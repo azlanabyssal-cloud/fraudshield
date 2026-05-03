@@ -1982,10 +1982,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ══════════════════════════════════════════════════════════
-     KAVACH 3-LANGUAGE SYSTEM
-     Click 1 → English  |  Click 2 → Hindi  |  Click 3 → Telugu
-     Click 4 (or any mid-speech 4th press) → Stop completely
-     Each message is short, plain, and direct for Indian families.
+     KAVACH 3-LANGUAGE SYSTEM — exact behaviour:
+       • If NOT speaking → advance to next language and play
+       • If SPEAKING     → stop immediately (click = stop)
+       Cycle: idle → English → idle → Hindi → idle → Telugu → idle → reset
+       "1930" repeated throughout every message for memorability.
   ══════════════════════════════════════════════════════════ */
 
   var kavachLangs = [
@@ -1994,59 +1995,59 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ── Step 1: English ── */
     {
       lang  : 'en-IN',
-      rate  : 0.88,
+      rate  : 0.95,
       pitch : 1.0,
       voices: ['Rishi','Microsoft Ravi - English (India)','Microsoft Ravi',
                'Google UK English Male','Daniel'],
-      msg   : 'Hello. I am Kavach, your digital guard. Three things that protect your family. ' +
-              'One — never share your OTP with anyone. Not your bank. Not C B I. No one. ' +
-              'Two — no police, no court, no C B I ever arrests you on a video call. ' +
-              'If this happens, hang up right away. It is always fraud. Always. ' +
-              'Three — if money is stolen, call nineteen thirty immediately. Free. Any time. ' +
-              'Please tell your family and neighbours today. One talk can protect everyone.'
+      msg   : 'I am Kavach — your digital guard. ' +
+              'Never share your OTP with anyone. No bank, no police, no government ever asks for it. ' +
+              'No one can arrest you on a video call — that is Digital Arrest fraud. ' +
+              'If money is stolen, call 1930 immediately. Free. 24 hours. ' +
+              'Save this number now — 1930.'
     },
 
     /* ── Step 2: Hindi ── */
     {
       lang  : 'hi-IN',
-      rate  : 0.85,
+      rate  : 0.93,
       pitch : 1.0,
-      voices: ['Lekha','Microsoft Swara - Hindi (India)','Microsoft Swara',
-               'Microsoft Hemant - Hindi (India)','Microsoft Hemant','Google हिन्दी'],
-      msg   : 'नमस्ते। मैं कवच हूँ। आपका डिजिटल रक्षक। ' +
-              'तीन ज़रूरी बातें। ' +
-              'पहली — अपना ओटीपी किसी को मत बताएं। बैंक को भी नहीं। सीबीआई को भी नहीं। ' +
-              'दूसरी — कोई भी पुलिस या अदालत वीडियो कॉल पर गिरफ्तार नहीं करती। ' +
-              'ऐसा कोई कॉल आए तो तुरंत फोन काटें। यह हमेशा धोखाधड़ी है। ' +
-              'तीसरी — पैसे गए तो उन्नीस तीस पर कॉल करें। बिल्कुल मुफ्त है। ' +
-              'आज ही अपने परिवार को बताएं।'
+      voices: ['Microsoft Hemant - Hindi (India)','Microsoft Hemant',
+               'Lekha','Microsoft Swara - Hindi (India)','Microsoft Swara','Google हिन्दी'],
+      msg   : 'मैं कवच हूँ — आपका डिजिटल रक्षक। ' +
+              'अपना ओटीपी कभी किसी को मत दें। बैंक, पुलिस, सरकार — कोई भी ओटीपी नहीं माँगता। ' +
+              'वीडियो कॉल पर कोई गिरफ्तारी नहीं होती — यह डिजिटल अरेस्ट धोखा है। ' +
+              'पैसे गए तो तुरंत उन्नीस तीस पर कॉल करें। मुफ्त। चौबीस घंटे। ' +
+              'यह नंबर अभी सेव करें — उन्नीस तीस।'
     },
 
     /* ── Step 3: Telugu ── */
     {
       lang  : 'te-IN',
-      rate  : 0.83,
+      rate  : 0.93,
       pitch : 1.0,
-      voices: ['Google తెలుగు','te-IN','te'],
-      msg   : 'నమస్కారం. నేను కవచ్. మీ డిజిటల్ రక్షకుడిని. ' +
-              'మూడు ముఖ్యమైన విషయాలు. ' +
-              'ఒకటి — మీ ఓటీపీ ఎవరికీ చెప్పకండి. బ్యాంకుకు కూడా వద్దు. సీబీఐకి కూడా వద్దు. ' +
-              'రెండు — పోలీసులు, కోర్టు వీడియో కాల్‌లో అరెస్ట్ చేయరు. ' +
-              'అలాంటి కాల్ వస్తే వెంటనే పెట్టేయండి. ఇది మోసం. ' +
-              'మూడు — డబ్బు పోతే పంతొమ్మిది ముప్పైకి కాల్ చేయండి. ఉచితం. ఎప్పుడైనా. ' +
-              'ఈరోజే మీ కుటుంబానికి చెప్పండి.'
+      voices: ['Google తెలుగు','Microsoft Vishwa','te-IN','te',
+               'Rishi','Microsoft Ravi - English (India)','Daniel'],
+      msg   : 'నేను కవచ్ — మీ డిజిటల్ రక్షకుడిని. ' +
+              'మీ ఓటీపీ ఎవరికీ చెప్పకండి. బ్యాంకు, పోలీసు, ప్రభుత్వం — ఎవరూ ఓటీపీ అడగరు. ' +
+              'వీడియో కాల్‌లో అరెస్ట్ అంటే మోసం — దాన్ని డిజిటల్ అరెస్ట్ అంటారు. ' +
+              'డబ్బు పోతే వెంటనే పంతొమ్మిది ముప్పైకి కాల్ చేయండి. ఉచితం. ఎప్పుడైనా. ' +
+              'ఇప్పుడే సేవ్ చేయండి — పంతొమ్మిది ముప్పై.'
     }
   ];
 
-  /* Tooltip text shown while each language is active */
-  var kavachTips = [
-    null,
-    '🇬🇧 English — tap for हिंदी',
-    '🇮🇳 हिंदी — tap for Telugu',
-    '🔤 Telugu — tap to stop'
+  /* Tooltips: idle vs speaking vs stopped-mid */
+  var kavachIdleTips  = [null,
+    '🇬🇧 Tap for English',
+    '🇮🇳 Tap for हिंदी',
+    '🔤 Tap for Telugu'
+  ];
+  var kavachActiveTips = [null,
+    '🔊 English — tap to stop',
+    '🔊 हिंदी — tap to stop',
+    '🔊 Telugu — tap to stop'
   ];
 
-  function setKavachTip(step) {
+  function setKavachTip(step, speaking) {
     var el  = document.querySelector('.creature.c-shield');
     var tip = el ? el.querySelector('.creature-tip') : null;
     if (!tip) return;
@@ -2054,27 +2055,37 @@ document.addEventListener('DOMContentLoaded', function () {
       if (tip.dataset.origText) tip.textContent = tip.dataset.origText;
     } else {
       if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
-      tip.textContent = kavachTips[step];
+      tip.textContent = speaking ? kavachActiveTips[step] : kavachIdleTips[step];
     }
   }
 
   function handleKavachClick() {
     if (!window.speechSynthesis) return;
 
-    /* Stop whatever is playing */
-    window.speechSynthesis.cancel();
-    speakingKey = null;
-
     var shieldEl = document.querySelector('.creature.c-shield');
 
-    /* Advance step */
-    kavachStep++;
-
-    /* Step 4 = stop command — reset everything */
-    if (kavachStep > 3) {
-      kavachStep = 0;
+    /* ── If Kavach is currently speaking → STOP immediately ── */
+    if (speakingKey === 'c-shield' && window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      speakingKey = null;
       if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      setKavachTip(0);
+      /* After stop: if Telugu was playing, full reset; else show "tap for next" */
+      if (kavachStep === 3) {
+        kavachStep = 0;
+        setKavachTip(0, false);
+      } else {
+        /* keep kavachStep — next click plays next language */
+        setKavachTip(kavachStep, false);
+      }
+      return;
+    }
+
+    /* ── Not speaking → advance to next language ── */
+    kavachStep++;
+    if (kavachStep > 3) {
+      /* Cycled past Telugu — full reset */
+      kavachStep = 0;
+      setKavachTip(0, false);
       return;
     }
 
@@ -2087,32 +2098,30 @@ document.addEventListener('DOMContentLoaded', function () {
     var voice = pickVoice(d);
     if (voice) utter.voice = voice;
 
-    /* Show glow and language-specific tooltip */
     speakingKey = 'c-shield';
     if (shieldEl) shieldEl.classList.add('creature--speaking');
-    setKavachTip(kavachStep);
+    setKavachTip(kavachStep, true);
 
-    var stepWhenStarted = kavachStep; /* capture for closure guard */
+    var capturedStep = kavachStep;
 
     utter.onend = function() {
-      if (speakingKey !== 'c-shield') return; /* another creature took over */
+      if (speakingKey !== 'c-shield') return;
       speakingKey = null;
       if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      /* After Telugu (step 3) finishes naturally — full reset */
-      if (stepWhenStarted === 3) {
+      if (capturedStep === 3) {
+        /* Telugu finished naturally — full reset */
         kavachStep = 0;
-        setKavachTip(0);
+        setKavachTip(0, false);
+      } else {
+        /* EN/HI finished naturally — show "tap for next language" */
+        setKavachTip(capturedStep, false);
       }
-      /* After English or Hindi finishes naturally — keep step so next
-         click advances to the next language, tip stays as the prompt */
     };
     utter.onerror = function() {
-      if (speakingKey === 'c-shield') {
-        speakingKey = null;
-        kavachStep  = 0;
-        if (shieldEl) shieldEl.classList.remove('creature--speaking');
-        setKavachTip(0);
-      }
+      speakingKey = null;
+      kavachStep  = 0;
+      if (shieldEl) shieldEl.classList.remove('creature--speaking');
+      setKavachTip(0, false);
     };
 
     window.speechSynthesis.speak(utter);
