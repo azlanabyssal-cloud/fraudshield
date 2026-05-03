@@ -1926,7 +1926,11 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Track which creature is currently speaking — enables toggle-stop */
   var speakingKey = null;
 
+  /* Kavach 3-language cycle: 0=idle, 1=English, 2=Hindi, 3=Telugu */
+  var kavachStep = 0;
+
   function clearAllSpeakingUI() {
+    kavachStep = 0; /* reset Kavach cycle whenever any creature state is cleared */
     document.querySelectorAll('.creature').forEach(function(cr) {
       cr.classList.remove('creature--speaking');
       var tip = cr.querySelector('.creature-tip');
@@ -1977,7 +1981,144 @@ document.addEventListener('DOMContentLoaded', function () {
     window.speechSynthesis.speak(utter);
   }
 
-  /* ── Creature click: TOGGLE — one click speaks, second click stops ── */
+  /* ══════════════════════════════════════════════════════════
+     KAVACH 3-LANGUAGE SYSTEM
+     Click 1 → English  |  Click 2 → Hindi  |  Click 3 → Telugu
+     Click 4 (or any mid-speech 4th press) → Stop completely
+     Each message is short, plain, and direct for Indian families.
+  ══════════════════════════════════════════════════════════ */
+
+  var kavachLangs = [
+    null, /* index 0 unused */
+
+    /* ── Step 1: English ── */
+    {
+      lang  : 'en-IN',
+      rate  : 0.88,
+      pitch : 1.0,
+      voices: ['Rishi','Microsoft Ravi - English (India)','Microsoft Ravi',
+               'Google UK English Male','Daniel'],
+      msg   : 'Hello. I am Kavach, your digital guard. Three things that protect your family. ' +
+              'One — never share your OTP with anyone. Not your bank. Not C B I. No one. ' +
+              'Two — no police, no court, no C B I ever arrests you on a video call. ' +
+              'If this happens, hang up right away. It is always fraud. Always. ' +
+              'Three — if money is stolen, call nineteen thirty immediately. Free. Any time. ' +
+              'Please tell your family and neighbours today. One talk can protect everyone.'
+    },
+
+    /* ── Step 2: Hindi ── */
+    {
+      lang  : 'hi-IN',
+      rate  : 0.85,
+      pitch : 1.0,
+      voices: ['Lekha','Microsoft Swara - Hindi (India)','Microsoft Swara',
+               'Microsoft Hemant - Hindi (India)','Microsoft Hemant','Google हिन्दी'],
+      msg   : 'नमस्ते। मैं कवच हूँ। आपका डिजिटल रक्षक। ' +
+              'तीन ज़रूरी बातें। ' +
+              'पहली — अपना ओटीपी किसी को मत बताएं। बैंक को भी नहीं। सीबीआई को भी नहीं। ' +
+              'दूसरी — कोई भी पुलिस या अदालत वीडियो कॉल पर गिरफ्तार नहीं करती। ' +
+              'ऐसा कोई कॉल आए तो तुरंत फोन काटें। यह हमेशा धोखाधड़ी है। ' +
+              'तीसरी — पैसे गए तो उन्नीस तीस पर कॉल करें। बिल्कुल मुफ्त है। ' +
+              'आज ही अपने परिवार को बताएं।'
+    },
+
+    /* ── Step 3: Telugu ── */
+    {
+      lang  : 'te-IN',
+      rate  : 0.83,
+      pitch : 1.0,
+      voices: ['Google తెలుగు','te-IN','te'],
+      msg   : 'నమస్కారం. నేను కవచ్. మీ డిజిటల్ రక్షకుడిని. ' +
+              'మూడు ముఖ్యమైన విషయాలు. ' +
+              'ఒకటి — మీ ఓటీపీ ఎవరికీ చెప్పకండి. బ్యాంకుకు కూడా వద్దు. సీబీఐకి కూడా వద్దు. ' +
+              'రెండు — పోలీసులు, కోర్టు వీడియో కాల్‌లో అరెస్ట్ చేయరు. ' +
+              'అలాంటి కాల్ వస్తే వెంటనే పెట్టేయండి. ఇది మోసం. ' +
+              'మూడు — డబ్బు పోతే పంతొమ్మిది ముప్పైకి కాల్ చేయండి. ఉచితం. ఎప్పుడైనా. ' +
+              'ఈరోజే మీ కుటుంబానికి చెప్పండి.'
+    }
+  ];
+
+  /* Tooltip text shown while each language is active */
+  var kavachTips = [
+    null,
+    '🇬🇧 English — tap for हिंदी',
+    '🇮🇳 हिंदी — tap for Telugu',
+    '🔤 Telugu — tap to stop'
+  ];
+
+  function setKavachTip(step) {
+    var el  = document.querySelector('.creature.c-shield');
+    var tip = el ? el.querySelector('.creature-tip') : null;
+    if (!tip) return;
+    if (step === 0) {
+      if (tip.dataset.origText) tip.textContent = tip.dataset.origText;
+    } else {
+      if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
+      tip.textContent = kavachTips[step];
+    }
+  }
+
+  function handleKavachClick() {
+    if (!window.speechSynthesis) return;
+
+    /* Stop whatever is playing */
+    window.speechSynthesis.cancel();
+    speakingKey = null;
+
+    var shieldEl = document.querySelector('.creature.c-shield');
+
+    /* Advance step */
+    kavachStep++;
+
+    /* Step 4 = stop command — reset everything */
+    if (kavachStep > 3) {
+      kavachStep = 0;
+      if (shieldEl) shieldEl.classList.remove('creature--speaking');
+      setKavachTip(0);
+      return;
+    }
+
+    var d = kavachLangs[kavachStep];
+    var utter = new SpeechSynthesisUtterance(d.msg);
+    utter.lang   = d.lang;
+    utter.rate   = d.rate;
+    utter.pitch  = d.pitch;
+    utter.volume = 1;
+    var voice = pickVoice(d);
+    if (voice) utter.voice = voice;
+
+    /* Show glow and language-specific tooltip */
+    speakingKey = 'c-shield';
+    if (shieldEl) shieldEl.classList.add('creature--speaking');
+    setKavachTip(kavachStep);
+
+    var stepWhenStarted = kavachStep; /* capture for closure guard */
+
+    utter.onend = function() {
+      if (speakingKey !== 'c-shield') return; /* another creature took over */
+      speakingKey = null;
+      if (shieldEl) shieldEl.classList.remove('creature--speaking');
+      /* After Telugu (step 3) finishes naturally — full reset */
+      if (stepWhenStarted === 3) {
+        kavachStep = 0;
+        setKavachTip(0);
+      }
+      /* After English or Hindi finishes naturally — keep step so next
+         click advances to the next language, tip stays as the prompt */
+    };
+    utter.onerror = function() {
+      if (speakingKey === 'c-shield') {
+        speakingKey = null;
+        kavachStep  = 0;
+        if (shieldEl) shieldEl.classList.remove('creature--speaking');
+        setKavachTip(0);
+      }
+    };
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  /* ── Creature click handler ── */
   document.querySelectorAll('.creature').forEach(function (cr) {
     var key = null;
     ['c-shield','c-bee','c-bot','c-ghost','c-star'].forEach(function(k){
@@ -1993,15 +2134,19 @@ document.addEventListener('DOMContentLoaded', function () {
       cr.classList.add('creature--bouncing');
       setTimeout(function () { cr.classList.remove('creature--bouncing'); }, 420);
 
-      /* If THIS creature is currently speaking — stop it */
+      /* ── Kavach: 3-language cycle ── */
+      if (key === 'c-shield') {
+        handleKavachClick();
+        return;
+      }
+
+      /* ── All other creatures: single toggle (start / stop) ── */
       if (speakingKey === key && window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         speakingKey = null;
         updateSpeakingUI(key, false);
         return;
       }
-
-      /* Otherwise start speaking */
       if (key && creatureData[key]) speakCreature(creatureData[key], key);
     });
   });
