@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeIndia — The Real Data</title>
+  <meta name="description" content="Official cybercrime statistics for India — sourced from RBI, NCRB, and I4C. Every number verified.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="SafeIndia Home">
+      <span aria-hidden="true">🛡️</span>
+      <span>Safe<span class="nav-logo__accent">India</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="data.html" class="active">The Data</a></li>
+      <li><a href="tips.html">Protect Yourself</a></li>
+      <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
+            aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobileNav" class="mobile-nav" role="navigation"
+     aria-label="Mobile navigation" aria-hidden="true">
+  <a href="index.html">Home</a>
+  <a href="data.html" class="active">The Data</a>
+  <a href="tips.html">Protect Yourself</a>
+  <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero__bg page-hero__bg--data"></div>
+  <div class="page-hero__content">
+    <span class="page-hero__badge page-hero__badge--navy">📊 VERIFIED · RBI · NCRB · I4C · MHA</span>
+    <h1>The Real Numbers</h1>
+    <p>Every figure sourced from official Indian government reports. No estimates. No fabrication.</p>
+  </div>
+</section>
+
+<!-- TAB BAR -->
+<div class="tab-bar" role="tablist" aria-label="Data categories">
+  <button class="tab-btn active" data-tab="cases" role="tab" aria-selected="true">📈 FIR Cases</button>
+  <button class="tab-btn" data-tab="types" role="tab" aria-selected="false">🍩 Fraud Types</button>
+  <button class="tab-btn" data-tab="states" role="tab" aria-selected="false">🗺️ By State</button>
+  <button class="tab-btn" data-tab="money" role="tab" aria-selected="false">💸 Money Lost</button>
+</div>
+
+<!-- TAB PANELS -->
+<div class="tab-panel" id="tab-cases">
+  <div class="chart-card">
+    <div class="chart-card__header">
+      <div>
+        <h3>Cybercrime FIRs Registered in India</h3>
+        <p>Source: National Crime Records Bureau (NCRB) — Crime in India 2023</p>
+      </div>
+    </div>
+    <canvas id="casesChart" height="340"
+            role="img" aria-label="Bar chart showing cybercrime FIRs from 2018 to 2023"></canvas>
+    <div class="chart-insight chart-insight--navy">
+      📌 Cases grew <strong>217%</strong> between 2018 and 2023. In 2023, the NCRB recorded
+      86,420 FIRs — but the I4C helpline received 15.96 lakh complaints.
+      Only <strong>5.4%</strong> of victims got a formal case registered.
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-types" hidden>
+  <div class="chart-card">
+    <h3>Fraud Type Breakdown 2023</h3>
+    <p>Source: Indian Cyber Crime Coordination Centre (I4C) — MHA 2023</p>
+    <div class="donut-layout">
+      <canvas id="typeChart" class="donut-canvas"
+              role="img" aria-label="Doughnut chart of fraud types"></canvas>
+      <ul class="legend-list">
+        <li class="legend-item">
+          <span class="legend-dot legend-dot--maroon"></span>
+          <div><strong>UPI / Payment Fraud — 67%</strong><br>
+          <small>Most common. Fake collect requests, QR codes, malicious apps.</small></div>
+        </li>
+        <li class="legend-item">
+          <span class="legend-dot legend-dot--orange"></span>
+          <div><strong>OTP &amp; SIM Swap — 12%</strong><br>
+          <small>Caller tricks victim into sharing one-time password.</small></div>
+        </li>
+        <li class="legend-item">
+          <span class="legend-dot legend-dot--navy"></span>
+          <div><strong>Phishing &amp; Fake Sites — 9%</strong><br>
+          <small>Fake bank and government websites steal login credentials.</small></div>
+        </li>
+        <li class="legend-item">
+          <span class="legend-dot legend-dot--olive"></span>
+          <div><strong>Fake Loan Apps — 7%</strong><br>
+          <small>Apps steal contacts and photos then blackmail victims.</small></div>
+        </li>
+        <li class="legend-item">
+          <span class="legend-dot legend-dot--gray"></span>
+          <div><strong>Other — 5%</strong><br>
+          <small>Sextortion, job fraud, investment scams, digital arrest.</small></div>
+        </li>
+      </ul>
+    </div>
+    <div class="chart-insight chart-insight--orange">
+      📌 UPI fraud alone (67%) is more than all other fraud types combined.
+      India processes 13.9 billion UPI transactions monthly — making this the
+      largest payment fraud surface in the world.
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-states" hidden>
+  <div class="chart-card">
+    <h3>Top 5 States by Cybercrime FIRs — 2023</h3>
+    <p>Source: NCRB — Crime in India 2023</p>
+    <canvas id="stateChart" height="300"
+            role="img" aria-label="Horizontal bar chart showing top 5 states"></canvas>
+    <div class="chart-insight chart-insight--maroon">
+      📌 Telangana leads partly due to strong reporting infrastructure and a
+      dedicated state cybercrime unit. High numbers reflect both crime volume
+      AND better reporting — not all states register complaints equally.
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-money" hidden>
+  <div class="chart-card">
+    <h3>Financial Losses Reported — ₹ Crore</h3>
+    <p>Source: I4C / Ministry of Home Affairs — Annual Reports 2021–2025</p>
+    <canvas id="moneyChart" height="300"
+            role="img" aria-label="Line chart of financial losses 2021 to 2025"></canvas>
+    <div class="chart-insight chart-insight--olive">
+      📌 The first-ever decline (2024: ₹22,845 Cr → 2025: ₹22,495 Cr) despite
+      a 24% rise in complaint volume is direct evidence that the CFCFRMS system
+      is working — freezing funds in real-time before criminals can launder them.
+    </div>
+  </div>
+</div>
+
+<!-- FACTS GRID -->
+<section class="facts-section">
+  <div class="container">
+    <div class="facts-grid">
+      <div class="fact-card fact-card--orange">
+        <div class="fact-num">₹1.2 Lakh Cr</div>
+        <div class="fact-label">Projected annual fraud loss by 2025 (0.7% of GDP)</div>
+        <div class="fact-src">MHA Study 2025</div>
+      </div>
+      <div class="fact-card fact-card--maroon">
+        <div class="fact-num">5.4%</div>
+        <div class="fact-label">Percentage of complaints that became FIRs in 2023 — 94.6% go unregistered</div>
+        <div class="fact-src">NCRB / I4C 2023</div>
+      </div>
+      <div class="fact-card fact-card--olive">
+        <div class="fact-num">₹8,690 Cr</div>
+        <div class="fact-label">Frozen by CFCFRMS real-time system in January 2026 alone</div>
+        <div class="fact-src">MHA I4C 2026</div>
+      </div>
+    </div>
+    <p class="source-note">Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI Annual Report 2023-24 · Ministry of Home Affairs I4C Annual Report</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="footer-logo">🛡️ SafeIndia</p>
+      <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
+      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Emergency</p>
+      <a href="tel:1930" class="footer-helpline-number">1930</a>
+      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Official Resources</p>
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
+      <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="report.html" class="footer-link">File a Report</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Pages</p>
+      <a href="index.html" class="footer-link">Home</a>
+      <a href="data.html" class="footer-link">The Data</a>
+      <a href="tips.html" class="footer-link">Protect Yourself</a>
+      <a href="report.html" class="footer-link">Report Fraud</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
+    <p>© 2026 SafeIndia. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>

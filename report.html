@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeIndia — Report Your Fraud</title>
+  <meta name="description" content="Organize your fraud report before filing at cybercrime.gov.in. Everything stays on your device — nothing is sent to any server.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="SafeIndia Home">
+      <span aria-hidden="true">🛡️</span>
+      <span>Safe<span class="nav-logo__accent">India</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="data.html">The Data</a></li>
+      <li><a href="tips.html">Protect Yourself</a></li>
+      <li><a href="report.html" class="nav-cta active">Report Fraud</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
+            aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobileNav" class="mobile-nav" role="navigation"
+     aria-label="Mobile navigation" aria-hidden="true">
+  <a href="index.html">Home</a>
+  <a href="data.html">The Data</a>
+  <a href="tips.html">Protect Yourself</a>
+  <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero__bg page-hero__bg--report"></div>
+  <div class="page-hero__content">
+    <span class="page-hero__badge page-hero__badge--orange">📋 YOUR DEVICE ONLY — NOTHING SENT TO ANY SERVER</span>
+    <h1>Organize Your Fraud Report</h1>
+    <p>Gather your information here before filing the official complaint at cybercrime.gov.in. Everything stays on your device.</p>
+  </div>
+</section>
+
+<!-- PROGRESS STEPS -->
+<div class="progress-steps" aria-label="Report progress steps">
+  <div class="progress-step progress-step--active">
+    <div class="progress-step__circle">1</div>
+    <span class="progress-step__label">Fill Details</span>
+  </div>
+  <div class="progress-connector"></div>
+  <div class="progress-step">
+    <div class="progress-step__circle">2</div>
+    <span class="progress-step__label">Copy Report</span>
+  </div>
+  <div class="progress-connector"></div>
+  <div class="progress-step">
+    <div class="progress-step__circle">3</div>
+    <span class="progress-step__label">File Officially</span>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrapper">
+  <div class="form-card">
+    <form id="reportForm" novalidate>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="inputName">YOUR FULL NAME</label>
+          <input type="text" id="inputName" name="fullname" autocomplete="name" placeholder="Enter your full name">
+        </div>
+
+        <div class="form-group">
+          <label for="inputState">YOUR STATE / UT</label>
+          <select id="inputState" name="state" autocomplete="address-level1">
+            <option value="" disabled selected>Select your state</option>
+            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chandigarh">Chandigarh</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Ladakh">Ladakh</option>
+            <option value="Lakshadweep">Lakshadweep</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Puducherry">Puducherry</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputType">TYPE OF FRAUD</label>
+          <select id="inputType" name="fraudType">
+            <option value="" disabled selected>Select fraud type</option>
+            <option value="UPI Fraud">UPI Fraud</option>
+            <option value="OTP Scam">OTP Scam</option>
+            <option value="Phishing">Phishing / Fake Website</option>
+            <option value="Fake Loan App">Fake Loan App</option>
+            <option value="Sextortion">Sextortion</option>
+            <option value="Digital Arrest">Digital Arrest</option>
+            <option value="Investment Scam">Investment / Stock Scam</option>
+            <option value="Job Fraud">Job Fraud</option>
+            <option value="SIM Swap">SIM Swap</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputDate">DATE OF INCIDENT</label>
+          <input type="date" id="inputDate" name="incidentDate" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="inputAmount">AMOUNT LOST (₹)</label>
+          <input type="number" id="inputAmount" name="amountLost"
+                 min="0" placeholder="0" inputmode="numeric">
+        </div>
+
+        <div class="form-group">
+          <label for="inputBank">BANK OR APP INVOLVED</label>
+          <input type="text" id="inputBank" name="bankApp"
+                 autocomplete="off" placeholder="e.g. SBI, PhonePe, HDFC, WhatsApp">
+        </div>
+
+        <div class="form-group form-group--full">
+          <label for="inputDescription">DESCRIBE WHAT HAPPENED</label>
+          <textarea id="inputDescription" name="description" rows="7"
+            placeholder="Describe how you were contacted, what you were told, what happened to your money, and any details about the fraudster — UPI ID, phone number, website URL, app name. Be as specific as possible."></textarea>
+        </div>
+
+        <div class="form-group form-group--full">
+          <button type="button" id="copyBtn" class="btn-copy"
+                  aria-label="Copy formatted fraud report to clipboard">
+            📋 Copy My Fraud Report to Clipboard
+          </button>
+          <div id="copySuccess" class="copy-success" hidden
+               role="alert" aria-live="polite">
+            ✅ Report copied! Paste it while filing your complaint at cybercrime.gov.in
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ACTION BOXES -->
+<div class="action-grid">
+  <div class="action-box action-box--official">
+    <p class="action-box__icon">🌐</p>
+    <h3 class="action-box__title">File Official Complaint</h3>
+    <p class="action-box__body">The only official government platform for cybercrime complaints in India. Free. Confidential. Available 24 hours.</p>
+    <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-primary action-box__btn">
+      Go to cybercrime.gov.in →
+    </a>
+  </div>
+  <div class="action-box action-box--helpline">
+    <p class="action-box__icon">📞</p>
+    <h3 class="action-box__title">Cyber Crime Helpline</h3>
+    <a href="tel:1930" class="action-box__number">1930</a>
+    <p class="action-box__body">
+      National Cyber Crime Helpline<br>Available 24 hours · 7 days · Free call
+    </p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="footer-logo">🛡️ SafeIndia</p>
+      <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
+      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Emergency</p>
+      <a href="tel:1930" class="footer-helpline-number">1930</a>
+      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Official Resources</p>
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
+      <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="report.html" class="footer-link">File a Report</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Pages</p>
+      <a href="index.html" class="footer-link">Home</a>
+      <a href="data.html" class="footer-link">The Data</a>
+      <a href="tips.html" class="footer-link">Protect Yourself</a>
+      <a href="report.html" class="footer-link">Report Fraud</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
+    <p>© 2026 SafeIndia. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>

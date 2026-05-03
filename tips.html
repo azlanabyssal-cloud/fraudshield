@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeIndia — Protect Yourself from Digital Fraud</title>
+  <meta name="description" content="Real prevention advice for India's most dangerous scams — UPI fraud, OTP scams, phishing, fake loans, sextortion, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="SafeIndia Home">
+      <span aria-hidden="true">🛡️</span>
+      <span>Safe<span class="nav-logo__accent">India</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="data.html">The Data</a></li>
+      <li><a href="tips.html" class="active">Protect Yourself</a></li>
+      <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
+            aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobileNav" class="mobile-nav" role="navigation"
+     aria-label="Mobile navigation" aria-hidden="true">
+  <a href="index.html">Home</a>
+  <a href="data.html">The Data</a>
+  <a href="tips.html" class="active">Protect Yourself</a>
+  <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero__bg page-hero__bg--tips"></div>
+  <div class="page-hero__content">
+    <span class="page-hero__badge page-hero__badge--olive">🛡️ PREVENTION GUIDE · VERIFIED 2024</span>
+    <h1>How To Protect Yourself</h1>
+    <p>Real scenarios. Real advice. Tested against actual fraud cases from 2023 and 2024.</p>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" role="toolbar" aria-label="Filter fraud type cards">
+  <button class="filter-btn active" data-filter="all" aria-pressed="true">All Fraud Types</button>
+  <button class="filter-btn" data-filter="upi" aria-pressed="false">📱 UPI &amp; Payments</button>
+  <button class="filter-btn" data-filter="identity" aria-pressed="false">🔒 Identity Theft</button>
+  <button class="filter-btn" data-filter="app" aria-pressed="false">📲 App Based</button>
+  <button class="filter-btn" data-filter="social" aria-pressed="false">🎭 Social Engineering</button>
+</div>
+
+<!-- FRAUD CARDS -->
+<div class="fraud-grid">
+
+  <!-- Card 1: UPI Fraud -->
+  <div class="fraud-card" data-category="upi">
+    <div class="fraud-card__header fraud-card__header--orange">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">📱</span>
+        <div>
+          <h3 class="fraud-card__name">UPI Fraud</h3>
+          <span class="fraud-card__stat">67% of all digital fraud in 2023 — most common in India</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>A scammer poses as a buyer, helpline agent, or sender and shares a UPI collect request or QR code saying "scan this to receive ₹X." Scanning approves a payment FROM your account — you send money, not receive it.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>Receiving money never requires scanning a QR code or entering your UPI PIN. If anyone asks you to scan to receive payment — disconnect immediately and call 1930.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 QR codes only debit your account. To receive money, just share your UPI ID or mobile number.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: OTP Scam -->
+  <div class="fraud-card" data-category="identity">
+    <div class="fraud-card__header fraud-card__header--navy">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">🔒</span>
+        <div>
+          <h3 class="fraud-card__name">OTP Scam</h3>
+          <span class="fraud-card__stat">12% of cases — rising sharply through 2024</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>A caller claims to be from your bank, TRAI, CBI, or police and creates urgency: "your SIM will be blocked in 2 hours unless you verify with your OTP." The OTP is used to authorize a transaction from your account.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>No bank, regulator, or government body ever asks for your OTP. It is a One-Time Password meant only for you. The moment any caller asks for it, hang up immediately.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 OTP is like your ATM PIN. No one — not your bank, not RBI, not CBI — will ever ask for it.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Phishing -->
+  <div class="fraud-card" data-category="identity">
+    <div class="fraud-card__header fraud-card__header--maroon">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">🎣</span>
+        <div>
+          <h3 class="fraud-card__name">Phishing</h3>
+          <span class="fraud-card__stat">9% of cases — fake sites that steal your login</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>You receive an SMS: "SBI KYC incomplete. Update here: sbi-kyc-update.net — or your account will be blocked." The page looks identical to your bank. Every detail you enter goes directly to criminals.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>SBI's real domain is sbi.co.in. Government sites end in .gov.in. IRCTC is irctc.co.in. Bookmark these. Never click a link in any SMS or WhatsApp message — always type the URL yourself.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 Check the URL bar before entering any password. One wrong character = a fake site.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Fake Loan Apps -->
+  <div class="fraud-card" data-category="app">
+    <div class="fraud-card__header fraud-card__header--olive">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">💰</span>
+        <div>
+          <h3 class="fraud-card__name">Fake Loan Apps</h3>
+          <span class="fraud-card__stat">Targeting people in financial distress — rising 2024</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>App offers instant ₹5,000–₹50,000 loan with no documents. After install, it reads your entire contact list and photo gallery. When repayment is missed, they morph your photos and send them to every person in your contacts.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>Only borrow from institutions on RBI's official approved lenders list at rbi.org.in. If any app demands access to your contacts or photos to process a loan, uninstall it immediately.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 RBI-approved lenders never access your contacts. Contact permission request for a loan = danger.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Sextortion -->
+  <div class="fraud-card" data-category="social">
+    <div class="fraud-card__header fraud-card__header--maroon">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">🚫</span>
+        <div>
+          <h3 class="fraud-card__name">Sextortion</h3>
+          <span class="fraud-card__stat">Cases up 300% between 2022 and 2024</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>A stranger with an attractive profile photo video calls you. The call is recorded. Hours later, they threaten to send the recording to your family and employer unless you transfer money immediately.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>Never accept video calls from unknown numbers. Do not pay even one rupee — payment proves you can pay and demands will increase. Report to 1930 immediately. Cases are handled with full confidentiality and no judgment.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 Do not pay. Do not respond. Call 1930. The team handles these cases discreetly.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Job & Investment Fraud -->
+  <div class="fraud-card" data-category="social">
+    <div class="fraud-card__header fraud-card__header--orange">
+      <div class="fraud-card__title-row">
+        <span class="fraud-card__icon">💼</span>
+        <div>
+          <h3 class="fraud-card__name">Job &amp; Investment Fraud</h3>
+          <span class="fraud-card__stat">76% of financial losses in 2025 — highest of all types</span>
+        </div>
+      </div>
+    </div>
+    <div class="fraud-card__body">
+      <div class="info-block">
+        <p class="info-block__label">⚡ HOW IT HAPPENS</p>
+        <p>WhatsApp message: work-from-home ₹500 per task. Small early payouts build trust. Then they ask you to deposit ₹5,000–₹50,000 to "unlock bigger earnings." The money disappears and the account goes silent.</p>
+      </div>
+      <div class="info-block">
+        <p class="info-block__label">✅ HOW TO STAY SAFE</p>
+        <p>Real employers pay you — they never ask you to pay first. Any investment promising guaranteed returns above 12% per year is almost certainly a Ponzi scheme targeting your savings.</p>
+      </div>
+      <div class="golden-rule">
+        🔑 Real jobs pay you first. Guaranteed high returns = guaranteed scam.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- VICTIM RECOVERY SECTION -->
+<section id="victim-steps" class="victim-section">
+  <div class="victim-section__photo-strip">
+    <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=900&q=80&fit=crop"
+         alt="Official help and police station" loading="lazy" aria-hidden="true">
+    <div class="victim-section__photo-overlay"></div>
+    <div class="victim-section__photo-text">
+      <span class="hero-eyebrow hero-eyebrow--olive">
+        💙 IF YOU ARE ALREADY A VICTIM
+      </span>
+      <h2>Here Is Exactly What To Do<br>— Step by Step</h2>
+      <p>
+        Banks are required under RBI guidelines to attempt reversal if you report within 24 hours.
+        Every minute matters.
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="victimAccordion" class="accordion">
+
+      <div class="accordion-item">
+        <button class="accordion-header" aria-expanded="false">
+          <span><span class="step-badge step-badge--olive">Step 1</span> 📞 Call 1930 Right Now</span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="accordion-body">
+          <p>The National Cyber Crime Helpline <strong>1930</strong> is operational 24 hours a day, 7 days a week. It is free. Tell them: the exact amount transferred, the UPI ID or bank account number, the time and date, and the app or bank you used. They can immediately issue a hold request to the receiving bank before the funds are moved to a secondary account.</p>
+          <a href="tel:1930" class="btn-primary">📞 Call 1930 Now</a>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" aria-expanded="false">
+          <span><span class="step-badge step-badge--navy">Step 2</span> 🌐 File at cybercrime.gov.in — Within 24 Hours</span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="accordion-body">
+          <p>Go to <strong>cybercrime.gov.in</strong> and click "Report Financial Fraud." You will need: your mobile number, the amount lost, the bank or UPI app name, and screenshots of any messages or transactions. The 24-hour window is critical — this is when banks can still intercept funds in transit. After 24 hours, reversal becomes extremely difficult.</p>
+          <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-primary">🌐 File at cybercrime.gov.in →</a>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" aria-expanded="false">
+          <span><span class="step-badge step-badge--orange">Step 3</span> 🏦 Call Your Bank to Freeze the Transfer</span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="accordion-body">
+          <p>Call the 24-hour helpline on the back of your debit card. Say exactly: <strong>"I am a fraud victim. I want to raise a dispute under RBI's Zero Liability Policy."</strong> RBI circular RBI/2017-18/15 requires banks to reverse unauthorized transactions reported within 3 working days. Do not accept any refusal — demand a written complaint number before ending the call.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" aria-expanded="false">
+          <span><span class="step-badge step-badge--maroon">Step 4</span> 📸 Collect and Preserve All Evidence</span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="accordion-body">
+          <p>Screenshot every SMS, WhatsApp message, call log, app notification, and bank transaction related to the fraud. Note the exact time, date, and everything the scammer said. Save the UPI transaction ID or bank reference number. Write it all down on paper too — do not rely only on your phone. Do not delete anything — this is your legal evidence.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" aria-expanded="false">
+          <span><span class="step-badge step-badge--navy">Step 5</span> 🚔 File an FIR at the Cybercrime Cell</span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="accordion-body">
+          <p>Visit your nearest police station and ask specifically for the <strong>Cybercrime Cell</strong>. Bring: your Aadhaar card, the complaint reference number from cybercrime.gov.in, your bank statement showing the fraud transaction, and all screenshots. An FIR creates the official legal record that supports both your bank reversal claim and any future prosecution of the fraudsters.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="empathy-card">
+      <p class="empathy-card__icon">💚</p>
+      <p class="empathy-card__title">You are not alone. You did nothing wrong.</p>
+      <p class="empathy-card__text">Professional fraud networks operate with training manuals, rehearsed scripts, and psychological playbooks tested on thousands of victims. In 2024, victims included IIT professors, retired military generals, sitting judges, and senior bank managers. Getting help immediately is the correct and courageous response.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="footer-logo">🛡️ SafeIndia</p>
+      <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
+      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Emergency</p>
+      <a href="tel:1930" class="footer-helpline-number">1930</a>
+      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Official Resources</p>
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
+      <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="report.html" class="footer-link">File a Report</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Pages</p>
+      <a href="index.html" class="footer-link">Home</a>
+      <a href="data.html" class="footer-link">The Data</a>
+      <a href="tips.html" class="footer-link">Protect Yourself</a>
+      <a href="report.html" class="footer-link">Report Fraud</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
+    <p>© 2026 SafeIndia. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>

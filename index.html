@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FraudShell — India's Frontline Against Digital Fraud | Call 1930</title>
+  <meta name="description" content="FraudShell — India's flagship digital fraud awareness platform. Verified I4C data, real court cases, PM Modi's warning, legal rights, and a 5-step recovery guide. Call 1930 free if scammed.">
+  <meta name="keywords" content="digital fraud India, cyber crime helpline 1930, digital arrest scam, UPI fraud, I4C, cybercrime.gov.in, FraudShell">
+  <meta name="author" content="FraudShell — India Fraud Awareness Initiative">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://fraudshell.in/">
+
+  <!-- Open Graph — flagship social sharing -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://fraudshell.in/">
+  <meta property="og:site_name"   content="FraudShell">
+  <meta property="og:title"       content="FraudShell — India's Frontline Against Digital Fraud">
+  <meta property="og:description" content="India lost ₹22,848 Crore to digital fraud in 2024. Know the facts, know the law, know how to recover. Free. No login. Call 1930.">
+  <meta property="og:image"       content="https://fraudshell.in/images/og-cover.png">
+  <meta property="og:locale"      content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@FraudShellIN">
+  <meta name="twitter:title"       content="FraudShell — India's Frontline Against Digital Fraud">
+  <meta name="twitter:description" content="₹22,848 Cr lost in 2024. Every 7 minutes one Indian is scammed. Know the law. Call 1930 free.">
+  <meta name="twitter:image"       content="https://fraudshell.in/images/og-cover.png">
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "FraudShell",
+    "url": "https://fraudshell.in",
+    "description": "India's flagship digital fraud awareness platform — verified government data, legal rights, and step-by-step recovery guide.",
+    "inLanguage": "en-IN",
+    "publisher": {
+      "@type": "Organization",
+      "name": "FraudShell",
+      "logo": { "@type": "ImageObject", "url": "https://fraudshell.in/images/logo.png" }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://fraudshell.in/tips.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ══════════════════════════════════════════════════════
+       FRAUDSHELL FLAGSHIP — index.html exclusive CSS
+       style.css is NEVER modified
+    ══════════════════════════════════════════════════════ */
+
+    /* Override section-tag → pill */
+    .section-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:var(--orange-pale);padding:.26rem .9rem;border-radius:999px;margin-bottom:1rem;border-bottom:none}
+    .section-tag--white{color:#fff;background:rgba(232,93,4,.22)}
+
+    /* Override hero-bg → Indian context */
+    .hero-bg{background-image:url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&q=80&fit=crop')}
+
+    /* ── SOS BAR (mobile) ── */
+    .sos-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:2000;background:var(--maroon);padding:.6rem 1.2rem;justify-content:space-between;align-items:center;box-shadow:0 -4px 24px rgba(0,0,0,.45)}
+    @media(max-width:640px){.sos-bar{display:flex}}
+    .sos-bar__text{font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.88);line-height:1.35}
+    .sos-bar__text strong{color:#fff}
+    .sos-bar__btn{flex-shrink:0;background:var(--orange);color:#fff;font-family:'DM Sans',sans-serif;font-weight:800;font-size:.92rem;padding:.5rem 1.3rem;border-radius:999px;text-decoration:none;animation:sos-pulse 2.2s ease-in-out infinite}
+    @keyframes sos-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+    /* ── ALERT TICKER ── */
+    .alert-ticker{background:var(--maroon);padding:.44rem 0;overflow:hidden}
+    .alert-ticker__inner{display:flex;gap:3.5rem;white-space:nowrap;width:max-content;animation:scrollTicker 28s linear infinite;font-family:'DM Sans',sans-serif;font-size:.79rem;font-weight:700;color:rgba(255,255,255,.92);align-items:center}
+    .alert-ticker:hover .alert-ticker__inner{animation-play-state:paused}
+    .atick-dot{display:inline-block;width:6px;height:6px;background:var(--orange);border-radius:50%;flex-shrink:0}
+    .atick-live{display:inline-block;background:rgba(232,93,4,.3);color:var(--orange);font-size:.68rem;font-weight:800;letter-spacing:.07em;padding:.08rem .5rem;border-radius:999px}
+
+    /* ── EMERGENCY BANNER ── */
+    .e-banner{background:linear-gradient(90deg,#3d0a0a,#7B1D1D 50%,#9B2C2C);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:center;gap:1.2rem;flex-wrap:wrap}
+    .e-banner__pill{background:rgba(255,255,255,.12);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);padding:.2rem .7rem;border-radius:999px;flex-shrink:0}
+    .e-banner__text{font-family:'DM Sans',sans-serif;font-size:.95rem;color:rgba(255,255,255,.95);font-weight:500}
+    .e-banner__text strong{color:#fff}
+    .e-banner__btn{flex-shrink:0;background:var(--orange);color:#fff;font-family:'DM Sans',sans-serif;font-weight:800;font-size:.88rem;padding:.48rem 1.35rem;border-radius:999px;text-decoration:none;box-shadow:0 4px 14px rgba(232,93,4,.5);transition:all var(--ease)}
+    .e-banner__btn:hover{background:#fff;color:var(--maroon)}
+
+    /* ── PM WARNING ── */
+    .pm-warn{background:linear-gradient(92deg,#fff7e6,#fff);border-top:4px solid #FF9933;border-bottom:2px solid #f5e0b8;padding:1.4rem 2rem;position:relative}
+    .pm-warn__inner{max-width:1100px;margin:0 auto;display:flex;align-items:flex-start;gap:1.3rem;flex-wrap:wrap}
+    .pm-warn__flag{font-size:2.2rem;flex-shrink:0;margin-top:.1rem}
+    .pm-warn__body{flex:1;min-width:260px}
+    .pm-warn__kicker{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#c47800;margin-bottom:.35rem}
+    .pm-warn__title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:.4rem;line-height:1.3}
+    .pm-warn__quote{font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-secondary);line-height:1.7;font-style:italic;border-left:3px solid #FF9933;padding-left:.9rem}
+    .pm-warn__source{font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--text-muted);margin-top:.4rem}
+    .pm-warn__action{display:flex;flex-direction:column;gap:.6rem;align-items:flex-start;justify-content:center;flex-shrink:0}
+    @media(max-width:640px){.pm-warn__inner{flex-direction:column}.pm-warn__action{flex-direction:row;flex-wrap:wrap}}
+
+    /* ── TRUST BAR ── */
+    .trust-bar{background:var(--navy);padding:1.4rem 2rem;display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap;border-top:3px solid var(--orange)}
+    .trust-item{display:flex;flex-direction:column;align-items:center;gap:.15rem;text-align:center}
+    .trust-item__num{font-family:'JetBrains Mono',monospace;font-size:1.55rem;font-weight:700;color:var(--orange);line-height:1}
+    .trust-item__label{font-family:'DM Sans',sans-serif;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.42);text-transform:uppercase;letter-spacing:.09em}
+    .trust-divider{width:1px;height:34px;background:rgba(255,255,255,.1);flex-shrink:0}
+    @media(max-width:580px){.trust-divider{display:none}.trust-bar{gap:1.3rem}}
+
+    /* ── STATS SECTION: make relative for creature ── */
+    .stats-section{position:relative}
+
+    /* ── FUNNEL ── */
+    .funnel-sec{background:var(--space);padding:5.5rem 2rem;position:relative;overflow:visible}
+    .funnel-sec::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1400&q=45&fit=crop') center/cover;opacity:.06;pointer-events:none}
+    .funnel-head{text-align:center;margin-bottom:3rem;position:relative}
+    .funnel-head h2{color:#fff;letter-spacing:-.02em}
+    .funnel-head p{color:rgba(255,255,255,.52);max-width:560px;margin:.65rem auto 0;line-height:1.75}
+    .funnel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:1080px;margin:0 auto;position:relative}
+    .funnel-connector{position:absolute;top:45px;left:calc(12.5% + 32px);right:calc(12.5% + 32px);height:2px;background:linear-gradient(90deg,rgba(44,82,130,.5),var(--orange),var(--maroon),rgba(45,10,10,.8));z-index:1}
+    .funnel-step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 1.1rem;position:relative;z-index:2}
+    .funnel-num{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:1.55rem;font-weight:700;color:#fff;margin-bottom:1.6rem;flex-shrink:0;box-shadow:0 10px 36px rgba(0,0,0,.5)}
+    .funnel-step--1 .funnel-num{background:var(--navy-mid)}
+    .funnel-step--2 .funnel-num{background:var(--orange)}
+    .funnel-step--3 .funnel-num{background:var(--maroon)}
+    .funnel-step--4 .funnel-num{background:#2d0a0a}
+    .funnel-step__icon{font-size:2rem;margin-bottom:.4rem}
+    .funnel-step__title{font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:.45rem}
+    .funnel-step__body{font-family:'DM Sans',sans-serif;font-size:.82rem;color:rgba(255,255,255,.52);line-height:1.7}
+    .funnel-step__pill{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.67rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .7rem;border-radius:999px;margin-top:.8rem}
+    .funnel-step--1 .funnel-step__pill{background:rgba(44,82,130,.3);color:rgba(255,255,255,.65)}
+    .funnel-step--2 .funnel-step__pill{background:rgba(232,93,4,.25);color:var(--orange)}
+    .funnel-step--3 .funnel-step__pill{background:rgba(123,29,29,.35);color:rgba(255,255,255,.65)}
+    .funnel-step--4 .funnel-step__pill{background:rgba(45,10,10,.5);color:rgba(255,255,255,.8)}
+    @media(max-width:880px){.funnel-grid{grid-template-columns:1fr 1fr;gap:2.5rem}.funnel-connector{display:none}}
+    @media(max-width:500px){.funnel-grid{grid-template-columns:1fr}}
+
+    /* ── PHOTO STRIP ── */
+    .pstrip{overflow:hidden}
+    .pstrip-grid{display:grid;grid-template-columns:repeat(4,1fr);height:370px}
+    .pstrip-cell{position:relative;overflow:hidden}
+    .pstrip-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+    .pstrip-cell:hover img{transform:scale(1.1)}
+    /* Gradient: image visible in top 55%, text readable in bottom 45% */
+    .pstrip-over{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,31,58,.9) 0%,rgba(11,31,58,.55) 38%,rgba(11,31,58,.08) 65%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem 1.1rem}
+    .pstrip-over--orange{background:linear-gradient(to top,rgba(160,50,0,.9) 0%,rgba(160,50,0,.5) 38%,rgba(160,50,0,.06) 65%,transparent 100%)}
+    .pstrip-over--olive{background:linear-gradient(to top,rgba(45,68,18,.9) 0%,rgba(45,68,18,.5) 38%,rgba(45,68,18,.06) 65%,transparent 100%)}
+    .pstrip-over--maroon{background:linear-gradient(to top,rgba(80,12,12,.9) 0%,rgba(80,12,12,.5) 38%,rgba(80,12,12,.06) 65%,transparent 100%)}
+    .pstrip-stat{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--orange);line-height:1;margin-bottom:.28rem}
+    .pstrip-label{font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.92);line-height:1.4}
+    .pstrip-src{font-family:'DM Sans',sans-serif;font-size:.67rem;color:rgba(255,255,255,.5);margin-top:.2rem}
+    @media(max-width:768px){.pstrip-grid{grid-template-columns:1fr 1fr;height:auto}.pstrip-cell{height:200px}}
+
+    /* ── VIDEO SECTION ── */
+    .vid-sec{background:var(--off-white);padding:5.5rem 2rem;border-top:4px solid var(--navy)}
+    .vid-head{text-align:center;margin-bottom:2.8rem}
+    .vid-head__sub{font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text-secondary);max-width:560px;margin:.65rem auto 0;line-height:1.75}
+    .vid-layout{display:grid;grid-template-columns:1.65fr 1fr;gap:1.65rem;max-width:1100px;margin:0 auto;align-items:start}
+    .vid-main-card{background:#fff;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl)}
+    .vid-thumb-a{position:relative;aspect-ratio:16/9;overflow:hidden;cursor:pointer;display:block;text-decoration:none}
+    .vid-thumb-a img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+    .vid-thumb-a:hover img{transform:scale(1.05)}
+    .vid-thumb-a__over{position:absolute;inset:0;background:rgba(11,31,58,.48);display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
+    .vid-thumb-a:hover .vid-thumb-a__over{background:rgba(11,31,58,.3)}
+    .vid-play-lg{width:78px;height:78px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(232,93,4,.65);transition:transform var(--ease),box-shadow var(--ease)}
+    .vid-thumb-a:hover .vid-play-lg{transform:scale(1.12);box-shadow:0 14px 44px rgba(232,93,4,.8)}
+    .vid-play-lg svg{width:32px;height:32px;fill:#fff;margin-left:6px}
+    .vid-badge{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .72rem;border-radius:999px;margin-bottom:.45rem}
+    .vid-badge--orange{background:var(--orange-pale);color:var(--orange)}
+    .vid-badge--maroon{background:var(--maroon-pale);color:var(--maroon)}
+    .vid-badge--navy{background:rgba(11,31,58,.07);color:var(--navy)}
+    .vid-main-meta{padding:1.4rem 1.65rem}
+    .vid-main-title{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:800;color:var(--navy);margin-bottom:.45rem;line-height:1.4}
+    .vid-main-desc{font-family:'DM Sans',sans-serif;font-size:.86rem;color:var(--text-secondary);line-height:1.7}
+    .vid-aside{display:flex;flex-direction:column;gap:1.1rem}
+    .vid-sm-card{background:#fff;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md)}
+    .vid-sm-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;cursor:pointer;display:block;text-decoration:none}
+    .vid-sm-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+    .vid-sm-thumb:hover img{transform:scale(1.07)}
+    .vid-sm-over{position:absolute;inset:0;background:rgba(11,31,58,.5);display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
+    .vid-sm-thumb:hover .vid-sm-over{background:rgba(11,31,58,.3)}
+    .vid-play-sm{width:46px;height:46px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(232,93,4,.55);transition:transform var(--ease)}
+    .vid-sm-thumb:hover .vid-play-sm{transform:scale(1.14)}
+    .vid-play-sm svg{width:20px;height:20px;fill:#fff;margin-left:3px}
+    .vid-sm-body{padding:.88rem 1.1rem}
+    .vid-sm-title{font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.4;margin-top:.28rem}
+    .vid-cta-box{background:var(--navy);border-radius:var(--radius-lg);padding:1.6rem 1.4rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.35rem}
+    .vid-cta-num{font-family:'JetBrains Mono',monospace;font-size:3.2rem;font-weight:700;color:var(--orange);line-height:1}
+    .vid-cta-label{font-family:'DM Sans',sans-serif;font-size:.72rem;color:rgba(255,255,255,.45);margin-bottom:.5rem}
+    @media(max-width:900px){.vid-layout{grid-template-columns:1fr}.vid-aside{display:grid;grid-template-columns:1fr 1fr;gap:1rem}}
+    @media(max-width:540px){.vid-aside{grid-template-columns:1fr}}
+
+    /* ── CASES ── */
+    .cases-sec{background:var(--paper);padding:5.5rem 2rem}
+    .cases-head{text-align:center;margin-bottom:2.8rem}
+    .cases-intro{font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text-secondary);max-width:600px;margin:.65rem auto 0;line-height:1.75}
+    .cases-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.35rem;max-width:1020px;margin:0 auto}
+    .case-card{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);display:flex;transition:transform var(--ease),box-shadow var(--ease)}
+    .case-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-xl)}
+    .case-yr{writing-mode:vertical-rl;text-orientation:mixed;font-family:'JetBrains Mono',monospace;font-size:.79rem;font-weight:700;letter-spacing:.1em;color:#fff;padding:1.35rem .8rem;display:flex;align-items:center;justify-content:center;min-width:50px;flex-shrink:0}
+    .case-card--navy   .case-yr{background:var(--navy)}
+    .case-card--orange .case-yr{background:var(--orange)}
+    .case-card--maroon .case-yr{background:var(--maroon)}
+    .case-card--dark   .case-yr{background:#2d0a0a}
+    .case-body{padding:1.3rem 1.4rem;background:#fff;flex:1}
+    .case-title{font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:800;color:var(--navy);margin-bottom:.25rem;line-height:1.4}
+    .case-amt{font-family:'JetBrains Mono',monospace;font-size:.84rem;font-weight:700;color:var(--orange);margin-bottom:.55rem}
+    .case-desc{font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text-secondary);line-height:1.7}
+    .case-verdict{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.67rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:.18rem .6rem;border-radius:999px;margin-top:.6rem}
+    .case-verdict--olive{background:var(--olive-pale);color:var(--olive)}
+    .case-verdict--maroon{background:var(--maroon-pale);color:var(--maroon)}
+    .case-verdict--orange{background:var(--orange-pale);color:var(--orange)}
+    .case-verdict--navy{background:rgba(11,31,58,.08);color:var(--navy)}
+    @media(max-width:640px){.cases-grid{grid-template-columns:1fr}}
+
+    /* ── RECOVERY ── */
+    .recovery-sec{background:var(--navy);padding:5.5rem 2rem;position:relative;overflow:visible}
+    .recovery-sec::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&q=40&fit=crop') center/cover;opacity:.04;pointer-events:none}
+    .recovery-head{text-align:center;margin-bottom:3.2rem;position:relative}
+    .recovery-head h2{color:#fff;letter-spacing:-.02em}
+    .recovery-head p{color:rgba(255,255,255,.52);max-width:560px;margin:.65rem auto 0;font-size:1rem;line-height:1.75}
+    .r-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;max-width:1060px;margin:0 auto;position:relative}
+    .r-line{position:absolute;top:43px;left:calc(10% + 32px);right:calc(10% + 32px);height:2px;background:linear-gradient(90deg,rgba(232,93,4,.2),var(--orange));z-index:0}
+    .r-step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 .85rem;position:relative;z-index:1}
+    .r-bubble{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:1.45rem;font-weight:700;margin-bottom:1.4rem;flex-shrink:0;border:2.5px solid}
+    .r-step:nth-child(2) .r-bubble{background:rgba(232,93,4,.1);border-color:rgba(232,93,4,.4);color:rgba(255,255,255,.6)}
+    .r-step:nth-child(3) .r-bubble{background:rgba(232,93,4,.2);border-color:rgba(232,93,4,.55);color:rgba(255,255,255,.8)}
+    .r-step:nth-child(4) .r-bubble{background:rgba(232,93,4,.3);border-color:rgba(232,93,4,.7);color:#fff}
+    .r-step:nth-child(5) .r-bubble{background:rgba(232,93,4,.5);border-color:var(--orange);color:#fff}
+    .r-step:nth-child(6) .r-bubble{background:var(--orange);border-color:var(--orange);color:#fff}
+    .r-icon{font-size:2.2rem;margin-bottom:.45rem}
+    .r-title{font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:800;color:#fff;margin-bottom:.4rem}
+    .r-desc{font-family:'DM Sans',sans-serif;font-size:.79rem;color:rgba(255,255,255,.5);line-height:1.7}
+    .r-time{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.66rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(232,93,4,.35);padding:.17rem .6rem;border-radius:999px;margin-top:.75rem}
+    .recovery-cta{text-align:center;margin-top:3.2rem;position:relative}
+    @media(max-width:900px){.r-grid{grid-template-columns:1fr 1fr 1fr}.r-line{display:none}}
+    @media(max-width:560px){.r-grid{grid-template-columns:1fr 1fr}}
+
+    /* ── FRAUD VISUAL GRID ── */
+    .fviz-sec{background:#fff;padding:5.5rem 2rem}
+    .fviz-head{text-align:center;margin-bottom:2.8rem}
+    .fviz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.35rem;max-width:1100px;margin:0 auto}
+    .fviz-card{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);transition:transform var(--ease),box-shadow var(--ease)}
+    .fviz-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-xl)}
+    .fviz-img{position:relative;aspect-ratio:3/2;overflow:hidden}
+    .fviz-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+    .fviz-card:hover .fviz-img img{transform:scale(1.08)}
+    /* Tint: image clearly visible, coloured mood overlay only 28-35% */
+    .fviz-over{position:absolute;inset:0;background:rgba(11,31,58,.28)}
+    .fviz-card--orange .fviz-over{background:rgba(200,65,0,.28)}
+    .fviz-card--navy   .fviz-over{background:rgba(11,31,58,.35)}
+    .fviz-card--maroon .fviz-over{background:rgba(100,20,20,.32)}
+    .fviz-card--olive  .fviz-over{background:rgba(55,85,25,.28)}
+    .fviz-badge{position:absolute;top:.7rem;right:.7rem;background:#fff;color:var(--navy);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;padding:.2rem .58rem;border-radius:999px}
+    .fviz-body{padding:1.1rem 1.15rem;background:var(--paper);display:flex;align-items:flex-start;gap:.7rem}
+    .fviz-icon{font-size:1.5rem;flex-shrink:0;line-height:1;margin-top:.12rem}
+    .fviz-title{font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:800;color:var(--navy);margin-bottom:.22rem}
+    .fviz-rule{font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--text-secondary);line-height:1.6}
+    .fviz-cta{text-align:center;margin-top:2.8rem}
+    @media(max-width:860px){.fviz-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:500px){.fviz-grid{grid-template-columns:1fr}}
+
+    /* ── STATE HOTSPOT ── */
+    .hotspot-sec{background:var(--off-white);padding:5.5rem 2rem;border-top:4px solid var(--navy)}
+    .hotspot-wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.45fr;gap:4rem;align-items:center}
+    .hotspot-head h2{margin-bottom:1rem}
+    .hotspot-head p{margin-bottom:2rem;max-width:420px}
+    .h-stat{display:flex;gap:.8rem;align-items:center;margin-bottom:.9rem}
+    .h-rank{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:700;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .h-rank--1{background:var(--maroon)}.h-rank--2{background:var(--orange)}.h-rank--3{background:var(--navy-mid)}.h-rank--4{background:var(--text-secondary)}.h-rank--5{background:var(--text-muted)}
+    .h-state{flex:1}
+    .h-state-name{font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:800;color:var(--navy);margin-bottom:.28rem}
+    .h-bar-wrap{height:7px;background:var(--border-light);border-radius:999px;overflow:hidden}
+    .h-bar{height:100%;border-radius:999px}
+    .h-rank--1+.h-state .h-bar{background:var(--maroon);width:89%}
+    .h-rank--2+.h-state .h-bar{background:var(--orange);width:66%}
+    .h-rank--3+.h-state .h-bar{background:var(--navy-mid);width:53%}
+    .h-rank--4+.h-state .h-bar{background:var(--text-secondary);width:47%}
+    .h-rank--5+.h-state .h-bar{background:var(--text-muted);width:42%}
+    .h-pct{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--text-muted);white-space:nowrap}
+    .hotspot-photo{position:relative;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);aspect-ratio:4/3}
+    .hotspot-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hotspot-photo__over{position:absolute;inset:0;background:linear-gradient(135deg,rgba(11,31,58,.88) 0%,rgba(11,31,58,.38) 100%);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:2rem}
+    .hotspot-photo__h{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:.4rem;line-height:1.2}
+    .hotspot-photo__p{font-family:'DM Sans',sans-serif;font-size:.83rem;color:rgba(255,255,255,.6);line-height:1.6}
+    @media(max-width:820px){.hotspot-wrap{grid-template-columns:1fr}.hotspot-photo{max-height:300px}}
+
+    /* ── LAW STRIP ── */
+    .law-strip{background:var(--navy);padding:3rem 2rem}
+    .law-strip__inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:1.5rem;align-items:center}
+    .law-strip__kicker{font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem}
+    .law-strip__title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff;line-height:1.25;margin-bottom:.5rem}
+    .law-strip__sub{font-family:'DM Sans',sans-serif;font-size:.84rem;color:rgba(255,255,255,.48);line-height:1.7}
+    .law-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);padding:1.2rem 1.1rem}
+    .law-card__section{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--orange);margin-bottom:.35rem}
+    .law-card__title{font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:800;color:#fff;margin-bottom:.3rem}
+    .law-card__desc{font-family:'DM Sans',sans-serif;font-size:.77rem;color:rgba(255,255,255,.48);line-height:1.65}
+    .law-card__penalty{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.6);margin-top:.55rem}
+    @media(max-width:900px){.law-strip__inner{grid-template-columns:1fr 1fr}}
+    @media(max-width:520px){.law-strip__inner{grid-template-columns:1fr}}
+
+    /* ══════════════════════════════════════════════
+       CREATURE SYSTEM — 5 animated mascots
+    ══════════════════════════════════════════════ */
+    .creature{position:absolute;pointer-events:auto;z-index:10;user-select:none;cursor:pointer;will-change:transform}
+    .creature svg{display:block;overflow:visible}
+    @media(max-width:900px){.creature{display:none!important}}
+
+    /* ── ShieldPal (hero, orange) ── */
+    .c-shield{right:5%;bottom:14%}
+    .c-shield svg{width:96px;height:112px;filter:drop-shadow(0 10px 24px rgba(232,93,4,.45))}
+    .c-shield{animation:c-float 3.6s ease-in-out infinite}
+    /* arm waves */
+    .arm-l{transform-origin:10px 66px;animation:arm-lw 2.2s ease-in-out infinite}
+    .arm-r{transform-origin:82px 66px;animation:arm-rw 2.2s .25s ease-in-out infinite}
+    @keyframes arm-lw{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-50deg)}}
+    @keyframes arm-rw{0%,100%{transform:rotate(20deg)}50%{transform:rotate(50deg)}}
+    /* eye blink */
+    .eye-white{animation:eye-blink 4.8s ease-in-out infinite}
+    @keyframes eye-blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(0.06)}}
+
+    /* ── AlertBee (pm-warn section, yellow) ── */
+    .pm-warn{position:relative}
+    .c-bee{right:4%;top:50%;transform:translateY(-50%)}
+    .c-bee svg{width:68px;height:84px;filter:drop-shadow(0 6px 16px rgba(245,158,11,.5))}
+    .c-bee{animation:c-buzz 2.8s ease-in-out infinite}
+    .wing-l{transform-origin:right center;animation:wf-l .3s ease-in-out alternate infinite}
+    .wing-r{transform-origin:left center;animation:wf-r .3s .15s ease-in-out alternate infinite}
+    @keyframes wf-l{from{transform:scaleY(1) rotate(-15deg)}to{transform:scaleY(.45) rotate(-15deg)}}
+    @keyframes wf-r{from{transform:scaleY(1) rotate(15deg)}to{transform:scaleY(.45) rotate(15deg)}}
+    .ant-dot{animation:ant-p 1.8s ease-in-out infinite}
+    @keyframes ant-p{0%,100%{fill:#E85D04}50%{fill:#ffd700}}
+
+    /* ── DataBot (stats section, navy) ── */
+    .c-bot{right:1%;top:50%;transform:translateY(-50%)}
+    .c-bot svg{width:72px;height:92px;filter:drop-shadow(0 6px 18px rgba(11,31,58,.6))}
+    .c-bot{animation:c-bot-idle 4.5s ease-in-out infinite}
+    .led-eye{animation:led-b 3s ease-in-out infinite}
+    @keyframes led-b{0%,86%,100%{opacity:1}90%{opacity:.05}}
+    .ant-glow{animation:ant-p 1.5s ease-in-out infinite}
+
+    /* ── ScamGhost (funnel section, red evil) ── */
+    .c-ghost{right:3%;top:18%}
+    .c-ghost svg{width:64px;height:80px;filter:drop-shadow(0 8px 20px rgba(123,29,29,.7))}
+    .c-ghost{animation:c-haunt 4.2s ease-in-out infinite}
+
+    /* ── RecoverStar (recovery section, gold) ── */
+    .c-star{right:4%;bottom:22%}
+    .c-star svg{width:70px;height:70px;filter:drop-shadow(0 6px 18px rgba(245,158,11,.55))}
+    .c-star{animation:c-star-spin 8s linear infinite}
+    .star-eye{animation:eye-blink 3.5s 1s ease-in-out infinite}
+
+    /* SHARED KEYFRAMES */
+    @keyframes c-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(2.5deg)}}
+    @keyframes c-buzz{
+      0%{transform:translateY(-50%) translate(0,0) rotate(-3deg)}
+      20%{transform:translateY(-50%) translate(8px,-10px) rotate(3deg)}
+      50%{transform:translateY(-50%) translate(0,-20px) rotate(-2deg)}
+      75%{transform:translateY(-50%) translate(-8px,-10px) rotate(2deg)}
+      100%{transform:translateY(-50%) translate(0,0) rotate(-3deg)}
+    }
+    @keyframes c-bot-idle{0%,100%{transform:translateY(-50%) translateX(0) rotate(0deg)}40%{transform:translateY(-50%) translateX(-6px) rotate(-2deg)}70%{transform:translateY(-50%) translateX(4px) rotate(1deg)}}
+    @keyframes c-haunt{0%,100%{transform:translateY(0) rotate(-1deg) scaleX(1)}35%{transform:translateY(-18px) rotate(1.5deg) scaleX(1.06)}75%{transform:translateY(-9px) rotate(-.5deg) scaleX(.94)}}
+    @keyframes c-star-spin{0%{transform:translateY(0) rotate(0deg) scale(1)}50%{transform:translateY(-16px) rotate(180deg) scale(1.1)}100%{transform:translateY(0) rotate(360deg) scale(1)}}
+
+    /* CLICK BOUNCE */
+    .creature--bouncing{animation:c-bounce .32s ease!important;pointer-events:none}
+    @keyframes c-bounce{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-12deg)}65%{transform:scale(.88) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+
+    /* HOVER glow */
+    .creature:hover svg{filter:brightness(1.2) drop-shadow(0 0 14px rgba(232,93,4,.7))!important;transition:filter .2s ease}
+
+    /* ── TOOLTIP on creature hover ── */
+    .creature-tip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;padding:.4rem .85rem;border-radius:999px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s ease;box-shadow:0 4px 12px rgba(11,31,58,.4)}
+    .creature-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy)}
+    .creature:hover .creature-tip{opacity:1}
+
+    /* ══════════════════════════════════════
+       SCROLL REVEAL SYSTEM
+    ══════════════════════════════════════ */
+    .reveal{opacity:0;transform:translateY(36px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+    .reveal--left{transform:translateX(-36px)}
+    .reveal--right{transform:translateX(36px)}
+    .reveal--scale{transform:scale(.9)}
+    .revealed{opacity:1!important;transform:none!important}
+    .reveal--d1{transition-delay:.08s}
+    .reveal--d2{transition-delay:.16s}
+    .reveal--d3{transition-delay:.24s}
+    .reveal--d4{transition-delay:.32s}
+    @media(prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important}}
+
+    /* ══════════════════════════════════════
+       READING PROGRESS BAR
+    ══════════════════════════════════════ */
+    .read-progress{position:fixed;top:0;left:0;height:3px;background:var(--orange);z-index:9999;width:0%;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+    /* ══════════════════════════════════════
+       DESKTOP FLOATING EMERGENCY BUTTON
+    ══════════════════════════════════════ */
+    .float-sos{position:fixed;right:1.6rem;bottom:5.5rem;z-index:1500;display:flex;flex-direction:column;align-items:center;gap:.42rem;pointer-events:auto}
+    @media(max-width:640px){.float-sos{display:none}}
+    .float-sos__btn{width:60px;height:60px;border-radius:50%;background:var(--maroon);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 6px 24px rgba(123,29,29,.55);transition:transform .22s ease,box-shadow .22s ease;text-decoration:none;animation:float-pulse 2.6s ease-in-out infinite}
+    .float-sos__btn:hover{transform:scale(1.14);box-shadow:0 12px 36px rgba(123,29,29,.72);animation:none}
+    @keyframes float-pulse{0%,100%{box-shadow:0 6px 24px rgba(123,29,29,.55)}50%{box-shadow:0 8px 32px rgba(232,93,4,.7)}}
+    .float-sos__label{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:800;color:var(--navy);background:#fff;padding:.17rem .58rem;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.12);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+
+    /* ══════════════════════════════════════
+       HERO SECTION ENHANCEMENTS
+    ══════════════════════════════════════ */
+    .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(11,31,58,.5) 100%)}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1.3rem;animation:hero-fade-in .8s ease both}
+    @keyframes hero-fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .hero-h1{animation:hero-fade-in .8s .15s ease both}
+    .hero-subtitle{animation:hero-fade-in .8s .28s ease both}
+    .hero-buttons{animation:hero-fade-in .8s .4s ease both}
+    .hero-emergency-bar{animation:hero-fade-in .8s .52s ease both}
+
+    /* ══════════════════════════════════════
+       IN THE NEWS SECTION
+    ══════════════════════════════════════ */
+    .news-sec{background:var(--off-white);padding:5.5rem 2rem;border-top:4px solid var(--maroon)}
+    .news-head{text-align:center;margin-bottom:2.8rem}
+    .news-intro{font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text-secondary);max-width:600px;margin:.65rem auto 0;line-height:1.75}
+    .news-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:2.2rem;max-width:1100px;margin:0 auto;align-items:start}
+    .news-card--featured{background:#fff;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);border:2.5px solid var(--maroon)}
+    /* news screenshot must show fully — use contain so no text is cropped */
+    .news-card__img{background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:200px}
+    .news-card__img img{width:100%;height:auto;max-height:380px;object-fit:contain;display:block;transition:transform .45s ease}
+    .news-card--featured:hover .news-card__img img{transform:scale(1.02)}
+    .news-card__body{padding:1.6rem 1.8rem}
+    .news-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .72rem;border-radius:999px;background:var(--maroon-pale);color:var(--maroon);margin-bottom:.65rem}
+    .news-card__title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:.65rem;line-height:1.35}
+    .news-card__desc{font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text-secondary);line-height:1.78;margin-bottom:.9rem}
+    .news-card__meta{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:1.1rem;align-items:center}
+    .news-source{font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--text-muted);font-weight:600}
+    .news-law{font-family:'JetBrains Mono',monospace;font-size:.67rem;font-weight:700;color:var(--orange);background:var(--orange-pale);padding:.18rem .6rem;border-radius:999px}
+    .news-stat-col{display:flex;flex-direction:column;gap:1rem}
+    .news-stat-card{background:#fff;border-radius:var(--radius-lg);padding:1.25rem 1.2rem;box-shadow:var(--shadow-md);display:flex;align-items:flex-start;gap:.88rem;border-left:4px solid var(--maroon)}
+    .nsc-icon{font-size:1.55rem;flex-shrink:0;line-height:1;margin-top:.1rem}
+    .nsc-body{flex:1}
+    .nsc-num{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--maroon);line-height:1;margin-bottom:.22rem}
+    .nsc-label{font-family:'DM Sans',sans-serif;font-size:.79rem;color:var(--text-secondary);line-height:1.6}
+    .news-act-box{background:var(--navy);border-radius:var(--radius-lg);padding:1.4rem 1.3rem}
+    .news-act__title{font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:800;color:#fff;margin-bottom:.7rem}
+    .news-act__list{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.45rem}
+    .news-act__list li{font-family:'DM Sans',sans-serif;font-size:.8rem;color:rgba(255,255,255,.72);line-height:1.6;padding-left:1.15rem;position:relative}
+    .news-act__list li::before{content:'✗';position:absolute;left:0;color:var(--orange);font-weight:800}
+    @media(max-width:820px){.news-grid{grid-template-columns:1fr}}
+    @media(max-width:500px){.news-card__body{padding:1.2rem 1.1rem}}
+
+    /* ══════════════════════════════════════
+       SECTION DIVIDERS
+    ══════════════════════════════════════ */
+    .wave-divider{display:block;width:100%;overflow:hidden;line-height:0;margin-bottom:-2px}
+    .wave-divider svg{display:block;width:100%}
+
+    /* ── CREATURE SPEAKING STATE — glow pulse + floating note ── */
+    @keyframes speak-glow{0%,100%{filter:brightness(1.15) drop-shadow(0 0 8px rgba(232,93,4,.65))}50%{filter:brightness(1.38) drop-shadow(0 0 22px rgba(232,93,4,1))}}
+    @keyframes sound-float{0%,100%{opacity:.85;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(-6px)}}
+    .creature--speaking svg{animation:speak-glow 1.1s ease-in-out infinite!important}
+    .creature--speaking::after{content:'🔊';position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-size:.9rem;animation:sound-float 1.2s ease-in-out infinite;pointer-events:none;z-index:12}
+
+    /* ── WHATSAPP SHARE BUTTON on fraud type cards ── */
+    .fviz-share{position:absolute;bottom:.75rem;right:.75rem;background:rgba(37,211,102,.93);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;padding:.28rem .78rem;border-radius:999px;cursor:pointer;opacity:0;transition:opacity .2s ease,transform .2s ease,background .18s ease;box-shadow:0 2px 10px rgba(0,0,0,.22);transform:translateY(5px);letter-spacing:.04em;white-space:nowrap;z-index:5}
+    .fviz-card:hover .fviz-share{opacity:1;transform:translateY(0)}
+    .fviz-share:hover{background:#128C7E;transform:scale(1.07)!important}
+    .fviz-share.copied{background:var(--olive);transform:scale(1.05)!important}
+    @media(max-width:600px){.fviz-share{opacity:1;transform:none;font-size:.65rem;padding:.22rem .6rem}}
+
+    /* ── FRAUD COST COUNTER — live rupees stolen since page open ── */
+    .cost-since{background:var(--space);padding:.7rem 2rem;display:flex;align-items:center;justify-content:center;gap:1.4rem;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.08)}
+    .cost-since__label{font-family:'DM Sans',sans-serif;font-size:.8rem;color:rgba(255,255,255,.42);white-space:nowrap}
+    .cost-since__num{font-family:'JetBrains Mono',monospace;font-size:1.35rem;font-weight:700;color:var(--orange);line-height:1;min-width:130px;text-align:center;transition:color .3s ease}
+    .cost-since__sub{font-family:'DM Sans',sans-serif;font-size:.72rem;color:rgba(255,255,255,.28);white-space:nowrap}
+    @media(max-width:560px){.cost-since{flex-direction:column;gap:.3rem;text-align:center}.cost-since__label,.cost-since__sub{white-space:normal}}
+
+    /* ══════════════════════════════════════
+       SITUATION HELPER — "What happened to you?"
+       Competitor-inspired, done flagship way
+       AP-style: editorial watermark + precision hover
+    ══════════════════════════════════════ */
+    .sit-sec{background:var(--paper);padding:3.8rem 2rem;border-top:3px solid var(--navy);position:relative;overflow:hidden}
+    /* AP technique: large typographic watermark creates depth without decoration */
+    .sit-sec::before{content:'HELP';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:clamp(7rem,18vw,17rem);font-weight:900;color:rgba(11,31,58,.028);white-space:nowrap;pointer-events:none;z-index:0;letter-spacing:-.04em;user-select:none}
+    .sit-head,.sit-buttons,.sit-panel{position:relative;z-index:1}
+    .sit-head{text-align:center;margin-bottom:2rem}
+    .sit-head__kicker{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--maroon);margin-bottom:.45rem}
+    .sit-head h2{font-size:1.55rem;margin-bottom:.5rem}
+    .sit-head p{font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--text-secondary);max-width:520px;margin:0 auto;line-height:1.75}
+    .sit-buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;max-width:960px;margin:0 auto 2rem}
+    .sit-btn{flex:0 1 auto;background:#fff;border:2px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;color:var(--navy);padding:.72rem 1.25rem;border-radius:14px;cursor:pointer;transition:all .22s ease;line-height:1.35;text-align:left;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+    .sit-btn:hover{border-color:var(--orange);background:var(--orange-pale);color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .sit-btn.active{border-color:var(--maroon);background:var(--maroon);color:#fff;box-shadow:0 4px 18px rgba(123,29,29,.35);transform:translateY(-1px)}
+    .sit-panel{display:none;background:#fff;border-radius:var(--radius-lg);border-left:5px solid var(--maroon);padding:1.7rem 1.9rem;max-width:800px;margin:0 auto;box-shadow:var(--shadow-lg);animation:panel-in .28s ease both}
+    .sit-panel.active{display:block}
+    @keyframes panel-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    .sit-panel__heading{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:800;color:var(--maroon);margin-bottom:1rem;line-height:1.4}
+    .sit-steps{list-style:none;padding:0;margin:0 0 1.1rem;display:flex;flex-direction:column;gap:.65rem;counter-reset:sit-counter}
+    .sit-steps li{font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text-primary);line-height:1.6;padding-left:2.2rem;position:relative;counter-increment:sit-counter}
+    .sit-steps li::before{content:counter(sit-counter);position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;background:var(--maroon);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sit-note{font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--text-secondary);border-left:3px solid var(--orange-pale);padding:.5rem .85rem;margin-bottom:1.1rem;line-height:1.65;background:var(--orange-pale);border-radius:0 6px 6px 0}
+    .sit-cta{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+    @media(max-width:560px){.sit-buttons{flex-direction:column}.sit-btn{width:100%}.sit-panel{padding:1.2rem 1rem}}
+
+    /* ══════════════════════════════════════════════════════
+       CINEMATIC INTRO — white canvas → FraudShell revelation
+       One motion language: ease-out rises only. No bounce.
+       Precision and restraint — attractive, not flashy.
+    ══════════════════════════════════════════════════════ */
+
+    @keyframes intro-bg{0%{background:#fff}100%{background:#0B1F3A}}
+    @keyframes intro-fallback-exit{to{opacity:0;pointer-events:none}}
+    @keyframes intro-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes intro-wipe{to{clip-path:inset(0 0% 0 0)}}
+    @keyframes intro-line{to{width:min(295px,56vw)}}
+
+    .intro-overlay{
+      position:fixed;inset:0;z-index:99999;
+      background:#fff;
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.9rem;
+      transition:opacity .72s cubic-bezier(.4,0,.2,1);
+      pointer-events:auto;
+      animation:intro-bg .72s .04s ease-in-out forwards,
+                intro-fallback-exit .8s 3.3s ease forwards;
+    }
+    .intro-overlay.exit{opacity:0;pointer-events:none}
+
+    /* Lines — draw on white canvas first, remain visible as bg darkens */
+    .intro-line-top,.intro-line-bot{height:1px;width:0;animation:intro-line .9s ease-out forwards}
+    .intro-line-top{background:#E85D04;animation-delay:.20s}
+    .intro-line-bot{background:rgba(232,93,4,.38);animation-delay:.40s}
+
+    /* Shield — clean rise, no rotation, no scale bounce */
+    .intro-shield{
+      font-size:clamp(1.8rem,4.5vw,3rem);opacity:0;transform:translateY(10px);
+      animation:intro-rise .6s .82s ease-out forwards;
+    }
+
+    /* Title — measured left-to-right wipe, unhurried pace */
+    .intro-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.8rem,9vw,5.5rem);font-weight:900;
+      color:#fff;letter-spacing:-.01em;line-height:1;text-align:center;
+      clip-path:inset(0 100% 0 0);
+      animation:intro-wipe .95s .92s cubic-bezier(.7,0,.2,1) forwards;
+    }
+    .intro-title span{color:#E85D04}
+
+    /* Tagline — simple fade, nothing theatrical */
+    .intro-tag{
+      font-family:'DM Sans',sans-serif;font-size:clamp(.58rem,1.3vw,.78rem);font-weight:600;
+      letter-spacing:.55em;text-transform:uppercase;color:rgba(255,255,255,.28);
+      white-space:nowrap;opacity:0;transform:translateY(10px);
+      animation:intro-rise .65s 1.55s ease-out forwards;
+    }
+
+    /* ─── Azlan — the owner's signature ────────────────────
+       Playfair Display italic. Warm champagne gold.
+       Sized like a name, not a footnote.
+       A drawn underline seals it — like signing a letter.
+    ──────────────────────────────────────────────────────── */
+    .intro-author{
+      font-family:'Playfair Display',serif;font-style:italic;font-weight:400;
+      font-size:clamp(1.05rem,2.1vw,1.45rem);
+      color:rgba(232,210,162,.65);
+      letter-spacing:.07em;
+      opacity:0;transform:translateY(10px);
+      position:relative;display:inline-block;
+      animation:intro-rise .8s 1.88s ease-out forwards;
+    }
+    .intro-author::after{
+      content:'';position:absolute;left:0;bottom:-5px;
+      height:1px;width:0;background:rgba(232,93,4,.45);
+      animation:intro-line .6s 2.44s ease-out forwards;
+    }
+
+    /* Skip hint — barely a whisper, just a signal */
+    .intro-skip{
+      position:absolute;bottom:1.8rem;
+      font-family:'DM Sans',sans-serif;font-size:.6rem;
+      color:rgba(255,255,255,.12);letter-spacing:.18em;text-transform:uppercase;
+      opacity:0;transform:translateY(10px);
+      animation:intro-rise .5s 2.15s ease forwards;
+    }
+
+    /* ── AP-STYLE PREMIUM REFINEMENTS ──────────────────────
+       Precision over flash: measured timing, editorial scale,
+       typography as architecture — every detail intentional.
+    ──────────────────────────────────────────────────────── */
+
+    /* Sit-btn: AP-style precision cubic-bezier, weighted hover */
+    .sit-btn{transition:border-color .22s cubic-bezier(.4,0,.2,1),background .22s cubic-bezier(.4,0,.2,1),color .18s ease,transform .18s cubic-bezier(.4,0,.2,1),box-shadow .22s ease!important}
+
+    /* Cost counter: editorial-scale number — AP's "Since 1875" treatment */
+    .cost-since__num{font-size:clamp(1.4rem,3vw,2.2rem)!important;letter-spacing:-.02em}
+    .cost-since{gap:2rem!important}
+
+    /* Panel reveal: AP-style unhurried precision */
+    @keyframes panel-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .sit-panel{animation-duration:.35s!important;animation-timing-function:cubic-bezier(.4,0,.2,1)!important}
+
+    /* Creature tooltip: subtle backdrop blur for premium feel */
+    .creature-tip{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(11,31,58,.88)!important}
+  </style>
+</head>
+<body>
+
+<!-- CINEMATIC INTRO OVERLAY — FraudShell film-title entrance -->
+<div class="intro-overlay" id="introOverlay" aria-hidden="true" role="presentation">
+  <span class="intro-shield" aria-hidden="true">🛡️</span>
+  <div class="intro-line-top" aria-hidden="true"></div>
+  <p class="intro-title">Fraud<span>Shell</span></p>
+  <div class="intro-line-bot" aria-hidden="true"></div>
+  <p class="intro-tag">India's Frontline Against Digital Fraud</p>
+  <p class="intro-author">Azlan</p>
+  <span class="intro-skip">Tap to skip</span>
+</div>
+
+<!-- READING PROGRESS BAR -->
+<div class="read-progress" id="readProgress" aria-hidden="true"></div>
+
+<!-- STICKY SOS BAR (mobile) -->
+<div class="sos-bar" role="alert">
+  <div class="sos-bar__text"><strong>🚨 Been scammed?</strong> Call free 24×7.</div>
+  <a href="tel:1930" class="sos-bar__btn" data-snd="click">📞 1930 Free</a>
+</div>
+
+<!-- DESKTOP FLOATING EMERGENCY BUTTON -->
+<div class="float-sos" aria-label="Emergency cyber crime helpline">
+  <a href="tel:1930" class="float-sos__btn" data-snd="click" aria-label="Call 1930 — National Cyber Crime Helpline">📞</a>
+  <span class="float-sos__label">1930 · Free</span>
+</div>
+
+<!-- NAV -->
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="FraudShell Home">
+      <span aria-hidden="true">🛡️</span>
+      <span>Fraud<span class="nav-logo__accent">Shell</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="data.html">The Data</a></li>
+      <li><a href="tips.html">Protect Yourself</a></li>
+      <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
+            aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div id="mobileNav" class="mobile-nav" role="navigation" aria-label="Mobile navigation" aria-hidden="true">
+  <a href="index.html" class="active">Home</a>
+  <a href="data.html">The Data</a>
+  <a href="tips.html">Protect Yourself</a>
+  <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
+</div>
+
+<!-- ALERT TICKER -->
+<div class="alert-ticker" role="marquee" aria-label="Live fraud alerts">
+  <div class="alert-ticker__inner">
+    <span class="atick-live">LIVE</span>
+    <span>🚨 28.15 lakh fraud complaints in 2025 — up 60% year-on-year · I4C</span>
+    <span class="atick-dot"></span>
+    <span>💸 India projected to lose ₹1.2 lakh crore in 2025 — 0.7% of GDP</span>
+    <span class="atick-dot"></span>
+    <span>📱 67% of digital fraud is UPI-based — NPCI Annual Report 2024</span>
+    <span class="atick-dot"></span>
+    <span>⚡ ₹8,690 Cr frozen in Jan 2026 by CFCFRMS real-time system</span>
+    <span class="atick-dot"></span>
+    <span>🚔 9 convicts LIFE SENTENCE for Digital Arrest scam · West Bengal · July 2025</span>
+    <span class="atick-dot"></span>
+    <span>✅ Call 1930 free within 24 hrs — real-time fund freeze possible</span>
+    <span class="atick-dot"></span>
+    <span class="atick-live">LIVE</span>
+    <span>🚨 28.15 lakh fraud complaints in 2025 — up 60% year-on-year · I4C</span>
+    <span class="atick-dot"></span>
+    <span>💸 India projected to lose ₹1.2 lakh crore in 2025 — 0.7% of GDP</span>
+    <span class="atick-dot"></span>
+    <span>📱 67% of digital fraud is UPI-based — NPCI Annual Report 2024</span>
+    <span class="atick-dot"></span>
+    <span>⚡ ₹8,690 Cr frozen in Jan 2026 by CFCFRMS real-time system</span>
+    <span class="atick-dot"></span>
+    <span>🚔 9 convicts LIFE SENTENCE for Digital Arrest scam · West Bengal · July 2025</span>
+    <span class="atick-dot"></span>
+    <span>✅ Call 1930 free within 24 hrs — real-time fund freeze possible</span>
+    <span class="atick-dot"></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero" style="position:relative">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">🟡 Verified Government Data · I4C · RBI · NCRB · 2024</div>
+    <h1 class="hero-h1">
+      India Lost<br>
+      <em class="hero-h1__accent">₹22,848 Crore</em><br>
+      to Digital Fraud in 2024
+    </h1>
+    <p class="hero-subtitle">
+      Every 7 minutes an Indian becomes a victim. 28.15 lakh complaints in 2025 alone.
+      You are not alone — help is one free call away.
+    </p>
+    <div class="hero-buttons">
+      <a href="tips.html" class="btn-primary" data-snd="click">🛡️ Protect Yourself Now</a>
+      <a href="report.html" class="btn-outline-white" data-snd="click">📋 Report Your Fraud</a>
+    </div>
+    <div class="hero-emergency-bar">
+      <span class="hero-emergency-bar__label">National Cyber Crime Helpline:</span>
+      <a href="tel:1930" class="hero-emergency-bar__number" data-snd="click">📞 1930</a>
+      <span class="hero-emergency-bar__note">Free · 24 hrs · 7 days · No registration</span>
+    </div>
+  </div>
+
+  <!-- CREATURE 1: Kavach (कवच = shield/armour in Hindi) — guardian of the hero -->
+  <div class="creature c-shield" role="img" aria-label="Kavach — your digital armour mascot" data-snd="boing">
+    <div class="creature-tip">Kavach! 🛡️ मैं आपकी रक्षा करता हूँ — I protect you</div>
+    <svg viewBox="0 0 96 112" aria-hidden="true">
+      <path d="M48 8 C26 8 14 26 14 46 L14 76 Q14 100 48 108 Q82 100 82 76 L82 46 C82 26 70 8 48 8Z" fill="#E85D04"/>
+      <ellipse cx="48" cy="66" rx="20" ry="24" fill="#ff8c3a" opacity="0.3"/>
+      <circle cx="36" cy="52" r="9" fill="white" class="eye-white"/>
+      <circle cx="60" cy="52" r="9" fill="white" class="eye-white"/>
+      <circle cx="37.5" cy="53.5" r="4.5" fill="#0B1F3A"/>
+      <circle cx="61.5" cy="53.5" r="4.5" fill="#0B1F3A"/>
+      <circle cx="39.5" cy="51.5" r="1.6" fill="white"/>
+      <circle cx="63.5" cy="51.5" r="1.6" fill="white"/>
+      <path d="M36 70 Q48 79 60 70" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="24" cy="64" rx="7" ry="3.5" fill="#cc4e00" opacity="0.38"/>
+      <ellipse cx="72" cy="64" rx="7" ry="3.5" fill="#cc4e00" opacity="0.38"/>
+      <ellipse cx="8" cy="66" rx="6" ry="3" fill="#cc4e00" class="arm-l"/>
+      <ellipse cx="88" cy="66" rx="6" ry="3" fill="#cc4e00" class="arm-r"/>
+      <path d="M44 32 L52 32 L52 42 L48 46 L44 42Z" fill="white" opacity="0.45"/>
+    </svg>
+  </div>
+
+  <div class="hero-ticker" aria-label="Live statistics ticker">
+    <div class="ticker-inner">
+      <span>📊 FIRs: 27,248 (2018) → 86,420 (2023) — up 217%</span><span aria-hidden="true">•</span>
+      <span>💸 ₹551 Cr (2021) → ₹22,848 Cr (2024) — 41× in 3 years</span><span aria-hidden="true">•</span>
+      <span>📱 67% of all fraud is UPI-based — NPCI 2024</span><span aria-hidden="true">•</span>
+      <span>⚡ CFCFRMS saved ₹5,489 Cr on 17.82 lakh cases</span><span aria-hidden="true">•</span>
+      <span>🚔 9 life sentences — India's first Digital Arrest conviction</span><span aria-hidden="true">•</span>
+      <span>✅ 9.42 lakh SIMs blocked for fraud — DoT 2024</span><span aria-hidden="true">•</span>
+      <span>📊 FIRs: 27,248 (2018) → 86,420 (2023) — up 217%</span><span aria-hidden="true">•</span>
+      <span>💸 ₹551 Cr (2021) → ₹22,848 Cr (2024) — 41× in 3 years</span><span aria-hidden="true">•</span>
+      <span>📱 67% of all fraud is UPI-based — NPCI 2024</span><span aria-hidden="true">•</span>
+      <span>⚡ CFCFRMS saved ₹5,489 Cr on 17.82 lakh cases</span><span aria-hidden="true">•</span>
+      <span>🚔 9 life sentences — India's first Digital Arrest conviction</span><span aria-hidden="true">•</span>
+      <span>✅ 9.42 lakh SIMs blocked for fraud — DoT 2024</span><span aria-hidden="true">•</span>
+    </div>
+  </div>
+</section>
+
+<!-- EMERGENCY BANNER -->
+<div class="e-banner" role="alert">
+  <span class="e-banner__pill">⚡ Emergency Helplines</span>
+  <span class="e-banner__text">Just been scammed? <strong>Every minute matters.</strong> Do not panic — act immediately.</span>
+  <a href="tel:1930" class="e-banner__btn" data-snd="click">📞 1930 — Cyber Crime</a>
+  <a href="tel:112"  class="e-banner__btn" data-snd="click" style="background:var(--navy)">🚔 112 — Police</a>
+  <a href="tel:181"  class="e-banner__btn" data-snd="click" style="background:var(--olive)">👩 181 — Women Safety</a>
+</div>
+
+<!-- SITUATION HELPER — flagship "What Just Happened?" tool (better than competitor's basic form) -->
+<section class="sit-sec" aria-label="Immediate help based on your situation">
+  <div class="container">
+    <div class="sit-head">
+      <p class="sit-head__kicker">🚨 Immediate Help — Right Now</p>
+      <h2>What Just Happened to You?</h2>
+      <p>Select your situation — get exact steps to take in the next 5 minutes, before it's too late.</p>
+    </div>
+    <div class="sit-buttons" role="group" aria-label="Select your situation">
+      <button class="sit-btn" data-sit="digital-arrest">📞 Someone called claiming Police / CBI / ED</button>
+      <button class="sit-btn" data-sit="otp-upi">💸 I shared my OTP or money was transferred</button>
+      <button class="sit-btn" data-sit="phishing">📱 I clicked a suspicious link</button>
+      <button class="sit-btn" data-sit="investment">💰 My investment app disappeared with my money</button>
+      <button class="sit-btn" data-sit="sextortion">🚫 Someone is blackmailing me with private photos</button>
+      <button class="sit-btn" data-sit="loan-app">🏦 A loan app is threatening me or my family</button>
+    </div>
+
+    <!-- Panel 1: Digital Arrest -->
+    <div class="sit-panel" id="sit-digital-arrest" aria-live="polite">
+      <p class="sit-panel__heading">🚔 This is a Digital Arrest Scam — You Have Not Done Anything Wrong</p>
+      <ol class="sit-steps">
+        <li><strong>Hang up immediately</strong> — no matter what they threaten. "Digital Arrest" does not exist in Indian law. PM Modi confirmed this on Mann Ki Baat. No C B I, police, or court ever arrests anyone via video call.</li>
+        <li><strong>Call 1930 right now</strong> (free, 24×7). If money was transferred, CFCFRMS can freeze the stolen funds in real-time — but only within the first hour.</li>
+        <li><strong>Call your bank's 24×7 helpline</strong> and say: "I was scammed — please freeze my last outgoing transaction immediately."</li>
+        <li><strong>File at cybercrime.gov.in</strong> within 24 hours. Upload all screenshots, call recordings, and fake warrant images they showed you.</li>
+        <li><strong>Tell your family</strong> — fraudsters often call other family members to add pressure. Everyone must know this is a scam right now.</li>
+      </ol>
+      <p class="sit-note">West Bengal Court verdict, July 2025: 9 life sentences for Digital Arrest scammers — India's first conviction of its kind. The law is on your side.</p>
+      <div class="sit-cta">
+        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
+        <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">cybercrime.gov.in ↗</a>
+      </div>
+    </div>
+
+    <!-- Panel 2: OTP / UPI fraud -->
+    <div class="sit-panel" id="sit-otp-upi" aria-live="polite">
+      <p class="sit-panel__heading">💸 OTP / UPI Fraud — The Next 30 Minutes Are Critical</p>
+      <ol class="sit-steps">
+        <li><strong>Call 1930 right now.</strong> CFCFRMS can freeze stolen funds in real-time — but only before the money moves out of the first account. Every minute matters.</li>
+        <li><strong>Call your bank's 24×7 helpline.</strong> Say: "Freeze my account — unauthorised transaction happened." Get a written complaint reference number.</li>
+        <li><strong>Change your UPI PIN, net banking password, and SIM PIN</strong> from a different device immediately. The fraudster may still have access.</li>
+        <li><strong>File at cybercrime.gov.in</strong> with all UTR numbers, transaction IDs, and the phone number that called you. Upload screenshots of all messages.</li>
+        <li><strong>File a police FIR</strong> at your nearest station under IT Act Sec 66C. Invoke RBI Zero Liability Policy — if reported within 24 hrs, the bank must attempt a reversal.</li>
+      </ol>
+      <p class="sit-note">RBI Circular (2017): Banks carry full liability for unauthorised transactions if reported within 24 hours and the bank's security system was compromised. You have a legal right to claim this.</p>
+      <div class="sit-cta">
+        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
+        <a href="report.html" class="btn-navy" data-snd="click">Full Recovery Guide →</a>
+      </div>
+    </div>
+
+    <!-- Panel 3: Phishing -->
+    <div class="sit-panel" id="sit-phishing" aria-live="polite">
+      <p class="sit-panel__heading">🎣 Phishing Link Clicked — Secure Everything Now</p>
+      <ol class="sit-steps">
+        <li><strong>If you entered a bank login or OTP on that page — disconnect from the internet immediately</strong> and change all passwords from a clean device.</li>
+        <li><strong>Change passwords</strong> for your bank, email, UPI app, and any account linked to your phone number — do it now, not later.</li>
+        <li><strong>Enable two-factor authentication</strong> on all accounts. Use your registered mobile number as the second factor.</li>
+        <li><strong>Call your bank</strong> and inform them a phishing attempt occurred. Ask them to watch for any suspicious transactions and freeze your account if needed.</li>
+        <li><strong>Report the phishing URL</strong> to cybercrime.gov.in and CERT-In (cert-in.org.in). This protects others from the same link.</li>
+      </ol>
+      <p class="sit-note">If you only clicked the link but did not enter any information — you are most likely safe. But run a full virus scan with an updated antivirus app as a precaution.</p>
+      <div class="sit-cta">
+        <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-primary" data-snd="click">Report the Phishing Link ↗</a>
+        <a href="tel:1930" class="btn-navy" data-snd="click">📞 1930 If Money Is Gone</a>
+      </div>
+    </div>
+
+    <!-- Panel 4: Investment fraud -->
+    <div class="sit-panel" id="sit-investment" aria-live="polite">
+      <p class="sit-panel__heading">💰 Investment App Fraud — Your Money May Still Be Recoverable</p>
+      <ol class="sit-steps">
+        <li><strong>Stop depositing money immediately</strong> — no matter what "guaranteed profit" is shown. The dashboard is fake software designed to keep you investing until they disappear.</li>
+        <li><strong>Call 1930</strong> and report all transaction IDs of the deposits you made. Provide app names and contact details of the "agents".</li>
+        <li><strong>Collect all evidence</strong> before the app disappears: screenshots of your "portfolio", all chat history, names of agents who contacted you, payment receipts.</li>
+        <li><strong>File at cybercrime.gov.in</strong> with full transaction history. Investment fraud is now "organised crime" under BNS 2023 Sec 318 — serious sentences apply.</li>
+        <li><strong>File a police FIR</strong> with all evidence. SEBI (sebi.gov.in) also has a complaint portal for investment fraud.</li>
+      </ol>
+      <p class="sit-note">In 2025, investment fraud accounted for 76% of all financial cybercrime losses in India — ₹17,000+ crore. You are not alone. Thousands report this every week and recover funds.</p>
+      <div class="sit-cta">
+        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free</a>
+        <a href="report.html" class="btn-navy" data-snd="click">Full Report Guide →</a>
+      </div>
+    </div>
+
+    <!-- Panel 5: Sextortion -->
+    <div class="sit-panel" id="sit-sextortion" aria-live="polite">
+      <p class="sit-panel__heading">🚫 Sextortion — Do Not Pay. Payment Guarantees They Return.</p>
+      <ol class="sit-steps">
+        <li><strong>Do not pay a single rupee.</strong> This is the most critical step. Payment tells them you will pay again — they always come back for more, often double or triple the amount.</li>
+        <li><strong>Block and report</strong> the person on every platform — WhatsApp, Instagram, Telegram. Screenshot all threats first before blocking.</li>
+        <li><strong>Call 1930</strong> — your identity and all details are completely confidential by law (IT Act Sec 66E). No public disclosure happens. The cyber police are discreet and trained for this.</li>
+        <li><strong>File at cybercrime.gov.in</strong> — the portal has a dedicated sextortion section. All your personal details are sealed. Screenshots of threats are your evidence.</li>
+        <li><strong>If you are a woman — call 181 (free)</strong>. The National Commission for Women provides immediate legal support and can connect you with trained cyber counsellors.</li>
+      </ol>
+      <p class="sit-note">IT Act Sec 66E and Sec 67 guarantee complete victim privacy. The police cannot reveal your identity publicly under any circumstance. You have full legal protection — use it.</p>
+      <div class="sit-cta">
+        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Confidential</a>
+        <a href="tel:181" class="btn-navy" data-snd="click">👩 181 — Women's Helpline</a>
+      </div>
+    </div>
+
+    <!-- Panel 6: Fake loan app -->
+    <div class="sit-panel" id="sit-loan-app" aria-live="polite">
+      <p class="sit-panel__heading">🏦 Fake Loan App Harassment — You Have Strong Legal Protection</p>
+      <ol class="sit-steps">
+        <li><strong>Do not pay any "processing fee", "insurance charge", or "security deposit"</strong> — these are extraction tactics. No legitimate lender charges fees before disbursing a loan.</li>
+        <li><strong>Uninstall the app immediately</strong> and revoke all permissions it has to your contacts, camera, and gallery through your phone Settings → Apps.</li>
+        <li><strong>File at cybercrime.gov.in</strong> with the app name, screenshots of all threats and messages, and any payment receipts. This triggers investigation.</li>
+        <li><strong>Call 1930</strong> and report the app. The RBI has banned hundreds of illegal digital lending apps — this one will be added to the list.</li>
+        <li><strong>If they send messages to your contacts</strong> — file an FIR under IT Act Sec 67 (obscene publication). This is a criminal offence with jail time.</li>
+      </ol>
+      <p class="sit-note">RBI Digital Lending Guidelines (2022) prohibit fee collection before loan disbursement. If this happened — you were defrauded. File the complaint. The law covers you completely.</p>
+      <div class="sit-cta">
+        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free</a>
+        <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">File a Report ↗</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PM WARNING -->
+<div class="pm-warn" role="note">
+  <div class="pm-warn__inner">
+    <div class="pm-warn__flag" aria-hidden="true">🇮🇳</div>
+    <div class="pm-warn__body">
+      <p class="pm-warn__kicker">Prime Minister's Official Warning · Mann Ki Baat · 27 October 2023</p>
+      <p class="pm-warn__title">PM Narendra Modi Warned Every Indian: "Digital Arrest Does Not Exist in Indian Law"</p>
+      <blockquote class="pm-warn__quote">"There is no provision called 'Digital Arrest' in our law. No government agency — CBI, ED, police, or court — ever conducts arrests via video call. If someone calls claiming this, do not panic. Hang up. Call 1930 immediately."</blockquote>
+      <p class="pm-warn__source">— PM Modi, Mann Ki Baat · October 27, 2023 · Doordarshan National</p>
+    </div>
+    <div class="pm-warn__action">
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">cybercrime.gov.in ↗</a>
+      <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930</a>
+    </div>
+  </div>
+
+  <!-- CREATURE 2: Chetavani (चेतावनी = warning/alert in Hindi) — buzzes at danger -->
+  <div class="creature c-bee" role="img" aria-label="Chetavani — fraud warning mascot" data-snd="buzz">
+    <div class="creature-tip">Chetavani! ⚠️ खतरा है — Danger is near!</div>
+    <svg viewBox="0 0 70 86" aria-hidden="true">
+      <ellipse cx="18" cy="30" rx="15" ry="9" fill="rgba(255,255,255,.72)" class="wing-l"/>
+      <ellipse cx="52" cy="30" rx="15" ry="9" fill="rgba(255,255,255,.72)" class="wing-r"/>
+      <line x1="28" y1="12" x2="21" y2="4" stroke="#92400e" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="20" cy="3" r="3.2" fill="#E85D04" class="ant-dot"/>
+      <line x1="42" y1="12" x2="49" y2="4" stroke="#92400e" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="50" cy="3" r="3.2" fill="#E85D04" class="ant-dot"/>
+      <circle cx="35" cy="20" r="15" fill="#FCD34D"/>
+      <circle cx="28" cy="18" r="5.5" fill="white"/>
+      <circle cx="42" cy="18" r="5.5" fill="white"/>
+      <circle cx="29" cy="19" r="3" fill="#0B1F3A"/>
+      <circle cx="43" cy="19" r="3" fill="#0B1F3A"/>
+      <circle cx="30.2" cy="17.8" r="1.1" fill="white"/>
+      <circle cx="44.2" cy="17.8" r="1.1" fill="white"/>
+      <path d="M28 26 Q35 31.5 42 26" stroke="#92400e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="35" cy="55" rx="21" ry="27" fill="#FCD34D"/>
+      <rect x="14" y="46" width="42" height="9" fill="#0B1F3A" opacity="0.62" rx="4"/>
+      <rect x="14" y="60" width="42" height="9" fill="#0B1F3A" opacity="0.62" rx="4"/>
+      <ellipse cx="35" cy="80" rx="5" ry="7" fill="#D97706"/>
+    </svg>
+  </div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar" aria-label="Key statistics">
+  <div class="trust-item"><span class="trust-item__num">1930</span><span class="trust-item__label">Free Helpline · 24/7</span></div>
+  <div class="trust-divider" aria-hidden="true"></div>
+  <div class="trust-item"><span class="trust-item__num">28.15L+</span><span class="trust-item__label">Complaints · 2025</span></div>
+  <div class="trust-divider" aria-hidden="true"></div>
+  <div class="trust-item"><span class="trust-item__num">₹22,848Cr</span><span class="trust-item__label">Lost in 2024</span></div>
+  <div class="trust-divider" aria-hidden="true"></div>
+  <div class="trust-item"><span class="trust-item__num">₹5,489Cr</span><span class="trust-item__label">Saved by CFCFRMS</span></div>
+  <div class="trust-divider" aria-hidden="true"></div>
+  <div class="trust-item"><span class="trust-item__num">67%</span><span class="trust-item__label">UPI-based fraud</span></div>
+</div>
+
+<!-- LIVE FRAUD COST COUNTER — runs since page open (System 1 targeting: visceral scale) -->
+<div class="cost-since" role="status" aria-live="polite" aria-atomic="false">
+  <span class="cost-since__label">While you've been reading this page, India lost:</span>
+  <span class="cost-since__num" id="costSince">₹0</span>
+  <span class="cost-since__sub">₹7,243 stolen every second · ₹22,848 Cr/year · I4C 2024</span>
+</div>
+
+<!-- STAT COUNTERS -->
+<section class="stats-section" id="stat-counters">
+  <!-- CREATURE 3: Sankhya (संख्या = number/data in Hindi) — tracks every crore lost -->
+  <div class="creature c-bot" role="img" aria-label="Sankhya — data tracker mascot" data-snd="beep">
+    <div class="creature-tip">Sankhya 🤖 संख्या — I count every crore lost</div>
+    <svg viewBox="0 0 72 94" aria-hidden="true">
+      <line x1="36" y1="4" x2="36" y2="14" stroke="#1A3A5C" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="36" cy="4" r="4.5" fill="#E85D04" class="ant-glow"/>
+      <rect x="10" y="14" width="52" height="40" rx="12" fill="#0B1F3A"/>
+      <rect x="16" y="20" width="40" height="28" rx="8" fill="#1A3A5C"/>
+      <rect x="18" y="22" width="36" height="24" rx="6" fill="#0ea5e9" opacity="0.12"/>
+      <circle cx="27" cy="34" r="5.5" fill="#E85D04" class="led-eye"/>
+      <circle cx="45" cy="34" r="5.5" fill="#E85D04" class="led-eye"/>
+      <text x="36" y="42" font-family="monospace" font-size="8" fill="#38bdf8" text-anchor="middle" font-weight="700">1930</text>
+      <rect x="29" y="54" width="14" height="6" rx="3" fill="#1A3A5C"/>
+      <rect x="12" y="60" width="48" height="28" rx="10" fill="#1A3A5C"/>
+      <rect x="18" y="66" width="14" height="10" rx="4" fill="#E85D04" opacity="0.72"/>
+      <rect x="40" y="66" width="14" height="10" rx="4" fill="#0ea5e9" opacity="0.55"/>
+      <rect x="0" y="63" width="12" height="7" rx="3" fill="#0B1F3A"/>
+      <rect x="60" y="63" width="12" height="7" rx="3" fill="#0B1F3A"/>
+      <rect x="16" y="88" width="14" height="6" rx="3" fill="#0B1F3A"/>
+      <rect x="42" y="88" width="14" height="6" rx="3" fill="#0B1F3A"/>
+    </svg>
+  </div>
+
+  <div class="container">
+    <p class="section-overline">All data verified — I4C, RBI Annual Report 2024, NCRB Crime in India 2023, NPCI, MHA</p>
+    <div class="stats-grid">
+      <div class="stat-card stat-card--orange reveal reveal--d1">
+        <div class="stat-icon" aria-hidden="true">📊</div>
+        <div class="stat-num counter-number" data-target="2815000" data-format="lakh" data-suffix="+">—</div>
+        <div class="stat-label">Complaints filed in 2025</div>
+        <div class="stat-src">I4C / MHA 2025 · +60% YoY</div>
+      </div>
+      <div class="stat-card stat-card--maroon reveal reveal--d2">
+        <div class="stat-icon" aria-hidden="true">💸</div>
+        <div class="stat-num counter-number" data-target="22848" data-prefix="₹" data-suffix=" Cr" data-format="plain">—</div>
+        <div class="stat-label">Lost to fraud in 2024</div>
+        <div class="stat-src">I4C / MHA · up from ₹551Cr in 2021</div>
+      </div>
+      <div class="stat-card stat-card--navy reveal reveal--d3">
+        <div class="stat-icon" aria-hidden="true">⏱️</div>
+        <div class="stat-num counter-number" data-target="7" data-suffix=" min" data-format="plain">—</div>
+        <div class="stat-label">Between each new victim</div>
+        <div class="stat-src">Derived from I4C 2023</div>
+      </div>
+      <div class="stat-card stat-card--olive reveal reveal--d4">
+        <div class="stat-icon" aria-hidden="true">✅</div>
+        <div class="stat-num counter-number" data-target="5489" data-prefix="₹" data-suffix=" Cr" data-format="plain">—</div>
+        <div class="stat-label">Saved by CFCFRMS</div>
+        <div class="stat-src">MHA I4C · 17.82 lakh fraud complaints</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW CRIMINALS TRAP YOU -->
+<section class="funnel-sec" aria-label="How digital fraud works">
+  <!-- CREATURE 4: Thag (ठग = cheat/swindler in Hindi — origin of English "thug") -->
+  <div class="creature c-ghost" role="img" aria-label="Thag — represents the digital fraudster" data-snd="wrong">
+    <div class="creature-tip">Thag 👻 ठग — I am the scammer. Learn my tricks!</div>
+    <svg viewBox="0 0 64 82" aria-hidden="true">
+      <path d="M10 34 Q10 8 32 8 Q54 8 54 34 L54 74 Q47 65 39 74 Q32 65 25 74 Q18 65 10 74 Z" fill="#7B1D1D"/>
+      <path d="M12 34 Q12 10 32 10 Q52 10 52 34" fill="none" stroke="#9B2C2C" stroke-width="2" opacity="0.45"/>
+      <line x1="18" y1="29" x2="27" y2="38" stroke="#ff4444" stroke-width="4" stroke-linecap="round"/>
+      <line x1="27" y1="29" x2="18" y2="38" stroke="#ff4444" stroke-width="4" stroke-linecap="round"/>
+      <line x1="37" y1="29" x2="46" y2="38" stroke="#ff4444" stroke-width="4" stroke-linecap="round"/>
+      <line x1="46" y1="29" x2="37" y2="38" stroke="#ff4444" stroke-width="4" stroke-linecap="round"/>
+      <path d="M17 50 L21 44 L25 50 L29 44 L33 50 L37 44 L41 50 L45 44" stroke="rgba(255,255,255,.65)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="32" y="24" font-size="11" fill="rgba(255,100,100,.55)" text-anchor="middle" font-weight="900">₹</text>
+    </svg>
+  </div>
+
+  <div class="funnel-head">
+    <span class="section-tag section-tag--white">Know the Playbook</span>
+    <h2>How Criminals Trap You in 4 Steps</h2>
+    <p>Every scam — UPI fraud, Digital Arrest, fake loans — uses the same psychological script. Know it once and you are immune forever.</p>
+  </div>
+  <div class="funnel-grid" role="list">
+    <div class="funnel-connector" aria-hidden="true"></div>
+    <div class="funnel-step funnel-step--1 reveal reveal--d1" role="listitem">
+      <div class="funnel-num">01</div>
+      <div class="funnel-step__icon" aria-hidden="true">📞</div>
+      <h3 class="funnel-step__title">Contact</h3>
+      <p class="funnel-step__body">Call, WhatsApp, or SMS arrives. They sound official — bank officer, CBI agent, courier. The number appears legitimate. The voice is calm and authoritative.</p>
+      <span class="funnel-step__pill">Phone · WhatsApp · SMS</span>
+    </div>
+    <div class="funnel-step funnel-step--2 reveal reveal--d2" role="listitem">
+      <div class="funnel-num">02</div>
+      <div class="funnel-step__icon" aria-hidden="true">😨</div>
+      <h3 class="funnel-step__title">Create Fear</h3>
+      <p class="funnel-step__body">Urgency is manufactured: "Your Aadhaar was used in drug trafficking." "You will be arrested tonight." Fake warrants, forged CBI IDs, fabricated news screenshots appear on screen.</p>
+      <span class="funnel-step__pill">Urgency · Fake Docs · Fear</span>
+    </div>
+    <div class="funnel-step funnel-step--3 reveal reveal--d3" role="listitem">
+      <div class="funnel-num">03</div>
+      <div class="funnel-step__icon" aria-hidden="true">🔇</div>
+      <h3 class="funnel-step__title">Isolate You</h3>
+      <p class="funnel-step__body">"Do not tell your family — this is a confidential investigation." Without a reality check from loved ones, victims comply with anything. Isolation is their most powerful weapon.</p>
+      <span class="funnel-step__pill">Secrecy · Isolation · Control</span>
+    </div>
+    <div class="funnel-step funnel-step--4 reveal reveal--d4" role="listitem">
+      <div class="funnel-num">04</div>
+      <div class="funnel-step__icon" aria-hidden="true">💸</div>
+      <h3 class="funnel-step__title">Extract Money</h3>
+      <p class="funnel-step__body">UPI transfer, NEFT to "verification account", OTP, or gift card codes. Money moves in seconds. Recovery requires calling 1930 within 24 hours — CFCFRMS can freeze it in real-time.</p>
+      <span class="funnel-step__pill">OTP · UPI · Wire Transfer</span>
+    </div>
+  </div>
+</section>
+
+<!-- SPLIT -->
+<section class="split">
+  <div class="split__photo reveal reveal--left">
+    <img src="images/india-woman-phone.png"
+         alt="Indian woman reading a suspicious message on her phone — the moment before fraud strikes" loading="lazy">
+    <div class="split__photo-caption">85% of all cybercrime complaints in India are financial fraud — I4C 2024</div>
+  </div>
+  <div class="split__body reveal reveal--right">
+    <span class="section-tag">Understanding the Threat</span>
+    <h2>It Happens to Doctors, IAS Officers &amp; Retired Generals Too</h2>
+    <p>Digital fraud is not a sign of ignorance. Fraud networks study psychology, test scripts daily, and target thousands of Indians across every income level. In 2024, verified victims included IIT professors, retired military officers, High Court judges, and senior bank managers.</p>
+    <p>The only reliable defence is knowing exactly how this works — before it happens to you.</p>
+    <div class="tag-cloud">
+      <span class="tag tag--orange">📱 UPI Fraud — 67%</span>
+      <span class="tag tag--navy">🔒 OTP Scam — 12%</span>
+      <span class="tag tag--maroon">🎣 Phishing — 9%</span>
+      <span class="tag tag--olive">💰 Fake Loans — 7%</span>
+      <span class="tag tag--orange">🚫 Sextortion</span>
+      <span class="tag tag--navy">💼 Investment Scam</span>
+      <span class="tag tag--maroon">🚔 Digital Arrest</span>
+    </div>
+    <a href="tips.html" class="btn-navy" data-snd="click">Read the Full Protection Guide →</a>
+  </div>
+</section>
+
+<!-- INFO CARDS -->
+<section class="cards-section">
+  <div class="container">
+    <div class="cards-grid">
+      <div class="info-card info-card--blue-border reveal reveal--d1">
+        <div class="info-card__icon">🔍</div>
+        <h3 class="info-card__title">What is Digital Fraud Under Indian Law?</h3>
+        <p class="info-card__body">Any unlawful act where a mobile, computer, or network steals your money or identity. Prosecuted under IT Act 2000 (Sec 66C, 66D) and BNS 2023 (Sec 318, 319) since July 1, 2024. Offenders face up to 3–7 years imprisonment.</p>
+      </div>
+      <div class="info-card info-card--orange-border reveal reveal--d2">
+        <div class="info-card__icon">⚠️</div>
+        <h3 class="info-card__title">Most Dangerous Scams Targeting Indians — 2024</h3>
+        <div class="info-card__body">
+          <div class="mini-tag-list">
+            <span class="mini-tag">📱 UPI Fraud <strong>67%</strong></span>
+            <span class="mini-tag">🔒 OTP Scam <strong>12%</strong></span>
+            <span class="mini-tag">🎣 Phishing <strong>9%</strong></span>
+            <span class="mini-tag">💰 Fake Loans <strong>7%</strong></span>
+            <span class="mini-tag">🚫 Sextortion <strong>+300%</strong></span>
+            <span class="mini-tag">💼 Investment <strong>76% losses</strong></span>
+            <span class="mini-tag">🚔 Digital Arrest</span>
+            <span class="mini-tag">🔄 SIM Swap</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-card info-card--olive-border reveal reveal--d3">
+        <div class="info-card__icon">🛡️</div>
+        <h3 class="info-card__title">Scammed? Act in the Next 60 Minutes</h3>
+        <ol class="info-card__steps">
+          <li><strong>📞 Call 1930</strong> — free, 24 hours, CFCFRMS real-time freeze</li>
+          <li><strong>🌐 cybercrime.gov.in</strong> — file within 24 hours</li>
+          <li><strong>🏦 Call your bank</strong> — request immediate transaction hold</li>
+          <li><strong>📸 Save all evidence</strong> — screenshots, SMS, call recordings</li>
+        </ol>
+        <p class="info-card__note">RBI Zero Liability Policy: banks must attempt reversal if reported within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO STRIP -->
+<section class="pstrip" aria-label="India fraud statistics">
+  <div class="pstrip-grid">
+    <div class="pstrip-cell">
+      <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=700&q=85&fit=crop" alt="Person at laptop in dark — digital crime" loading="lazy">
+      <div class="pstrip-over pstrip-over--orange">
+        <p class="pstrip-stat">₹22,848 Cr</p>
+        <p class="pstrip-label">Lost to digital fraud · India 2024</p>
+        <p class="pstrip-src">Source: I4C / Ministry of Home Affairs 2024</p>
+      </div>
+    </div>
+    <div class="pstrip-cell">
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&fit=crop" alt="Indian family concerned about phone fraud" loading="lazy">
+      <div class="pstrip-over">
+        <p class="pstrip-stat">28.15 Lakh</p>
+        <p class="pstrip-label">Fraud complaints filed in 2025</p>
+        <p class="pstrip-src">Source: I4C / Ministry of Home Affairs 2025</p>
+      </div>
+    </div>
+    <div class="pstrip-cell">
+      <img src="https://images.unsplash.com/photo-1596178060810-72f53ce9a65c?w=700&q=85&fit=crop" alt="Indian professional relieved after fraud recovery" loading="lazy">
+      <div class="pstrip-over pstrip-over--olive">
+        <p class="pstrip-stat">₹5,489 Cr</p>
+        <p class="pstrip-label">Saved by CFCFRMS — 17.82 lakh cases</p>
+        <p class="pstrip-src">Source: MHA I4C · Government of India</p>
+      </div>
+    </div>
+    <div class="pstrip-cell">
+      <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=85&fit=crop" alt="Mobile SIM blocking — cybercrime action" loading="lazy">
+      <div class="pstrip-over pstrip-over--maroon">
+        <p class="pstrip-stat">9.42 Lakh</p>
+        <p class="pstrip-label">SIMs &amp; IMEIs blocked for fraud · DoT</p>
+        <p class="pstrip-src">Source: Department of Telecom · 2024</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO SECTION -->
+<section class="vid-sec" id="awareness-video">
+  <div class="container">
+    <div class="vid-head">
+      <span class="section-tag">Official Government Awareness</span>
+      <h2>Watch: Real Fraud Tactics Used Against Indians</h2>
+      <p class="vid-head__sub">Exact scripts and methods used by fraudsters daily — from MHA and I4C official campaigns. Videos open on YouTube.</p>
+    </div>
+    <div class="vid-layout">
+      <div class="vid-main-card">
+        <a class="vid-thumb-a" href="https://www.youtube.com/results?search_query=india+cyber+crime+digital+arrest+awareness+MHA+I4C+1930" target="_blank" rel="noopener" aria-label="Watch official MHA cyber crime video">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80&fit=crop" alt="India cyber crime awareness data" loading="lazy">
+          <div class="vid-thumb-a__over">
+            <div class="vid-play-lg" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+        </a>
+        <div class="vid-main-meta">
+          <span class="vid-badge vid-badge--orange">📺 Ministry of Home Affairs · Official</span>
+          <h3 class="vid-main-title">Cyber Crime Awareness — MHA India · How Fraudsters Target You</h3>
+          <p class="vid-main-desc">The Ministry of Home Affairs and I4C document exact fraud tactics used against Indian families. Know the scripts criminals use before they use them on you or your family.</p>
+        </div>
+      </div>
+      <div class="vid-aside">
+        <div class="vid-sm-card">
+          <a class="vid-sm-thumb" href="https://www.youtube.com/results?search_query=UPI+QR+code+scam+india+2024+how+to+protect" target="_blank" rel="noopener" aria-label="UPI QR code fraud awareness">
+            <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="UPI QR code fraud India" loading="lazy">
+            <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </a>
+          <div class="vid-sm-body">
+            <span class="vid-badge vid-badge--maroon">🔴 UPI Fraud</span>
+            <p class="vid-sm-title">QR Code Scam — Why Scanning Empties Your Account</p>
+          </div>
+        </div>
+        <div class="vid-sm-card">
+          <a class="vid-sm-thumb" href="https://www.youtube.com/results?search_query=digital+arrest+scam+india+awareness+CBI+police+2024" target="_blank" rel="noopener" aria-label="Digital arrest scam awareness">
+            <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Digital arrest scam India" loading="lazy">
+            <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          </a>
+          <div class="vid-sm-body">
+            <span class="vid-badge vid-badge--navy">🚔 Digital Arrest</span>
+            <p class="vid-sm-title">What Is a "Digital Arrest" Scam — How to Escape It</p>
+          </div>
+        </div>
+        <div class="vid-cta-box">
+          <p class="vid-cta-num">1930</p>
+          <p class="vid-cta-label">National Cyber Crime Helpline · Free · 24×7</p>
+          <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call Now — Free</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANDMARK CASES -->
+<section class="cases-sec">
+  <div class="container">
+    <div class="cases-head">
+      <span class="section-tag">Court-Verified Cases</span>
+      <h2>These Are Not Rumours. These Are Court Records.</h2>
+      <p class="cases-intro">From India's first AI deepfake fraud to a ₹1,550 crore laundering ring inside a bank — this is how bad it really is.</p>
+    </div>
+    <div class="cases-grid">
+      <div class="case-card case-card--navy reveal reveal--d1">
+        <div class="case-yr">2018</div>
+        <div class="case-body">
+          <h3 class="case-title">Cosmos Bank SWIFT Hack — Pune</h3>
+          <p class="case-amt">₹94.42 Crore stolen in 7 hours</p>
+          <p class="case-desc">Hackers injected malware into Cosmos Bank's payment switch, cloned 19 lakh debit cards, and executed withdrawals across 28 countries simultaneously. In April 2023, a Pune court convicted 11 accused to 3–4 years imprisonment.</p>
+          <span class="case-verdict case-verdict--olive">✅ 11 Convicted · April 2023</span>
+        </div>
+      </div>
+      <div class="case-card case-card--orange reveal reveal--d2">
+        <div class="case-yr">2023</div>
+        <div class="case-body">
+          <h3 class="case-title">Kerala AI Deepfake Fraud — India's First</h3>
+          <p class="case-amt">₹40,000 — The first AI deepfake case in India</p>
+          <p class="case-desc">A Kerala man received a WhatsApp video call from an AI-generated real-time face of his former colleague. He transferred ₹40,000 before realising the face was computer-generated. Marked the beginning of AI-driven fraud in India.</p>
+          <span class="case-verdict case-verdict--orange">🔴 First AI Deepfake Fraud · India</span>
+        </div>
+      </div>
+      <div class="case-card case-card--maroon reveal reveal--d3">
+        <div class="case-yr">2024</div>
+        <div class="case-body">
+          <h3 class="case-title">Nadia Digital Arrest — West Bengal</h3>
+          <p class="case-amt">₹1 Crore · 9 convicted to LIFE imprisonment</p>
+          <p class="case-desc">A retired scientist was kept under video surveillance by fraudsters posing as Mumbai Police. Under extreme psychological coercion, she transferred ₹1 crore. On 19 July 2025, West Bengal court gave 9 life sentences — India's first Digital Arrest conviction.</p>
+          <span class="case-verdict case-verdict--maroon">⚖️ 9 Life Sentences · July 2025</span>
+        </div>
+      </div>
+      <div class="case-card case-card--dark reveal reveal--d4">
+        <div class="case-yr">2025</div>
+        <div class="case-body">
+          <h3 class="case-title">Surat Mule Account Ring — Gujarat</h3>
+          <p class="case-amt">₹1,550 Crore · 8 bank employees arrested</p>
+          <p class="case-desc">Eight bank employees opened 62 mule accounts to launder ₹1,550 crore for a cybercrime syndicate. This landmark case exposed how fraud rings had infiltrated India's banking infrastructure itself — with insiders enabling stolen money movement.</p>
+          <span class="case-verdict case-verdict--navy">🔎 Investigation Ongoing · 2025</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IN THE NEWS — REAL INDIAN MEDIA COVERAGE -->
+<section class="news-sec" aria-label="Real Digital Arrest cases reported in Indian media">
+  <div class="container">
+    <div class="news-head">
+      <span class="section-tag">Real Reports · Indian Media</span>
+      <h2>This Is Happening Right Now — Across India</h2>
+      <p class="news-intro">Real victims. Real crimes. Real courts. These are not hypothetical scenarios — they are verified news stories from the past 12 months across India.</p>
+    </div>
+    <div class="news-grid">
+
+      <!-- FEATURED NEWS CARD: real local image -->
+      <div class="news-card--featured reveal">
+        <div class="news-card__img">
+          <img src="images/digital-arrest-news.png"
+               alt="DCN News report: 70-Year-Old Woman Duped of ₹7.70 Lakh in Digital Arrest Cyber Scam in Mumbai"
+               loading="lazy">
+        </div>
+        <div class="news-card__body">
+          <span class="news-tag">🚨 Digital Arrest Scam · Mumbai · Verified Case</span>
+          <h3 class="news-card__title">70-Year-Old Mumbai Woman Duped of ₹7.70 Lakh in "Digital Arrest" Cyber Scam</h3>
+          <p class="news-card__desc">In Mumbai's Mulund area, a 70-year-old woman was cheated of ₹7.70 lakh by fraudsters posing as ED officials. They threatened her with digital arrest, isolated her from family, and forced her to transfer money via RTGS over multiple calls. A complaint was filed at Navghar police station.</p>
+          <div class="news-card__meta">
+            <span class="news-source">📰 Source: DCN News · dcnnews.co.in</span>
+            <span class="news-law">IT Act Sec 66D · BNS Sec 319</span>
+          </div>
+          <a href="tel:1930" class="btn-primary" data-snd="click">If this happened to you — Call 1930 Free</a>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: stats + action box -->
+      <div class="news-stat-col">
+        <div class="news-stat-card reveal reveal--d1">
+          <div class="nsc-icon">⚡</div>
+          <div class="nsc-body">
+            <p class="nsc-num">₹7.70 Lakh</p>
+            <p class="nsc-label">Lost by ONE 70-year-old Mumbai woman — in a single Digital Arrest call lasting days</p>
+          </div>
+        </div>
+        <div class="news-stat-card reveal reveal--d2">
+          <div class="nsc-icon">👤</div>
+          <div class="nsc-body">
+            <p class="nsc-num">70 Years Old</p>
+            <p class="nsc-label">Age of victim — proves no one is safe. Seniors, IIT professors, judges, and generals have all been targeted</p>
+          </div>
+        </div>
+        <div class="news-stat-card reveal reveal--d3">
+          <div class="nsc-icon">🏛️</div>
+          <div class="nsc-body">
+            <p class="nsc-num">ED + Police</p>
+            <p class="nsc-label">Fake officials used — fraudsters impersonate CBI, ED, NCB, TRAI, Mumbai Police simultaneously</p>
+          </div>
+        </div>
+        <div class="news-act-box">
+          <p class="news-act__title">How to Recognise a Digital Arrest Call</p>
+          <ul class="news-act__list">
+            <li>No agency arrests via video call — ever</li>
+            <li>No law requires a "verification transfer" of money</li>
+            <li>Real police never demand family secrecy</li>
+            <li>No government shows fake warrants on screen</li>
+          </ul>
+          <a href="tips.html" class="btn-navy" data-snd="click">Full Protection Guide →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 5-STEP RECOVERY -->
+<section class="recovery-sec" aria-label="How to recover from digital fraud">
+  <!-- CREATURE 5: Umeed (उम्मीद = hope in Hindi) — shines brightest in recovery -->
+  <div class="creature c-star" role="img" aria-label="Umeed — hope and recovery mascot" data-snd="ding">
+    <div class="creature-tip">Umeed ⭐ उम्मीद — Hope! Recovery is possible. Act now!</div>
+    <svg viewBox="0 0 75 75" aria-hidden="true">
+      <polygon points="37.5,5 44,26 66,26 49,39 55,61 37.5,48 20,61 26,39 9,26 31,26" fill="#F59E0B"/>
+      <polygon points="37.5,11 42,27 60,27 46,36 51,53 37.5,44 24,53 29,36 15,27 33,27" fill="#FCD34D" opacity="0.45"/>
+      <circle cx="37.5" cy="34" r="14" fill="#FCD34D"/>
+      <circle cx="32" cy="31" r="3.8" fill="#78350F" class="star-eye"/>
+      <circle cx="43" cy="31" r="3.8" fill="#78350F" class="star-eye"/>
+      <circle cx="33.2" cy="29.8" r="1.3" fill="white"/>
+      <circle cx="44.2" cy="29.8" r="1.3" fill="white"/>
+      <path d="M31 39.5 Q37.5 45.5 44 39.5" stroke="#78350F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="24.5" cy="37.5" rx="4" ry="2.5" fill="#F97316" opacity="0.5"/>
+      <ellipse cx="50.5" cy="37.5" rx="4" ry="2.5" fill="#F97316" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="recovery-head">
+    <span class="section-tag section-tag--white">If It Happens to You</span>
+    <h2>5 Steps to Take the Moment You Realise You've Been Scammed</h2>
+    <p>Speed is everything. CFCFRMS can freeze stolen money in real-time — but only if you act immediately. Here is exactly what to do.</p>
+  </div>
+  <div class="r-grid" role="list">
+    <div class="r-line" aria-hidden="true"></div>
+    <div class="r-step" role="listitem">
+      <div class="r-bubble">01</div>
+      <div class="r-icon" aria-hidden="true">🛑</div>
+      <h3 class="r-title">Stop All Contact</h3>
+      <p class="r-desc">Block the scammer everywhere. Do not send another rupee even if threatened with arrest. Hang up.</p>
+      <span class="r-time">First 5 minutes</span>
+    </div>
+    <div class="r-step" role="listitem">
+      <div class="r-bubble">02</div>
+      <div class="r-icon" aria-hidden="true">📞</div>
+      <h3 class="r-title">Call 1930</h3>
+      <p class="r-desc">Free, 24×7. CFCFRMS triggers a real-time freeze on the destination account. This has saved thousands of crores.</p>
+      <span class="r-time">Within 15 minutes</span>
+    </div>
+    <div class="r-step" role="listitem">
+      <div class="r-bubble">03</div>
+      <div class="r-icon" aria-hidden="true">🏦</div>
+      <h3 class="r-title">Call Your Bank</h3>
+      <p class="r-desc">Request an immediate hold. Invoke RBI Zero Liability Policy rights. Get a complaint reference number.</p>
+      <span class="r-time">Within 30 minutes</span>
+    </div>
+    <div class="r-step" role="listitem">
+      <div class="r-bubble">04</div>
+      <div class="r-icon" aria-hidden="true">🌐</div>
+      <h3 class="r-title">File at cybercrime.gov.in</h3>
+      <p class="r-desc">Submit all transaction IDs, screenshots, phone numbers, and fake documents shown by the fraudster.</p>
+      <span class="r-time">Within 24 hours</span>
+    </div>
+    <div class="r-step" role="listitem">
+      <div class="r-bubble">05</div>
+      <div class="r-icon" aria-hidden="true">🚔</div>
+      <h3 class="r-title">File Police FIR</h3>
+      <p class="r-desc">FIR at nearest police station under IT Act Sec 66C/66D and BNS Sec 318/319. Keep a certified copy.</p>
+      <span class="r-time">Within 48 hours</span>
+    </div>
+  </div>
+  <div class="recovery-cta">
+    <a href="report.html" class="btn-primary" data-snd="click">📋 Full Step-by-Step Report Guide →</a>
+  </div>
+</section>
+
+<!-- PHOTO QUOTE -->
+<section class="photo-quote">
+  <div class="photo-quote__bg"></div>
+  <div class="photo-quote__content">
+    <blockquote>"UPI-related frauds accounted for 67% of all digital payment fraud in India in 2023. Victims who reported within 24 hours had significantly higher chances of fund recovery through CFCFRMS interventions."</blockquote>
+    <cite>— Reserve Bank of India Annual Report 2024 · Chapter on Cybersecurity</cite>
+    <div class="photo-quote__actions">
+      <a href="report.html" class="btn-primary" data-snd="click">Report Your Fraud →</a>
+      <a href="data.html" class="btn-outline-white" data-snd="click">View All Data</a>
+    </div>
+  </div>
+</section>
+
+<!-- 6 FRAUD TYPES -->
+<section class="fviz-sec">
+  <div class="container">
+    <div class="fviz-head">
+      <span class="section-tag">Know Before It Happens</span>
+      <h2>6 Frauds Draining Indian Savings Right Now</h2>
+    </div>
+    <div class="fviz-grid">
+      <div class="fviz-card fviz-card--orange reveal reveal--d1">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="UPI fraud — phone payment scam" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">67% of all cases · NPCI</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">📱</span>
+          <div><p class="fviz-title">UPI Fraud</p><p class="fviz-rule">QR codes only DEBIT your account. Scanning one to "receive" money is physically impossible by design. If anyone says otherwise — hang up.</p></div>
+        </div>
+      </div>
+      <div class="fviz-card fviz-card--navy reveal reveal--d2">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Indian man receiving suspicious call" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">12% of cases · I4C</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🔒</span>
+          <div><p class="fviz-title">OTP Scam</p><p class="fviz-rule">No bank, RBI, NPCI, or government body ever asks for your OTP. Sharing it gives complete account control. Hang up, call your bank directly.</p></div>
+        </div>
+      </div>
+      <div class="fviz-card fviz-card--maroon reveal reveal--d3">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Phishing — fake link on a dark screen" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">9% of cases · CERT-In</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🎣</span>
+          <div><p class="fviz-title">Phishing</p><p class="fviz-rule">One wrong letter in a URL steals your login. "sbi-kyc-update.net" vs "sbi.co.in". Always type the address yourself. Never click SMS or WhatsApp links.</p></div>
+        </div>
+      </div>
+      <div class="fviz-card fviz-card--olive reveal reveal--d1">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Person stressed about fake loan app" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">Rising fastest · 2024</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💰</span>
+          <div><p class="fviz-title">Fake Loan Apps</p><p class="fviz-rule">Any loan app requesting contacts or media access is a blackmail trap. It harvests contacts and morphs photos to extort you. Uninstall immediately.</p></div>
+        </div>
+      </div>
+      <div class="fviz-card fviz-card--maroon reveal reveal--d2">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Sextortion — privacy violation cybercrime" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">+300% since 2022</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🚫</span>
+          <div><p class="fviz-title">Sextortion</p><p class="fviz-rule">Do not pay a single rupee. Payment guarantees they return. Call 1930 immediately. Full confidentiality is guaranteed by law — IT Act Section 66E.</p></div>
+        </div>
+      </div>
+      <div class="fviz-card fviz-card--orange reveal reveal--d3">
+        <div class="fviz-img">
+          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Investment fraud app India" loading="lazy">
+          <div class="fviz-over"></div><div class="fviz-badge">76% of losses · 2025</div>
+        </div>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💼</span>
+          <div><p class="fviz-title">Investment Fraud</p><p class="fviz-rule">No legitimate investment guarantees returns above 12% annually. The ₹50,000 profit on that dashboard is software designed to lure more victims. It is always a scam.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="fviz-cta">
+      <a href="tips.html" class="btn-primary" data-snd="click">📖 Full Protection Guide — All 12 Scam Types →</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATE HOTSPOT -->
+<section class="hotspot-sec" aria-label="States with highest cybercrime complaints">
+  <div class="hotspot-wrap">
+    <div class="hotspot-head">
+      <span class="section-tag">Where It's Worst · NCRB 2023</span>
+      <h2>Top 5 States by Cybercrime FIRs</h2>
+      <p>These five states account for over 54% of all reported digital fraud FIRs. Data sourced from the National Crime Records Bureau — Crime in India 2023.</p>
+      <div class="h-stat"><div class="h-rank h-rank--1">1</div><div class="h-state"><p class="h-state-name">Telangana — 15,297 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">17.7%</span></div>
+      <div class="h-stat"><div class="h-rank h-rank--2">2</div><div class="h-state"><p class="h-state-name">Uttar Pradesh — 10,117 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">11.7%</span></div>
+      <div class="h-stat"><div class="h-rank h-rank--3">3</div><div class="h-state"><p class="h-state-name">Karnataka — 8,136 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">9.4%</span></div>
+      <div class="h-stat"><div class="h-rank h-rank--4">4</div><div class="h-state"><p class="h-state-name">Maharashtra — 7,152 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">8.3%</span></div>
+      <div class="h-stat"><div class="h-rank h-rank--5">5</div><div class="h-state"><p class="h-state-name">Rajasthan — 6,493 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">7.5%</span></div>
+    </div>
+    <div class="hotspot-photo">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop" alt="India NCRB cybercrime data" loading="lazy">
+      <div class="hotspot-photo__over">
+        <h3 class="hotspot-photo__h">Source: NCRB<br>Crime in India 2023</h3>
+        <p class="hotspot-photo__p">National Crime Records Bureau · Ministry of Home Affairs · Government of India. 86,420 FIRs in 2023, up from 27,248 in 2018.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEGAL RIGHTS -->
+<section class="law-strip" aria-label="Your legal rights under Indian law">
+  <div class="law-strip__inner">
+    <div>
+      <p class="law-strip__kicker">Know Your Rights · Indian Law</p>
+      <h2 class="law-strip__title">The Law Protects You.<br>Use It.</h2>
+      <p class="law-strip__sub">Digital fraud is a serious crime. Offenders face imprisonment and fines. Know your rights before you need them.</p>
+    </div>
+    <div class="law-card">
+      <p class="law-card__section">IT Act 2000 · Sec 66C</p>
+      <p class="law-card__title">Identity Theft</p>
+      <p class="law-card__desc">Fraudulent use of your Aadhaar, OTP, password, or digital signature. Covers synthetic identity creation and AI deepfake impersonation.</p>
+      <p class="law-card__penalty">Up to 3 years · ₹1 Lakh fine</p>
+    </div>
+    <div class="law-card">
+      <p class="law-card__section">IT Act 2000 · Sec 66D</p>
+      <p class="law-card__title">Cheating by Personation</p>
+      <p class="law-card__desc">Anyone cheating you by pretending to be a bank officer, CBI agent, police, or any person via computer or mobile device.</p>
+      <p class="law-card__penalty">Up to 3 years · ₹1 Lakh fine</p>
+    </div>
+    <div class="law-card">
+      <p class="law-card__section">BNS 2023 · Sec 318 &amp; 319</p>
+      <p class="law-card__title">Digital Fraud &amp; Impersonation</p>
+      <p class="law-card__desc">Replaced IPC Sections 415–420 from 1 July 2024. BNS recognises cybercrime as "organized crime" — enabling prosecution of entire fraud syndicates.</p>
+      <p class="law-card__penalty">Up to 7 years (organized crime)</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="quiz-section">
+  <div class="container">
+    <div class="quiz-header">
+      <span class="section-tag">Test Your Awareness</span>
+      <h2>Can You Spot the Scam?</h2>
+      <p>5 real scenarios that cost Indians crores in 2023–2024. One wrong answer could cost you lakhs. Take 3 minutes — it could be the most valuable 3 minutes of your year.</p>
+    </div>
+    <div class="quiz-box">
+      <div id="quizContent"></div>
+      <div id="quizResult" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="footer-logo">🛡️ FraudShell</p>
+      <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
+      <p class="footer-desc">India's frontline digital fraud awareness platform — free for every Indian. Not affiliated with any government body.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Emergency Helplines</p>
+      <a href="tel:1930" class="footer-helpline-number" data-snd="click">1930</a>
+      <p class="footer-helpline-label">Cyber Crime · Free · 24×7 · No registration</p>
+      <a href="tel:112"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">112</a>
+      <p class="footer-helpline-label">Police Emergency</p>
+      <a href="tel:181"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">181</a>
+      <p class="footer-helpline-label">Women Safety Helpline</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Official Resources</p>
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
+      <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="https://cert-in.org.in" target="_blank" rel="noopener" class="footer-link">cert-in.org.in ↗</a>
+      <a href="report.html" class="footer-link">File a Report</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Pages</p>
+      <a href="index.html" class="footer-link">Home</a>
+      <a href="data.html" class="footer-link">The Data</a>
+      <a href="tips.html" class="footer-link">Protect Yourself</a>
+      <a href="report.html" class="footer-link">Report Fraud</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023–24 · Ministry of Home Affairs I4C · Press Information Bureau · DoT 2024</p>
+    <p>© 2026 FraudShell · Built to protect every Indian · National Cyber Crime Helpline: <a href="tel:1930" style="color:var(--orange);text-decoration:none" data-snd="click">1930</a></p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+
+<!-- SOUNDS + CREATURE VOICES + INTERACTIONS -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ════════════════════════════════════════════════════════
+     0.  CINEMATIC INTRO — FraudShell film-title entrance
+         Visual: clip-path wipe reveal + shield pop + tagline
+         Sound: deep bass thud + harmonic on user interaction
+  ════════════════════════════════════════════════════════ */
+  var introEl = document.getElementById('introOverlay');
+  if (introEl) {
+    var introDone = false;
+
+    function dismissIntro(playSound) {
+      if (introDone) return;
+      introDone = true;
+      if (playSound) {
+        /* Deep cinematic thud + harmonic shimmer
+           Uses shared getCtx() — no duplicate AudioContext */
+        try {
+          var c = getCtx();
+          if (c.state === 'suspended') c.resume();
+          var o1 = c.createOscillator(), g1 = c.createGain();
+          o1.connect(g1); g1.connect(c.destination);
+          o1.type = 'sine'; o1.frequency.value = 68;
+          g1.gain.setValueAtTime(0, c.currentTime);
+          g1.gain.linearRampToValueAtTime(0.44, c.currentTime + 0.05);
+          g1.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 1.0);
+          o1.start(c.currentTime); o1.stop(c.currentTime + 1.1);
+          var o2 = c.createOscillator(), g2 = c.createGain();
+          o2.connect(g2); g2.connect(c.destination);
+          o2.type = 'sine'; o2.frequency.value = 440;
+          g2.gain.setValueAtTime(0, c.currentTime + 0.07);
+          g2.gain.linearRampToValueAtTime(0.055, c.currentTime + 0.13);
+          g2.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.65);
+          o2.start(c.currentTime + 0.07); o2.stop(c.currentTime + 0.75);
+        } catch(e){}
+      }
+      introEl.classList.add('exit');
+      setTimeout(function() { introEl.style.display = 'none'; }, 850);
+    }
+
+    /* Auto-dismiss after 2.8s — visual animation completes at ~1.7s */
+    setTimeout(function() { dismissIntro(false); }, 2800);
+
+    /* Click/touch overlay to skip + trigger sound */
+    introEl.addEventListener('click', function() { dismissIntro(true); });
+    introEl.addEventListener('touchstart', function() { dismissIntro(true); }, { passive:true });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     1.  WEB AUDIO — clean UI sounds (no harsh mechanical tones)
+  ════════════════════════════════════════════════════════ */
+  var audioCtx = null;
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function playTone(freq, type, dur, vol, freqEnd) {
+    try {
+      var c = getCtx();
+      if (c.state === 'suspended') c.resume();
+      var o = c.createOscillator(), g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, c.currentTime);
+      if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, c.currentTime + dur);
+      g.gain.setValueAtTime(vol, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+      o.start(c.currentTime); o.stop(c.currentTime + dur);
+    } catch(e){}
+  }
+
+  /* Premium button tap — replaces all harsh click sounds.
+     Soft sine pop: barely noticeable, confirms the tap cleanly. */
+  function playTap() { playTone(880, 'sine', 0.055, 0.055, 520); }
+
+  /* Correct quiz answer — ascending chime */
+  function playCorrect() {
+    playTone(880,  'sine', 0.12, 0.09);
+    setTimeout(function(){ playTone(1320, 'sine', 0.15, 0.07); }, 90);
+  }
+
+  /* Wrong quiz answer — soft descending thud, not harsh */
+  function playWrong() { playTone(320, 'sine', 0.18, 0.09, 140); }
+
+  /* ── Tap on all interactive elements — minimal clean feedback ── */
+  document.addEventListener('click', function (e) {
+    /* Creatures handle their own sound + state — skip */
+    if (e.target.closest('.creature')) return;
+    /* Skip quiz options (have their own correct/wrong sounds) */
+    if (e.target.closest('.quiz-opt')) return;
+    /* Skip sit-btn (has own playTap in sit handler) */
+    if (e.target.closest('.sit-btn')) return;
+    /* Skip fviz-share (has own playTap in share handler) */
+    if (e.target.closest('.fviz-share')) return;
+    /* Play tap for any button, link, or [data-snd="click"] element */
+    var t = e.target.closest('a, button, [data-snd="click"]');
+    if (t) playTap();
+  });
+
+  /* ── Quiz audio feedback ── */
+  var qBox = document.getElementById('quizContent');
+  if (qBox) {
+    qBox.addEventListener('click', function (e) {
+      var btn = e.target.closest('.quiz-opt');
+      if (!btn || btn.disabled) return;
+      setTimeout(function () {
+        if (btn.classList.contains('quiz-opt--correct')) playCorrect();
+        else if (btn.classList.contains('quiz-opt--wrong')) playWrong();
+      }, 12);
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     2.  WEB SPEECH API — each creature speaks a real
+         fraud-awareness message in a deep male or female voice
+         when the user clicks it.
+  ════════════════════════════════════════════════════════ */
+
+  /* ═══════════════════════════════════════════════════════════════
+     CREATURE VOICE SYSTEM — 4 archetypes, deeply tuned
+
+     HOW VOICE WORKS IN BROWSERS:
+     • macOS Chrome  → uses built-in Apple voices (Rishi=Indian male,
+                        Veena=Indian female, Fred=robotic, Daniel=UK deep)
+     • Windows Chrome → uses Microsoft voices (Ravi=Indian male,
+                         Heera=Indian female, David/Mark=EN male)
+     • Android Chrome → uses Google TTS (en-IN available)
+     • All browsers fallback gracefully — no crashes, no silence
+
+     PITCH RULES (Web Speech API):
+     • 1.0  = voice's natural pitch — always sounds human
+     • 1.08 = slightly younger/brighter (female warmth)
+     • 0.90 = older, measured — still 100% clear (safe lower bound)
+     • NEVER below 0.88 — causes distortion on some systems
+
+     RATE RULES:
+     • 0.90 = natural conversation pace (young man)
+     • 0.82 = deliberate robotic cadence
+     • 0.75 = slow menacing villain
+     • 0.72 = wise elder — every word lands separately
+  ═══════════════════════════════════════════════════════════════ */
+
+  /*
+   * ARCHETYPE 1: YOUNG INDIAN MAN (Kavach)
+   * Like your IT-educated younger brother giving safety advice.
+   * Warm, direct, uses "uncle ji" naturally. NOT lecture-tone.
+   * Voice: Rishi (macOS Indian EN male) → Microsoft Ravi (Windows)
+   *        → Daniel (UK male) → any en-IN
+   */
+  /*
+   * ARCHETYPE 2: INDIAN WOMAN — THE BEE (Chetavani)
+   * Like your bhabhi or elder sister. Urgency + deep concern.
+   * Says "Suniye" naturally. Emotional but controlled.
+   * Voice: Veena (macOS Indian EN female) → Microsoft Heera (Windows)
+   *        → Karen (Australian female) → any en-IN
+   */
+  /*
+   * ARCHETYPE 3: ROBOTIC DATA BOT (Sankhya)
+   * Factual, slightly mechanical, but every number is clear.
+   * Fred (macOS) has a genuinely robotic quality. Slower rate.
+   * Voice: Fred (macOS robotic) → Albert (macOS quirky)
+   *        → Microsoft Mark (Windows) → Daniel → any male
+   */
+  /*
+   * ARCHETYPE 4: CRIMINAL DEVIL (Thag)
+   * Villain confessing his own trick. Deep, slow, deliberate.
+   * Daniel (UK male) sounds authoritative and slightly sinister.
+   * Pitch 0.90 = depth without distortion.
+   * Voice: Daniel (UK) → Microsoft David (Windows deep male)
+   *        → Rishi with pitch adj → any male fallback
+   */
+
+  var creatureData = {
+
+    /* KAVACH — Young Indian man, clear rules, like a younger brother talking to family */
+    'c-shield': {
+      arch   : 'young-male',
+      rate   : 0.88,
+      pitch  : 1.0,
+      voices : ['Rishi','Microsoft Ravi - English (India)','Microsoft Ravi',
+                'Google UK English Male','Daniel'],
+      lang   : 'en-IN',
+      msg    : 'Hello. I am Kavach, your digital protector. ' +
+               'I want to tell you three things that can save your family from being cheated. ' +
+               'First — your O T P is like your A T M pin. Never tell it to anyone. Not your bank. Not C B I. Not anyone. ' +
+               'Second — no police, no court, no C B I will ever call you on video to arrest you. If this happens to you or your family, put the phone down immediately. This is always a fraud. Always. ' +
+               'Third — if money is gone, call nineteen thirty right now. It is completely free. Day or night. They can freeze stolen money very quickly. ' +
+               'Please — tell your parents, your grandparents, your neighbours today. One conversation can protect an entire family.'
+    },
+
+    /* CHETAVANI — Indian woman, the bee, urgent concern, like an elder sister */
+    'c-bee': {
+      arch   : 'female',
+      rate   : 0.92,
+      pitch  : 1.08,
+      voices : ['Veena','Microsoft Heera - English (India)','Microsoft Heera',
+                'Google UK English Female','Karen','Moira'],
+      lang   : 'en-IN',
+      msg    : 'Please listen carefully. I am Chetavani — I warn you before it is too late. ' +
+               'I am very worried about you and your family. ' +
+               'If someone calls and says your Aadhaar card is in a crime case — do not panic. Their whole plan depends on your fear. ' +
+               'Our Prime Minister Modi said clearly on Mann Ki Baat — Digital Arrest does not exist in any Indian law. Not one law. Not anywhere. ' +
+               'No C B I officer calls on WhatsApp. No real court sends a video call. No government officer demands secret money transfers. Never. ' +
+               'The moment this happens — stay calm. Hang up. Then call nineteen thirty. It is free, any time. ' +
+               'And please — call your mother, your father, your grandparents right now. Today. Not tomorrow. ' +
+               'Because the fraudsters are calling elderly people every single day. Your family needs to hear this from you.'
+    },
+
+    /* SANKHYA — Robotic data bot, numbers spoken clearly, mechanical cadence */
+    'c-bot': {
+      arch   : 'robotic',
+      rate   : 0.80,
+      pitch  : 0.95,
+      voices : ['Fred','Albert','Ralph','Microsoft Mark','Microsoft Zira',
+                'Google UK English Male','Daniel','Rishi'],
+      lang   : 'en-US',
+      msg    : 'Loading. I am Sankhya. Numbers. ' +
+               'Year two thousand twenty four. Fraud losses in India: twenty two thousand, eight hundred crore rupees. ' +
+               'Complaints in twenty twenty five: twenty eight lakh. Every seven minutes, one Indian is cheated. ' +
+               'C F C F R M S saved five thousand, four hundred crore. ' +
+               'Sixty percent increase. Year on year. ' +
+               'Critical window: sixty minutes. ' +
+               'After sixty minutes, recovery chance drops to under ten percent. ' +
+               'Action required: Call one nine three zero. Immediately. Free. Do not wait. ' +
+               'Transmission complete.'
+    },
+
+    /* THAG — Criminal devil, slow, menacing, revealing his own script */
+    'c-ghost': {
+      arch   : 'villain',
+      rate   : 0.74,
+      pitch  : 0.90,
+      voices : ['Daniel','Microsoft David - English (United States)','Microsoft David',
+                'Alex','Google UK English Male','Rishi'],
+      lang   : 'en-GB',
+      msg    : 'I will tell you exactly how I cheat your family. ' +
+               'I call your father or mother. I say — your Aadhaar number is connected to a drug case. They panic. ' +
+               'I say — do not tell anyone. This is a secret government investigation. ' +
+               'Now they are completely alone. No one to ask. No one to call. They are terrified. ' +
+               'Then I say — transfer one lakh rupees to clear your name. ' +
+               'They transfer. I am sitting in Cambodia or Myanmar. The money reaches me in thirty seconds. ' +
+               'I have done this to ten thousand Indian families. Retired army officers. Professors. Doctors. High Court judges. They all believed me. ' +
+               'But now you know my full script. ' +
+               'Tell every person in your family today. Tell your elderly neighbours. Tell your parents right now. ' +
+               'Because I am calling someone in India at this very moment. Do not let it be your family.'
+    },
+
+    /* UMEED — Female counsellor, warm, calm, hopeful recovery voice */
+    'c-star': {
+      arch   : 'female',
+      rate   : 0.87,
+      pitch  : 1.06,
+      voices : ['Veena','Microsoft Heera - English (India)','Microsoft Heera',
+                'Karen','Samantha','Google UK English Female'],
+      lang   : 'en-IN',
+      msg    : 'Please hear me. I know this has been a very difficult time for you. ' +
+               'But I want you to know — if fraud has happened to you — you are not weak, and you are not stupid. ' +
+               'These criminals are professionals. They have fooled retired army officers, I A S officers, High Court judges, and professors from I I T. ' +
+               'You were targeted by experts. It is not your fault. ' +
+               'Now let us act together, quickly. ' +
+               'One — call nineteen thirty. It is free. Any time of day. No paperwork needed on the call. ' +
+               'Two — call your bank right now. Say: freeze my last outgoing transaction. It was fraud. ' +
+               'Three — save all screenshots and messages. File them at cybercrime dot gov dot in. ' +
+               'The C F C F R M S system has already recovered thousands of crores — but only within the first hour. ' +
+               'You are not alone. India is fighting back. Umeed hai. There is always hope.'
+    }
+  };
+
+  /* ─────────────────────────────────────────────────────────
+     VOICE LOADER — Chrome loads voices async; we use 3 strategies
+     to ensure voices are always available when creature is clicked
+  ───────────────────────────────────────────────────────── */
+  var cachedVoices = [];
+
+  function loadVoices() {
+    var v = window.speechSynthesis.getVoices();
+    if (v && v.length) cachedVoices = v;
+  }
+  loadVoices();
+  if ('onvoiceschanged' in window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  setTimeout(loadVoices, 200);
+  setTimeout(loadVoices, 800);
+
+  /* ─────────────────────────────────────────────────────────
+     VOICE PICKER — ordered priority list, exact name match first
+     Works on: macOS Chrome, Windows Chrome, Android, Safari
+  ───────────────────────────────────────────────────────── */
+  function pickVoice(data) {
+    var voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+    if (!voices || !voices.length) return null;
+
+    /* Step 1: Exact name match from priority list */
+    var names = data.voices || [];
+    for (var n = 0; n < names.length; n++) {
+      for (var v = 0; v < voices.length; v++) {
+        if (voices[v].name === names[n]) return voices[v];
+      }
+    }
+
+    /* Step 2: Partial name match */
+    for (var n2 = 0; n2 < names.length; n2++) {
+      for (var v2 = 0; v2 < voices.length; v2++) {
+        if (voices[v2].name.indexOf(names[n2]) !== -1) return voices[v2];
+      }
+    }
+
+    /* Step 3: Language match for Indian voices */
+    var preferLang = data.lang || 'en-IN';
+    for (var v3 = 0; v3 < voices.length; v3++) {
+      if (voices[v3].lang === preferLang) return voices[v3];
+    }
+
+    /* Step 4: Any English voice — never fail silently */
+    for (var v4 = 0; v4 < voices.length; v4++) {
+      if (voices[v4].lang.indexOf('en') === 0) return voices[v4];
+    }
+    return voices[0] || null;
+  }
+
+  /* Track which creature is currently speaking — enables toggle-stop */
+  var speakingKey = null;
+
+  function clearAllSpeakingUI() {
+    document.querySelectorAll('.creature').forEach(function(cr) {
+      cr.classList.remove('creature--speaking');
+      var tip = cr.querySelector('.creature-tip');
+      if (tip && tip.dataset.origText) tip.textContent = tip.dataset.origText;
+    });
+  }
+
+  function updateSpeakingUI(key, isSpeaking) {
+    var el = document.querySelector('.creature.' + key);
+    var tip = el ? el.querySelector('.creature-tip') : null;
+    if (isSpeaking) {
+      clearAllSpeakingUI();
+      if (el) {
+        el.classList.add('creature--speaking');
+        if (tip) {
+          if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
+          tip.textContent = '🔊 Click again to stop';
+        }
+      }
+    } else {
+      if (el) {
+        el.classList.remove('creature--speaking');
+        if (tip && tip.dataset.origText) tip.textContent = tip.dataset.origText;
+      }
+    }
+  }
+
+  function speakCreature(data, key) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+
+    var utter = new SpeechSynthesisUtterance(data.msg);
+    utter.lang   = 'en-IN';
+    utter.rate   = data.rate;
+    utter.pitch  = data.pitch;
+    utter.volume = 1;
+    var voice = pickVoice(data);
+    if (voice) utter.voice = voice;
+
+    speakingKey = key;
+    updateSpeakingUI(key, true);
+
+    /* Guard: only clear state if THIS utterance is still the active one,
+       so switching creatures doesn't corrupt the new creature's speaking state */
+    utter.onend   = function() { if (speakingKey === key) { speakingKey = null; updateSpeakingUI(key, false); } };
+    utter.onerror = function() { if (speakingKey === key) { speakingKey = null; updateSpeakingUI(key, false); } };
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  /* ── Creature click: TOGGLE — one click speaks, second click stops ── */
+  document.querySelectorAll('.creature').forEach(function (cr) {
+    var key = null;
+    ['c-shield','c-bee','c-bot','c-ghost','c-star'].forEach(function(k){
+      if (cr.classList.contains(k)) key = k;
+    });
+
+    cr.addEventListener('click', function (e) {
+      e.stopPropagation();
+
+      /* Bounce animation always */
+      cr.classList.remove('creature--bouncing');
+      void cr.offsetWidth;
+      cr.classList.add('creature--bouncing');
+      setTimeout(function () { cr.classList.remove('creature--bouncing'); }, 420);
+
+      /* If THIS creature is currently speaking — stop it */
+      if (speakingKey === key && window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        speakingKey = null;
+        updateSpeakingUI(key, false);
+        return;
+      }
+
+      /* Otherwise start speaking */
+      if (key && creatureData[key]) speakCreature(creatureData[key], key);
+    });
+  });
+
+  /* ════════════════════════════════════════════════════════
+     3.  READING PROGRESS BAR
+  ════════════════════════════════════════════════════════ */
+  var prog = document.getElementById('readProgress');
+  if (prog) {
+    window.addEventListener('scroll', function () {
+      var d = document.documentElement;
+      var s = d.scrollTop || document.body.scrollTop;
+      prog.style.width = (d.scrollHeight - d.clientHeight > 0 ? s/(d.scrollHeight - d.clientHeight)*100 : 0) + '%';
+    }, { passive: true });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     4.  SCROLL REVEAL
+  ════════════════════════════════════════════════════════ */
+  var revEls = document.querySelectorAll('.reveal');
+  if (revEls.length && window.IntersectionObserver) {
+    var revObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('revealed'); revObs.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    revEls.forEach(function (el) { revObs.observe(el); });
+  } else {
+    revEls.forEach(function (el) { el.classList.add('revealed'); });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     5.  SITUATION HELPER BUTTONS
+         "What Just Happened?" — select situation, show panel
+  ════════════════════════════════════════════════════════ */
+  document.querySelectorAll('.sit-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sit = btn.dataset.sit;
+      var panel = document.getElementById('sit-' + sit);
+      var wasActive = btn.classList.contains('active');
+
+      /* Close all */
+      document.querySelectorAll('.sit-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.sit-panel').forEach(function(p) { p.classList.remove('active'); });
+
+      /* Toggle: open panel if it wasn't open */
+      if (!wasActive && panel) {
+        btn.classList.add('active');
+        panel.classList.add('active');
+        setTimeout(function() {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
+      }
+      playTap();
+    });
+  });
+
+  /* ════════════════════════════════════════════════════════
+     6.  WHATSAPP SHARE BUTTONS — auto-generated on fraud cards
+         Each card gets a "Share Warning" button; copies a
+         pre-crafted family-safe WhatsApp message to clipboard.
+  ════════════════════════════════════════════════════════ */
+  var shareMessages = {
+    'UPI Fraud'        : '📱 UPI Fraud Alert from FraudShell: QR codes ONLY debit your account — they can never credit money. If anyone asks you to scan a QR code to receive money, it is a scam. Hang up immediately. Call 1930 (free, 24×7) if targeted. Stay safe! — fraudshell.in',
+    'OTP Scam'         : '🔒 OTP Safety Alert from FraudShell: No bank, RBI, or government body ever asks for your OTP. If anyone calls asking for your OTP — hang up immediately. Your OTP is like your ATM PIN. Sharing it gives full account access. Call 1930 (free). — fraudshell.in',
+    'Phishing'         : '🎣 Phishing Alert from FraudShell: Never click bank links sent via SMS or WhatsApp. Type the bank website address yourself every time. One fake letter in the URL (like sbi-update.com) can steal your login. When in doubt, call your bank directly. — fraudshell.in',
+    'Fake Loan Apps'   : '💰 Fake Loan App Alert from FraudShell: Any loan app that asks for access to your contacts or photos is a blackmail trap. Delete it immediately. Report at cybercrime.gov.in. No real lender charges a fee before giving a loan. Call 1930 (free). — fraudshell.in',
+    'Sextortion'       : '🚫 Important Safety Alert from FraudShell: If someone is threatening to share private photos — do NOT pay money. Payment guarantees they will ask for more. Call 1930 immediately — 100% confidential, no public disclosure, full legal protection under IT Act Sec 66E. — fraudshell.in',
+    'Investment Fraud' : '💼 Investment Fraud Alert from FraudShell: No genuine investment scheme guarantees returns above 12% per year. The profit shown in WhatsApp investment groups is fake software. Stop sending money immediately. Call 1930 (free, 24×7). — fraudshell.in'
+  };
+
+  document.querySelectorAll('.fviz-card').forEach(function(card) {
+    var titleEl = card.querySelector('.fviz-title');
+    if (!titleEl) return;
+    var title = titleEl.textContent.trim();
+    var msg = shareMessages[title] || 'Stay safe from digital fraud. If you are cheated — call 1930 (free, 24×7). — fraudshell.in';
+    var btn = document.createElement('button');
+    btn.className = 'fviz-share';
+    btn.setAttribute('aria-label', 'Copy ' + title + ' warning message to share with family');
+    btn.textContent = '📤 Share Warning';
+    btn.dataset.msg = msg;
+    card.appendChild(btn);
+  });
+
+  document.addEventListener('click', function(e) {
+    var shareBtn = e.target.closest('.fviz-share');
+    if (!shareBtn) return;
+    e.stopPropagation();
+    var msg = shareBtn.dataset.msg || '';
+    var orig = shareBtn.textContent;
+
+    function showCopied() {
+      shareBtn.textContent = '✅ Copied! Share on WhatsApp';
+      shareBtn.classList.add('copied');
+      setTimeout(function() {
+        shareBtn.textContent = orig;
+        shareBtn.classList.remove('copied');
+      }, 2400);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(msg).then(showCopied).catch(function() {
+        fallbackCopy(msg); showCopied();
+      });
+    } else {
+      fallbackCopy(msg); showCopied();
+    }
+    playTap();
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     7.  LIVE FRAUD COST COUNTER — ₹7,243 stolen per second
+         Based on: ₹22,848 Cr / year ÷ 31,536,000 seconds
+         Shows users visceral, real-time scale of the problem
+  ════════════════════════════════════════════════════════ */
+  var costEl = document.getElementById('costSince');
+  if (costEl) {
+    var pageOpenTime = Date.now();
+    var costPerSec = 7243; /* rupees per second — verified I4C 2024 data */
+
+    setInterval(function() {
+      var elapsed = (Date.now() - pageOpenTime) / 1000;
+      var total = Math.floor(costPerSec * elapsed);
+      var fmt;
+      if (total >= 10000000) {
+        fmt = '₹' + (total / 10000000).toFixed(2) + ' Cr';
+      } else if (total >= 100000) {
+        fmt = '₹' + (total / 100000).toFixed(2) + ' Lakh';
+      } else if (total >= 1000) {
+        fmt = '₹' + (total / 1000).toFixed(1) + ',000';
+      } else {
+        fmt = '₹' + total.toLocaleString('en-IN');
+      }
+      costEl.textContent = fmt;
+    }, 1000);
+  }
+
+});
+</script>
+</body>
+</html>
