@@ -241,7 +241,7 @@
     .fviz-sec{background:#fff;padding:5.5rem 2rem}
     .fviz-head{text-align:center;margin-bottom:2.8rem}
     .fviz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.35rem;max-width:1100px;margin:0 auto}
-    .fviz-card{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);transition:transform var(--ease),box-shadow var(--ease)}
+    .fviz-card{position:relative;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);transition:transform var(--ease),box-shadow var(--ease)}
     .fviz-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-xl)}
     .fviz-img{position:relative;aspect-ratio:3/2;overflow:hidden}
     .fviz-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
@@ -348,11 +348,11 @@
     /* ── RecoverStar (recovery section, gold) ── */
     .c-star{right:4%;bottom:22%}
     .c-star svg{width:70px;height:70px;filter:drop-shadow(0 6px 18px rgba(245,158,11,.55))}
-    .c-star{animation:c-star-spin 8s linear infinite}
+    .c-star{animation:c-star-spin 8s ease-in-out infinite}
     .star-eye{animation:eye-blink 3.5s 1s ease-in-out infinite}
 
     /* SHARED KEYFRAMES */
-    @keyframes c-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(2.5deg)}}
+    @keyframes c-float{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-13px) rotate(2deg)}}
     @keyframes c-buzz{
       0%{transform:translateY(-50%) translate(0,0) rotate(-3deg)}
       20%{transform:translateY(-50%) translate(8px,-10px) rotate(3deg)}
@@ -365,8 +365,8 @@
     @keyframes c-star-spin{0%{transform:translateY(0) rotate(0deg) scale(1)}50%{transform:translateY(-16px) rotate(180deg) scale(1.1)}100%{transform:translateY(0) rotate(360deg) scale(1)}}
 
     /* CLICK BOUNCE */
-    .creature--bouncing{animation:c-bounce .32s ease!important;pointer-events:none}
-    @keyframes c-bounce{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-12deg)}65%{transform:scale(.88) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+    .creature--bouncing{animation:c-bounce .38s cubic-bezier(.4,0,.2,1)!important;pointer-events:none}
+    @keyframes c-bounce{0%{transform:scale(1)}32%{transform:scale(1.16) rotate(-5deg)}66%{transform:scale(.95) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
 
     /* HOVER glow */
     .creature:hover svg{filter:brightness(1.2) drop-shadow(0 0 14px rgba(232,93,4,.7))!important;transition:filter .2s ease}
@@ -379,10 +379,10 @@
     /* ══════════════════════════════════════
        SCROLL REVEAL SYSTEM
     ══════════════════════════════════════ */
-    .reveal{opacity:0;transform:translateY(36px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
-    .reveal--left{transform:translateX(-36px)}
-    .reveal--right{transform:translateX(36px)}
-    .reveal--scale{transform:scale(.9)}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+    .reveal--left{transform:translateX(-22px)}
+    .reveal--right{transform:translateX(22px)}
+    .reveal--scale{transform:scale(.94)}
     .revealed{opacity:1!important;transform:none!important}
     .reveal--d1{transition-delay:.08s}
     .reveal--d2{transition-delay:.16s}
@@ -492,9 +492,8 @@
     .sit-btn{flex:0 1 auto;background:#fff;border:2px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;color:var(--navy);padding:.72rem 1.25rem;border-radius:14px;cursor:pointer;transition:all .22s ease;line-height:1.35;text-align:left;box-shadow:0 2px 6px rgba(0,0,0,.06)}
     .sit-btn:hover{border-color:var(--orange);background:var(--orange-pale);color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow-md)}
     .sit-btn.active{border-color:var(--maroon);background:var(--maroon);color:#fff;box-shadow:0 4px 18px rgba(123,29,29,.35);transform:translateY(-1px)}
-    .sit-panel{display:none;background:#fff;border-radius:var(--radius-lg);border-left:5px solid var(--maroon);padding:1.7rem 1.9rem;max-width:800px;margin:0 auto;box-shadow:var(--shadow-lg);animation:panel-in .28s ease both}
+    .sit-panel{display:none;background:#fff;border-radius:var(--radius-lg);border-left:5px solid var(--maroon);padding:1.7rem 1.9rem;max-width:800px;margin:0 auto;box-shadow:var(--shadow-lg);animation:panel-in .35s cubic-bezier(.4,0,.2,1) both}
     .sit-panel.active{display:block}
-    @keyframes panel-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
     .sit-panel__heading{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:800;color:var(--maroon);margin-bottom:1rem;line-height:1.4}
     .sit-steps{list-style:none;padding:0;margin:0 0 1.1rem;display:flex;flex-direction:column;gap:.65rem;counter-reset:sit-counter}
     .sit-steps li{font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text-primary);line-height:1.6;padding-left:2.2rem;position:relative;counter-increment:sit-counter}
@@ -522,14 +521,14 @@
       transition:opacity .72s cubic-bezier(.4,0,.2,1);
       pointer-events:auto;
       animation:intro-bg .72s .04s ease-in-out forwards,
-                intro-fallback-exit .8s 3.3s ease forwards;
+                intro-fallback-exit .8s 4.0s ease forwards;
     }
     .intro-overlay.exit{opacity:0;pointer-events:none}
 
-    /* Lines — draw on white canvas first, remain visible as bg darkens */
-    .intro-line-top,.intro-line-bot{height:1px;width:0;animation:intro-line .9s ease-out forwards}
-    .intro-line-top{background:#E85D04;animation-delay:.20s}
-    .intro-line-bot{background:rgba(232,93,4,.38);animation-delay:.40s}
+    /* Lines — draw only after bg is dark (bg darkens by 0.76s, lines start at 0.62s/0.75s) */
+    .intro-line-top,.intro-line-bot{height:1px;width:0;animation:intro-line .75s cubic-bezier(.4,0,.2,1) forwards}
+    .intro-line-top{background:#E85D04;animation-delay:.62s}
+    .intro-line-bot{background:rgba(232,93,4,.32);animation-delay:.75s}
 
     /* Shield — clean rise, no rotation, no scale bounce */
     .intro-shield{
@@ -556,23 +555,37 @@
     }
 
     /* ─── Azlan — the owner's signature ────────────────────
-       Playfair Display italic. Warm champagne gold.
-       Sized like a name, not a footnote.
-       A drawn underline seals it — like signing a letter.
+       Bold italic Playfair. Rich jewelry gold. Film-credit scale.
+       "by" whispered before the name. Drawn gradient underline seals it.
+       Psychology: confidence + warmth + unhurried presence.
     ──────────────────────────────────────────────────────── */
+    @keyframes intro-author-appear{
+      from{opacity:0;transform:translateY(14px) scale(.96)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes intro-author-line{to{width:100%}}
+
     .intro-author{
-      font-family:'Playfair Display',serif;font-style:italic;font-weight:400;
-      font-size:clamp(1.05rem,2.1vw,1.45rem);
-      color:rgba(232,210,162,.65);
-      letter-spacing:.07em;
-      opacity:0;transform:translateY(10px);
+      font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
+      font-size:clamp(1.2rem,2.5vw,1.75rem);
+      color:rgba(215,168,72,.94);
+      letter-spacing:.1em;
+      text-shadow:0 0 38px rgba(215,160,55,.3),0 2px 16px rgba(0,0,0,.4);
+      opacity:0;transform:translateY(14px) scale(.96);
       position:relative;display:inline-block;
-      animation:intro-rise .8s 1.88s ease-out forwards;
+      animation:intro-author-appear .92s 1.92s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .intro-by{
+      font-family:'DM Sans',sans-serif;font-style:normal;font-weight:400;
+      font-size:.52em;letter-spacing:.28em;text-transform:uppercase;
+      color:rgba(255,255,255,.22);vertical-align:.18em;
+      margin-right:.35em;text-shadow:none;
     }
     .intro-author::after{
-      content:'';position:absolute;left:0;bottom:-5px;
-      height:1px;width:0;background:rgba(232,93,4,.45);
-      animation:intro-line .6s 2.44s ease-out forwards;
+      content:'';position:absolute;left:0;bottom:-7px;
+      height:1.5px;width:0;
+      background:linear-gradient(90deg,rgba(232,93,4,.8) 0%,rgba(232,93,4,.55) 60%,rgba(232,93,4,.06) 100%);
+      animation:intro-author-line .72s 2.68s cubic-bezier(.4,0,.2,1) forwards;
     }
 
     /* Skip hint — barely a whisper, just a signal */
@@ -598,7 +611,6 @@
 
     /* Panel reveal: AP-style unhurried precision */
     @keyframes panel-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-    .sit-panel{animation-duration:.35s!important;animation-timing-function:cubic-bezier(.4,0,.2,1)!important}
 
     /* Creature tooltip: subtle backdrop blur for premium feel */
     .creature-tip{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(11,31,58,.88)!important}
@@ -613,7 +625,7 @@
   <p class="intro-title">Fraud<span>Shell</span></p>
   <div class="intro-line-bot" aria-hidden="true"></div>
   <p class="intro-tag">India's Frontline Against Digital Fraud</p>
-  <p class="intro-author">Azlan</p>
+  <p class="intro-author"><span class="intro-by">by</span> Azlan</p>
   <span class="intro-skip">Tap to skip</span>
 </div>
 
@@ -1171,37 +1183,37 @@
     </div>
     <div class="vid-layout">
       <div class="vid-main-card">
-        <a class="vid-thumb-a" href="https://www.youtube.com/results?search_query=india+cyber+crime+digital+arrest+awareness+MHA+I4C+1930" target="_blank" rel="noopener" aria-label="Watch official MHA cyber crime video">
+        <a class="vid-thumb-a" href="https://www.youtube.com/watch?v=CTw6r_G97_g" target="_blank" rel="noopener" aria-label="Watch official I4C Annual Press Conference — MHA India 2024">
           <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80&fit=crop" alt="India cyber crime awareness data" loading="lazy">
           <div class="vid-thumb-a__over">
             <div class="vid-play-lg" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
         </a>
         <div class="vid-main-meta">
-          <span class="vid-badge vid-badge--orange">📺 Ministry of Home Affairs · Official</span>
-          <h3 class="vid-main-title">Cyber Crime Awareness — MHA India · How Fraudsters Target You</h3>
-          <p class="vid-main-desc">The Ministry of Home Affairs and I4C document exact fraud tactics used against Indian families. Know the scripts criminals use before they use them on you or your family.</p>
+          <span class="vid-badge vid-badge--orange">📺 I4C Annual Press Conference · MHA India · 2024</span>
+          <h3 class="vid-main-title">I4C Press Conference — Real Cyber Crime Data for India 2024</h3>
+          <p class="vid-main-desc">The Indian Cyber Crime Coordination Centre (I4C) releases annual data on fraud losses, FIRs, and government action. Verified numbers — how bad it really is and what the government is doing.</p>
         </div>
       </div>
       <div class="vid-aside">
         <div class="vid-sm-card">
-          <a class="vid-sm-thumb" href="https://www.youtube.com/results?search_query=UPI+QR+code+scam+india+2024+how+to+protect" target="_blank" rel="noopener" aria-label="UPI QR code fraud awareness">
-            <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="UPI QR code fraud India" loading="lazy">
+          <a class="vid-sm-thumb" href="https://www.youtube.com/watch?v=UasqK0JA6co" target="_blank" rel="noopener" aria-label="NPCI Official — UPI Fraud Awareness Video">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=85&fit=crop" alt="UPI QR code fraud India" loading="lazy">
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
-            <span class="vid-badge vid-badge--maroon">🔴 UPI Fraud</span>
-            <p class="vid-sm-title">QR Code Scam — Why Scanning Empties Your Account</p>
+            <span class="vid-badge vid-badge--maroon">🔴 NPCI Official · UPI Fraud</span>
+            <p class="vid-sm-title">UPI Fraud Awareness — Official Video by NPCI India</p>
           </div>
         </div>
         <div class="vid-sm-card">
-          <a class="vid-sm-thumb" href="https://www.youtube.com/results?search_query=digital+arrest+scam+india+awareness+CBI+police+2024" target="_blank" rel="noopener" aria-label="Digital arrest scam awareness">
-            <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Digital arrest scam India" loading="lazy">
+          <a class="vid-sm-thumb" href="https://www.youtube.com/watch?v=ENjcdVL_dY0" target="_blank" rel="noopener" aria-label="PM Modi warns of Digital Arrest scam — India awareness video">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=85&fit=crop" alt="Digital arrest scam India" loading="lazy">
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
-            <span class="vid-badge vid-badge--navy">🚔 Digital Arrest</span>
-            <p class="vid-sm-title">What Is a "Digital Arrest" Scam — How to Escape It</p>
+            <span class="vid-badge vid-badge--navy">🚔 PM Modi · Digital Arrest Warning</span>
+            <p class="vid-sm-title">PM Modi Personally Warns Every Indian About "Digital Arrest" Scam</p>
           </div>
         </div>
         <div class="vid-cta-box">
@@ -1421,7 +1433,7 @@
     <div class="fviz-grid">
       <div class="fviz-card fviz-card--orange reveal reveal--d1">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="UPI fraud — phone payment scam" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=700&q=85&fit=crop" alt="UPI fraud — phone payment scam" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">67% of all cases · NPCI</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">📱</span>
@@ -1430,7 +1442,7 @@
       </div>
       <div class="fviz-card fviz-card--navy reveal reveal--d2">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Indian man receiving suspicious call" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&fit=crop" alt="Indian man receiving suspicious call" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">12% of cases · I4C</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🔒</span>
@@ -1439,7 +1451,7 @@
       </div>
       <div class="fviz-card fviz-card--maroon reveal reveal--d3">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Phishing — fake link on a dark screen" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=700&q=85&fit=crop" alt="Phishing — fake link on a dark screen" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">9% of cases · CERT-In</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🎣</span>
@@ -1448,7 +1460,7 @@
       </div>
       <div class="fviz-card fviz-card--olive reveal reveal--d1">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Person stressed about fake loan app" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1596178060810-72f53ce9a65c?w=700&q=85&fit=crop" alt="Person stressed about fake loan app" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Rising fastest · 2024</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💰</span>
@@ -1457,7 +1469,7 @@
       </div>
       <div class="fviz-card fviz-card--maroon reveal reveal--d2">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Sextortion — privacy violation cybercrime" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=85&fit=crop" alt="Sextortion — privacy violation cybercrime" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">+300% since 2022</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🚫</span>
@@ -1466,7 +1478,7 @@
       </div>
       <div class="fviz-card fviz-card--orange reveal reveal--d3">
         <div class="fviz-img">
-          <img src="https://images\.unsplash\.com/\1?w=700&q=80&fit=crop" alt="Investment fraud app India" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=700&q=85&fit=crop" alt="Investment fraud app India" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">76% of losses · 2025</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💼</span>
@@ -1629,8 +1641,8 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(function() { introEl.style.display = 'none'; }, 850);
     }
 
-    /* Auto-dismiss after 2.8s — visual animation completes at ~1.7s */
-    setTimeout(function() { dismissIntro(false); }, 2800);
+    /* Auto-dismiss at 3.5s — underline animation ends at 3.04s, give 460ms to breathe */
+    setTimeout(function() { dismissIntro(false); }, 3500);
 
     /* Click/touch overlay to skip + trigger sound */
     introEl.addEventListener('click', function() { dismissIntro(true); });
@@ -1798,23 +1810,23 @@ document.addEventListener('DOMContentLoaded', function () {
                'Because the fraudsters are calling elderly people every single day. Your family needs to hear this from you.'
     },
 
-    /* SANKHYA — Robotic data bot, numbers spoken clearly, mechanical cadence */
+    /* SANKHYA — Robotic data bot, clear mechanical cadence, each number lands separately */
     'c-bot': {
       arch   : 'robotic',
-      rate   : 0.80,
-      pitch  : 0.95,
-      voices : ['Fred','Albert','Ralph','Microsoft Mark','Microsoft Zira',
+      rate   : 0.78,
+      pitch  : 0.92,
+      voices : ['Fred','Albert','Microsoft Mark - English (United States)','Microsoft Mark',
                 'Google UK English Male','Daniel','Rishi'],
       lang   : 'en-US',
-      msg    : 'Loading. I am Sankhya. Numbers. ' +
-               'Year two thousand twenty four. Fraud losses in India: twenty two thousand, eight hundred crore rupees. ' +
-               'Complaints in twenty twenty five: twenty eight lakh. Every seven minutes, one Indian is cheated. ' +
-               'C F C F R M S saved five thousand, four hundred crore. ' +
-               'Sixty percent increase. Year on year. ' +
-               'Critical window: sixty minutes. ' +
-               'After sixty minutes, recovery chance drops to under ten percent. ' +
-               'Action required: Call one nine three zero. Immediately. Free. Do not wait. ' +
-               'Transmission complete.'
+      msg    : 'I am Sankhya. Data report begins. ' +
+               'India. Year twenty twenty four. Total fraud losses: twenty two thousand eight hundred crore rupees. ' +
+               'Fraud complaints in twenty twenty five: twenty eight lakh. That is two million eight hundred thousand complaints. ' +
+               'One Indian is cheated every seven minutes. ' +
+               'Government recovery system — C F C F R M S — has saved five thousand four hundred eighty nine crore rupees. ' +
+               'Year on year increase in fraud: sixty percent. ' +
+               'Recovery window after fraud: sixty minutes maximum. After sixty minutes — recovery probability falls below ten percent. ' +
+               'Required action: Call one nine three zero. It is free. Available twenty four hours. Do not wait. ' +
+               'Data report complete.'
     },
 
     /* THAG — Criminal devil, slow, menacing, revealing his own script */
@@ -1947,7 +1959,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.speechSynthesis.cancel();
 
     var utter = new SpeechSynthesisUtterance(data.msg);
-    utter.lang   = 'en-IN';
+    utter.lang   = data.lang || 'en-IN';
     utter.rate   = data.rate;
     utter.pitch  = data.pitch;
     utter.volume = 1;
