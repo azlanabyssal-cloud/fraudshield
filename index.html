@@ -658,14 +658,13 @@
        MOBILE REFINEMENTS — spacing, performance, overflow
     ══════════════════════════════════════════════════════ */
 
-    /* Section vertical padding: 5.5rem = 88px top+bottom per side on phone — too large */
+    /* Section vertical padding: 5.5rem = 88px per side on phone — reduce to breathable 4rem */
     @media(max-width:640px){
-      .funnel-sec,.vid-sec,.cases-sec,.recovery-sec,.fviz-sec,.news-sec{padding:3rem 1.2rem}
-      .hotspot-sec{padding:3rem 1.2rem}
-      .sit-sec{padding:2.5rem 1.2rem}
-      .law-strip{padding:2rem 1.2rem}
+      .funnel-sec,.vid-sec,.cases-sec,.recovery-sec,.fviz-sec,.news-sec{padding:4rem 1.5rem}
+      .hotspot-sec{padding:4rem 1.5rem}
+      .sit-sec{padding:3rem 1.5rem}
+      .law-strip{padding:2.5rem 1.5rem}
       .law-strip__inner{gap:1rem}
-      .fviz-head,.vid-head,.cases-head,.recovery-head,.news-head{margin-bottom:1.8rem}
     }
 
     /* iOS-safe horizontal overflow clamp on sections with overflow:visible */
