@@ -314,26 +314,6 @@
     ══════════════════════════════════════════════ */
     .creature{position:absolute;pointer-events:auto;z-index:10;user-select:none;cursor:pointer;will-change:transform;touch-action:manipulation;outline:none}
     .creature svg{display:block;overflow:visible}
-    @media(max-width:900px){
-      /* ── Creatures: visible on mobile, small + corner-anchored ── */
-      .creature{display:block!important;z-index:6}
-      .creature svg{width:52px!important;height:auto!important}
-      /* Arm/wing animations use pixel transform-origin tuned for desktop SVG size —
-         disable on mobile to avoid wrong pivot at scaled size */
-      .arm-l,.arm-r,.wing-l,.wing-r{animation:none!important;transform:none!important}
-      /* Override all desktop positions + translateY(-50%) centering tricks */
-      .c-shield,.c-bee,.c-bot,.c-ghost,.c-star,.c-dost{
-        transform:none!important;
-        animation:c-float-mobile 3.8s ease-in-out infinite!important
-      }
-      /* Corner positions per section — never over text */
-      .c-shield{right:2%;bottom:4%;left:auto;top:auto}
-      .c-dost{right:calc(2% + 58px);bottom:4%;left:auto;top:auto}
-      .c-bee{right:3%;bottom:4%;left:auto;top:auto}
-      .c-bot{right:3%;bottom:3%;left:auto;top:auto}
-      .c-ghost{right:3%;top:5%;left:auto;bottom:auto}
-      .c-star{right:3%;bottom:5%;left:auto;top:auto}
-    }
 
     /* ── ShieldPal (hero, orange) ── */
     .c-shield{right:5%;bottom:14%}
@@ -402,6 +382,27 @@
     /* CLICK BOUNCE */
     .creature--bouncing{animation:c-bounce .38s cubic-bezier(.4,0,.2,1)!important;pointer-events:none}
     @keyframes c-bounce{0%{transform:scale(1)}32%{transform:scale(1.16) rotate(-5deg)}66%{transform:scale(.95) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
+
+    /* ── MOBILE CREATURE OVERRIDES — placed AFTER all desktop rules so these win ── */
+    @media(max-width:900px){
+      .creature{display:block!important;z-index:6}
+      .creature svg{width:52px!important;height:auto!important}
+      /* Arm/wing pivot points are tuned for desktop SVG size — disable on mobile */
+      .arm-l,.arm-r,.wing-l,.wing-r{animation:none!important;transform:none!important}
+      /* Reset all desktop transforms (translateY centering tricks) + use gentle float */
+      .c-shield,.c-bee,.c-bot,.c-ghost,.c-star,.c-dost{
+        transform:none!important;
+        animation:c-float-mobile 3.8s ease-in-out infinite!important
+      }
+      /* Hero creatures: bottom:10% clears the 60px fixed SOS bar on mobile */
+      .c-shield{right:2%;bottom:10%;left:auto;top:auto}
+      .c-dost{right:calc(2% + 58px);bottom:10%;left:auto;top:auto}
+      /* Section creatures: corner-anchored, never over text */
+      .c-bee{right:3%;bottom:5%;left:auto;top:auto}
+      .c-bot{right:3%;bottom:5%;left:auto;top:auto}
+      .c-ghost{right:3%;top:5%;left:auto;bottom:auto}
+      .c-star{right:3%;bottom:5%;left:auto;top:auto}
+    }
 
     /* HOVER glow */
     .creature:hover svg{filter:brightness(1.2) drop-shadow(0 0 14px rgba(232,93,4,.7))!important;transition:filter .2s ease}
@@ -2115,8 +2116,9 @@ document.addEventListener('DOMContentLoaded', function () {
       cr.classList.add('creature--bouncing');
       setTimeout(function () { cr.classList.remove('creature--bouncing'); }, 420);
 
-      if (speakingKey === key && window.speechSynthesis && window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
+      /* iOS Safari: speechSynthesis.speaking is unreliable — check speakingKey only */
+      if (speakingKey === key) {
+        window.speechSynthesis && window.speechSynthesis.cancel();
         speakingKey = null;
         updateSpeakingUI(key, false);
         return;
