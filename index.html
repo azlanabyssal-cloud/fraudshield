@@ -59,7 +59,10 @@
     ══════════════════════════════════════════════════════ */
 
     /* ── CRITICAL GLOBAL RESETS ── */
-    html,body{overflow-x:hidden}
+    /* overflow-x:clip on html — unlike hidden, does NOT create a scroll container.
+       Prevents Android layout-width shrink that html+body hidden together causes. */
+    html{overflow-x:clip}
+    body{overflow-x:hidden;position:relative}
     /* Remove iOS blue flash on tap for all interactive elements */
     *{-webkit-tap-highlight-color:transparent}
     a,button,[role=button],[tabindex]{touch-action:manipulation}
