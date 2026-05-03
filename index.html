@@ -2035,11 +2035,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   ];
 
-  /* Tooltips: idle vs speaking vs stopped-mid */
+  /* kavachIdleTips[N] = what to show AFTER step N completes (= hint for next step) */
   var kavachIdleTips  = [null,
-    '🇬🇧 Tap for English',
-    '🇮🇳 Tap for हिंदी',
-    '🔤 Tap for Telugu'
+    '🇮🇳 Tap for हिंदी',   /* after English: next is Hindi  */
+    '🔤 Tap for Telugu',    /* after Hindi: next is Telugu  */
+    null                    /* after Telugu: restore original */
   ];
   var kavachActiveTips = [null,
     '🔊 English — tap to stop',
@@ -2051,11 +2051,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var el  = document.querySelector('.creature.c-shield');
     var tip = el ? el.querySelector('.creature-tip') : null;
     if (!tip) return;
-    if (step === 0) {
-      if (tip.dataset.origText) tip.textContent = tip.dataset.origText;
+    if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
+    if (speaking) {
+      tip.textContent = kavachActiveTips[step];
     } else {
-      if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
-      tip.textContent = speaking ? kavachActiveTips[step] : kavachIdleTips[step];
+      var idle = kavachIdleTips[step];
+      tip.textContent = (idle != null) ? idle : tip.dataset.origText;
     }
   }
 
@@ -2069,14 +2070,7 @@ document.addEventListener('DOMContentLoaded', function () {
       window.speechSynthesis.cancel();
       speakingKey = null;
       if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      /* After stop: if Telugu was playing, full reset; else show "tap for next" */
-      if (kavachStep === 3) {
-        kavachStep = 0;
-        setKavachTip(0, false);
-      } else {
-        /* keep kavachStep — next click plays next language */
-        setKavachTip(kavachStep, false);
-      }
+      setKavachTip(kavachStep, false); /* keep step — next click advances to next lang */
       return;
     }
 
@@ -2108,14 +2102,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (speakingKey !== 'c-shield') return;
       speakingKey = null;
       if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      if (capturedStep === 3) {
-        /* Telugu finished naturally — full reset */
-        kavachStep = 0;
-        setKavachTip(0, false);
-      } else {
-        /* EN/HI finished naturally — show "tap for next language" */
-        setKavachTip(capturedStep, false);
-      }
+      setKavachTip(capturedStep, false); /* keep step; next click advances */
     };
     utter.onerror = function() {
       speakingKey = null;
