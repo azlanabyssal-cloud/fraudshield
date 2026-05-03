@@ -734,7 +734,7 @@
     </div>
   </div>
 
-  <!-- CREATURE 1: Kavach (कवच = shield/armour in Hindi) — guardian of the hero -->
+  <!-- Dost (दोस्त = friend) — Hindi guardian, hero section left -->
   <div class="creature c-dost" role="img" aria-label="Dost — Hindi-speaking digital friend mascot" data-snd="boing">
     <div class="creature-tip">दोस्त 🤝 — हिंदी में सुनें</div>
     <svg viewBox="0 0 80 96" aria-hidden="true">
@@ -815,7 +815,7 @@
 </div>
 
 <!-- SITUATION HELPER — flagship "What Just Happened?" tool (better than competitor's basic form) -->
-<section class="sit-sec" aria-label="Immediate help based on your situation">
+<section id="sit-sec" class="sit-sec" aria-label="Immediate help based on your situation">
   <div class="container">
     <div class="sit-head">
       <p class="sit-head__kicker">🚨 Immediate Help — Right Now</p>
@@ -1681,7 +1681,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* Auto-dismiss at 3.5s — underline animation ends at 3.04s, give 460ms to breathe */
-    setTimeout(function() { dismissIntro(false); }, 3500);
+    setTimeout(function() { dismissIntro(false); }, 3900);
 
     /* Click/touch overlay to skip + trigger sound */
     introEl.addEventListener('click', function() { dismissIntro(true); });
