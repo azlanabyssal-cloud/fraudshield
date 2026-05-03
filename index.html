@@ -345,6 +345,13 @@
     .c-ghost svg{width:64px;height:80px;filter:drop-shadow(0 8px 20px rgba(123,29,29,.7))}
     .c-ghost{animation:c-haunt 4.2s ease-in-out infinite}
 
+    /* ── DostPal (hero, left side, forest-green) ── */
+    .c-dost{left:3%;bottom:14%}
+    .c-dost svg{width:82px;height:98px;filter:drop-shadow(0 8px 22px rgba(27,122,79,.5))}
+    .c-dost{animation:c-dost-bob 4.3s ease-in-out infinite}
+    .eye-white-d{animation:eye-blink 5.2s 1.4s ease-in-out infinite}
+    @keyframes c-dost-bob{0%,100%{transform:translateY(0) rotate(1.5deg)}50%{transform:translateY(-12px) rotate(-1.5deg)}}
+
     /* ── RecoverStar (recovery section, gold) ── */
     .c-star{right:4%;bottom:22%}
     .c-star svg{width:70px;height:70px;filter:drop-shadow(0 6px 18px rgba(245,158,11,.55))}
@@ -728,6 +735,38 @@
   </div>
 
   <!-- CREATURE 1: Kavach (कवच = shield/armour in Hindi) — guardian of the hero -->
+  <div class="creature c-dost" role="img" aria-label="Dost — Hindi-speaking digital friend mascot" data-snd="boing">
+    <div class="creature-tip">दोस्त 🤝 — हिंदी में सुनें</div>
+    <svg viewBox="0 0 80 96" aria-hidden="true">
+      <!-- Round trustworthy body -->
+      <path d="M40 8 C17 8 10 28 10 48 L10 74 Q10 94 40 94 Q70 94 70 74 L70 48 C70 28 63 8 40 8Z" fill="#1b7a4f"/>
+      <!-- Belly soft glow -->
+      <ellipse cx="40" cy="66" rx="17" ry="20" fill="#27a862" opacity="0.28"/>
+      <!-- Top head dark dome -->
+      <ellipse cx="40" cy="20" rx="20" ry="14" fill="#145e3b" opacity="0.45"/>
+      <!-- Eyes whites -->
+      <circle cx="28" cy="46" r="9.5" fill="white" class="eye-white-d"/>
+      <circle cx="52" cy="46" r="9.5" fill="white" class="eye-white-d"/>
+      <!-- Pupils -->
+      <circle cx="29.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
+      <circle cx="53.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
+      <!-- Eye sparkle -->
+      <circle cx="31.5" cy="45.5" r="1.7" fill="white"/>
+      <circle cx="55.5" cy="45.5" r="1.7" fill="white"/>
+      <!-- Rosy cheeks -->
+      <ellipse cx="15" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
+      <ellipse cx="65" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
+      <!-- Warm smile -->
+      <path d="M25 63 Q40 76 55 63" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- Arms -->
+      <ellipse cx="3" cy="62" rx="6" ry="3" fill="#115e3a"/>
+      <ellipse cx="77" cy="62" rx="6" ry="3" fill="#115e3a"/>
+      <!-- Trust badge — small diamond on chest -->
+      <path d="M40 28 L46 36 L40 44 L34 36Z" fill="white" opacity="0.44"/>
+      <path d="M40 32 L44 36 L40 40 L36 36Z" fill="#1b7a4f" opacity="0.55"/>
+    </svg>
+  </div>
+
   <div class="creature c-shield" role="img" aria-label="Kavach — your digital armour mascot" data-snd="boing">
     <div class="creature-tip">Kavach! 🛡️ मैं आपकी रक्षा करता हूँ — I protect you</div>
     <svg viewBox="0 0 96 112" aria-hidden="true">
@@ -1849,6 +1888,21 @@ document.addEventListener('DOMContentLoaded', function () {
                'Because I am calling someone in India at this very moment. Do not let it be your family.'
     },
 
+    /* DOST — Friendly Hindi-speaking guardian, warm trustworthy male voice */
+    'c-dost': {
+      arch   : 'friendly-male',
+      rate   : 0.90,
+      pitch  : 1.0,
+      voices : ['Microsoft Hemant - Hindi (India)','Microsoft Hemant',
+                'Lekha','Microsoft Swara - Hindi (India)','Microsoft Swara','Google हिन्दी'],
+      lang   : 'hi-IN',
+      msg    : 'नमस्ते। मैं दोस्त हूँ — आपका डिजिटल दोस्त। ' +
+               'पहली बात — अपना ओटीपी कभी किसी को मत बताएं। बैंक हो, पुलिस हो, या कोई सरकारी अफसर हो — कोई भी ओटीपी नहीं माँगता। जो माँगे, वो ठग है। ' +
+               'दूसरी बात — वीडियो कॉल पर कोई गिरफ्तारी नहीं होती। यह डिजिटल अरेस्ट का धोखा है। प्रधानमंत्री मोदी जी ने खुद यह बात कही है। ' +
+               'तीसरी बात — अगर पैसे चले गए, तो घबराएं नहीं। तुरंत उन्नीस तीस पर कॉल करें। बिल्कुल मुफ्त। चौबीस घंटे। ' +
+               'यह नंबर याद रखें — उन्नीस तीस। और आज ही अपने घर में सबको बताएं।'
+    },
+
     /* UMEED — Female counsellor, warm, calm, hopeful recovery voice */
     'c-star': {
       arch   : 'female',
@@ -1926,11 +1980,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Track which creature is currently speaking — enables toggle-stop */
   var speakingKey = null;
 
-  /* Kavach 3-language cycle: 0=idle, 1=English, 2=Hindi, 3=Telugu */
-  var kavachStep = 0;
-
   function clearAllSpeakingUI() {
-    kavachStep = 0; /* reset Kavach cycle whenever any creature state is cleared */
     document.querySelectorAll('.creature').forEach(function(cr) {
       cr.classList.remove('creature--speaking');
       var tip = cr.querySelector('.creature-tip');
@@ -1981,162 +2031,22 @@ document.addEventListener('DOMContentLoaded', function () {
     window.speechSynthesis.speak(utter);
   }
 
-  /* ══════════════════════════════════════════════════════════
-     KAVACH 3-LANGUAGE SYSTEM — exact behaviour:
-       • If NOT speaking → advance to next language and play
-       • If SPEAKING     → stop immediately (click = stop)
-       Cycle: idle → English → idle → Hindi → idle → Telugu → idle → reset
-       "1930" repeated throughout every message for memorability.
-  ══════════════════════════════════════════════════════════ */
-
-  var kavachLangs = [
-    null, /* index 0 unused */
-
-    /* ── Step 1: English ── */
-    {
-      lang  : 'en-IN',
-      rate  : 0.95,
-      pitch : 1.0,
-      voices: ['Rishi','Microsoft Ravi - English (India)','Microsoft Ravi',
-               'Google UK English Male','Daniel'],
-      msg   : 'I am Kavach — your digital guard. ' +
-              'Never share your OTP with anyone. No bank, no police, no government ever asks for it. ' +
-              'No one can arrest you on a video call — that is Digital Arrest fraud. ' +
-              'If money is stolen, call 1930 immediately. Free. 24 hours. ' +
-              'Save this number now — 1930.'
-    },
-
-    /* ── Step 2: Hindi ── */
-    {
-      lang  : 'hi-IN',
-      rate  : 0.93,
-      pitch : 1.0,
-      voices: ['Microsoft Hemant - Hindi (India)','Microsoft Hemant',
-               'Lekha','Microsoft Swara - Hindi (India)','Microsoft Swara','Google हिन्दी'],
-      msg   : 'मैं कवच हूँ — आपका डिजिटल रक्षक। ' +
-              'अपना ओटीपी कभी किसी को मत दें। बैंक, पुलिस, सरकार — कोई भी ओटीपी नहीं माँगता। ' +
-              'वीडियो कॉल पर कोई गिरफ्तारी नहीं होती — यह डिजिटल अरेस्ट धोखा है। ' +
-              'पैसे गए तो तुरंत उन्नीस तीस पर कॉल करें। मुफ्त। चौबीस घंटे। ' +
-              'यह नंबर अभी सेव करें — उन्नीस तीस।'
-    },
-
-    /* ── Step 3: Telugu ── */
-    {
-      lang  : 'te-IN',
-      rate  : 0.93,
-      pitch : 1.0,
-      voices: ['Google తెలుగు','Microsoft Vishwa','te-IN','te',
-               'Rishi','Microsoft Ravi - English (India)','Daniel'],
-      msg   : 'నేను కవచ్ — మీ డిజిటల్ రక్షకుడిని. ' +
-              'మీ ఓటీపీ ఎవరికీ చెప్పకండి. బ్యాంకు, పోలీసు, ప్రభుత్వం — ఎవరూ ఓటీపీ అడగరు. ' +
-              'వీడియో కాల్‌లో అరెస్ట్ అంటే మోసం — దాన్ని డిజిటల్ అరెస్ట్ అంటారు. ' +
-              'డబ్బు పోతే వెంటనే పంతొమ్మిది ముప్పైకి కాల్ చేయండి. ఉచితం. ఎప్పుడైనా. ' +
-              'ఇప్పుడే సేవ్ చేయండి — పంతొమ్మిది ముప్పై.'
-    }
-  ];
-
-  /* kavachIdleTips[N] = what to show AFTER step N completes (= hint for next step) */
-  var kavachIdleTips  = [null,
-    '🇮🇳 Tap for हिंदी',   /* after English: next is Hindi  */
-    '🔤 Tap for Telugu',    /* after Hindi: next is Telugu  */
-    null                    /* after Telugu: restore original */
-  ];
-  var kavachActiveTips = [null,
-    '🔊 English — tap to stop',
-    '🔊 हिंदी — tap to stop',
-    '🔊 Telugu — tap to stop'
-  ];
-
-  function setKavachTip(step, speaking) {
-    var el  = document.querySelector('.creature.c-shield');
-    var tip = el ? el.querySelector('.creature-tip') : null;
-    if (!tip) return;
-    if (!tip.dataset.origText) tip.dataset.origText = tip.textContent;
-    if (speaking) {
-      tip.textContent = kavachActiveTips[step];
-    } else {
-      var idle = kavachIdleTips[step];
-      tip.textContent = (idle != null) ? idle : tip.dataset.origText;
-    }
-  }
-
-  function handleKavachClick() {
-    if (!window.speechSynthesis) return;
-
-    var shieldEl = document.querySelector('.creature.c-shield');
-
-    /* ── If Kavach is currently speaking → STOP immediately ── */
-    if (speakingKey === 'c-shield' && window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-      speakingKey = null;
-      if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      setKavachTip(kavachStep, false); /* keep step — next click advances to next lang */
-      return;
-    }
-
-    /* ── Not speaking → advance to next language ── */
-    kavachStep++;
-    if (kavachStep > 3) {
-      /* Cycled past Telugu — full reset */
-      kavachStep = 0;
-      setKavachTip(0, false);
-      return;
-    }
-
-    var d = kavachLangs[kavachStep];
-    var utter = new SpeechSynthesisUtterance(d.msg);
-    utter.lang   = d.lang;
-    utter.rate   = d.rate;
-    utter.pitch  = d.pitch;
-    utter.volume = 1;
-    var voice = pickVoice(d);
-    if (voice) utter.voice = voice;
-
-    speakingKey = 'c-shield';
-    if (shieldEl) shieldEl.classList.add('creature--speaking');
-    setKavachTip(kavachStep, true);
-
-    var capturedStep = kavachStep;
-
-    utter.onend = function() {
-      if (speakingKey !== 'c-shield') return;
-      speakingKey = null;
-      if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      setKavachTip(capturedStep, false); /* keep step; next click advances */
-    };
-    utter.onerror = function() {
-      speakingKey = null;
-      kavachStep  = 0;
-      if (shieldEl) shieldEl.classList.remove('creature--speaking');
-      setKavachTip(0, false);
-    };
-
-    window.speechSynthesis.speak(utter);
-  }
 
   /* ── Creature click handler ── */
   document.querySelectorAll('.creature').forEach(function (cr) {
     var key = null;
-    ['c-shield','c-bee','c-bot','c-ghost','c-star'].forEach(function(k){
+    ['c-shield','c-bee','c-bot','c-ghost','c-star','c-dost'].forEach(function(k){
       if (cr.classList.contains(k)) key = k;
     });
 
     cr.addEventListener('click', function (e) {
       e.stopPropagation();
 
-      /* Bounce animation always */
       cr.classList.remove('creature--bouncing');
       void cr.offsetWidth;
       cr.classList.add('creature--bouncing');
       setTimeout(function () { cr.classList.remove('creature--bouncing'); }, 420);
 
-      /* ── Kavach: 3-language cycle ── */
-      if (key === 'c-shield') {
-        handleKavachClick();
-        return;
-      }
-
-      /* ── All other creatures: single toggle (start / stop) ── */
       if (speakingKey === key && window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         speakingKey = null;
