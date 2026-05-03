@@ -318,10 +318,10 @@
         animation:c-float-mobile 3.8s ease-in-out infinite!important
       }
       /* Corner positions per section — never over text */
-      .c-shield{right:4%;bottom:5%;left:auto;top:auto}
+      .c-shield{right:2%;bottom:4%;left:auto;top:auto}
+      .c-dost{right:calc(2% + 58px);bottom:4%;left:auto;top:auto}
       .c-bee{right:3%;bottom:4%;left:auto;top:auto}
       .c-bot{right:3%;bottom:3%;left:auto;top:auto}
-      .c-dost{left:3%;bottom:3%;right:auto;top:auto}
       .c-ghost{right:3%;top:5%;left:auto;bottom:auto}
       .c-star{right:3%;bottom:5%;left:auto;top:auto}
     }
@@ -364,12 +364,11 @@
     .c-ghost svg{width:64px;height:80px;filter:drop-shadow(0 8px 20px rgba(123,29,29,.7))}
     .c-ghost{animation:c-haunt 4.2s ease-in-out infinite}
 
-    /* ── DostPal (stats section, left side, forest-green) ── */
-    .c-dost{left:1%;top:50%;transform:translateY(-50%)}
+    /* ── DostPal (hero, left of Kavach, forest-green) ── */
+    .c-dost{right:15%;bottom:14%}
     .c-dost svg{width:80px;height:96px;filter:drop-shadow(0 8px 22px rgba(27,122,79,.5))}
-    .c-dost{animation:c-dost-bob 4.3s ease-in-out infinite}
+    .c-dost{animation:c-float 4.1s .5s ease-in-out infinite}
     .eye-white-d{animation:eye-blink 5.2s 1.4s ease-in-out infinite}
-    @keyframes c-dost-bob{0%,100%{transform:translateY(-50%) rotate(-1.5deg) translateX(0)}50%{transform:translateY(calc(-50% - 11px)) rotate(1.5deg) translateX(0)}}
 
     /* ── RecoverStar (recovery section, gold) ── */
     .c-star{right:4%;bottom:22%}
@@ -774,6 +773,29 @@
     </svg>
   </div>
 
+  <!-- Dost (दोस्त = friend) — Hindi guardian, left of Kavach -->
+  <div class="creature c-dost" role="img" aria-label="Dost — Hindi-speaking digital friend mascot" data-snd="boing">
+    <div class="creature-tip">दोस्त 🤝 — हिंदी में सुनें</div>
+    <svg viewBox="0 0 80 96" aria-hidden="true">
+      <path d="M40 8 C17 8 10 28 10 48 L10 74 Q10 94 40 94 Q70 94 70 74 L70 48 C70 28 63 8 40 8Z" fill="#1b7a4f"/>
+      <ellipse cx="40" cy="66" rx="17" ry="20" fill="#27a862" opacity="0.28"/>
+      <ellipse cx="40" cy="20" rx="20" ry="14" fill="#145e3b" opacity="0.45"/>
+      <circle cx="28" cy="46" r="9.5" fill="white" class="eye-white-d"/>
+      <circle cx="52" cy="46" r="9.5" fill="white" class="eye-white-d"/>
+      <circle cx="29.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
+      <circle cx="53.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
+      <circle cx="31.5" cy="45.5" r="1.7" fill="white"/>
+      <circle cx="55.5" cy="45.5" r="1.7" fill="white"/>
+      <ellipse cx="15" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
+      <ellipse cx="65" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
+      <path d="M25 63 Q40 76 55 63" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="3" cy="62" rx="6" ry="3" fill="#115e3a"/>
+      <ellipse cx="77" cy="62" rx="6" ry="3" fill="#115e3a"/>
+      <path d="M40 28 L46 36 L40 44 L34 36Z" fill="white" opacity="0.44"/>
+      <path d="M40 32 L44 36 L40 40 L36 36Z" fill="#1b7a4f" opacity="0.55"/>
+    </svg>
+  </div>
+
   <div class="hero-ticker" aria-label="Live statistics ticker">
     <div class="ticker-inner">
       <span>📊 FIRs: 27,248 (2018) → 86,420 (2023) — up 217%</span><span aria-hidden="true">•</span>
@@ -987,30 +1009,6 @@
 
 <!-- STAT COUNTERS -->
 <section class="stats-section" id="stat-counters">
-
-  <!-- Dost (दोस्त = friend) — Hindi guardian, stats section left -->
-  <div class="creature c-dost" role="img" aria-label="Dost — Hindi-speaking digital friend mascot" data-snd="boing">
-    <div class="creature-tip">दोस्त 🤝 — हिंदी में सुनें</div>
-    <svg viewBox="0 0 80 96" aria-hidden="true">
-      <path d="M40 8 C17 8 10 28 10 48 L10 74 Q10 94 40 94 Q70 94 70 74 L70 48 C70 28 63 8 40 8Z" fill="#1b7a4f"/>
-      <ellipse cx="40" cy="66" rx="17" ry="20" fill="#27a862" opacity="0.28"/>
-      <ellipse cx="40" cy="20" rx="20" ry="14" fill="#145e3b" opacity="0.45"/>
-      <circle cx="28" cy="46" r="9.5" fill="white" class="eye-white-d"/>
-      <circle cx="52" cy="46" r="9.5" fill="white" class="eye-white-d"/>
-      <circle cx="29.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
-      <circle cx="53.5" cy="47.5" r="4.8" fill="#0B1F3A"/>
-      <circle cx="31.5" cy="45.5" r="1.7" fill="white"/>
-      <circle cx="55.5" cy="45.5" r="1.7" fill="white"/>
-      <ellipse cx="15" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
-      <ellipse cx="65" cy="55" rx="6.5" ry="3.5" fill="#ff7e6a" opacity="0.38"/>
-      <path d="M25 63 Q40 76 55 63" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <ellipse cx="3" cy="62" rx="6" ry="3" fill="#115e3a"/>
-      <ellipse cx="77" cy="62" rx="6" ry="3" fill="#115e3a"/>
-      <path d="M40 28 L46 36 L40 44 L34 36Z" fill="white" opacity="0.44"/>
-      <path d="M40 32 L44 36 L40 40 L36 36Z" fill="#1b7a4f" opacity="0.55"/>
-    </svg>
-  </div>
-
   <!-- CREATURE 3: Sankhya (संख्या = number/data in Hindi) — tracks every crore lost -->
   <div class="creature c-bot" role="img" aria-label="Sankhya — data tracker mascot" data-snd="beep">
     <div class="creature-tip">Sankhya 🤖 संख्या — I count every crore lost</div>
