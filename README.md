@@ -1,4 +1,4 @@
-# FraudShell
+# FraudShield
 
 **Digital fraud awareness platform for India.**  
 Community service project by Azlan — second-year BTech student.
@@ -20,7 +20,7 @@ The problem is not intelligence — it is information. My uncle did not know tha
 
 That information is on government websites. But it is buried in PDFs, written in legal language, and assumes the reader already knows where to look.
 
-I built FraudShell because the information exists — it just does not reach the people who need it. Specifically Indian middle-class families: people who are online, who use UPI and WhatsApp every day, but who have never heard of cybercrime.gov.in or the 1930 helpline.
+I built FraudShield because the information exists — it just does not reach the people who need it. Specifically Indian middle-class families: people who are online, who use UPI and WhatsApp every day, but who have never heard of cybercrime.gov.in or the 1930 helpline.
 
 No budget. No team. Just the knowledge and the tools to build something real.
 
