@@ -16,7 +16,7 @@ He is a retired government employee. Educated. Careful. It still happened to him
 The problem is not intelligence — it is information. My uncle did not know that:
 - No government agency arrests you over video call
 - The number 1930 exists and can freeze the money if you call within the first hour
-- The CFCFRMS system has already saved ₹5,489 crore for other victims
+- The CFCFRMS system has already saved ₹8,690 crore for other victims (as of early 2026)
 
 That information is on government websites. But it is buried in PDFs, written in legal language, and assumes the reader already knows where to look.
 

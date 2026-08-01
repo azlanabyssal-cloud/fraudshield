@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FraudShield Assistant — Voice, Text &amp; Screenshot Fraud Help</title>
+  <meta name="description" content="Talk to the FraudShield Assistant by voice, text, or screenshot. Free, guided, step-by-step help for digital arrest, OTP, UPI, phishing, and other scams — nothing you share ever leaves your device.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="FraudShield Home">
+      <span aria-hidden="true">🛡️</span>
+      <span>Fraud<span class="nav-logo__accent">Shield</span></span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="data.html">The Data</a></li>
+      <li><a href="tips.html">Protect Yourself</a></li>
+      <li><a href="assistant.html" class="active">🤖 Assistant</a></li>
+      <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
+    </ul>
+    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
+            aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobileNav" class="mobile-nav" role="navigation"
+     aria-label="Mobile navigation" aria-hidden="true">
+  <a href="index.html">Home</a>
+  <a href="data.html">The Data</a>
+  <a href="tips.html">Protect Yourself</a>
+  <a href="assistant.html" class="active">🤖 Assistant</a>
+  <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero__bg page-hero__bg--assistant"></div>
+  <div class="page-hero__content">
+    <span class="page-hero__badge page-hero__badge--orange">🤖 VOICE · TEXT · SCREENSHOTS — REAL GUIDED HELP</span>
+    <h1>Talk to the FraudShield Assistant</h1>
+    <p>Type, speak, or paste a screenshot of what happened. It runs entirely in your browser — nothing you share here is ever sent to a server.</p>
+  </div>
+</section>
+
+<div class="assistant-page-wrap">
+  <div id="assistantRoot" class="assistant-shell" aria-label="FraudShield Assistant chat"></div>
+</div>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <p class="footer-logo">🛡️ FraudShield</p>
+      <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
+      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Emergency</p>
+      <a href="tel:1930" class="footer-helpline-number">1930</a>
+      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Official Resources</p>
+      <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
+      <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="report.html" class="footer-link">File a Report</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col__heading">Pages</p>
+      <a href="index.html" class="footer-link">Home</a>
+      <a href="data.html" class="footer-link">The Data</a>
+      <a href="tips.html" class="footer-link">Protect Yourself</a>
+      <a href="assistant.html" class="footer-link">Assistant</a>
+      <a href="report.html" class="footer-link">Report Fraud</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
+    <p>© 2026 FraudShield. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
