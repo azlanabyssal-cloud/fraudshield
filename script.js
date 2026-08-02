@@ -916,16 +916,41 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const CHAT_INTENT_KEYWORDS = {
-    'Digital Arrest': ['cbi', 'digital arrest', 'video call', 'arrest warrant', 'court notice', 'narcotics case', 'judge', 'police custody'],
-    'OTP Scam': ['otp', 'one time password', 'verification code'],
-    'UPI Fraud': ['upi', 'qr code', 'scan the qr', 'gpay', 'phonepe', 'google pay'],
-    'Phishing': ['phishing', 'click the link', 'fake website', 'kyc update', 'fake sms'],
-    'Fake Loan App': ['loan app', 'instant loan', 'loan approved', 'loan agent'],
-    'Sextortion': ['nude', 'private photo', 'blackmail', 'morphed', 'sextortion', 'obscene video'],
-    'Investment Scam': ['invest', 'trading tip', 'guaranteed return', 'crypto scheme', 'stock tip', 'demat'],
-    'Job Fraud': ['job offer', 'work from home job', 'part time job', 'registration fee'],
-    'SIM Swap': ['sim swap', 'sim stopped', 'no service suddenly', 'sim card blocked', 'duplicate sim']
+    'Digital Arrest': ['cbi', 'digital arrest', 'video call', 'arrest warrant', 'court notice', 'narcotics case',
+      'judge', 'police custody', 'aadhaar linked', 'aadhaar is linked', 'parcel case', 'customs case', 'trai',
+      'courier scam', 'fedex scam', 'money laundering case', 'drug case', 'passport case', 'income tax notice'],
+    'OTP Scam': ['otp', 'one time password', 'verification code', 'shared my otp', 'gave my otp', 'told them the otp'],
+    'UPI Fraud': ['upi', 'qr code', 'scan the qr', 'gpay', 'phonepe', 'google pay', 'paytm fraud', 'scan and pay',
+      'unauthorized upi', 'unauthorised upi'],
+    'Phishing': ['phishing', 'click the link', 'clicked a link', 'clicked on a link', 'fake website', 'kyc update',
+      'fake sms', 'suspicious link', 'fake link', 'malicious link'],
+    'Fake Loan App': ['loan app', 'instant loan', 'loan approved', 'loan agent', 'loan recovery agent',
+      'harassing me for loan', 'blackmailing me for loan'],
+    'Sextortion': ['nude', 'private photo', 'blackmail', 'morphed', 'sextortion', 'obscene video',
+      'threatening to leak', 'threatening to post', 'video call recorded', 'threatening to share my photo'],
+    'Investment Scam': ['invest', 'trading tip', 'guaranteed return', 'crypto scheme', 'stock tip', 'demat',
+      'ponzi', 'forex scam', 'binary trading', 'stock market fraud', 'trading app fraud'],
+    'Job Fraud': ['job offer', 'work from home job', 'part time job', 'registration fee', 'fake job', 'job scam',
+      'data entry job'],
+    'SIM Swap': ['sim swap', 'sim stopped', 'no service suddenly', 'sim card blocked', 'duplicate sim',
+      'number deactivated', 'sim deactivated']
   };
+
+  // General "I've already been defrauded" phrasing that doesn't name a specific
+  // scam type — this is how a lot of people actually describe it. Checked
+  // AFTER the specific-type matcher above (which is more actionable when it
+  // hits), but BEFORE giving up with the generic fallback.
+  const GENERAL_LOSS_KEYWORDS = [
+    'money is gone', 'money gone', 'lost my money', 'lost money', 'stolen my money', 'money was stolen',
+    'took my money', 'scammed me', 'i got scammed', 'i was scammed', 'i got cheated', 'i was cheated',
+    'get my money back', 'get back my money', 'recover my money', 'defrauded', 'someone cheated me',
+    'sent money to a scammer', 'unauthorized transaction', 'unauthorised transaction', 'account was hacked',
+    'money got deducted', 'amount deducted', 'wiped my account', 'emptied my account', 'drained my account'
+  ];
+  function isGeneralMoneyLoss(text) {
+    const lower = text.toLowerCase();
+    return GENERAL_LOSS_KEYWORDS.some(kw => lower.indexOf(kw) !== -1);
+  }
 
   const CHAT_SAFE_DOMAINS = ['cybercrime.gov.in', 'rbi.org.in', 'npci.org.in', 'uidai.gov.in', 'incometax.gov.in',
     'sbi.co.in', 'onlinesbi.sbi', 'hdfcbank.com', 'icicibank.com', 'axisbank.com', 'paytm.com', 'phonepe.com',
@@ -1244,6 +1269,12 @@ document.addEventListener('DOMContentLoaded', () => {
         result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link, even if it looks official.'
       ], { urgent: result.verdict === 'danger' });
     }
+    function respondToGeneralLoss() {
+      botSay([
+        "I'm sorry this happened — let's move fast, every minute matters. Call your bank's helpline right now and say exactly this: \"unauthorised transaction, please freeze and dispute it.\" That triggers RBI's Zero Liability process. Then call 1930 immediately and describe it as financial fraud — reporting within the first hour gives the best chance of freezing the money before it moves further.",
+        'To get you more specific next steps, what caused it — a phone call, a link, a QR code, or something else? Or pick the closest match below.'
+      ], { urgent: true, cta: [{ label: '📞 Call 1930 Now', href: 'tel:1930' }], options: buildMainMenuOptions() });
+    }
     function respondToFreeText(text) {
       if (state.awaitingLink) {
         state.awaitingLink = false; persist();
@@ -1258,6 +1289,8 @@ document.addEventListener('DOMContentLoaded', () => {
         botSay(['That sounds like ' + intent + " — let's go through it step by step."], { noMenuChip: true, onDone: () => goToNode(intent, CHAT_FLOWS[intent].start) });
         return;
       }
+
+      if (isGeneralMoneyLoss(text)) { respondToGeneralLoss(); return; }
 
       const introducedName = extractIntroducedName(text);
       if (introducedName) {
