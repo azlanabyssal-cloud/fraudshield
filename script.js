@@ -984,6 +984,63 @@ document.addEventListener('DOMContentLoaded', () => {
     return bestScore > 0 ? best : null;
   }
 
+  // ── Small talk — a hand-authored conversational layer, NOT a general AI.
+  //    This is a rule-based pattern matcher for common greetings/chit-chat so
+  //    the bot doesn't dead-end on "hello" or "how are you". It cannot answer
+  //    arbitrary open-ended questions the way a real LLM could — that would
+  //    need an API key and a small ongoing cost, which this project runs
+  //    without by design. ──
+  const NAME_PATTERN = /\b(?:i'?m|i am|my name is|myself)\s+([a-z][a-z'-]{1,19})\b/i;
+  const NAME_STOPWORDS = new Set(['not', 'worried', 'scared', 'afraid', 'confused', 'trying', 'asking',
+    'wondering', 'calling', 'writing', 'here', 'sure', 'sorry', 'fine', 'good', 'ok', 'okay', 'well',
+    'still', 'also', 'just', 'really', 'very', 'so', 'done', 'back', 'new', 'a', 'an', 'the', 'having']);
+
+  function extractIntroducedName(text) {
+    const m = text.match(NAME_PATTERN);
+    if (!m) return null;
+    const raw = m[1].toLowerCase();
+    if (NAME_STOPWORDS.has(raw)) return null;
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  }
+
+  const SMALL_TALK = [
+    {
+      test: /^\s*(hi+|hello+|hey+|yo|namaste|helo)\b/i,
+      reply: name => ['Hello' + (name ? ', ' + name : '') + '! Good to hear from you. I\'m here to help with anything fraud-related — or ask me anything else too.']
+    },
+    {
+      test: /\bhow are you\b/i,
+      reply: () => ["I'm doing well, thanks for asking! More importantly — how are you doing? Anything fraud-related I can help with today?"]
+    },
+    {
+      test: /\b(good|safe|digital|online)\s+habits?\b|\bhow (can|do) i (stay|keep myself) safe\b|\bhow to stay safe\b/i,
+      reply: () => [
+        'Good question — a few habits genuinely keep you safer than any single warning: never share your OTP or UPI PIN with anyone, verify unexpected urgent calls by hanging up and calling back on an official number, never click links in SMS or WhatsApp from unknown senders, and remember no real official ever asks for money to "verify" or "clear" your name.',
+        'Want the full guide, or is something specific worrying you right now?'
+      ]
+    },
+    {
+      test: /\b(thank you|thanks|thx|thankyou)\b/i,
+      reply: () => ["You're welcome! I'm here anytime you need help."]
+    },
+    {
+      test: /\bwhat can you (do|help)|\bwho are you\b|\bwhat are you\b/i,
+      reply: () => ["I'm the FraudShield Assistant — I guide you step by step through common scams (digital arrest, OTP, UPI, phishing, and more), check suspicious links, read screenshots of scam messages, and connect you straight to the 1930 helpline. Type, speak, or paste a screenshot anytime."]
+    },
+    {
+      test: /\b(bye|goodbye|good ?night|see you)\b/i,
+      reply: () => ['Take care! Remember — 1930 is always free, day or night, if you ever need it.'],
+      noMenu: true
+    }
+  ];
+
+  function matchSmallTalk(text) {
+    for (const rule of SMALL_TALK) {
+      if (rule.test.test(text)) return rule;
+    }
+    return null;
+  }
+
   // ── Shared session state (sessionStorage — survives navigating between pages
   //    AND switching between the floating widget and the full assistant page) ──
   function loadChatState() {
@@ -991,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = sessionStorage.getItem('fs_cb_state');
       if (raw) return JSON.parse(raw);
     } catch (e) { /* ignore corrupt state */ }
-    return { flow: null, node: null, awaitingLink: false, voiceOut: false, log: [] };
+    return { flow: null, node: null, awaitingLink: false, voiceOut: false, userName: null, log: [] };
   }
   function saveChatState(state) {
     try { sessionStorage.setItem('fs_cb_state', JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
@@ -1025,19 +1082,32 @@ document.addEventListener('DOMContentLoaded', () => {
     window.speechSynthesis.onvoiceschanged = loadCbVoices;
   }
   function pickIndianVoice() {
+    // 1. Known-good named voices first (best quality on the platforms that ship them)
     const prefer = ['Rishi', 'Veena', 'Microsoft Ravi - English (India)', 'Microsoft Heera - English (India)', 'Google UK English Female', 'Google UK English Male'];
     for (const name of prefer) {
       const v = cbCachedVoices.find(vv => vv.name === name);
       if (v) return v;
     }
-    return cbCachedVoices.find(v => v.lang === 'en-IN') || cbCachedVoices.find(v => v.lang.indexOf('en') === 0) || null;
+    // 2. Any en-IN voice, preferring network/cloud voices — they're consistently
+    //    higher quality than a device's bundled offline voice.
+    const enIN = cbCachedVoices.filter(v => v.lang === 'en-IN');
+    if (enIN.length) return enIN.find(v => !v.localService) || enIN[0];
+    // 3. Any English voice at all, same network-quality preference
+    const en = cbCachedVoices.filter(v => v.lang.indexOf('en') === 0);
+    if (en.length) return en.find(v => !v.localService) || en[0];
+    return null;
   }
   function speakText(text) {
     if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
+    // Deliberately NOT calling cancel() here: bot replies arrive as several
+    // lines paced ~0.5s apart, each triggering a speakText() call. Cancelling
+    // on every call kills the previous line before it finishes — the browser's
+    // speech queue already plays sequential utterances in order on its own,
+    // so just queue this one.
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-IN'; u.rate = 0.95; u.pitch = 1;
     const v = pickIndianVoice();
+    u.lang = v ? v.lang : 'en-IN';
+    u.rate = 0.95; u.pitch = 1;
     if (v) u.voice = v;
     window.speechSynthesis.speak(u);
   }
@@ -1159,7 +1229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function showMainMenu() {
       state.flow = null; state.node = null; persist();
-      botSay(['What would you like help with? You can also paste a screenshot, or attach an audio clip.'], { options: buildMainMenuOptions(), noMenuChip: true });
+      const who = state.userName ? ', ' + state.userName : '';
+      botSay(['What would you like help with' + who + '? You can also paste a screenshot, or attach an audio clip.'], { options: buildMainMenuOptions(), noMenuChip: true });
     }
     function askForLink() {
       state.awaitingLink = true; persist();
@@ -1187,6 +1258,20 @@ document.addEventListener('DOMContentLoaded', () => {
         botSay(['That sounds like ' + intent + " — let's go through it step by step."], { noMenuChip: true, onDone: () => goToNode(intent, CHAT_FLOWS[intent].start) });
         return;
       }
+
+      const introducedName = extractIntroducedName(text);
+      if (introducedName) {
+        state.userName = introducedName; persist();
+        botSay(['Nice to meet you, ' + introducedName + "! I'll remember that for our chat."], { options: buildMainMenuOptions(), noMenuChip: true });
+        return;
+      }
+
+      const smallTalk = matchSmallTalk(text);
+      if (smallTalk) {
+        botSay(smallTalk.reply(state.userName), smallTalk.noMenu ? { noMenuChip: true } : { options: buildMainMenuOptions(), noMenuChip: true });
+        return;
+      }
+
       botSay(["I couldn't quite match that to a scam type — tell me a bit more, or pick the closest below:"], { options: buildMainMenuOptions(), noMenuChip: true });
     }
 
@@ -1203,6 +1288,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Image (screenshot) handling — client-side OCR, no server, no API key ──
+    function showOcrProgress(label) {
+      const div = document.createElement('div');
+      div.className = 'cb-msg cb-msg--bot cb-msg--ocr';
+      div.textContent = label;
+      dom.messagesEl.appendChild(div);
+      scrollToBottom();
+      return div;
+    }
+    function updateOcrProgress(el, label) {
+      if (!el || !el.isConnected) return;
+      el.textContent = label;
+      scrollToBottom();
+    }
+
     function handleImageFile(file) {
       if (!file || file.type.indexOf('image/') !== 0) return;
       if (file.size > 10 * 1024 * 1024) {
@@ -1211,11 +1310,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const objectUrl = URL.createObjectURL(file);
       addImageMessage(objectUrl);
-      showTyping();
+      const progressEl = showOcrProgress('🔍 Preparing image reader…');
       loadOcrEngine()
-        .then(Tesseract => Tesseract.recognize(objectUrl, 'eng'))
+        .then(Tesseract => Tesseract.recognize(objectUrl, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              updateOcrProgress(progressEl, '🔍 Reading image — ' + Math.round((m.progress || 0) * 100) + '%');
+            } else if (m.status) {
+              updateOcrProgress(progressEl, '🔍 ' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…');
+            }
+          }
+        }))
         .then(({ data }) => {
-          hideTyping();
+          progressEl.remove();
           const text = ((data && data.text) || '').trim();
           if (!text || text.length < 4) {
             botSay(["I couldn't read clear text from that image — could you type or say what it says instead?"]);
@@ -1227,7 +1334,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         })
         .catch(() => {
-          hideTyping();
+          progressEl.remove();
           botSay(["I couldn't read that image right now — image analysis needs an internet connection the first time it's used on this device. You can type or say what the message said instead."]);
         });
     }
@@ -1258,18 +1365,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!SRClass && dom.micBtn) {
       dom.micBtn.hidden = true;
     } else if (dom.micBtn) {
+      const micPlaceholder = dom.inputEl.placeholder;
       dom.micBtn.addEventListener('click', () => {
         if (!recognition) {
           recognition = new SRClass();
           recognition.lang = 'en-IN';
-          recognition.interimResults = false;
+          recognition.interimResults = true;
           recognition.maxAlternatives = 1;
-          recognition.onresult = e => handleUserInput(e.results[0][0].transcript);
-          recognition.onend = () => dom.micBtn.classList.remove('cb-mic--live');
+          recognition.onresult = e => {
+            let finalTranscript = '', interimTranscript = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+              const transcript = e.results[i][0].transcript;
+              if (e.results[i].isFinal) finalTranscript += transcript;
+              else interimTranscript += transcript;
+            }
+            // Show live captions in the input as you speak, so it never feels
+            // like a silent black box — this is the visible feedback loop
+            // most voice UIs give you and this one was missing.
+            dom.inputEl.value = finalTranscript || interimTranscript;
+            if (finalTranscript) handleUserInput(finalTranscript);
+          };
+          recognition.onstart = () => { dom.inputEl.placeholder = 'Listening…'; };
+          recognition.onend = () => {
+            dom.micBtn.classList.remove('cb-mic--live');
+            dom.inputEl.placeholder = micPlaceholder;
+          };
           recognition.onerror = e => {
             dom.micBtn.classList.remove('cb-mic--live');
+            dom.inputEl.placeholder = micPlaceholder;
             if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
               botSay(['Microphone access was blocked — you can still type your message any time.']);
+            } else if (e.error === 'no-speech') {
+              botSay(["I didn't catch that — try again, or type your message."]);
             }
           };
         }
