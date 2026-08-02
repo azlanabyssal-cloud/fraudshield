@@ -1123,7 +1123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
   function speakText(text) {
-    if (!window.speechSynthesis) return;
+    if (!window.speechSynthesis) return null;
     // Deliberately NOT calling cancel() here: bot replies arrive as several
     // lines paced ~0.5s apart, each triggering a speakText() call. Cancelling
     // on every call kills the previous line before it finishes — the browser's
@@ -1135,6 +1135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     u.rate = 0.95; u.pitch = 1;
     if (v) u.voice = v;
     window.speechSynthesis.speak(u);
+    return u;
   }
 
   // ── The chat engine itself — mounted by both initChatbot() (floating widget)
@@ -1142,6 +1143,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildChatController(dom) {
     const state = loadChatState();
     function persist() { saveChatState(state); }
+
+    let lastUtterance = null; // most recent bot-line utterance this turn, used to time the mic re-arm
 
     function scrollToBottom() { dom.messagesEl.scrollTop = dom.messagesEl.scrollHeight; }
 
@@ -1153,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollToBottom();
       state.log.push({ text, from });
       persist();
-      if (from === 'bot' && state.voiceOut) speakText(text);
+      if (from === 'bot' && state.voiceOut) lastUtterance = speakText(text);
     }
 
     function addImageMessage(objectUrl) {
@@ -1199,6 +1202,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       dom.messagesEl.appendChild(row);
       scrollToBottom();
+
+      // The bot's turn just genuinely ended (it's showing options and waiting
+      // on the user again) — if this reply was triggered by voice, re-open
+      // the mic now for a real back-and-forth conversation. Never while the
+      // bot is still speaking: wait for its last line to finish first, so
+      // the mic can't hear the bot's own voice and reply to itself.
+      if (voiceTurnPending) {
+        voiceTurnPending = false;
+        if (state.voiceOut && lastUtterance && window.speechSynthesis.speaking) {
+          lastUtterance.addEventListener('end', () => startListening(), { once: true });
+        } else {
+          startListening();
+        }
+      }
     }
 
     function showTyping() {
@@ -1395,46 +1412,69 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Voice input (live mic — real speech-to-text via the browser) ──
     const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
+    let micBlocked = false;
+    // Set right before a voice-submitted message is handled; consumed the
+    // moment the bot's reply finishes rendering (see addChips below) to
+    // re-open the mic automatically — a real back-and-forth conversation
+    // instead of click-talk-click-talk every turn. Never armed while the
+    // bot is mid-speech, so the mic can't hear the bot's own voice and
+    // trigger itself (no feedback loop).
+    let voiceTurnPending = false;
+
+    function ensureRecognition() {
+      if (recognition || !SRClass) return recognition;
+      const micPlaceholder = dom.inputEl.placeholder;
+      recognition = new SRClass();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+      recognition.onresult = e => {
+        let finalTranscript = '', interimTranscript = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const transcript = e.results[i][0].transcript;
+          if (e.results[i].isFinal) finalTranscript += transcript;
+          else interimTranscript += transcript;
+        }
+        // Show live captions in the input as you speak, so it never feels
+        // like a silent black box — this is the visible feedback loop
+        // most voice UIs give you and this one was missing.
+        dom.inputEl.value = finalTranscript || interimTranscript;
+        if (finalTranscript) {
+          voiceTurnPending = true;
+          handleUserInput(finalTranscript);
+        }
+      };
+      recognition.onstart = () => { dom.inputEl.placeholder = 'Listening…'; };
+      recognition.onend = () => {
+        dom.micBtn.classList.remove('cb-mic--live');
+        dom.inputEl.placeholder = micPlaceholder;
+      };
+      recognition.onerror = e => {
+        dom.micBtn.classList.remove('cb-mic--live');
+        dom.inputEl.placeholder = micPlaceholder;
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          micBlocked = true;
+          botSay(['Microphone access was blocked — you can still type your message any time.']);
+        } else if (e.error === 'no-speech') {
+          botSay(["I didn't catch that — try again, or type your message."]);
+        }
+      };
+      return recognition;
+    }
+
+    function startListening() {
+      const rec = ensureRecognition();
+      if (!rec || micBlocked) return;
+      try { rec.start(); dom.micBtn.classList.add('cb-mic--live'); } catch (e) { /* already started */ }
+    }
+
     if (!SRClass && dom.micBtn) {
       dom.micBtn.hidden = true;
     } else if (dom.micBtn) {
-      const micPlaceholder = dom.inputEl.placeholder;
       dom.micBtn.addEventListener('click', () => {
-        if (!recognition) {
-          recognition = new SRClass();
-          recognition.lang = 'en-IN';
-          recognition.interimResults = true;
-          recognition.maxAlternatives = 1;
-          recognition.onresult = e => {
-            let finalTranscript = '', interimTranscript = '';
-            for (let i = e.resultIndex; i < e.results.length; i++) {
-              const transcript = e.results[i][0].transcript;
-              if (e.results[i].isFinal) finalTranscript += transcript;
-              else interimTranscript += transcript;
-            }
-            // Show live captions in the input as you speak, so it never feels
-            // like a silent black box — this is the visible feedback loop
-            // most voice UIs give you and this one was missing.
-            dom.inputEl.value = finalTranscript || interimTranscript;
-            if (finalTranscript) handleUserInput(finalTranscript);
-          };
-          recognition.onstart = () => { dom.inputEl.placeholder = 'Listening…'; };
-          recognition.onend = () => {
-            dom.micBtn.classList.remove('cb-mic--live');
-            dom.inputEl.placeholder = micPlaceholder;
-          };
-          recognition.onerror = e => {
-            dom.micBtn.classList.remove('cb-mic--live');
-            dom.inputEl.placeholder = micPlaceholder;
-            if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-              botSay(['Microphone access was blocked — you can still type your message any time.']);
-            } else if (e.error === 'no-speech') {
-              botSay(["I didn't catch that — try again, or type your message."]);
-            }
-          };
-        }
+        ensureRecognition();
         if (dom.micBtn.classList.contains('cb-mic--live')) { recognition.stop(); return; }
-        try { recognition.start(); dom.micBtn.classList.add('cb-mic--live'); } catch (e) { /* already started */ }
+        startListening();
       });
     }
 
