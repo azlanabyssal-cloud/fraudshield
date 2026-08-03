@@ -1,5 +1,19 @@
 'use strict';
 
+// ═══════════════════════════════════════════════════════
+// PWA — register the service worker (offline support, installable)
+// Registered on window 'load' (not DOMContentLoaded) so it never
+// competes with the page's own assets for bandwidth on first visit.
+// ═══════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // Offline support just won't be available this session — the
+      // site still works fully online without it, so fail silently.
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ═══════════════════════════════════════════════════════
@@ -1468,10 +1482,15 @@ document.addEventListener('DOMContentLoaded', () => {
       try { rec.start(); dom.micBtn.classList.add('cb-mic--live'); } catch (e) { /* already started */ }
     }
 
-    if (!SRClass && dom.micBtn) {
-      dom.micBtn.hidden = true;
-    } else if (dom.micBtn) {
+    if (dom.micBtn) {
       dom.micBtn.addEventListener('click', () => {
+        if (!SRClass) {
+          // Never fail silently — a hidden/dead button with no explanation
+          // looks exactly like "voice doesn't work" when it's really just
+          // unsupported here. Say so plainly instead.
+          botSay(["Voice input isn't supported in this browser — it needs Chrome, Edge, or Safari on iOS 14.5+. You can still type, or paste a screenshot."]);
+          return;
+        }
         ensureRecognition();
         if (dom.micBtn.classList.contains('cb-mic--live')) { recognition.stop(); return; }
         startListening();
