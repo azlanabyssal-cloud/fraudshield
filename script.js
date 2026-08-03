@@ -1466,11 +1466,22 @@ document.addEventListener('DOMContentLoaded', () => {
       recognition.onerror = e => {
         dom.micBtn.classList.remove('cb-mic--live');
         dom.inputEl.placeholder = micPlaceholder;
+        // Every branch here ends in a message — a voice feature that fails
+        // with zero explanation is indistinguishable from "broken", which
+        // is exactly what was happening for error codes this didn't cover.
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
           micBlocked = true;
-          botSay(['Microphone access was blocked — you can still type your message any time.']);
+          botSay(['Microphone access was blocked — check the 🔒 icon next to the address bar, allow microphone for this site, then try again. You can still type any time.']);
         } else if (e.error === 'no-speech') {
           botSay(["I didn't catch that — try again, or type your message."]);
+        } else if (e.error === 'audio-capture') {
+          botSay(["I can't reach a microphone on this device — check nothing else (another app or tab) is already using it, or type your message."]);
+        } else if (e.error === 'network') {
+          botSay(['Voice recognition needs an internet connection — check your connection and try again, or type your message.']);
+        } else if (e.error === 'aborted') {
+          // User- or system-initiated stop — not a failure, no message needed.
+        } else {
+          botSay(["Voice input hit an unexpected problem (" + e.error + ") — you can still type your message."]);
         }
       };
       return recognition;
@@ -1479,7 +1490,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function startListening() {
       const rec = ensureRecognition();
       if (!rec || micBlocked) return;
-      try { rec.start(); dom.micBtn.classList.add('cb-mic--live'); } catch (e) { /* already started */ }
+      try {
+        rec.start();
+        dom.micBtn.classList.add('cb-mic--live');
+      } catch (e) {
+        // InvalidStateError just means it's already running — safe to ignore.
+        // Anything else was failing completely silently before this fix.
+        if (e.name !== 'InvalidStateError') {
+          botSay(['Voice input could not start — you can still type your message.']);
+        }
+      }
     }
 
     if (dom.micBtn) {
