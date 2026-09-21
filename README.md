@@ -3,7 +3,7 @@
 **Digital fraud awareness platform for India.**  
 Community service project by Azlan — second-year BTech student.
 
-Live: [fraudshell.in](https://fraudshell.in) | Helpline: **1930** (Free · 24×7)
+Live: [azlanabyssal-cloud.github.io/fraudshield](https://azlanabyssal-cloud.github.io/fraudshield/) | Helpline: **1930** (Free · 24×7)
 
 ---
 
