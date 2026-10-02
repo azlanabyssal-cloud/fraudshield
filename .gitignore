@@ -1,0 +1,4 @@
+
+# Real scam messages: never commit the working dataset or the private provenance log.
+data_ops/golden_holdout.csv
+data_ops/*.private.*

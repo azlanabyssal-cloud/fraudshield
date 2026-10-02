@@ -1,5 +1,10 @@
 {
   "name": "fraudshield",
   "private": true,
-  "scripts": { "test": "node --test \"tests/*.test.js\"" }
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "data:template": "node data_ops/generate_template.js",
+    "data:validate": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report",
+    "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final"
+  }
 }
