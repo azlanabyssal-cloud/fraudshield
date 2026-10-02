@@ -1283,10 +1283,7 @@ footer { background: var(--space); color: #94a3b8; }
 
 .cb-quickbar__expand{margin-left:auto;background:none;border:none;color:var(--navy);text-decoration:underline;font-weight:700}
 
-.cb-msg--image,.cb-msg--audio{max-width:94%;padding:.5rem}
 .cb-msg--image img{max-width:100%;border-radius:6px;display:block}
-.cb-msg--audio p{font-size:.78rem;margin:0 0 .35rem;font-weight:700}
-.cb-msg--audio audio{width:100%;height:34px;display:block}
 
 /* ── Full-page assistant variant (assistant.html) ── */
 .assistant-page-wrap{padding:0 1.5rem 5rem;display:flex;justify-content:center}

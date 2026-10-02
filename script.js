@@ -934,6 +934,11 @@ document.addEventListener('DOMContentLoaded', () => {
     extractIntroducedName, matchSmallTalk
   } = window.FraudShieldCore;
 
+  // V1 privacy mandate: speech *recognition* in Chrome streams the user's audio to
+  // Google, which contradicts "nothing you share leaves your device". It stays
+  // off until it can ship with an explicit consent step (planned V1.5).
+  const FEATURES = { voiceInput: false };
+
   // ── Shared session state (sessionStorage — survives navigating between pages
   //    AND switching between the floating widget and the full assistant page) ──
   function loadChatState() {
@@ -951,12 +956,15 @@ document.addEventListener('DOMContentLoaded', () => {
   //    someone attaches or pastes a screenshot. 100% client-side, MIT-licensed,
   //    no API key, no server round-trip for the image itself. ──
   let ocrEnginePromise = null;
+  // OCR code and language data are served from this site (vendor/tesseract/),
+  // not a CDN, so the screenshot never reaches a third party and OCR works offline.
+  const OCR_BASE = new URL('vendor/tesseract/', document.baseURI).href;
   function loadOcrEngine() {
     if (ocrEnginePromise) return ocrEnginePromise;
     ocrEnginePromise = new Promise((resolve, reject) => {
       if (window.Tesseract) { resolve(window.Tesseract); return; }
       const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      s.src = OCR_BASE + 'tesseract.min.js';
       s.onload = () => (window.Tesseract ? resolve(window.Tesseract) : reject(new Error('tesseract-missing')));
       s.onerror = () => reject(new Error('tesseract-load-failed'));
       document.head.appendChild(s);
@@ -974,21 +982,17 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCbVoices();
     window.speechSynthesis.onvoiceschanged = loadCbVoices;
   }
+  // Only on-device voices. A network voice (e.g. Chrome's "Google ..." voices)
+  // sends the reply text to a server to be synthesised, which breaks the privacy
+  // promise. If no local voice exists, spoken replies are simply unavailable.
   function pickIndianVoice() {
-    // 1. Known-good named voices first (best quality on the platforms that ship them)
-    const prefer = ['Rishi', 'Veena', 'Microsoft Ravi - English (India)', 'Microsoft Heera - English (India)', 'Google UK English Female', 'Google UK English Male'];
+    const local = cbCachedVoices.filter(v => v.localService);
+    const prefer = ['Rishi', 'Veena', 'Microsoft Ravi - English (India)', 'Microsoft Heera - English (India)'];
     for (const name of prefer) {
-      const v = cbCachedVoices.find(vv => vv.name === name);
+      const v = local.find(vv => vv.name === name);
       if (v) return v;
     }
-    // 2. Any en-IN voice, preferring network/cloud voices — they're consistently
-    //    higher quality than a device's bundled offline voice.
-    const enIN = cbCachedVoices.filter(v => v.lang === 'en-IN');
-    if (enIN.length) return enIN.find(v => !v.localService) || enIN[0];
-    // 3. Any English voice at all, same network-quality preference
-    const en = cbCachedVoices.filter(v => v.lang.indexOf('en') === 0);
-    if (en.length) return en.find(v => !v.localService) || en[0];
-    return null;
+    return local.find(v => v.lang === 'en-IN') || local.find(v => v.lang.indexOf('en') === 0) || null;
   }
   function speakText(text) {
     if (!window.speechSynthesis) return null;
@@ -997,11 +1001,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // on every call kills the previous line before it finishes — the browser's
     // speech queue already plays sequential utterances in order on its own,
     // so just queue this one.
-    const u = new SpeechSynthesisUtterance(text);
     const v = pickIndianVoice();
-    u.lang = v ? v.lang : 'en-IN';
+    if (!v) return null;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = v.lang;
     u.rate = 0.95; u.pitch = 1;
-    if (v) u.voice = v;
+    u.voice = v;
     window.speechSynthesis.speak(u);
     return u;
   }
@@ -1034,20 +1039,6 @@ document.addEventListener('DOMContentLoaded', () => {
       img.src = objectUrl;
       img.alt = 'Screenshot you shared';
       div.appendChild(img);
-      dom.messagesEl.appendChild(div);
-      scrollToBottom();
-    }
-
-    function addAudioMessage(objectUrl, fileName) {
-      const div = document.createElement('div');
-      div.className = 'cb-msg cb-msg--user cb-msg--audio';
-      const label = document.createElement('p');
-      label.textContent = '🎧 ' + (fileName || 'Audio clip');
-      const audio = document.createElement('audio');
-      audio.controls = true;
-      audio.src = objectUrl;
-      div.appendChild(label);
-      div.appendChild(audio);
       dom.messagesEl.appendChild(div);
       scrollToBottom();
     }
@@ -1140,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showMainMenu() {
       state.flow = null; state.node = null; persist();
       const who = state.userName ? ', ' + state.userName : '';
-      botSay(['What would you like help with' + who + '? You can also paste a screenshot, or attach an audio clip.'], { options: buildMainMenuOptions(), noMenuChip: true });
+      botSay(['What would you like help with' + who + '? You can also paste a screenshot.'], { options: buildMainMenuOptions(), noMenuChip: true });
     }
     function askForLink() {
       state.awaitingLink = true; persist();
@@ -1194,7 +1185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function greet() {
-      botSay(["Hi — I'm the FraudShield Assistant. Type, speak, or paste a screenshot of what happened, and I'll guide you step by step."], { onDone: showMainMenu, noMenuChip: true });
+      botSay(["Hi — I'm the FraudShield Assistant. Type or paste a screenshot of what happened, and I'll guide you step by step."], { onDone: showMainMenu, noMenuChip: true });
     }
 
     function handleUserInput(rawText) {
@@ -1230,7 +1221,10 @@ document.addEventListener('DOMContentLoaded', () => {
       addImageMessage(objectUrl);
       const progressEl = showOcrProgress('🔍 Preparing image reader…');
       loadOcrEngine()
-        .then(Tesseract => Tesseract.recognize(objectUrl, 'eng', {
+        .then(Tesseract => Tesseract.recognize(objectUrl, 'eng+hin', {
+          workerPath: OCR_BASE + 'worker.min.js',
+          corePath: OCR_BASE,
+          langPath: OCR_BASE + 'lang',
           logger: m => {
             if (m.status === 'recognizing text') {
               updateOcrProgress(progressEl, '🔍 Reading image — ' + Math.round((m.progress || 0) * 100) + '%');
@@ -1255,26 +1249,6 @@ document.addEventListener('DOMContentLoaded', () => {
           progressEl.remove();
           botSay(["I couldn't read that image right now — image analysis needs an internet connection the first time it's used on this device. You can type or say what the message said instead."]);
         });
-    }
-
-    // ── Audio (voice note / call recording) handling — honest about a real
-    //    browser limitation: there is no way to feed an uploaded audio FILE
-    //    into speech recognition (only a live microphone stream is supported
-    //    by any browser's Web Speech API). Rather than fake a transcription,
-    //    we keep the clip for evidence and route the user to the mic, which
-    //    genuinely works, for real-time narration. ──
-    function handleAudioFile(file) {
-      if (!file || file.type.indexOf('audio/') !== 0) return;
-      if (file.size > 20 * 1024 * 1024) {
-        botSay(['That audio file is quite large (over 20MB) — a shorter clip of the key part would work better here.']);
-        return;
-      }
-      const objectUrl = URL.createObjectURL(file);
-      addAudioMessage(objectUrl, file.name);
-      botSay([
-        "Got the audio — you can play it back anytime, and I'd recommend saving the original file as evidence for your report.",
-        "I can't transcribe audio files automatically yet (that needs a paid speech service) — but tap the mic and tell me in your own words what was said, and I'll guide you from there."
-      ]);
     }
 
     // ── Voice input (live mic — real speech-to-text via the browser) ──
@@ -1356,7 +1330,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (dom.micBtn) {
+    if (dom.micBtn && !FEATURES.voiceInput) {
+      dom.micBtn.hidden = true;
+    } else if (dom.micBtn) {
       dom.micBtn.addEventListener('click', () => {
         if (!SRClass) {
           // Never fail silently — a hidden/dead button with no explanation
@@ -1399,8 +1375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.fileInput.value = '';
         if (!file) return;
         if (file.type.indexOf('image/') === 0) handleImageFile(file);
-        else if (file.type.indexOf('audio/') === 0) handleAudioFile(file);
-        else botSay(["I can read images (screenshots) or play audio clips — that file type isn't supported."]);
+        else botSay(["I can read screenshots (images) — that file type isn't supported."]);
       });
     }
     dom.inputEl.addEventListener('paste', e => {
@@ -1456,7 +1431,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="cb-header__icon">🛡️</span>
           <div class="cb-header__text">
             <p class="cb-header__title">FraudShield Assistant</p>
-            <p class="cb-header__sub">Voice · text · screenshots — 100% free</p>
+            <p class="cb-header__sub">Text · screenshots — free and private</p>
           </div>
           <button id="cbVoiceToggle" class="cb-header__btn" type="button" aria-label="Toggle spoken replies" title="Read replies aloud">🔊</button>
           <button id="cbClose" class="cb-header__btn" type="button" aria-label="Close assistant">✕</button>
@@ -1468,9 +1443,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="cbMessages" class="cb-messages" aria-live="polite"></div>
         <div class="cb-inputrow">
-          <input id="cbInput" class="cb-input" type="text" placeholder="Type, paste a screenshot, or tap the mic…" autocomplete="off" aria-label="Message to FraudShield Assistant">
-          <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or audio clip" title="Attach image/audio">📎</button>
-          <input id="cbFile" type="file" accept="image/*,audio/*" hidden>
+          <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
+          <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot" title="Attach a screenshot">📎</button>
+          <input id="cbFile" type="file" accept="image/*" hidden>
           <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
           <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>
         </div>
@@ -1533,7 +1508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="cb-header__icon">🛡️</span>
         <div class="cb-header__text">
           <p class="cb-header__title">FraudShield Assistant</p>
-          <p class="cb-header__sub">Voice · text · screenshots · audio — 100% free, nothing leaves your device</p>
+          <p class="cb-header__sub">Text · screenshots — read on your device, never sent to our servers</p>
         </div>
         <button id="cbVoiceToggle" class="cb-header__btn" type="button" aria-label="Toggle spoken replies" title="Read replies aloud">🔊</button>
       </div>
@@ -1543,9 +1518,9 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div id="cbMessages" class="cb-messages cb-messages--big" aria-live="polite"></div>
       <div class="cb-inputrow">
-        <input id="cbInput" class="cb-input" type="text" placeholder="Type, paste a screenshot, or tap the mic…" autocomplete="off" aria-label="Message to FraudShield Assistant">
-        <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or audio clip" title="Attach image/audio">📎</button>
-        <input id="cbFile" type="file" accept="image/*,audio/*" hidden>
+        <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
+        <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot" title="Attach a screenshot">📎</button>
+        <input id="cbFile" type="file" accept="image/*" hidden>
         <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
         <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>
       </div>
