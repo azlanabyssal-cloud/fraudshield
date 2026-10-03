@@ -20,12 +20,6 @@
       "reason": "Same news report, in the card text."
     },
     {
-      "page": "about.html",
-      "token": "₹3.4 lakh",
-      "count": 1,
-      "reason": "Azlan's own account of his uncle's case; a personal story, not a statistic."
-    },
-    {
       "page": "index.html",
       "token": "₹1 lakh",
       "count": 2,

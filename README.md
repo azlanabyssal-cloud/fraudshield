@@ -11,11 +11,9 @@ Community service project by Azlan, second-year BTech student. Not monetised: no
 
 ## Why this exists
 
-My uncle got a call last year. Someone said they were from CBI. They said his Aadhaar was linked to a drug case. They kept him on video call for six hours. He transferred ₹3.4 lakh before my cousin stopped him.
+I started FraudShield as my Community Service Project at G. Pulla Reddy Engineering College, after going home to home and shop to shop in Munagalapadu, Andhra Pradesh, to talk about digital fraud.
 
-He is a retired government employee. Educated. Careful. It still happened to him.
-
-The problem is not intelligence, it is information. That information is on government websites, but it is buried in PDFs and written in legal language. FraudShield puts the first-hour recovery steps, the 1930 helpline and plain-language scam patterns in front of people who use UPI and WhatsApp every day but have never heard of cybercrime.gov.in.
+The help that saves money is free and public: the 1930 helpline, cybercrime.gov.in, an immediate call to your bank. It sits in PDFs written in legal language. FraudShield puts the first-hour recovery steps, the 1930 helpline and plain-language scam patterns where a frightened person will read them.
 
 If someone calls 1930 in time because of this website, that is the whole point.
 

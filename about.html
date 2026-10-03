@@ -57,8 +57,8 @@
   <div class="page-hero__bg page-hero__bg--about"></div>
   <div class="page-hero__content">
     <span class="page-hero__badge page-hero__badge--orange">ABOUT</span>
-    <h1>A scam hit my family. I built this.</h1>
-    <p>FraudShield is my Community Service Project at G. Pulla Reddy Engineering College, Kurnool. Its first job is simple: tell you what to do in the first hour after a scam.</p>
+    <h1>I went to the doors. Then I built this.</h1>
+    <p>FraudShield is my Community Service Project at G. Pulla Reddy Engineering College, Kurnool. I started by talking to people about digital fraud, home by home and shop by shop. Then I built the tool that tells you exactly what to do in the first hour after a scam.</p>
   </div>
 </section>
 
@@ -67,10 +67,10 @@
   <section class="about-section" aria-labelledby="why">
     <div class="about-wrap about-wrap--narrow">
       <span class="section-tag">Why this exists</span>
-      <h2 id="why">It started with one phone call.</h2>
-      <p class="about-lead">A caller said he was CBI. He told my uncle his Aadhaar was tied to a drug case and kept him on a video call for six hours. My uncle moved ₹3.4 lakh before my cousin stepped in.</p>
-      <p>My uncle is a retired government employee. Educated. Careful. It worked on him anyway.</p>
-      <p>Intelligence was not the gap. Information was. The steps that help are free and public, but they sit in PDFs written in legal language. I put them where people will read them: the first-hour steps, the 1930 helpline, and the scripts criminals run.</p>
+      <h2 id="why">The help exists. It is buried.</h2>
+      <p class="about-lead">The steps that save money are free and public: call 1930, report on cybercrime.gov.in, tell your bank at once. They sit in PDFs written for lawyers, and a frightened person at midnight will not find them.</p>
+      <p>So I pulled them out and put them in plain language, in the order you need them: the first hour, the helpline, and the exact scripts criminals run.</p>
+      <p>The scam I take most seriously is the fake-officer call. A voice claims to be CBI, says your Aadhaar is tied to a case, and keeps you on a video call so you cannot think or ask anyone. It works on educated, careful people. The case on the home page is real and sourced.</p>
     </div>
   </section>
 
@@ -78,7 +78,7 @@
     <div class="about-wrap">
       <span class="section-tag">On the ground</span>
       <h2 id="ground">I went to the doors and the shops.</h2>
-      <p class="about-lead">A website does not reach someone who never searched for it. So I went to <span data-fw="village">Munagalapadu, Andhra Pradesh</span> and talked to people in their homes and shops about digital fraud and what to do when it happens. First visit: <span data-fw="first_visit_long">Sunday 3 May 2026</span>.</p>
+      <p class="about-lead">A website does not reach a man who never searched for it. So I went to <span data-fw="village">Munagalapadu, Andhra Pradesh</span> and spoke with people at home and at the counter about digital fraud and what to do when it hits. First visit: <span data-fw="first_visit_long">Sunday 3 May 2026</span>.</p>
 <!-- @gen:fieldwork_numbers -->
 <!-- @/gen:fieldwork_numbers -->
 <!-- @gen:fieldwork_gallery -->
@@ -92,23 +92,31 @@
   <section class="about-section" aria-labelledby="honest">
     <div class="about-wrap">
       <span class="section-tag">Standards</span>
-      <h2 id="honest">What I stand behind. What I do not claim.</h2>
+      <h2 id="honest">What I stand behind. What I refuse to claim.</h2>
       <div class="about-cards">
         <article class="about-card">
           <h3>Every number has a source.</h3>
-          <p>All statistics sit in one data file, each with its source and a status. If a page disagrees with that file, the build fails. <a href="data.html">Check them on The Data page.</a></p>
+          <p>Every statistic lives in one data file with its source and a status. If a page disagrees with that file, the build fails. I would rather ship nothing than ship a number I cannot defend. <a href="data.html">Check them on The Data page.</a></p>
         </article>
         <article class="about-card">
-          <h3>Guidance, not a verdict.</h3>
-          <p>The assistant never tells you a message is safe. It names the warning signs and the next step. I am building a test set of real messages to measure how often it is right, and I will publish the result, good or bad.</p>
+          <h3>Evidence, not a verdict.</h3>
+          <p>The assistant never tells you a message is safe. It names the scam it resembles, quotes the exact words that gave it away, and says what to do next. I measured it on public data and it missed most of what it should catch. I published that result in the repository instead of hiding it. The fix needs real Indian messages, and collecting them is the next job.</p>
         </article>
         <article class="about-card">
-          <h3>Your messages stay in your browser.</h3>
-          <p>No accounts. No analytics. Text and screenshots you give the assistant are processed on your device. Pages still load fonts from Google and some photos from Unsplash.</p>
+          <h3>Your messages stay on your device.</h3>
+          <p>No accounts. No analytics. Text, links, QR codes and screenshots are processed in your browser. Voice is the one exception, and only if you choose it: your browser's speech service hears the audio unless the browser can do it on the device, and the site tells you which before it listens. Pages still load fonts from Google and a few photos from Unsplash.</p>
         </article>
         <article class="about-card">
           <h3>Independent.</h3>
           <p>Not a government body. Not legal advice. The official routes are the 1930 helpline and cybercrime.gov.in.</p>
+        </article>
+        <article class="about-card">
+          <h3>I try to break my own work.</h3>
+          <p>I break my own tests on purpose to see whether they can fail. Several could not. I fixed them. The tests block a page that promises safety, a number that drifts from its source, and any page that touches your microphone before you tap.</p>
+        </article>
+        <article class="about-card">
+          <h3>Built to be checked.</h3>
+          <p>The code, the data, the decisions and the failures are in the open repository. When I get something wrong I correct it in public, with the reason.</p>
         </article>
       </div>
     </div>
@@ -116,8 +124,8 @@
 
   <section class="about-section about-section--navy" aria-labelledby="hello">
     <div class="about-wrap about-wrap--narrow about-center">
-      <h2 id="hello">Found an error? Tell me.</h2>
-      <p>Every figure lists its source, so mistakes can be found and fixed. The code and the data are open.</p>
+      <h2 id="hello">Found a mistake? Tell me.</h2>
+      <p>Every figure lists its source, so errors can be found and corrected. The code and the data are open. If I am wrong, I want to hear it before someone relies on it.</p>
       <p class="about-actions">
         <a class="btn-primary" href="https://github.com/azlanabyssal-cloud/fraudshield" target="_blank" rel="noopener">Open the project on GitHub ↗</a>
         <a class="btn-outline-white" href="assistant.html">Use the assistant</a>
