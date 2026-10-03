@@ -69,6 +69,7 @@ CI runs the linter and the full suite on every push: unit and property tests, a 
 | Small word-weight model, held-out test, 95% intervals | precision 89.7% [83.1–93.9], recall 95.0% [89.4–97.7] |
 | Same model against the project's 1% scam-rate gate | **fails**: adjusted precision 43.2% against a 90% target |
 | **Shipped keyword router on real smishing it was never built on** (153 independent messages) | **caught none: recall 0.0% [0.0–2.4]** |
+| Domain-name model, 40,449 held-out domains (lexical only, scheme and path removed; ADR-0014) | AUC 0.768 [0.761–0.775]. Strict setting: catches 13.8% of phishing domains with 0.12% false alarms. Shipped as a hint that can only raise "unverified" to "suspicious". A public dataset's near-100% scores come from artifacts, not skill |
 | Message check on the same messages (rules written before, not tuned after) | flags 19.6% [14.1–26.6] at "suspicious" or above, with 0.5% [0.1–1.7] false alarms; at "scam" only, recall 7.2% [4.1–12.4] and no false alarms in 436. Weak: the slice is English and the rules target Indian scam families |
 | Link analyzer on the same messages (not tuned on them) | only 39.2% of the smishing messages contain a link at all, which caps any link checker. Strict "scam" verdict: recall 0.7% [0.1–3.6], false alarms 0.0% [0.0–0.9]. A link with no evidence is "unverified", by design |
 | The word-weight model on the same slice | recall 100% [97.6–100], false alarms 2.5% [1.4–4.5], adjusted precision 28.6%: fails the gate |

@@ -26,6 +26,30 @@ test('weak signals alone are only "suspicious", and an unknown address is "unver
   ['https://random-shop.com', 'unverified', 'nothing to go on'], ['https://example.info', 'unverified', 'an ending alone proves nothing'], ['https://my-local-sweets.club', 'unverified', 'an ending alone proves nothing'],
   ['https://bit.ly/3abc', 'unverified', 'shortened'], ['https://www.google.com/search?q=sbi', 'unverified', 'brand only in the query'], ['https://axis-physio.com', 'unverified', 'not a bank name']]));
 
+test('short brand names are matched as names, not as letters: ordinary words that happen to contain them are left alone', () => {
+  // each of these was a real false alarm on a legitimate domain in the training split of the phishing corpus
+  for (const host of ['mytrainingsitepro.xyz', 'namibia-tracks-and-trails.com', 'traingon.top', 'sbis.link', 'cbinsights.com', 'turbi.com', 'rbitech.io', 'strait-trading.top', 'cabinet-sbirt.org', 'bhimrao-college.top', 'epfoundation.xyz']) {
+    const r = L.analyzeUrl('https://' + host + '/'); assert.notEqual(r.level, 'scam', host); assert.ok(!r.codes.includes('impersonation'), `${host}: ${r.codes}`);
+  }
+  // and the real imitations are still caught, with or without separators
+  for (const host of ['sbi-kyc-update.top', 'sbikyc.xyz', 'sbi2kyc.top', 'hdfcbank-login.xyz', 'hdfc-netbanking.top', 'trai-gov-notice.top', 'rbi-refund.xyz', 'cbi-case-status.top', 'epfo-claim.top']) {
+    const r = L.analyzeUrl('https://' + host + '/'); assert.equal(r.level, 'scam', host + ' ' + r.codes);
+  }
+});
+
+test('a brand\'s own regional sites and unusual endings are not accused, while a real hijack of the same official name still is', () => {
+  for (const host of ['amazon.com.au', 'amazon.com.br', 'amazon.de', 'amazon.co.uk', 'www.amazon.co.jp']) assert.equal(L.analyzeUrl('https://' + host + '/').level, 'official', host);
+  assert.equal(L.analyzeUrl('https://amazon.care/').level, 'suspicious', 'the ending is not a pressure word');
+  for (const host of ['amazon.com.attacker.xyz', 'amazon.com.verify-now.top', 'sbi.co.in.kyc-update.xyz', 'hdfcbank.com.secure-login.top']) assert.equal(L.analyzeUrl('https://' + host + '/').level, 'scam', host);
+  assert.equal(L.analyzeUrl('https://hdfc-care.top/').level, 'scam', 'but "care" inside the name still counts');
+});
+
+test('a brand name merely inside a longer label is a warning, and becomes a scam only with more evidence beside it', () => {
+  assert.equal(L.analyzeUrl('https://amazonia-travel.com/').level, 'suspicious'); assert.equal(L.analyzeUrl('https://amazonia-travel.top/').level, 'suspicious');
+  assert.equal(L.analyzeUrl('https://hdfcbank.xyz/').level, 'scam', 'the bank\'s own name on a cheap ending');
+  assert.equal(L.analyzeUrl('https://hdfcbank.net/').level, 'suspicious', 'the bank\'s own name alone is a warning, not yet an accusation');
+});
+
 test('well-known honest sites are never called a scam', () => {
   const honest = ['google.com', 'youtube.com', 'wikipedia.org', 'zomato.com', 'swiggy.com', 'myntra.com', 'bookmyshow.com', 'makemytrip.com', 'jio.com', 'airtel.in', 'mygov.in', 'umang.gov.in', 'parivahan.gov.in', 'nsdl.co.in', 'bseindia.com', 'nseindia.com',
     'zerodha.com', 'groww.in', 'github.com', 'microsoft.com', 'apple.com', 'amazon.in', 'hotstar.com', 'olacabs.com', 'uber.com', 'ndtv.com', 'thehindu.com', 'timesofindia.indiatimes.com', 'ugc.gov.in', 'jntua.ac.in', 'gprec.ac.in', 'nptel.ac.in',
@@ -75,6 +99,13 @@ test('an internationalised name that imitates a brand with look-alike letters is
 test('edit distance counts a swap of neighbouring letters as one edit', () => {
   assert.equal(L.damerau('hdfcbank', 'hdfcbnak', 2), 1); assert.equal(L.damerau('hdfcbank', 'hdfcbank', 2), 0); assert.equal(L.damerau('icicibank', 'icicibanc', 2), 1);
   assert.equal(L.damerau('paytm', 'phonepe', 1), 2, 'beyond the cap it reports cap + 1'); assert.equal(L.damerau('a', 'abcdef', 2), 3);
+});
+
+test('splitDomain finds the name the owner chose, in any country\'s suffix', () => {
+  for (const [host, name, suffix, subs] of [['www.example.com', 'example', 'com', ['www']], ['shop.sbi.co.in', 'sbi', 'co.in', ['shop']], ['paytm-kyc.com.br', 'paytm-kyc', 'com.br', []], ['a.b.ravi.co.uk', 'ravi', 'co.uk', ['a', 'b']], ['bank.in', 'bank', 'in', []], ['sbi.bank.in', 'sbi', 'bank.in', []], ['x.ac.jp', 'x', 'ac.jp', []], ['localhost', 'localhost', '', []], ['co.uk', 'co', 'uk', []]]) {
+    const d = L.splitDomain(host); assert.equal(d.name, name, host); assert.equal(d.suffix, suffix, host); assert.deepEqual(JSON.parse(JSON.stringify(d.subdomains)), subs, host);
+  }
+  assert.equal(L.registrableDomain('login.hdfc-bank.com.br'), 'hdfc-bank.com.br'); assert.equal(L.registrableDomain('a.b.c.example.co.za'), 'example.co.za');
 });
 
 test('registrable domain handles India-specific suffixes', () => {

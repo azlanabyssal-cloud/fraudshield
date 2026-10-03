@@ -70,6 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   // ANIMATED COUNTERS
   // ═══════════════════════════════════════════════════════
+  // The domain-name model is a soft warning added to link checks. Its weights load after the page is usable; until they arrive the link
+  // analyzer simply runs on its rules, so nothing waits on the download and a failed download costs nothing.
+  function initUrlModel() {
+    const Model = window.FraudShieldUrlModel;
+    if (!Model || typeof fetch !== 'function') return;
+    fetch('data/urlmodel.json').then(r => (r.ok ? r.json() : Promise.reject(new Error('model-unavailable')))).then(m => Model.install(m)).catch(() => {});
+  }
+
   // Primary calls to action lean towards a nearby pointer (fine pointers only; a no-op on touch and under reduced motion).
   function initMagnetic() {
     const Motion = window.FraudShieldMotion;
@@ -1569,6 +1577,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHamburger();
   initCounters();
   initMagnetic();
+  initUrlModel();
   initQuiz();
   initTabs();
   initFilters();

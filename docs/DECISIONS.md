@@ -145,3 +145,25 @@ independent slice, 153 smishing and 436 genuine. Flagging at "suspicious" or "sc
 Consequences: a real gain over the router, and still weak: four in five of these messages are missed. The slice is Western
 smishing (parcel, bank, prize lures in English) and the rules were written for Indian scam families, so this number says little about
 the target. Only the S0 set can: collect it, run the gate, then change rules against it. Until then no accuracy is claimed.
+
+## ADR-0014: A name-only phishing model, shipped as a hint, and why it is not "100%"
+Context: the request was a top-end ML model for phishing links. The public corpus used (PhiUSIIL, 235,795 addresses) is trivially separable:
+every legitimate address in it is exactly "https://www.<host>" (100% https, 100% www, 0% with a path, query or trailing slash) while
+phishing varies on all of those, and its famous ~100% scores rely on that or on page content that a privacy-first browser app must not fetch.
+Decision: train on the only honest signal, the registered name and its ending, with scheme, "www", path and sub-domains removed;
+exclude the 69 hosting platforms whose tenants have no legitimate examples in the data; add 98,267 ordinary domains from the Tranco
+long tail so small honest sites are represented; split by owner-chosen name (so amazon.com and amazon.in never straddle the split);
+choose everything on validation and score the test split once through the quantised deployed file; ship a logistic regression because a
+boosted stack gained only 0.008 AUC and cannot be explained per n-gram. Used only as a hint: at its strict setting it can lift an
+unexplained address to "suspicious", never to "scam".
+Measured (proxy, 40,449 held-out domains): AUC 0.768 [0.761-0.775]; at the strict setting it catches 13.8% of phishing domains with
+0.12% false alarms (precision 93% if 10% of checked links are phishing, 55% if 1%); name n-grams alone 0.695, engineered features 0.629,
+the ending 0.692, name length 0.520. Rules alone flag 9.2% of held-out phishing domains and 0.04% of honest ones, 0 false "scam" verdicts
+in 33,948; rules plus the hint flag 13.9% and 0.15%, with 0 false "scam" verdicts.
+Rejected: the looser setting (on validation, 218 more phishing domains for 128 more honest ones flagged); a typosquatting-distance feature
+(0.9% of phishing domains versus 0.76% of ordinary ones: no signal); a boosted model; 100% anything. A model near 100% here would mean a leak.
+Found on the way: rules called 3 legitimate held-out domains "scam" (Amazon's regional sites, and ".care" counted as a pressure word) and
+matched short brand names inside ordinary words ("trai" in "training"). Fixed on principle; the fix for those 3 was motivated by seeing the test
+split, so the rule figures above are post-hoc for that defect. Training-split false "scam" fell from 4 to 0 and false "suspicious" from 336 to 70.
+Consequences: most reported phishing hides behind ordinary-looking or compromised sites and free hosting, so a name cannot reveal it. Real gains
+need the page, the registration date or the certificate, none of which a browser may fetch without sending the link to a server. Not claimable.

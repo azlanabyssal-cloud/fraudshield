@@ -1,0 +1,242 @@
+{
+  "proxy": true,
+  "claimable": false,
+  "warning": "Trained and tested on reported-phishing hosts and ranked legitimate domains. It sees only the registered name and its ending, never the page. NOT a measure of FraudShield on real Indian links. Never present these figures as product accuracy.",
+  "date": "2026-10-03",
+  "sources": {
+    "phiusiil": {
+      "url": "https://archive.ics.uci.edu/static/public/967/phiusiil+phishing+url+dataset.zip",
+      "zipSha256": "0a639fd03aea6308c5b1c10c92aa23c2ce1505447a9137271865cd0badc9a59a",
+      "csvSha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+      "licence": "CC BY 4.0"
+    },
+    "tranco": {
+      "listId": "94GG2",
+      "csvSha256": "c5a05417a5a7a816e55b4527e29fa95bce35e31b79664aacaa1c5a632d44167b"
+    }
+  },
+  "datasetArtifacts": {
+    "https": {
+      "phishing": 0.487,
+      "legitimate": 1
+    },
+    "www": {
+      "phishing": 0.414,
+      "legitimate": 1
+    },
+    "path": {
+      "phishing": 0.272,
+      "legitimate": 0
+    },
+    "query": {
+      "phishing": 0.061,
+      "legitimate": 0
+    },
+    "trailingSlash": {
+      "phishing": 0.365,
+      "legitimate": 0
+    },
+    "bareHost": {
+      "phishing": 0.716,
+      "legitimate": 1
+    }
+  },
+  "counts": {
+    "phishingAddresses": 100337,
+    "legitimateAddresses": 134850,
+    "platformsFound": 69,
+    "conflictingDomains": 123,
+    "domains": 270990,
+    "phishing": 42595,
+    "legitimate": 228395,
+    "legitimateFromTranco": 98267,
+    "bySplit": {
+      "train": {
+        "phishing": 29782,
+        "legitimate": 159954
+      },
+      "val": {
+        "phishing": 6312,
+        "legitimate": 34493
+      },
+      "test": {
+        "phishing": 6501,
+        "legitimate": 33948
+      }
+    }
+  },
+  "protocol": "Split by owner-chosen name (70/15/15). Hyperparameters, calibration and thresholds chosen on validation only; test scored once through the quantised deployed model. Platform tenants excluded.",
+  "hyperparameters": {
+    "chosen": {
+      "hashBits": 14,
+      "l2": 0.001,
+      "epochs": 3,
+      "lr": 0.2
+    },
+    "grid": [
+      {
+        "hashBits": 14,
+        "l2": 0.0001,
+        "epochs": 2,
+        "valAuc": 0.7608
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.0001,
+        "epochs": 3,
+        "valAuc": 0.7614
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.0001,
+        "epochs": 4,
+        "valAuc": 0.761
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.001,
+        "epochs": 2,
+        "valAuc": 0.7608
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.001,
+        "epochs": 3,
+        "valAuc": 0.7618
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.001,
+        "epochs": 4,
+        "valAuc": 0.7617
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.01,
+        "epochs": 2,
+        "valAuc": 0.7573
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.01,
+        "epochs": 3,
+        "valAuc": 0.7596
+      },
+      {
+        "hashBits": 14,
+        "l2": 0.01,
+        "epochs": 4,
+        "valAuc": 0.7604
+      }
+    ],
+    "reference16BitValAuc": 0.7699,
+    "quantisation": {
+      "scale": 20,
+      "pruneBelow": 0.1
+    }
+  },
+  "validation": {
+    "auc": 0.7614
+  },
+  "test": {
+    "n": {
+      "phishing": 6501,
+      "legitimate": 33948,
+      "outOfScope": 0
+    },
+    "auc": 0.7684,
+    "aucCi95": [
+      0.7611,
+      0.7747
+    ],
+    "atHighThreshold": {
+      "flagged": {
+        "phishing": 895,
+        "legitimate": 39
+      },
+      "recall": {
+        "value": 0.1377,
+        "lo": 0.1295,
+        "hi": 0.1463
+      },
+      "falseAlarm": {
+        "value": 0.00115,
+        "lo": 0.00084,
+        "hi": 0.00157
+      },
+      "precisionIfPrevalence": {
+        "0.01": 0.548,
+        "0.1": 0.93,
+        "0.3": 0.981
+      }
+    },
+    "atElevatedThreshold": {
+      "flagged": {
+        "phishing": 1553,
+        "legitimate": 364
+      },
+      "recall": {
+        "value": 0.2389,
+        "lo": 0.2287,
+        "hi": 0.2494
+      },
+      "falseAlarm": {
+        "value": 0.01072,
+        "lo": 0.00968,
+        "hi": 0.01187
+      },
+      "precisionIfPrevalence": {
+        "0.01": 0.184,
+        "0.1": 0.712,
+        "0.3": 0.905
+      }
+    },
+    "ablationAuc": {
+      "nameNgramsOnly": 0.6953,
+      "engineeredOnly": 0.6293,
+      "endingOnly": 0.6919
+    },
+    "baselineAuc": {
+      "nameLengthOnly": 0.5204,
+      "digitsOnly": 0.5297,
+      "coinFlip": 0.5
+    },
+    "rules": {
+      "withoutModel": {
+        "phishing": {
+          "scam": 0,
+          "suspicious": 600,
+          "unverified": 5899,
+          "official": 2
+        },
+        "legitimate": {
+          "scam": 0,
+          "suspicious": 15,
+          "unverified": 33881,
+          "official": 52
+        }
+      },
+      "withModel": {
+        "phishing": {
+          "scam": 0,
+          "suspicious": 903,
+          "unverified": 5596,
+          "official": 2
+        },
+        "legitimate": {
+          "scam": 0,
+          "suspicious": 51,
+          "unverified": 33845,
+          "official": 52
+        }
+      }
+    }
+  },
+  "modelSha256": "bf96eb26eca8efbbf9cc421a203622937602a9b729546c4c3ed0f752b7d4a49a",
+  "modelBytes": 126705,
+  "codeSha256": {
+    "urlmodel.js": "da6e296d4488f166c1c58b93384d504c0a249406d699d34cf7d55ed80d9d0582",
+    "train.js": "1d0502b374cda3eaadc6af4418b046b616f9e850661dc5ec29161e9f8b262737",
+    "data.js": "fc3dbeb3b601856a5a7c23d4816dbea4c1df7cb27fa617751876fee595a75ae2"
+  }
+}
