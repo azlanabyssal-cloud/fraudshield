@@ -60,6 +60,16 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
 - **C-17: external-validation numbers (Mendeley smishing)**. The recall, false-alarm and AUC figures in
   `mlops/benchmarks/results/mendeley_smishing_external.json` come from English public SMS corpora and a slice that is
   confounded by message length. Same rule as C-16: not product accuracy, README "Measured so far" section only.
+- **C-18: the link and QR analyzer's address rules**. `.bank.in` and `.fin.in` are treated as official because registration
+  is restricted to banks and financial institutions (IDRBT registry, RBI direction; migration deadline reported as 31 Oct 2025).
+  `gov.in` and `nic.in` are treated as official because registration is restricted to government bodies. Status: researched
+  from public reports during development; the primary RBI, IDRBT and registry pages returned 403 and were not re-fetched, so
+  re-verify against the primary source before launch. Brand lists are in `lib/linkcheck.js` (`BRANDS`, `OFFICIAL_DOMAINS`) and are not a complete list of banks.
+- **C-19: "scanning a UPI QR only sends money"**. A UPI QR code or link can only start a payment from the person who scans it;
+  nobody receives money by scanning, and a UPI PIN is only for paying. Source: NPCI and I4C public advisories on the
+  "scan to receive" fraud. Status: secondary confirmation; add the primary NPCI page when it can be fetched.
+- **C-20: analyzer measurements**. The link-presence and recall figures for the analyzer in `mlops/benchmarks/results/mendeley_smishing_external.json`
+  are proxy figures (English, public corpus, not tuned on) and follow rule C-17.
 
 ## Maintenance rule
 Before adding any number, deadline, legal section or "never/always" to the product, add it here with a

@@ -87,6 +87,11 @@ test('"@" in the authority part of a URL is danger (userinfo trick)', () => {
   assert.equal(core.checkLink('https://www.sbi.co.in').verdict, 'safe');
 });
 
-test('core.js avoids regex lookbehind (throws SyntaxError on Safari < 16.4 and would break the whole page)', () => {
-  assert.doesNotMatch(require('node:fs').readFileSync(require('node:path').join(__dirname, '../lib/core.js'), 'utf8'), /\(\?<[!=]/);
+test('no browser file uses regex lookbehind (a SyntaxError on Safari before 16.4 would break the whole page)', () => {
+  const fs = require('node:fs'), path = require('node:path'), root = path.join(__dirname, '..');
+  const files = ['script.js', 'sw.js', ...fs.readdirSync(path.join(root, 'lib')).filter(f => f.endsWith('.js')).map(f => 'lib/' + f)];
+  for (const f of files) {
+    const code = fs.readFileSync(path.join(root, f), 'utf8').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    assert.doesNotMatch(code, /\(\?<[!=]/, f + ' uses regex lookbehind');
+  }
 });

@@ -946,6 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // OCR code and language data are served from this site (vendor/tesseract/),
   // not a CDN, so the screenshot never reaches a third party and OCR works offline.
   const OCR_BASE = new URL('vendor/tesseract/', document.baseURI).href;
+  const QR_DECODER_URL = new URL('vendor/jsqr/jsQR.js', document.baseURI).href;
   function loadOcrEngine() {
     if (ocrEnginePromise) return ocrEnginePromise;
     ocrEnginePromise = new Promise((resolve, reject) => {
@@ -1122,15 +1123,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function askForLink() {
       state.awaitingLink = true; persist();
-      botSay(['Paste the link, phone number, or UPI ID you want me to check.'], { noMenuChip: true });
+      botSay(['Paste the link, phone number or UPI ID you want me to check, or attach a photo of the QR code.'], { noMenuChip: true });
     }
     function respondToLink(raw) {
-      const result = checkLink(raw);
-      const icon = result.verdict === 'safe' ? '✅' : result.verdict === 'danger' ? '🚫' : '⚠️';
+      const result = checkLink(raw), scam = result.level === 'scam';
+      const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
         icon + ' ' + result.headline,
         result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link, even if it looks official.'
-      ], { urgent: result.verdict === 'danger' });
+      ], { urgent: scam, cta: scam ? [{ label: '📞 Paid or shared details? Call 1930', href: 'tel:1930' }] : undefined });
     }
     function respondToGeneralLoss() {
       botSay([
@@ -1172,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function greet() {
-      botSay(["Hi — I'm the FraudShield Assistant. Type or paste a screenshot of what happened, and I'll guide you step by step."], { onDone: showMainMenu, noMenuChip: true });
+      botSay(["Hi — I'm the FraudShield Assistant. Type what happened, paste a link, or share a screenshot or QR code, and I'll guide you step by step."], { onDone: showMainMenu, noMenuChip: true });
     }
 
     function handleUserInput(rawText) {
@@ -1206,7 +1207,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const objectUrl = URL.createObjectURL(file);
       addImageMessage(objectUrl);
-      const progressEl = showOcrProgress('🔍 Preparing image reader…');
+      const progressEl = showOcrProgress('🔍 Looking for a QR code…');
+      const qr = window.FraudShieldQR;
+      (qr ? qr.scan(file, { decoderUrl: QR_DECODER_URL }) : Promise.resolve(null)).catch(() => null).then(code => {
+        if (!code) { readTextFromImage(objectUrl, progressEl); return; }
+        progressEl.remove();
+        botSay(['I found a QR code in that image. It contains: "' + code.replace(/\s+/g, ' ').slice(0, 200) + '"'], { noMenuChip: true, onDone: () => respondToLink(code) });
+      });
+    }
+
+    function readTextFromImage(objectUrl, progressEl) {
+      updateOcrProgress(progressEl, '🔍 Preparing image reader…');
       loadOcrEngine()
         .then(Tesseract => Tesseract.recognize(objectUrl, 'eng+hin', {
           workerPath: OCR_BASE + 'worker.min.js',
@@ -1418,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="cb-header__icon">🛡️</span>
           <div class="cb-header__text">
             <p class="cb-header__title">FraudShield Assistant</p>
-            <p class="cb-header__sub">Text · screenshots — free and private</p>
+            <p class="cb-header__sub">Text · screenshots · QR codes — free and private</p>
           </div>
           <button id="cbVoiceToggle" class="cb-header__btn" type="button" aria-label="Toggle spoken replies" title="Read replies aloud">🔊</button>
           <button id="cbClose" class="cb-header__btn" type="button" aria-label="Close assistant">✕</button>
@@ -1431,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div id="cbMessages" class="cb-messages" aria-live="polite"></div>
         <div class="cb-inputrow">
           <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
-          <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot" title="Attach a screenshot">📎</button>
+          <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
           <input id="cbFile" type="file" accept="image/*" hidden>
           <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
           <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>
@@ -1495,7 +1506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="cb-header__icon">🛡️</span>
         <div class="cb-header__text">
           <p class="cb-header__title">FraudShield Assistant</p>
-          <p class="cb-header__sub">Text · screenshots — read on your device, never sent to our servers</p>
+          <p class="cb-header__sub">Text · screenshots · QR codes — read on your device, never sent to our servers</p>
         </div>
         <button id="cbVoiceToggle" class="cb-header__btn" type="button" aria-label="Toggle spoken replies" title="Read replies aloud">🔊</button>
       </div>
@@ -1506,7 +1517,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div id="cbMessages" class="cb-messages cb-messages--big" aria-live="polite"></div>
       <div class="cb-inputrow">
         <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
-        <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot" title="Attach a screenshot">📎</button>
+        <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
         <input id="cbFile" type="file" accept="image/*" hidden>
         <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
         <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>

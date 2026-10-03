@@ -83,7 +83,7 @@ corpus (the Mendeley set is largely a relabelled copy of UCI: 4,549 exact and 12
 detectors are fixed in advance, never tuned on this data, and individual failures are not inspected.
 
 Result on the independent slice (153 smishing, 436 genuine): the shipped router catches none, the strict link checker
-catches 3.3%, the word-weight model flags all of them with 2.5% false alarms, which fails the 1% gate (28.6% adjusted precision).
+catches 0.7% (only 39.2% of those messages contain a link at all; ADR-0012), the word-weight model flags all of them with 2.5% false alarms, which fails the 1% gate (28.6% adjusted precision).
 `shortcutCheck` compares against message length alone (AUC 0.884 vs the model's 0.998): the slice is easy because the
 classes differ in style, so treat the model's 100% as weak evidence. Hard negatives (long genuine bank alerts) are the
 missing piece, and only real S0 data will contain them.

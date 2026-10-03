@@ -68,3 +68,76 @@ test('the average-loss counter ticks with Indian formatting and the rate from th
     assert.ok(!/\d\.\d,000/.test(el.textContent), 'the old "79.7,000" formatting bug must not return');
   } finally { p.close(); }
 });
+
+/* ---------- the assistant, driven through its real UI ---------- */
+const until = async (fn, ms = 6000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const v = fn(); if (v) return v; await new Promise(r => setTimeout(r, 60)); } return fn(); };
+const say = (doc, text) => { doc.getElementById('cbInput').value = text; doc.getElementById('cbSend').click(); };
+const transcript = doc => doc.getElementById('cbMessages').textContent;
+const finished = doc => /Never enter your OTP/.test(transcript(doc));   // the closing line of every link verdict; the bot types its lines one at a time
+const attach = (win, name = 'photo.png') => {
+  const input = win.document.getElementById('cbFile');
+  Object.defineProperty(input, 'files', { value: [new win.File([new Uint8Array(32)], name, { type: 'image/png' })], configurable: true });
+  win.URL.createObjectURL = () => 'blob:fraudshield-test'; win.URL.revokeObjectURL = () => {};
+  input.dispatchEvent(new win.Event('change'));
+};
+
+test('a pasted scam link gets a scam verdict, a 1930 button, and never the word "safe"', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'check this http://rto-challan-pay.top/echallan.apk');
+    await until(() => finished(p.document));
+    const text = transcript(p.document);
+    assert.match(text, /🚫 This looks like a scam link/); assert.match(text, /app file|\.apk/);
+    assert.ok(p.document.querySelector('#cbMessages a[href="tel:1930"]'), 'the 1930 button is offered');
+    assert.doesNotMatch(text, /\bsafe\b/i);
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('an official address is called official, with the reminder that a real address does not vouch for the message', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'https://sbi.bank.in/');
+    await until(() => finished(p.document));
+    const text = transcript(p.document);
+    assert.match(text, /✅ This ends in \.bank\.in/); assert.match(text, /Never enter your OTP/); assert.doesNotMatch(text, /\bsafe\b/i);
+  } finally { p.close(); }
+});
+
+test('an image is checked for a QR code first: a refund QR is called a scam and the on-screen text is not needed', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    let ocrCalled = false;
+    p.window.FraudShieldQR.scan = async () => 'upi://pay?pa=refund@ybl&pn=Refund%20Desk&tn=claim%20refund&am=4999';
+    p.window.Tesseract = { recognize: async () => { ocrCalled = true; return { data: { text: '' } }; } };
+    attach(p.window);
+    await until(() => finished(p.document), 9000);
+    const text = transcript(p.document);
+    assert.match(text, /I found a QR code in that image/); assert.match(text, /only ever sends money out/); assert.match(text, /🚫 This QR code looks like a scam/);
+    assert.equal(ocrCalled, false, 'a decoded QR code ends the search; OCR is not run');
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('an image with no QR code falls back to reading its text, and a link in that text is still checked', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    p.window.FraudShieldQR.scan = async () => null;
+    p.window.Tesseract = { recognize: async () => ({ data: { text: 'Dear customer your KYC is expired. Update now at http://sbi-kyc-update.tk to avoid block' } }) };
+    attach(p.window);
+    await until(() => finished(p.document), 9000);
+    const text = transcript(p.document);
+    assert.match(text, /Here's what I read from the image/); assert.match(text, /🚫 This looks like a scam link/);
+  } finally { p.close(); }
+});
+
+test('a QR scan that throws does not strand the user: the text reader takes over', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    p.window.FraudShieldQR.scan = () => Promise.reject(new Error('decoder failed to load'));
+    p.window.Tesseract = { recognize: async () => ({ data: { text: 'Pay Rs 500 to claim your prize now at http://paytm-kyc-update.in/verify' } }) };
+    attach(p.window);
+    await until(() => /Here's what I read/.test(transcript(p.document)), 9000);
+    assert.match(transcript(p.document), /Here's what I read from the image/);
+  } finally { p.close(); }
+});

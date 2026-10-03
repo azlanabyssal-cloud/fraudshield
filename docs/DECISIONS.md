@@ -101,8 +101,27 @@ a relabelled copy of another (UCI), so a naive "second dataset" would have been 
 Decision: evaluate on an independent slice (exact and near duplicates of the reference corpus removed), report the
 contaminated set beside it, and always report a trivial-baseline AUC (message length) next to the model's.
 Findings (measured, proxy data): the shipped router catches none of 153 independent real smishing messages and the strict link
-checker 3.3%; the word-weight model flags all of them with 2.5% false alarms (gate fails at 1% prevalence); length alone
+checker (the earlier, cruder version; see ADR-0012) 3.3%; the word-weight model flags all of them with 2.5% false alarms (gate fails at 1% prevalence); length alone
 reaches AUC 0.884, so the slice is easy and the model's recall is weak evidence.
 Consequences: the evidence points at the router and link checker as the product's weak parts, but only S0, with long genuine
 bank alerts as hard negatives, can justify changing them. Nothing was tuned on this data.
 
+## ADR-0012: The link and QR analyzer says "scam" only on evidence, and never says "safe"
+Context: the request was that any phishing link or QR code a user sends must be called fake or a scam. A blanket "scam" on
+every link would call genuine shops, colleges and government pages scams, and a checker that cries wolf on everything is
+ignored the one time it is right. The opposite failure is worse: "safe" on an address nobody verified.
+Decision: `lib/linkcheck.js` returns one of four levels. **scam** needs specific evidence: a hidden destination (`user@host`),
+an official name hijacked inside another domain, a lookalike or homoglyph brand with pressure words, a raw IP, a code link,
+an app-file download from a cheap domain, a "scan to receive" UPI pretext, an auto-debit request dressed as a refund.
+**suspicious** is weak evidence only. **unverified** means nothing here proves it genuine or fake. **official** means the
+address belongs to a known bank or government body, and its message still warns that a real address does not vouch for the
+SMS that carried it. No level is ever "safe", and a fuzz test plus a DOM test enforce that. QR codes are decoded on the
+device (jsQR 1.4.0, vendored, hash-pinned, loaded on first use) and the payload goes through the same analyzer; a UPI QR always
+states the one fact that defeats the common fraud: scanning only ever sends money out.
+Measured (proxy, English, not tuned on it): only 39.2% of the 153 independent real smishing messages contain a link at all, so
+no link checker can exceed that recall. Its strict "scam" verdict catches 0.7% [0.1-3.6] with 0 false alarms on 436 genuine
+messages [0.0-0.9]. The earlier checker's 3.3% came from calling an address dangerous on weak evidence, which is the behaviour
+this ADR removes.
+Consequences: a bare shortener or a random domain stays "unverified", because the address alone cannot prove it fake. Catching
+message-level smishing needs the message text plus the link, which is the S0 dataset's job, not stronger link rules. A
+domain-grouped URL model (PhiUSIIL) is not built; if it is, it may only raise a soft warning, never a "scam" verdict.

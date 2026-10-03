@@ -19,6 +19,12 @@ test('every page has a language, a title, a viewport, a description and a theme 
   if (!d.querySelector('meta[name="theme-color"]')) bad('missing theme-color');
 }));
 
+test('every page that loads the shared core also loads the link analyzer first, because the core depends on it', () => each((page, d, bad) => {
+  const srcs = [...d.querySelectorAll('script[src]')].map(s => s.getAttribute('src'));
+  const core = srcs.indexOf('lib/core.js'), link = srcs.indexOf('lib/linkcheck.js');
+  if (core >= 0 && (link < 0 || link > core)) bad('lib/core.js is loaded without lib/linkcheck.js before it');
+}));
+
 test('no duplicate ids on any page', () => each((page, d, bad) => {
   const seen = new Map();
   d.querySelectorAll('[id]').forEach(e => seen.set(e.id, (seen.get(e.id) || 0) + 1));
