@@ -57,7 +57,7 @@ it is 80% at 5% scam share and 95% at 20%. Within the 250 KB budget the best cro
 the character n-gram models reach 94% at 1% with 80% recall but exceed the budget.
 
 How to read it: the test split is the noisier estimate, so the cross-validated 94% raw precision is the better guide. The naive
-split overstates precision by 7.4 points because 10.7% of its test rows also appear in training. Raw precision on a dataset that is
+split reports 97.1% precision because 10.7% of its test rows also appear in training; the grouped estimates are 94.0% (cross-validation) and 89.7% (test split, interval ±5 points), so the inflation is a few points and its exact size is uncertain. Raw precision on a dataset that is
 13% spam says little about real use, which is why the gate adjusts it.
 
 Protocol, in order: group duplicates into one split; choose the configuration by grouped cross-validation on

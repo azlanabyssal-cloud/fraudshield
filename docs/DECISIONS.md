@@ -70,8 +70,9 @@ proxy and blocked from product copy (CLAIMS C-16). Protocol: duplicates grouped 
 by cross-validation on train+val only, threshold set on validation, near-duplicates of training rows removed from
 the test split, test split read twice and both reads disclosed in the results file. The shipped candidate is a
 40 KB word-weight model, with no runtime library.
-Findings (all measured): a naive random split inflated precision by 7.4 points because 10.7% of its test rows also
-appeared in training; the shipped keyword router caught 0 of 119 spam messages; and under ADR-0010's 1% prevalence rule the
+Findings (all measured): 10.7% of a naive random split's test rows also appeared in training, and it reported 97.1% precision against 94.0%
+cross-validated and 89.7% on the grouped test split (the test split's interval is about ±5 points, so the size of
+the inflation is a few points, not a precise figure); the shipped keyword router caught 0 of 119 spam messages; and under ADR-0010's 1% prevalence rule the
 benchmark model fails the gate (adjusted precision 43.2%, worst case 29.6%, against 0.90). The cross-validation table
 lists every configuration at 1%, 5% and 20% scam share. The best configuration inside the 250 KB budget reaches 85% at 1%;
 the character n-gram models reach 94% at 1% with 80% recall but exceed the budget. Raising the budget after seeing

@@ -62,7 +62,7 @@ FraudShield does **not** claim a detection accuracy. The assistant is a rule-bas
 
 | | result |
 |---|---|
-| Naive random split vs. grouped split | the naive split overstated precision by 7.4 points (10.7% of its test rows were also in training) |
+| Naive random split vs. grouped split | 10.7% of the naive split's test rows were also in training. It reported 97.1% precision; the grouped, de-duplicated evaluation gave 94.0% (cross-validation) and 89.7% (test split, wide interval). The true gap is a few points, and the leak is real. |
 | Small word-weight model, held-out test, 95% intervals | precision 89.7% [83.1–93.9], recall 95.0% [89.4–97.7] |
 | Same model against the project's 1% scam-rate gate | **fails**: adjusted precision 43.2% against a 90% target |
 | The shipped keyword router on the same data | caught 0 of 119 spam messages |
