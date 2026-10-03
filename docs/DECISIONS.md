@@ -63,3 +63,17 @@ Consequences: today the gate reports NO_EVIDENCE, which is the true state. Nothi
 S0 exists; the harness makes the first real number checkable. Revisit serving infrastructure only if
 a server-side feature (for example opt-in reporting) is added with consent.
 
+## ADR-0009: A proxy benchmark to prove the pipeline, with the operating point left as a product decision
+Context: no FraudShield dataset exists yet, and a model score on invented messages would be fiction.
+Decision: run the evaluation pipeline on one public, hash-pinned dataset (UCI SMS Spam, CC BY 4.0), labelled a
+proxy and blocked from product copy (CLAIMS C-16). Protocol: duplicates grouped into one split, configuration chosen
+by cross-validation on train+val only, threshold set on validation, near-duplicates of training rows removed from
+the test split, test split read twice and both reads disclosed in the results file. The shipped candidate is a
+40 KB word-weight model, with no runtime library.
+Findings (all measured): a naive random split inflated precision by 7.4 points because 10.7% of its test rows also
+appeared in training; the shipped keyword router caught 0 of 119 spam messages; the 0.90 precision target is easy to
+meet at 50% scam share and not at 5% (conservative 69-81% depending on the model), so the operating point depends on
+how many checked messages are scams. Which point to ship is a product decision for when real data exists; the
+cross-validation table lists every option.
+Consequences: the benchmark proves the machinery, not the product. First real number: S0.
+

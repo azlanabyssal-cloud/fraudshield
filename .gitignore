@@ -4,3 +4,4 @@ data_ops/golden_holdout.csv
 data_ops/*.private.*
 
 node_modules/
+mlops/benchmarks/data/

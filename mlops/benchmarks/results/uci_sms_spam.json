@@ -1,0 +1,601 @@
+{
+  "benchmark": "uci-sms-spam",
+  "proxy": true,
+  "claimable": false,
+  "warning": "English SMS spam from a different era and country. A proxy benchmark for the evaluation pipeline, NOT a measure of FraudShield. Never quote these numbers as the product's accuracy.",
+  "source": "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip",
+  "license": "CC BY 4.0",
+  "dataset_sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
+  "date": "2026-10-03",
+  "testLooks": 2,
+  "disclosure": "The test split was read twice. Look 1 used naive Bayes chosen on one validation split: precision 89.7% [83.1-93.9], recall 95.0% [89.4-97.7]. That result prompted replacing single-split selection with cross-validation on train+val. Look 2 is the headline below. Every configuration was compared without the test split.",
+  "code_sha256": {
+    "text_models.js": "d76d904eb572bab0c6aee7f2eb39ddb5297c16d57a00439ad7f31b1eb0caba84",
+    "pipeline.js": "76b3b4c36be0cc5b1063c1a089946837a1795da0c13d515b9ebe9d3583033b4d"
+  },
+  "data": {
+    "rows": 5574,
+    "spam": 747,
+    "uniqueTexts": 5137,
+    "rowsInDuplicateGroups": 739,
+    "duplicateGroupsWithConflictingLabels": 0
+  },
+  "seed": "fs-sms-v1",
+  "split": {
+    "train": {
+      "rows": 3344,
+      "spam": 469
+    },
+    "val": {
+      "rows": 1059,
+      "spam": 140
+    },
+    "test": {
+      "rows": 1171,
+      "spam": 138
+    },
+    "testAfterRemovingNearDuplicates": {
+      "rows": 1148,
+      "spam": 119
+    }
+  },
+  "leakage": {
+    "nearOrExactDuplicatesRemovedFromTest": 23,
+    "exact": 0
+  },
+  "selection": {
+    "method": "grouped 5-fold cross-validation on train+val",
+    "minPrecisionLowerBound": 0.9,
+    "maxModelBytes": 250000,
+    "cv": [
+      {
+        "name": "nb_words@0.9",
+        "precision": {
+          "k": 470,
+          "n": 500,
+          "value": 0.94,
+          "lo": 0.9156384216937552,
+          "hi": 0.9576519139990498
+        },
+        "recall": {
+          "k": 470,
+          "n": 496,
+          "value": 0.9475806451612904,
+          "lo": 0.9243015829777604,
+          "hi": 0.9639798245721515
+        },
+        "fpr": {
+          "k": 30,
+          "n": 3775,
+          "value": 0.007947019867549669,
+          "lo": 0.005572349364181739,
+          "hi": 0.011322140206378723
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.8112019802082445
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9532910259917992
+          }
+        ],
+        "foldPrecisionMin": 0.9148936170212766,
+        "foldPrecisionMax": 0.97,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 40718,
+        "overBudget": false
+      },
+      {
+        "name": "nb_words@0.95",
+        "precision": {
+          "k": 431,
+          "n": 441,
+          "value": 0.9773242630385488,
+          "lo": 0.9587668987779081,
+          "hi": 0.9876373943457566
+        },
+        "recall": {
+          "k": 431,
+          "n": 496,
+          "value": 0.8689516129032258,
+          "lo": 0.8363966282648567,
+          "hi": 0.8958353428235841
+        },
+        "fpr": {
+          "k": 10,
+          "n": 3775,
+          "value": 0.0026490066225165563,
+          "lo": 0.001439534591371404,
+          "hi": 0.004869700492734793
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.9003959264839699
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9772410782190899
+          }
+        ],
+        "foldPrecisionMin": 0.9148936170212766,
+        "foldPrecisionMax": 1,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 40718,
+        "overBudget": false
+      },
+      {
+        "name": "nb_words_chars@0.9",
+        "precision": {
+          "k": 470,
+          "n": 493,
+          "value": 0.9533468559837728,
+          "lo": 0.930968767840328,
+          "hi": 0.9687143504814872
+        },
+        "recall": {
+          "k": 470,
+          "n": 496,
+          "value": 0.9475806451612904,
+          "lo": 0.9243015829777604,
+          "hi": 0.9639798245721515
+        },
+        "fpr": {
+          "k": 23,
+          "n": 3775,
+          "value": 0.0060927152317880795,
+          "lo": 0.004063367396286438,
+          "hi": 0.00912628310401503
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.8420340466244898
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9620057480540224
+          }
+        ],
+        "foldPrecisionMin": 0.9042553191489362,
+        "foldPrecisionMax": 0.979381443298969,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 627434,
+        "overBudget": true
+      },
+      {
+        "name": "nb_words_chars@0.95",
+        "precision": {
+          "k": 399,
+          "n": 401,
+          "value": 0.9950124688279302,
+          "lo": 0.9819992485883698,
+          "hi": 0.9986312004563923
+        },
+        "recall": {
+          "k": 399,
+          "n": 496,
+          "value": 0.8044354838709677,
+          "lo": 0.767245004777204,
+          "hi": 0.836946403060799
+        },
+        "fpr": {
+          "k": 2,
+          "n": 3775,
+          "value": 0.0005298013245033113,
+          "lo": 0.000145299616363919,
+          "hi": 0.0019298336731605743
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.9543894768588854
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9900391098022354
+          }
+        ],
+        "foldPrecisionMin": 0.978021978021978,
+        "foldPrecisionMax": 1,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 627434,
+        "overBudget": true
+      },
+      {
+        "name": "lr_words@0.9",
+        "precision": {
+          "k": 456,
+          "n": 475,
+          "value": 0.96,
+          "lo": 0.938373818894252,
+          "hi": 0.9742453019173064
+        },
+        "recall": {
+          "k": 456,
+          "n": 496,
+          "value": 0.9193548387096774,
+          "lo": 0.892044231624603,
+          "hi": 0.9402194295032423
+        },
+        "fpr": {
+          "k": 19,
+          "n": 3775,
+          "value": 0.005033112582781457,
+          "lo": 0.0032245588651151104,
+          "hi": 0.007848040737895506
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.8567816638493504
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9660050620313816
+          }
+        ],
+        "foldPrecisionMin": 0.9444444444444444,
+        "foldPrecisionMax": 0.9875,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 42181,
+        "overBudget": false
+      },
+      {
+        "name": "lr_words@0.95",
+        "precision": {
+          "k": 448,
+          "n": 454,
+          "value": 0.986784140969163,
+          "lo": 0.9714699481641045,
+          "hi": 0.9939294388728095
+        },
+        "recall": {
+          "k": 448,
+          "n": 496,
+          "value": 0.9032258064516129,
+          "lo": 0.8740231713414762,
+          "hi": 0.9262303489737597
+        },
+        "fpr": {
+          "k": 6,
+          "n": 3775,
+          "value": 0.0015894039735099338,
+          "lo": 0.0007286253724822522,
+          "hi": 0.003463558814333093
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.9299792917452864
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9843962295308271
+          }
+        ],
+        "foldPrecisionMin": 0.967741935483871,
+        "foldPrecisionMax": 1,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 42181,
+        "overBudget": false
+      },
+      {
+        "name": "lr_words_chars@0.9",
+        "precision": {
+          "k": 456,
+          "n": 475,
+          "value": 0.96,
+          "lo": 0.938373818894252,
+          "hi": 0.9742453019173064
+        },
+        "recall": {
+          "k": 456,
+          "n": 496,
+          "value": 0.9193548387096774,
+          "lo": 0.892044231624603,
+          "hi": 0.9402194295032423
+        },
+        "fpr": {
+          "k": 19,
+          "n": 3775,
+          "value": 0.005033112582781457,
+          "lo": 0.0032245588651151104,
+          "hi": 0.007848040737895506
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.8567816638493504
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9660050620313816
+          }
+        ],
+        "foldPrecisionMin": 0.9431818181818182,
+        "foldPrecisionMax": 0.98989898989899,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 411614,
+        "overBudget": true
+      },
+      {
+        "name": "lr_words_chars@0.95",
+        "precision": {
+          "k": 399,
+          "n": 401,
+          "value": 0.9950124688279302,
+          "lo": 0.9819992485883698,
+          "hi": 0.9986312004563923
+        },
+        "recall": {
+          "k": 399,
+          "n": 496,
+          "value": 0.8044354838709677,
+          "lo": 0.767245004777204,
+          "hi": 0.836946403060799
+        },
+        "fpr": {
+          "k": 2,
+          "n": 3775,
+          "value": 0.0005298013245033113,
+          "lo": 0.000145299616363919,
+          "hi": 0.0019298336731605743
+        },
+        "precisionAtPrevalence": [
+          {
+            "prevalence": 0.05,
+            "precision": 0.9543894768588854
+          },
+          {
+            "prevalence": 0.2,
+            "precision": 0.9900391098022354
+          }
+        ],
+        "foldPrecisionMin": 0.9767441860465116,
+        "foldPrecisionMax": 1,
+        "foldsWithoutThreshold": 0,
+        "sizeBytes": 411614,
+        "overBudget": true
+      }
+    ],
+    "winner": "nb_words@0.9"
+  },
+  "model": {
+    "kind": "nb",
+    "sizeBytes": 40734,
+    "features": 2821,
+    "threshold": 6.583000000000001,
+    "thresholdChosenOn": "validation",
+    "validation": {
+      "threshold": 6.583000000000001,
+      "recall": 0.9571428571428572,
+      "precision": 0.950354609929078,
+      "precisionLo": 0.9010731405592894
+    }
+  },
+  "candidate": {
+    "n": 1148,
+    "tp": 113,
+    "fp": 13,
+    "fn": 6,
+    "tn": 1016,
+    "precision": {
+      "k": 113,
+      "n": 126,
+      "value": 0.8968253968253969,
+      "lo": 0.8314608773520775,
+      "hi": 0.9387083134157506
+    },
+    "recall": {
+      "k": 113,
+      "n": 119,
+      "value": 0.9495798319327731,
+      "lo": 0.8943504337593848,
+      "hi": 0.9766899955414383
+    },
+    "fpr": {
+      "k": 13,
+      "n": 1029,
+      "value": 0.012633624878522837,
+      "lo": 0.007397780538143825,
+      "hi": 0.02149493640896597
+    },
+    "underpowered": false,
+    "prevalence": 0.10365853658536585,
+    "atPrevalence": [
+      {
+        "prevalence": 0.05,
+        "precision": 0.6865074134729562
+      },
+      {
+        "prevalence": 0.2,
+        "precision": 0.9122951150102269
+      },
+      {
+        "prevalence": 0.5,
+        "precision": 0.976529950241475
+      }
+    ],
+    "latencyMs": {
+      "p50": 0.001584,
+      "p95": 0.004875,
+      "note": "Node on this machine, not a phone"
+    }
+  },
+  "baselines": {
+    "router_v0": {
+      "n": 1148,
+      "tp": 0,
+      "fp": 1,
+      "fn": 119,
+      "tn": 1028,
+      "precision": {
+        "k": 0,
+        "n": 1,
+        "value": 0,
+        "lo": 0,
+        "hi": 0.7934567085261071
+      },
+      "recall": {
+        "k": 0,
+        "n": 119,
+        "value": 0,
+        "lo": 3.469446951953614e-18,
+        "hi": 0.03127279358132749
+      },
+      "fpr": {
+        "k": 1,
+        "n": 1029,
+        "value": 0.0009718172983479105,
+        "lo": 0.00017156580574146296,
+        "hi": 0.005484286940700973
+      },
+      "underpowered": false,
+      "prevalence": 0.10365853658536585,
+      "atPrevalence": [
+        {
+          "prevalence": 0.05,
+          "precision": 3.329557208254207e-17
+        },
+        {
+          "prevalence": 0.2,
+          "precision": 1.5815396739207477e-16
+        },
+        {
+          "prevalence": 0.5,
+          "precision": 6.326158695682989e-16
+        }
+      ],
+      "latencyMs": {
+        "p50": 0.146833,
+        "p95": 0.231,
+        "note": "Node on this machine, not a phone"
+      }
+    },
+    "always_scam": {
+      "n": 1148,
+      "tp": 119,
+      "fp": 1029,
+      "fn": 0,
+      "tn": 0,
+      "precision": {
+        "k": 119,
+        "n": 1148,
+        "value": 0.10365853658536585,
+        "lo": 0.08732734842321657,
+        "hi": 0.1226334656331606
+      },
+      "recall": {
+        "k": 119,
+        "n": 119,
+        "value": 1,
+        "lo": 0.9687272064186726,
+        "hi": 1
+      },
+      "fpr": {
+        "k": 1029,
+        "n": 1029,
+        "value": 1,
+        "lo": 0.9962805526036131,
+        "hi": 1
+      },
+      "underpowered": false,
+      "prevalence": 0.10365853658536585,
+      "atPrevalence": [
+        {
+          "prevalence": 0.05,
+          "precision": 0.04851221594670734
+        },
+        {
+          "prevalence": 0.2,
+          "precision": 0.19496486045103403
+        },
+        {
+          "prevalence": 0.5,
+          "precision": 0.49205761126290926
+        }
+      ],
+      "latencyMs": {
+        "p50": 0.000042,
+        "p95": 0.000042,
+        "note": "Node on this machine, not a phone"
+      }
+    },
+    "never_scam": {
+      "n": 1148,
+      "tp": 0,
+      "fp": 0,
+      "fn": 119,
+      "tn": 1029,
+      "precision": {
+        "k": 0,
+        "n": 0,
+        "value": null,
+        "lo": null,
+        "hi": null
+      },
+      "recall": {
+        "k": 0,
+        "n": 119,
+        "value": 0,
+        "lo": 3.469446951953614e-18,
+        "hi": 0.03127279358132749
+      },
+      "fpr": {
+        "k": 0,
+        "n": 1029,
+        "value": 0,
+        "lo": 0,
+        "hi": 0.0037194473963868225
+      },
+      "underpowered": false,
+      "prevalence": 0.10365853658536585,
+      "atPrevalence": [
+        {
+          "prevalence": 0.05,
+          "precision": 4.9093978673509044e-17
+        },
+        {
+          "prevalence": 0.2,
+          "precision": 2.3319639869916785e-16
+        },
+        {
+          "prevalence": 0.5,
+          "precision": 9.327855947966708e-16
+        }
+      ],
+      "latencyMs": {
+        "p50": 0.000041,
+        "p95": 0.000042,
+        "note": "Node on this machine, not a phone"
+      }
+    }
+  },
+  "vsRouterV0": {
+    "candidateOnlyCorrect": 114,
+    "baselineOnlyCorrect": 13,
+    "p": 2.517461353960426e-21,
+    "better": 101
+  },
+  "naiveSplitContrast": {
+    "testRowsAlsoInTrain": 119,
+    "testRows": 1116,
+    "precision": {
+      "k": 136,
+      "n": 140,
+      "value": 0.9714285714285714,
+      "lo": 0.928841706594433,
+      "hi": 0.9888344037936607
+    },
+    "recall": {
+      "k": 136,
+      "n": 143,
+      "value": 0.951048951048951,
+      "lo": 0.9024087816159931,
+      "hi": 0.9760888648275214
+    }
+  }
+}

@@ -3,5 +3,7 @@
   "minPrecision": 0.90,
   "maxP95LatencyMs": 50,
   "regressionAlpha": 0.05,
-  "nearDuplicateJaccard": 0.85
+  "nearDuplicateJaccard": 0.85,
+  "_proposal": "maxModelBytes is a proposal set before any model was compared: the PWA already ships a 10 MB OCR bundle, so 250 KB is small; revisit with real on-device measurements.",
+  "maxModelBytes": 250000
 }
