@@ -153,6 +153,9 @@ test('a link inside the message is judged by the link analyzer and outweighs the
   assert.equal(run('Download the form from https://www.nptel.ac.in/downloads').level, 'nothing');
   const r = run('Update here http://sbi.co.in@evil.com/login'); assert.equal(r.level, 'scam'); assert.ok(r.link && r.link.level === 'scam'); assert.ok(r.next.some(l => /link/i.test(l)));
   assert.equal(run('Your order is out. Track at https://random-shop.com/track').level, 'nothing', 'one unverified link alone is not an accusation');
+  for (const text of ['Dear customer, your KYC expires today. Update now at bankkyc-verify.xyz or your account will be blocked.', 'Hi, see https://sbi-kyc-update.tk/login']) {
+    const said = run(text).next.filter(l => /\blink\b/i.test(l)).length; assert.equal(said, 1, 'the link warning is given once, not twice: ' + text);
+  }
 });
 
 test('a scammer cannot buy an exemption: "delivery agent" excuses an OTP ask only in the same sentence', () => {
