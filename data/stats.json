@@ -1,0 +1,572 @@
+{
+  "_readme": "Single source of truth for every statistic shown on the site. Pages mark numbers with data-stat=\"key\"; scripts/sync_stats.js writes the formatted value into the HTML and tests fail if a page disagrees. Never type a statistic into a page by hand. status: primary = read at the official source; secondary = reported by named outlets, official source not readable by me; derived = computed here from other entries (formula given, recomputed by tests).",
+  "asOf": "2026-10-03",
+  "stats": {
+    "ncrb_cases_2021": {
+      "value": 52974,
+      "fmt": "num",
+      "label": "cyber crime cases registered, 2021",
+      "source": "NCRB, Crime in India 2021",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Widely cited NCRB figure; confirmed by a search-engine summary of outlet reports, not read in the NCRB table."
+    },
+    "ncrb_cases_2022": {
+      "value": 65893,
+      "fmt": "num",
+      "label": "cyber crime cases registered, 2022",
+      "source": "NCRB, Crime in India 2022",
+      "url": "https://www.ncrb.gov.in/uploads/nationalcrimerecordsbureau/custom/1701607577CrimeinIndia2022Book1.pdf",
+      "status": "secondary",
+      "note": "The NCRB 2022 book exists at this URL (found by search); the figure was confirmed through outlet reports and a search summary."
+    },
+    "ncrb_cases_2023": {
+      "value": 86420,
+      "fmt": "num",
+      "label": "cyber crime cases registered, 2023",
+      "source": "NCRB, Crime in India 2023",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Cited by four independent outlets as the 2023 base for the 2024 growth figure."
+    },
+    "ncrb_cases_2024": {
+      "value": 101928,
+      "fmt": "num",
+      "label": "cyber crime cases registered, 2024",
+      "source": "NCRB, Crime in India 2024 (released May 2026)",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Read in four independent write-ups (ETV Bharat, Vajiram, Budding Forensic Expert, Drishti); the NCRB site lists the 2024 report but its tables were not readable."
+    },
+    "ncrb_growth_2024_pct": {
+      "value": 17.9,
+      "fmt": "pct",
+      "label": "growth in cyber crime cases, 2024 over 2023",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Three of four write-ups say 17.9%; one says 17%. Check: 101928/86420 = 1.179."
+    },
+    "ncrb_rate_2024": {
+      "value": 7.3,
+      "fmt": "plain",
+      "label": "cyber crime rate per lakh population, 2024 (6.2 in 2023)",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary"
+    },
+    "ncrb_fraud_2024": {
+      "value": 73987,
+      "fmt": "num",
+      "label": "cyber crime cases with fraud as the motive, 2024",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary"
+    },
+    "ncrb_fraud_share_2024_pct": {
+      "value": 72.6,
+      "fmt": "pct",
+      "label": "share of cyber crime cases that were fraud, 2024",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Check: 73987/101928 = 72.6%."
+    },
+    "ncrb_telangana_2024": {
+      "value": 27230,
+      "fmt": "num",
+      "label": "cyber crime cases in Telangana, 2024 (highest of any state)",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary"
+    },
+    "ncrb_karnataka_2024": {
+      "value": 21003,
+      "fmt": "num",
+      "label": "cyber crime cases in Karnataka, 2024 (second highest)",
+      "source": "NCRB, Crime in India 2024",
+      "url": "https://ncrb.gov.in/crime-in-india",
+      "status": "secondary",
+      "note": "Third place is reported as Maharashtra without a figure in the write-ups read; the full state table was not readable."
+    },
+    "ncrp_cases_2024": {
+      "value": 2268000,
+      "fmt": "lakh",
+      "label": "cyber fraud cases recorded, 2024",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary",
+      "note": "ThePrint attributes the series to an MHA reply to a Lok Sabha question. The reply itself was not read. Other replies give different counts for the same years (definitions differ), so only this set is used."
+    },
+    "ncrp_cases_2025": {
+      "value": 2815000,
+      "fmt": "lakh",
+      "label": "cyber fraud cases recorded, 2025",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "ncrp_firs_2024": {
+      "value": 66370,
+      "fmt": "num",
+      "label": "FIRs registered on those cases, 2024",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "ncrp_firs_2025": {
+      "value": 55484,
+      "fmt": "num",
+      "label": "FIRs registered on those cases, 2025",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "loss_2023_cr": {
+      "value": 7465,
+      "fmt": "inr_cr",
+      "label": "reported fraud losses, 2023",
+      "source": "MHA reply in Lok Sabha, as reported by outlets",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary",
+      "note": "Appears as the base of the 206% rise to 2024 in reports of the Lok Sabha reply."
+    },
+    "loss_2024_cr": {
+      "value": 22845,
+      "fmt": "inr_cr",
+      "label": "reported fraud losses, 2024",
+      "source": "MHA reply in Lok Sabha, as reported by ThePrint and others",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary",
+      "note": "Another analysis of a different reply gives 22,812. This is the figure most outlets report; the site uses one number everywhere."
+    },
+    "loss_2025_cr": {
+      "value": 22495,
+      "fmt": "inr_cr",
+      "label": "reported fraud losses, 2025",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "loss_share_2025_investment_pct": {
+      "value": 76,
+      "fmt": "pct",
+      "label": "share of 2025 money lost that was investment fraud (35% of cases)",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "loss_share_2025_digital_arrest_pct": {
+      "value": 9,
+      "fmt": "pct",
+      "label": "share of 2025 money lost that was digital arrest (6% of cases)",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "loss_share_2025_sextortion_pct": {
+      "value": 4,
+      "fmt": "pct",
+      "label": "share of 2025 money lost that was sextortion (19% of cases)",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "case_share_2025_investment_pct": {
+      "value": 35,
+      "fmt": "pct",
+      "label": "share of 2025 cases that were investment fraud",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "case_share_2025_sextortion_pct": {
+      "value": 19,
+      "fmt": "pct",
+      "label": "share of 2025 cases that were sextortion",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    },
+    "cfcfrms_saved_cr": {
+      "value": 11158,
+      "fmt": "inr_cr",
+      "label": "saved or frozen through CFCFRMS, cumulative, as of 30 June 2026",
+      "source": "Rajya Sabha written reply by the MoS Home Affairs (PIB, July 2026), as reported by Sarkaritel and Cyraacs",
+      "url": "https://www.sarkaritel.com/ai-enabled-cyber-crime-i4c-digital-protection/",
+      "status": "secondary",
+      "note": "Two pages state it as more than Rs 11,158 crore across more than 32.80 lakh complaints. PIB itself returned 403. Earlier cumulative figures: 8,189 Cr (31 Dec 2025), 8,690 Cr (31 Jan 2026)."
+    },
+    "cfcfrms_complaints": {
+      "value": 3280000,
+      "fmt": "lakh",
+      "label": "complaints in which money was saved or frozen, cumulative, as of 30 June 2026",
+      "source": "same reply",
+      "url": "https://www.sarkaritel.com/ai-enabled-cyber-crime-i4c-digital-protection/",
+      "status": "secondary"
+    },
+    "upi_aug2026_bn": {
+      "value": 24.51,
+      "fmt": "bn",
+      "label": "UPI transactions in August 2026, a record month",
+      "source": "NPCI data, as reported by Medianama and Business Standard",
+      "url": "https://www.medianama.com/2026/09/223-upi-transactions-august-2026/",
+      "status": "secondary",
+      "note": "Worth Rs 29.82 lakh crore; volume up 22% on August 2025. NPCI's own page loads its table by script and could not be read."
+    },
+    "loss_growth_2024_pct": {
+      "value": 206,
+      "fmt": "pct",
+      "label": "rise in reported losses, 2024 over 2023",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round((loss_2024_cr / loss_2023_cr - 1) * 100)",
+      "inputs": [
+        "loss_2024_cr",
+        "loss_2023_cr"
+      ]
+    },
+    "cases_growth_2025_pct": {
+      "value": 24,
+      "fmt": "pct",
+      "label": "rise in cases, 2025 over 2024",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round((ncrp_cases_2025 / ncrp_cases_2024 - 1) * 100)",
+      "inputs": [
+        "ncrp_cases_2025",
+        "ncrp_cases_2024"
+      ]
+    },
+    "fir_rate_2025_pct": {
+      "value": 2,
+      "fmt": "pct",
+      "label": "share of 2025 cases that led to an FIR (about)",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(ncrp_firs_2025 / ncrp_cases_2025 * 100)",
+      "inputs": [
+        "ncrp_firs_2025",
+        "ncrp_cases_2025"
+      ]
+    },
+    "loss_per_second_2025": {
+      "value": 7133,
+      "fmt": "inr",
+      "label": "average rupees reported lost per second across 2025",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(loss_2025_cr * 10000000 / 31536000)",
+      "inputs": [
+        "loss_2025_cr"
+      ]
+    },
+    "seconds_per_case_2025": {
+      "value": 11,
+      "fmt": "plain",
+      "label": "average seconds between cases recorded in 2025",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(31536000 / ncrp_cases_2025)",
+      "inputs": [
+        "ncrp_cases_2025"
+      ]
+    },
+    "ncrb_growth_2021_2024_pct": {
+      "value": 92,
+      "fmt": "pct",
+      "label": "rise in NCRB cyber crime cases, 2024 over 2021",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round((ncrb_cases_2024 / ncrb_cases_2021 - 1) * 100)",
+      "inputs": [
+        "ncrb_cases_2024",
+        "ncrb_cases_2021"
+      ]
+    },
+    "loss_investment_2025_cr": {
+      "value": 17096,
+      "fmt": "inr_cr",
+      "label": "money lost to investment fraud in 2025 (76% of the total)",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(loss_2025_cr * loss_share_2025_investment_pct / 100)",
+      "inputs": [
+        "loss_2025_cr",
+        "loss_share_2025_investment_pct"
+      ]
+    },
+    "loss_share_2025_other_pct": {
+      "value": 11,
+      "fmt": "pct",
+      "label": "share of 2025 money lost to all other fraud types",
+      "source": "derived",
+      "status": "derived",
+      "formula": "100 - loss_share_2025_investment_pct - loss_share_2025_digital_arrest_pct - loss_share_2025_sextortion_pct",
+      "inputs": [
+        "loss_share_2025_investment_pct",
+        "loss_share_2025_digital_arrest_pct",
+        "loss_share_2025_sextortion_pct"
+      ]
+    },
+    "loss_change_2025_pct": {
+      "value": -1.5,
+      "fmt": "plain",
+      "label": "change in reported losses, 2025 against 2024 (percent)",
+      "source": "derived",
+      "status": "derived",
+      "formula": "Math.round((loss_2025_cr / loss_2024_cr - 1) * 1000) / 10",
+      "inputs": [
+        "loss_2025_cr",
+        "loss_2024_cr"
+      ]
+    },
+    "suspect_registry_ids": {
+      "value": 3048000,
+      "fmt": "lakh",
+      "label": "suspect identifiers received from banks for the Suspect Registry, cumulative to 30 June 2026",
+      "source": "Reply in Parliament, as reported by Organiser",
+      "url": "https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/",
+      "status": "secondary",
+      "note": "Matches the figures a search summary gave for the same cut-off; the MHA PDF returned 403."
+    },
+    "suspect_registry_mules": {
+      "value": 3208000,
+      "fmt": "lakh",
+      "label": "Layer 1 mule accounts shared with Suspect Registry participants, cumulative to 30 June 2026",
+      "source": "same reply",
+      "url": "https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/",
+      "status": "secondary"
+    },
+    "suspect_registry_declined_cr": {
+      "value": 25698,
+      "fmt": "inr_cr",
+      "label": "transactions declined through the Suspect Registry, cumulative to 30 June 2026",
+      "source": "same reply",
+      "url": "https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/",
+      "status": "secondary"
+    },
+    "sims_blocked_police": {
+      "value": 1575000,
+      "fmt": "lakh",
+      "label": "SIM cards blocked on police reports, cumulative to 30 June 2026",
+      "source": "same reply",
+      "url": "https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/",
+      "status": "secondary"
+    },
+    "imeis_blocked": {
+      "value": 577000,
+      "fmt": "lakh",
+      "label": "IMEIs made inactive, cumulative to 30 June 2026",
+      "source": "same reply",
+      "url": "https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/",
+      "status": "secondary"
+    },
+    "mulehunter_banks": {
+      "value": 26,
+      "fmt": "num",
+      "label": "banks where MuleHunter.AI is live",
+      "source": "PIB release, 24 March 2026 (read in the earlier claims audit, C-14)",
+      "url": "https://www.pib.gov.in/",
+      "status": "secondary",
+      "note": "C-14 in docs/CLAIMS.md"
+    },
+    "mrm_threshold_inr": {
+      "value": 50000,
+      "fmt": "inr",
+      "label": "Money Restoration Module: frozen-amount threshold per bank account (a police report is enough up to this level; above it an FIR is compulsory)",
+      "source": "The420.in, and India TV (September 2026) for the process",
+      "url": "https://the420.in/national-crime-reporting-portal-money-restoration-module/",
+      "status": "secondary",
+      "note": "Two outlets describe the module; neither gave the portal URL and the I4C page was not readable, so the site points people to cybercrime.gov.in."
+    },
+    "rbi_comp_share_pct": {
+      "value": 85,
+      "fmt": "pct",
+      "label": "RBI small-value fraud compensation: share of net loss (from 1 January 2027)",
+      "source": "RBI Third Amendment Directions 2026, as summarised by Vajiram & Ravi",
+      "url": "https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/",
+      "status": "secondary",
+      "note": "Final directions confirmed by ELP Law; these terms by one summary only."
+    },
+    "rbi_comp_cap_inr": {
+      "value": 25000,
+      "fmt": "inr",
+      "label": "RBI small-value fraud compensation: cap (from 1 January 2027, once in a lifetime)",
+      "source": "same summary",
+      "url": "https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/",
+      "status": "secondary"
+    },
+    "rbi_gross_loss_cap_inr": {
+      "value": 50000,
+      "fmt": "inr",
+      "label": "RBI small-value fraud compensation: largest gross loss that qualifies",
+      "source": "same summary",
+      "url": "https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/",
+      "status": "secondary"
+    },
+    "rbi_report_days": {
+      "value": 5,
+      "fmt": "num",
+      "label": "RBI small-value fraud compensation: calendar days to report to 1930 and the bank",
+      "source": "same summary",
+      "url": "https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/",
+      "status": "secondary"
+    },
+    "ncrb_telangana_share_2024_pct": {
+      "value": 26.7,
+      "fmt": "pct",
+      "label": "Telangana share of all cyber crime cases, 2024",
+      "source": "derived",
+      "status": "derived",
+      "formula": "Math.round(ncrb_telangana_2024 / ncrb_cases_2024 * 1000) / 10",
+      "inputs": [
+        "ncrb_telangana_2024",
+        "ncrb_cases_2024"
+      ]
+    },
+    "ncrb_karnataka_share_2024_pct": {
+      "value": 20.6,
+      "fmt": "pct",
+      "label": "Karnataka share of all cyber crime cases, 2024",
+      "source": "derived",
+      "status": "derived",
+      "formula": "Math.round(ncrb_karnataka_2024 / ncrb_cases_2024 * 1000) / 10",
+      "inputs": [
+        "ncrb_karnataka_2024",
+        "ncrb_cases_2024"
+      ]
+    },
+    "avg_loss_per_case_2024": {
+      "value": 100728,
+      "fmt": "inr",
+      "label": "average rupees reported lost per case, 2024",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(loss_2024_cr * 10000000 / ncrp_cases_2024)",
+      "inputs": [
+        "loss_2024_cr",
+        "ncrp_cases_2024"
+      ]
+    },
+    "avg_loss_per_case_2025": {
+      "value": 79911,
+      "fmt": "inr",
+      "label": "average rupees reported lost per case, 2025",
+      "source": "derived",
+      "status": "derived",
+      "formula": "round(loss_2025_cr * 10000000 / ncrp_cases_2025)",
+      "inputs": [
+        "loss_2025_cr",
+        "ncrp_cases_2025"
+      ]
+    },
+    "case_share_2025_digital_arrest_pct": {
+      "value": 6,
+      "fmt": "pct",
+      "label": "share of 2025 cases that were digital arrest",
+      "source": "MHA reply in Parliament, as reported by ThePrint",
+      "url": "https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/",
+      "status": "secondary"
+    }
+  },
+  "rbi_directions": {
+    "issued": "2026-06-24",
+    "effective": "2027-01-01",
+    "name": "Reserve Bank of India (Commercial Banks - Responsible Business Conduct) Third Amendment Directions, 2026",
+    "status": "secondary",
+    "note": "Final directions confirmed by a law-firm note and a current-affairs summary; the RBI document itself was not readable. They apply to transactions on or after 1 January 2027, so the compensation below is NOT available for fraud happening today.",
+    "small_value_compensation": {
+      "max_gross_loss_inr": 50000,
+      "share_of_net_loss_pct": 85,
+      "cap_inr": 25000,
+      "once_in_lifetime": true,
+      "report_within_calendar_days": 5,
+      "report_to": [
+        "National Cyber Crime Reporting Portal or 1930",
+        "your bank"
+      ]
+    },
+    "url": "https://elplaw.in/leadership/rbi-tightens-customer-protection-framework-for-fraudulent-electronic-banking-transactions-2/"
+  },
+  "series": {
+    "ncrb_cases": {
+      "title": "Cyber crime cases registered in India (NCRB)",
+      "points": [
+        {
+          "label": "2021",
+          "stat": "ncrb_cases_2021"
+        },
+        {
+          "label": "2022",
+          "stat": "ncrb_cases_2022"
+        },
+        {
+          "label": "2023",
+          "stat": "ncrb_cases_2023"
+        },
+        {
+          "label": "2024",
+          "stat": "ncrb_cases_2024"
+        }
+      ]
+    },
+    "losses": {
+      "title": "Reported losses, Rs crore",
+      "points": [
+        {
+          "label": "2023",
+          "stat": "loss_2023_cr"
+        },
+        {
+          "label": "2024",
+          "stat": "loss_2024_cr"
+        },
+        {
+          "label": "2025",
+          "stat": "loss_2025_cr"
+        }
+      ]
+    },
+    "states_2024": {
+      "title": "Cyber crime cases, the two highest states, 2024",
+      "points": [
+        {
+          "label": "Telangana",
+          "stat": "ncrb_telangana_2024",
+          "share": "ncrb_telangana_share_2024_pct"
+        },
+        {
+          "label": "Karnataka",
+          "stat": "ncrb_karnataka_2024",
+          "share": "ncrb_karnataka_share_2024_pct"
+        }
+      ]
+    },
+    "loss_shares_2025": {
+      "title": "Where the money went, 2025 (share of rupees lost)",
+      "points": [
+        {
+          "label": "Investment fraud",
+          "stat": "loss_share_2025_investment_pct"
+        },
+        {
+          "label": "Digital arrest",
+          "stat": "loss_share_2025_digital_arrest_pct"
+        },
+        {
+          "label": "Sextortion",
+          "stat": "loss_share_2025_sextortion_pct"
+        },
+        {
+          "label": "Everything else",
+          "stat": "loss_share_2025_other_pct"
+        }
+      ]
+    }
+  },
+  "site": {
+    "footer_sources": "NCRB Crime in India 2024 · MHA replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026 · PIB",
+    "year": 2026
+  }
+}

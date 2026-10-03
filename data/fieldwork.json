@@ -1,0 +1,35 @@
+{
+  "_readme": "Azlan's real field work, in his own numbers. Nothing here is guessed: a null number is simply not shown. A photo appears on the About page only when its file exists, it has width and height, and consent is true (the people in it agreed to it being published). Process photos first with: npm run photo:prepare -- <file>",
+  "village": "Munagalapadu, Andhra Pradesh",
+  "programme": "Community Service Project, G. Pulla Reddy Engineering College, Kurnool",
+  "first_visit": "2026-05-03",
+  "numbers": {
+    "households": null,
+    "shops": null,
+    "people_reached": null,
+    "hours": null
+  },
+  "number_labels": {
+    "households": "homes visited",
+    "shops": "shops visited",
+    "people_reached": "people spoken to",
+    "hours": "hours on the ground"
+  },
+  "learned": [],
+  "photos": [],
+  "timezone": "IST (GMT +05:30)",
+  "pending_photos": [
+    {
+      "id": "shop",
+      "date": "2026-05-03",
+      "time": "12:42",
+      "note": "Azlan with a shopkeeper and a second man in a small shop. GPS stamp: 12:42:26 PM. Needs consent from the people shown, and the GPS panel cropped out."
+    },
+    {
+      "id": "home",
+      "date": "2026-05-03",
+      "time": "12:14",
+      "note": "Azlan speaking with a woman inside a home. GPS stamp: 12:14 PM. Needs her consent, and the GPS panel (it shows the house address and coordinates) cropped out."
+    }
+  ]
+}

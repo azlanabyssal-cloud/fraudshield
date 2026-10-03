@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FraudShield — India's Frontline Against Digital Fraud | Call 1930</title>
-  <meta name="description" content="FraudShield — India's flagship digital fraud awareness platform. Verified I4C data, real court cases, PM Modi's warning, legal rights, and a 5-step recovery guide. Call 1930 free if scammed.">
+  <meta name="description" data-tpl="FraudShield: sourced data from MHA and NCRB, reported cases, the PM's warning, your legal rights and a step-by-step recovery guide. Call 1930 free if you are scammed." content="FraudShield: sourced data from MHA and NCRB, reported cases, the PM's warning, your legal rights and a step-by-step recovery guide. Call 1930 free if you are scammed.">
   <meta name="keywords" content="digital fraud India, cyber crime helpline 1930, digital arrest scam, UPI fraud, I4C, cybercrime.gov.in, FraudShield">
   <meta name="author" content="FraudShield — India Fraud Awareness Initiative">
   <meta name="robots" content="index, follow">
@@ -15,7 +15,7 @@
   <meta property="og:url"         content="https://azlanabyssal-cloud.github.io/fraudshield/">
   <meta property="og:site_name"   content="FraudShield">
   <meta property="og:title"       content="FraudShield — India's Frontline Against Digital Fraud">
-  <meta property="og:description" content="India lost ₹22,848 Crore to digital fraud in 2024. Know the facts, know the law, know how to recover. Free. No login. Call 1930.">
+  <meta property="og:description" data-tpl="Indians reported losing {{loss_2025_cr|inr_crore}} to digital fraud in 2025. Know the facts, know the law, know how to recover. Free. No login. Call 1930." content="Indians reported losing ₹22,495 Crore to digital fraud in 2025. Know the facts, know the law, know how to recover. Free. No login. Call 1930.">
   <meta property="og:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/icon-512.png">
   <meta property="og:locale"      content="en_IN">
 
@@ -23,7 +23,7 @@
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@FraudShieldIN">
   <meta name="twitter:title"       content="FraudShield — India's Frontline Against Digital Fraud">
-  <meta name="twitter:description" content="₹22,848 Cr lost in 2024. Every 7 minutes one Indian is scammed. Know the law. Call 1930 free.">
+  <meta name="twitter:description" data-tpl="{{loss_2025_cr|inr_cr}} reported lost in 2025, about one case every {{seconds_per_case_2025}} seconds. Know the law. Call 1930 free." content="₹22,495 Cr reported lost in 2025, about one case every 11 seconds. Know the law. Call 1930 free.">
   <meta name="twitter:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/icon-512.png">
 
   <!-- Schema.org structured data -->
@@ -52,6 +52,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="hero-scene.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0B1F3A">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -75,9 +76,6 @@
     /* Override section-tag → pill */
     .section-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:var(--orange-pale);padding:.26rem .9rem;border-radius:999px;margin-bottom:1rem;border-bottom:none}
     .section-tag--white{color:#fff;background:rgba(232,93,4,.22)}
-
-    /* Override hero-bg → Indian context */
-    .hero-bg{background-image:url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&q=80&fit=crop')}
 
     /* ── SOS BAR (mobile) ── */
     .sos-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:2000;background:var(--maroon);padding:.6rem 1.2rem;justify-content:space-between;align-items:center;box-shadow:0 -4px 24px rgba(0,0,0,.45)}
@@ -449,7 +447,6 @@
     /* ══════════════════════════════════════
        HERO SECTION ENHANCEMENTS
     ══════════════════════════════════════ */
-    .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(11,31,58,.5) 100%)}
     .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1.3rem;animation:hero-fade-in .8s ease both}
     @keyframes hero-fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
     .hero-h1{animation:hero-fade-in .8s .15s ease both}
@@ -736,6 +733,8 @@
 </div>
 
 <!-- NAV -->
+<!-- @gen:nav -->
+<a class="skip-link" href="#main">Skip to main content</a>
 <nav id="navbar" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo" aria-label="FraudShield Home">
@@ -747,6 +746,7 @@
       <li><a href="data.html">The Data</a></li>
       <li><a href="tips.html">Protect Yourself</a></li>
       <li><a href="assistant.html">🤖 Assistant</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
     </ul>
     <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
@@ -755,58 +755,63 @@
     </button>
   </div>
 </nav>
-<div id="mobileNav" class="mobile-nav" role="navigation" aria-label="Mobile navigation" aria-hidden="true">
+
+<div id="mobileNav" class="mobile-nav" role="navigation"
+     aria-label="Mobile navigation" aria-hidden="true">
   <a href="index.html" class="active">Home</a>
   <a href="data.html">The Data</a>
   <a href="tips.html">Protect Yourself</a>
   <a href="assistant.html">🤖 Assistant</a>
+  <a href="about.html">About</a>
   <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
 </div>
+<!-- @/gen:nav -->
+<main id="main">
 
 <!-- ALERT TICKER -->
 <div class="alert-ticker" role="marquee" aria-label="Live fraud alerts">
   <div class="alert-ticker__inner">
-    <span class="atick-live">LIVE</span>
-    <span>🚨 28.15 lakh fraud complaints in 2025 — up 60% year-on-year · I4C</span>
+    <span class="atick-live">LATEST</span>
+    <span>🚨 <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💸 India projected to lose ₹1.2 lakh crore in 2025 — 0.7% of GDP</span>
+    <span>💸 <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>📱 67% of digital fraud is UPI-based — NPCI Annual Report 2024</span>
+    <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
     <span class="atick-dot"></span>
-    <span>⚡ ₹8,690 Cr saved or frozen by CFCFRMS (cumulative, as of Jan 2026)</span>
+    <span>⚡ <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
     <span class="atick-dot"></span>
-    <span>🚔 9 convicts LIFE SENTENCE for Digital Arrest scam · West Bengal · July 2025</span>
+    <span>🚔 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
     <span class="atick-dot"></span>
-    <span>✅ Call 1930 free within 24 hrs — real-time fund freeze possible</span>
+    <span>✅ Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
     <span class="atick-dot"></span>
-    <span class="atick-live">LIVE</span>
-    <span>🚨 28.15 lakh fraud complaints in 2025 — up 60% year-on-year · I4C</span>
+    <span class="atick-live">LATEST</span>
+    <span>🚨 <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💸 India projected to lose ₹1.2 lakh crore in 2025 — 0.7% of GDP</span>
+    <span>💸 <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>📱 67% of digital fraud is UPI-based — NPCI Annual Report 2024</span>
+    <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
     <span class="atick-dot"></span>
-    <span>⚡ ₹8,690 Cr saved or frozen by CFCFRMS (cumulative, as of Jan 2026)</span>
+    <span>⚡ <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
     <span class="atick-dot"></span>
-    <span>🚔 9 convicts LIFE SENTENCE for Digital Arrest scam · West Bengal · July 2025</span>
+    <span>🚔 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
     <span class="atick-dot"></span>
-    <span>✅ Call 1930 free within 24 hrs — real-time fund freeze possible</span>
+    <span>✅ Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
     <span class="atick-dot"></span>
   </div>
 </div>
 
 <!-- HERO -->
 <section id="hero" style="position:relative">
-  <div class="hero-bg"></div>
+  <div class="hero-scene" id="heroScene" aria-hidden="true"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">🟡 Verified Government Data · I4C · RBI · NCRB · 2024</div>
+    <div class="hero-eyebrow">🟡 Sourced data · MHA · NCRB · 2025</div>
     <h1 class="hero-h1">
-      India Lost<br>
-      <em class="hero-h1__accent">₹22,848 Crore</em><br>
-      to Digital Fraud in 2024
+      Indians Reported<br>
+      Losing <em class="hero-h1__accent"><span data-stat="loss_2025_cr" data-fmt="inr_crore">₹22,495 Crore</span></em><br>
+      to Digital Fraud in 2025
     </h1>
     <p class="hero-subtitle">
-      Every 7 minutes an Indian becomes a victim. 28.15 lakh complaints in 2025 alone.
+      <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases were recorded in 2025 — about one every <span data-stat="seconds_per_case_2025">11</span> seconds.
       You are not alone — help is one free call away.
     </p>
     <div class="hero-buttons">
@@ -865,18 +870,18 @@
 
   <div class="hero-ticker" aria-label="Live statistics ticker">
     <div class="ticker-inner">
-      <span>📊 FIRs: 27,248 (2018) → 86,420 (2023) — up 217%</span><span aria-hidden="true">•</span>
-      <span>💸 ₹551 Cr (2021) → ₹22,848 Cr (2024) — 41× in 3 years</span><span aria-hidden="true">•</span>
-      <span>📱 67% of all fraud is UPI-based — NPCI 2024</span><span aria-hidden="true">•</span>
-      <span>⚡ CFCFRMS saved ₹8,690 Cr by early 2026</span><span aria-hidden="true">•</span>
-      <span>🚔 9 life sentences — India's first Digital Arrest conviction</span><span aria-hidden="true">•</span>
-      <span>✅ 9.42 lakh SIMs blocked for fraud — DoT 2024</span><span aria-hidden="true">•</span>
-      <span>📊 FIRs: 27,248 (2018) → 86,420 (2023) — up 217%</span><span aria-hidden="true">•</span>
-      <span>💸 ₹551 Cr (2021) → ₹22,848 Cr (2024) — 41× in 3 years</span><span aria-hidden="true">•</span>
-      <span>📱 67% of all fraud is UPI-based — NPCI 2024</span><span aria-hidden="true">•</span>
-      <span>⚡ CFCFRMS saved ₹8,690 Cr by early 2026</span><span aria-hidden="true">•</span>
-      <span>🚔 9 life sentences — India's first Digital Arrest conviction</span><span aria-hidden="true">•</span>
-      <span>✅ 9.42 lakh SIMs blocked for fraud — DoT 2024</span><span aria-hidden="true">•</span>
+      <span>📊 NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
+      <span>💸 Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
+      <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
+      <span>⚡ CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
+      <span>🚔 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
+      <span>📱 UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
+      <span>📊 NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
+      <span>💸 Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
+      <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
+      <span>⚡ CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
+      <span>🚔 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
+      <span>📱 UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
     </div>
   </div>
 </section>
@@ -914,10 +919,10 @@
         <li><strong>Hang up immediately</strong> — no matter what they threaten. "Digital Arrest" does not exist in Indian law. PM Modi confirmed this on Mann Ki Baat. No C B I, police, or court ever arrests anyone via video call.</li>
         <li><strong>Call 1930 right now</strong> (free, 24×7). If money was transferred, report it immediately: the faster you report, the better the chance the receiving account can be frozen through I4C's CFCFRMS system.</li>
         <li><strong>Call your bank's 24×7 helpline</strong> and say: "I was scammed — please freeze my last outgoing transaction immediately."</li>
-        <li><strong>File at cybercrime.gov.in</strong> within 24 hours. Upload all screenshots, call recordings, and fake warrant images they showed you.</li>
+        <li><strong>File at cybercrime.gov.in</strong> as soon as you can. Upload all screenshots, call recordings, and fake warrant images they showed you.</li>
         <li><strong>Tell your family</strong> — fraudsters often call other family members to add pressure. Everyone must know this is a scam right now.</li>
       </ol>
-      <p class="sit-note">West Bengal Court verdict, July 2025: 9 life sentences for Digital Arrest scammers — India's first conviction of its kind. The law is on your side.</p>
+      <p class="sit-note">In July 2025 a court in Nadia, West Bengal, gave nine members of a digital arrest network life sentences; the prosecutor called it India's first such conviction. The law is on your side.</p>
       <div class="sit-cta">
         <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
         <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">cybercrime.gov.in ↗</a>
@@ -926,15 +931,15 @@
 
     <!-- Panel 2: OTP / UPI fraud -->
     <div class="sit-panel" id="sit-otp-upi" aria-live="polite">
-      <p class="sit-panel__heading">💸 OTP / UPI Fraud — The Next 30 Minutes Are Critical</p>
+      <p class="sit-panel__heading">💸 OTP / UPI Fraud — Act Right Now</p>
       <ol class="sit-steps">
         <li><strong>Call 1930 right now.</strong> CFCFRMS can freeze stolen funds in real-time — but only before the money moves out of the first account. Every minute matters.</li>
         <li><strong>Call your bank's 24×7 helpline.</strong> Say: "Freeze my account — unauthorised transaction happened." Get a written complaint reference number.</li>
         <li><strong>Change your UPI PIN, net banking password, and SIM PIN</strong> from a different device immediately. The fraudster may still have access.</li>
         <li><strong>File at cybercrime.gov.in</strong> with all UTR numbers, transaction IDs, and the phone number that called you. Upload screenshots of all messages.</li>
-        <li><strong>File a police FIR</strong> at your nearest station under IT Act Sec 66C. Invoke RBI Zero Liability Policy — if reported within 24 hrs, the bank must attempt a reversal.</li>
+        <li><strong>File a police FIR</strong> at your nearest station under IT Act Sec 66C. Ask the bank whether RBI's limited-liability rules apply to you: they protect customers who report quickly when the fraud was not their fault.</li>
       </ol>
-      <p class="sit-note">RBI Circular (2017): Banks carry full liability for unauthorised transactions if reported within 24 hours and the bank's security system was compromised. You have a legal right to claim this.</p>
+      <p class="sit-note">RBI circular of 6 July 2017: if the fraud came from a breach that was not your fault and you report within 3 working days, your liability is zero; if you shared your OTP or PIN, you bear the loss until you report, and any loss after you report is the bank's.</p>
       <div class="sit-cta">
         <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
         <a href="report.html" class="btn-navy" data-snd="click">Full Recovery Guide →</a>
@@ -968,7 +973,7 @@
         <li><strong>File at cybercrime.gov.in</strong> with full transaction history. Investment fraud is now "organised crime" under BNS 2023 Sec 318 — serious sentences apply.</li>
         <li><strong>File a police FIR</strong> with all evidence. SEBI (sebi.gov.in) also has a complaint portal for investment fraud.</li>
       </ol>
-      <p class="sit-note">In 2025, investment fraud accounted for 76% of all financial cybercrime losses in India — ₹17,000+ crore. You are not alone. Thousands report this every week and recover funds.</p>
+      <p class="sit-note">In 2025, investment fraud was <span data-stat="loss_share_2025_investment_pct">76%</span> of the money reported lost in India, about <span data-stat="loss_investment_2025_cr">₹17,096 Cr</span>. You are not alone: report it, and if any of the money was frozen you can apply to get it back.</p>
       <div class="sit-cta">
         <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free</a>
         <a href="report.html" class="btn-navy" data-snd="click">Full Report Guide →</a>
@@ -1058,20 +1063,20 @@
 <div class="trust-bar" aria-label="Key statistics">
   <div class="trust-item"><span class="trust-item__num">1930</span><span class="trust-item__label">Free Helpline · 24/7</span></div>
   <div class="trust-divider" aria-hidden="true"></div>
-  <div class="trust-item"><span class="trust-item__num">28.15L+</span><span class="trust-item__label">Complaints · 2025</span></div>
+  <div class="trust-item"><span class="trust-item__num"><span data-stat="ncrp_cases_2025" data-fmt="lakh_tight">28.15L</span></span><span class="trust-item__label">Cases · 2025</span></div>
   <div class="trust-divider" aria-hidden="true"></div>
-  <div class="trust-item"><span class="trust-item__num">₹22,848Cr</span><span class="trust-item__label">Lost in 2024</span></div>
+  <div class="trust-item"><span class="trust-item__num"><span data-stat="loss_2025_cr" data-fmt="inr_cr_tight">₹22,495Cr</span></span><span class="trust-item__label">Reported lost · 2025</span></div>
   <div class="trust-divider" aria-hidden="true"></div>
-  <div class="trust-item"><span class="trust-item__num">₹8,690Cr</span><span class="trust-item__label">Saved by CFCFRMS</span></div>
+  <div class="trust-item"><span class="trust-item__num"><span data-stat="cfcfrms_saved_cr" data-fmt="inr_cr_tight">₹11,158Cr</span></span><span class="trust-item__label">Saved by CFCFRMS</span></div>
   <div class="trust-divider" aria-hidden="true"></div>
-  <div class="trust-item"><span class="trust-item__num">67%</span><span class="trust-item__label">UPI-based fraud</span></div>
+  <div class="trust-item"><span class="trust-item__num"><span data-stat="loss_share_2025_investment_pct">76%</span></span><span class="trust-item__label">of 2025 losses: investment fraud</span></div>
 </div>
 
 <!-- LIVE FRAUD COST COUNTER — runs since page open (System 1 targeting: visceral scale) -->
-<div class="cost-since" role="status" aria-live="polite" aria-atomic="false">
-  <span class="cost-since__label">While you've been reading this page, India lost:</span>
-  <span class="cost-since__num" id="costSince">₹0</span>
-  <span class="cost-since__sub">₹7,243 stolen every second · ₹22,848 Cr/year · I4C 2024</span>
+<div class="cost-since" role="status" aria-live="off" aria-atomic="false">
+  <span class="cost-since__label">At the 2025 average, reported losses while you read this page:</span>
+  <span class="cost-since__num" id="costSince" data-stat-target="loss_per_second_2025" data-target="7133">₹0</span>
+  <span class="cost-since__sub"><span data-stat="loss_per_second_2025">₹7,133</span> reported lost every second on average · <span data-stat="loss_2025_cr">₹22,495 Cr</span> in 2025 · an average, not a live feed</span>
 </div>
 
 <!-- STAT COUNTERS -->
@@ -1100,31 +1105,31 @@
   </div>
 
   <div class="container">
-    <p class="section-overline">All data verified — I4C, RBI Annual Report 2024, NCRB Crime in India 2023, NPCI, MHA</p>
+    <p class="section-overline">Figures from MHA replies to Parliament and NCRB Crime in India 2024, as reported · sources on The Data page</p>
     <div class="stats-grid">
       <div class="stat-card stat-card--orange reveal reveal--d1">
         <div class="stat-icon" aria-hidden="true">📊</div>
-        <div class="stat-num counter-number" data-target="2815000" data-format="lakh" data-suffix="+">—</div>
-        <div class="stat-label">Complaints filed in 2025</div>
-        <div class="stat-src">I4C / MHA 2025 · +60% YoY</div>
+        <div class="stat-num counter-number" data-stat="ncrp_cases_2025" data-stat-target="ncrp_cases_2025" data-target="2815000" data-format="lakh">28.15 lakh</div>
+        <div class="stat-label">Cyber fraud cases recorded in 2025</div>
+        <div class="stat-src">MHA reply to Parliament · up <span data-stat="cases_growth_2025_pct">24%</span> on 2024</div>
       </div>
       <div class="stat-card stat-card--maroon reveal reveal--d2">
         <div class="stat-icon" aria-hidden="true">💸</div>
-        <div class="stat-num counter-number" data-target="22848" data-prefix="₹" data-suffix=" Cr" data-format="plain">—</div>
-        <div class="stat-label">Lost to fraud in 2024</div>
-        <div class="stat-src">I4C / MHA · up from ₹551Cr in 2021</div>
+        <div class="stat-num counter-number" data-stat="loss_2025_cr" data-stat-target="loss_2025_cr" data-target="22495" data-prefix="₹" data-suffix=" Cr" data-format="plain">₹22,495 Cr</div>
+        <div class="stat-label">Reported lost in 2025</div>
+        <div class="stat-src">MHA reply to Parliament · 2024: <span data-stat="loss_2024_cr">₹22,845 Cr</span></div>
       </div>
       <div class="stat-card stat-card--navy reveal reveal--d3">
         <div class="stat-icon" aria-hidden="true">⏱️</div>
-        <div class="stat-num counter-number" data-target="7" data-suffix=" min" data-format="plain">—</div>
-        <div class="stat-label">Between each new victim</div>
-        <div class="stat-src">Derived from I4C 2023</div>
+        <div class="stat-num counter-number" data-stat="seconds_per_case_2025" data-stat-target="seconds_per_case_2025" data-target="11" data-suffix=" sec" data-format="plain">11</div>
+        <div class="stat-label">Between cases recorded, on average</div>
+        <div class="stat-src">Derived: seconds in a year ÷ cases in 2025</div>
       </div>
       <div class="stat-card stat-card--olive reveal reveal--d4">
         <div class="stat-icon" aria-hidden="true">✅</div>
-        <div class="stat-num counter-number" data-target="8690" data-prefix="₹" data-suffix=" Cr" data-format="plain">—</div>
-        <div class="stat-label">Saved by CFCFRMS</div>
-        <div class="stat-src">MHA I4C · 17.82 lakh fraud complaints</div>
+        <div class="stat-num counter-number" data-stat="cfcfrms_saved_cr" data-stat-target="cfcfrms_saved_cr" data-target="11158" data-prefix="₹" data-suffix=" Cr" data-format="plain">₹11,158 Cr</div>
+        <div class="stat-label">Saved or frozen by CFCFRMS</div>
+        <div class="stat-src">Cumulative to 30 June 2026 · more than <span data-stat="cfcfrms_complaints">32.80 lakh</span> complaints</div>
       </div>
     </div>
   </div>
@@ -1179,7 +1184,7 @@
       <div class="funnel-num">04</div>
       <div class="funnel-step__icon" aria-hidden="true">💸</div>
       <h3 class="funnel-step__title">Extract Money</h3>
-      <p class="funnel-step__body">UPI transfer, NEFT to "verification account", OTP, or gift card codes. Money moves in seconds. Recovery requires calling 1930 within 24 hours — CFCFRMS can freeze it in real-time.</p>
+      <p class="funnel-step__body">UPI transfer, NEFT to "verification account", OTP, or gift card codes. Money moves in seconds. Call 1930 as soon as you realise: the sooner you report, the better the chance the receiving account can be frozen.</p>
       <span class="funnel-step__pill">OTP · UPI · Wire Transfer</span>
     </div>
   </div>
@@ -1190,21 +1195,21 @@
   <div class="split__photo reveal reveal--left">
     <img src="images/india-woman-phone.png"
          alt="Indian woman reading a suspicious message on her phone — the moment before fraud strikes" loading="lazy">
-    <div class="split__photo-caption">85% of all cybercrime complaints in India are financial fraud — I4C 2024</div>
+    <div class="split__photo-caption"><span data-stat="ncrb_fraud_share_2024_pct">72.6%</span> of cyber crime cases registered in 2024 were fraud · NCRB</div>
   </div>
   <div class="split__body reveal reveal--right">
     <span class="section-tag">Understanding the Threat</span>
     <h2>It Happens to Doctors, IAS Officers &amp; Retired Generals Too</h2>
-    <p>Digital fraud is not a sign of ignorance. Fraud networks study psychology, test scripts daily, and target thousands of Indians across every income level. In 2024, verified victims included IIT professors, retired military officers, High Court judges, and senior bank managers.</p>
+    <p>Digital fraud is not a sign of ignorance. Fraud networks study psychology, test scripts daily, and target people across every income level and profession. The victims in the reported cases below include a retired scientist and a retired executive.</p>
     <p>The only reliable defence is knowing exactly how this works — before it happens to you.</p>
     <div class="tag-cloud">
-      <span class="tag tag--orange">📱 UPI Fraud — 67%</span>
-      <span class="tag tag--navy">🔒 OTP Scam — 12%</span>
-      <span class="tag tag--maroon">🎣 Phishing — 9%</span>
-      <span class="tag tag--olive">💰 Fake Loans — 7%</span>
+      <span class="tag tag--orange">📱 UPI &amp; QR tricks</span>
+      <span class="tag tag--navy">🔒 OTP scams</span>
+      <span class="tag tag--maroon">🎣 Phishing links</span>
+      <span class="tag tag--olive">💰 Fake loan apps</span>
       <span class="tag tag--orange">🚫 Sextortion</span>
-      <span class="tag tag--navy">💼 Investment Scam</span>
-      <span class="tag tag--maroon">🚔 Digital Arrest</span>
+      <span class="tag tag--navy">💼 Investment scams</span>
+      <span class="tag tag--maroon">🚔 Digital arrest</span>
     </div>
     <a href="tips.html" class="btn-navy" data-snd="click">Read the Full Protection Guide →</a>
   </div>
@@ -1221,15 +1226,15 @@
       </div>
       <div class="info-card info-card--orange-border reveal reveal--d2">
         <div class="info-card__icon">⚠️</div>
-        <h3 class="info-card__title">Most Dangerous Scams Targeting Indians — 2024</h3>
+        <h3 class="info-card__title">Scams to Watch For</h3>
         <div class="info-card__body">
           <div class="mini-tag-list">
-            <span class="mini-tag">📱 UPI Fraud <strong>67%</strong></span>
-            <span class="mini-tag">🔒 OTP Scam <strong>12%</strong></span>
-            <span class="mini-tag">🎣 Phishing <strong>9%</strong></span>
-            <span class="mini-tag">💰 Fake Loans <strong>7%</strong></span>
-            <span class="mini-tag">🚫 Sextortion <strong>+300%</strong></span>
-            <span class="mini-tag">💼 Investment <strong>76% losses</strong></span>
+            <span class="mini-tag">📱 UPI &amp; QR tricks</span>
+            <span class="mini-tag">🔒 OTP scams</span>
+            <span class="mini-tag">🎣 Phishing links</span>
+            <span class="mini-tag">💰 Fake loan apps</span>
+            <span class="mini-tag">🚫 Sextortion <strong><span data-stat="case_share_2025_sextortion_pct">19%</span> of cases</strong></span>
+            <span class="mini-tag">💼 Investment <strong><span data-stat="loss_share_2025_investment_pct">76%</span> of losses</strong></span>
             <span class="mini-tag">🚔 Digital Arrest</span>
             <span class="mini-tag">🔄 SIM Swap</span>
           </div>
@@ -1239,12 +1244,12 @@
         <div class="info-card__icon">🛡️</div>
         <h3 class="info-card__title">Scammed? Act in the Next 60 Minutes</h3>
         <ol class="info-card__steps">
-          <li><strong>📞 Call 1930</strong> — free, 24 hours, CFCFRMS real-time freeze</li>
-          <li><strong>🌐 cybercrime.gov.in</strong> — file within 24 hours</li>
+          <li><strong>📞 Call 1930</strong> — free, 24 hours; it starts the freeze request</li>
+          <li><strong>🌐 cybercrime.gov.in</strong> — file the same day</li>
           <li><strong>🏦 Call your bank</strong> — request immediate transaction hold</li>
           <li><strong>📸 Save all evidence</strong> — screenshots, SMS, call recordings</li>
         </ol>
-        <p class="info-card__note">RBI Zero Liability Policy: banks must attempt reversal if reported within 24 hours.</p>
+        <p class="info-card__note">RBI rules (2017): report an unauthorised transaction within 3 working days and, if it was not your fault, your liability can be zero.</p>
       </div>
     </div>
   </div>
@@ -1256,33 +1261,33 @@
     <div class="pstrip-cell">
       <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=700&q=85&fit=crop" alt="Person at laptop in dark — digital crime" loading="lazy">
       <div class="pstrip-over pstrip-over--orange">
-        <p class="pstrip-stat">₹22,848 Cr</p>
-        <p class="pstrip-label">Lost to digital fraud · India 2024</p>
-        <p class="pstrip-src">Source: I4C / Ministry of Home Affairs 2024</p>
+        <p class="pstrip-stat"><span data-stat="loss_2025_cr" data-fmt="inr_cr">₹22,495 Cr</span></p>
+        <p class="pstrip-label">Reported lost to digital fraud · India 2025</p>
+        <p class="pstrip-src">Source: MHA reply to Parliament, as reported</p>
       </div>
     </div>
     <div class="pstrip-cell">
       <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&fit=crop" alt="Indian family concerned about phone fraud" loading="lazy">
       <div class="pstrip-over">
-        <p class="pstrip-stat">28.15 Lakh</p>
-        <p class="pstrip-label">Fraud complaints filed in 2025</p>
-        <p class="pstrip-src">Source: I4C / Ministry of Home Affairs 2025</p>
+        <p class="pstrip-stat"><span data-stat="ncrp_cases_2025" data-fmt="lakh_title">28.15 Lakh</span></p>
+        <p class="pstrip-label">Cyber fraud cases recorded in 2025</p>
+        <p class="pstrip-src">Source: MHA reply to Parliament, as reported</p>
       </div>
     </div>
     <div class="pstrip-cell">
       <img src="https://images.unsplash.com/photo-1596178060810-72f53ce9a65c?w=700&q=85&fit=crop" alt="Indian professional relieved after fraud recovery" loading="lazy">
       <div class="pstrip-over pstrip-over--olive">
-        <p class="pstrip-stat">₹8,690 Cr</p>
-        <p class="pstrip-label">Saved by CFCFRMS — 17.82 lakh cases</p>
-        <p class="pstrip-src">Source: MHA I4C · Government of India</p>
+        <p class="pstrip-stat"><span data-stat="cfcfrms_saved_cr" data-fmt="inr_cr">₹11,158 Cr</span></p>
+        <p class="pstrip-label">Saved or frozen by CFCFRMS · more than <span data-stat="cfcfrms_complaints">32.80 lakh</span> complaints</p>
+        <p class="pstrip-src">Source: MHA reply, cumulative to 30 June 2026</p>
       </div>
     </div>
     <div class="pstrip-cell">
       <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=85&fit=crop" alt="Mobile SIM blocking — cybercrime action" loading="lazy">
       <div class="pstrip-over pstrip-over--maroon">
-        <p class="pstrip-stat">9.42 Lakh</p>
-        <p class="pstrip-label">SIMs &amp; IMEIs blocked for fraud · DoT</p>
-        <p class="pstrip-src">Source: Department of Telecom · 2024</p>
+        <p class="pstrip-stat"><span data-stat="sims_blocked_police" data-fmt="lakh_title">15.75 Lakh</span></p>
+        <p class="pstrip-label">SIM cards blocked on police reports · <span data-stat="imeis_blocked">5.77 lakh</span> IMEIs</p>
+        <p class="pstrip-src">Source: MHA reply, to 30 June 2026</p>
       </div>
     </div>
   </div>
@@ -1345,47 +1350,53 @@
 <section class="cases-sec">
   <div class="container">
     <div class="cases-head">
-      <span class="section-tag">Court-Verified Cases</span>
-      <h2>These Are Not Rumours. These Are Court Records.</h2>
-      <p class="cases-intro">From India's first AI deepfake fraud to a ₹1,550 crore laundering ring inside a bank — this is how bad it really is.</p>
+      <span class="section-tag">Reported Cases</span>
+      <h2>These Are Not Rumours. These Are Reported Cases.</h2>
+      <p class="cases-intro">From a fake video call in Kerala to bank officers lending their branches to mule rings: real cases, as reported by Indian media and police.</p>
     </div>
     <div class="cases-grid">
+<!-- @gen:cases -->
       <div class="case-card case-card--navy reveal reveal--d1">
         <div class="case-yr">2018</div>
         <div class="case-body">
-          <h3 class="case-title">Cosmos Bank SWIFT Hack — Pune</h3>
-          <p class="case-amt">₹94.42 Crore stolen in 7 hours</p>
-          <p class="case-desc">Hackers injected malware into Cosmos Bank's payment switch, cloned 19 lakh debit cards, and executed withdrawals across 28 countries simultaneously. In April 2023, a Pune court convicted 11 accused to 3–4 years imprisonment.</p>
-          <span class="case-verdict case-verdict--olive">✅ 11 Convicted · April 2023</span>
+          <h3 class="case-title">Cosmos Bank hack — Pune</h3>
+          <p class="case-amt">₹94 crore taken on 11 and 13 August 2018</p>
+          <p class="case-desc">Hackers attacked the bank's card-payment system with malware and its SWIFT link. About ₹78 crore went out in more than 12,000 ATM withdrawals outside India, ₹13.92 crore was sent to a firm in Hong Kong, and about ₹2.5 crore was taken in transactions inside India. A Pune court convicted 11 people in April 2023.</p>
+          <span class="case-verdict case-verdict--olive">✅ 11 convicted · April 2023</span>
+          <p class="case-src">Reported by: <a href="https://www.business-standard.com/india-news/pune-court-convicts-11-accused-in-cosmos-bank-s-rs-94-cr-cyber-fraud-case-123042300456_1.html" target="_blank" rel="noopener">Business Standard, 23 April 2023</a></p>
         </div>
       </div>
       <div class="case-card case-card--orange reveal reveal--d2">
         <div class="case-yr">2023</div>
         <div class="case-body">
-          <h3 class="case-title">Kerala AI Deepfake Fraud — India's First</h3>
-          <p class="case-amt">₹40,000 — The first AI deepfake case in India</p>
-          <p class="case-desc">A Kerala man received a WhatsApp video call from an AI-generated real-time face of his former colleague. He transferred ₹40,000 before realising the face was computer-generated. Marked the beginning of AI-driven fraud in India.</p>
-          <span class="case-verdict case-verdict--orange">🔴 First AI Deepfake Fraud · India</span>
+          <h3 class="case-title">Kerala AI deepfake call — Kozhikode</h3>
+          <p class="case-amt">₹40,000 lost to a fake video call</p>
+          <p class="case-desc">A retired executive in Kozhikode got a WhatsApp video call showing what looked like a friend, asking urgently for money for a sister's surgery. He sent ₹40,000, and grew suspicious only when the caller asked for ₹30,000 more. Kerala Police described it as the first case of its kind in Kerala to use AI-made video.</p>
+          <span class="case-verdict case-verdict--orange">🔴 First AI-video fraud reported in Kerala</span>
+          <p class="case-src">Reported by: <a href="https://www.deccanherald.com/national/south/fraud-using-ai-based-deepfaking-reported-in-kerala-1237663.html" target="_blank" rel="noopener">Deccan Herald</a></p>
         </div>
       </div>
       <div class="case-card case-card--maroon reveal reveal--d3">
-        <div class="case-yr">2024</div>
+        <div class="case-yr">2025</div>
         <div class="case-body">
-          <h3 class="case-title">Nadia Digital Arrest — West Bengal</h3>
-          <p class="case-amt">₹1 Crore · 9 convicted to LIFE imprisonment</p>
-          <p class="case-desc">A retired scientist was kept under video surveillance by fraudsters posing as Mumbai Police. Under extreme psychological coercion, she transferred ₹1 crore. On 19 July 2025, West Bengal court gave 9 life sentences — India's first Digital Arrest conviction.</p>
-          <span class="case-verdict case-verdict--maroon">⚖️ 9 Life Sentences · July 2025</span>
+          <h3 class="case-title">Nadia digital arrest — West Bengal</h3>
+          <p class="case-amt">About ₹1 crore lost · 9 sentenced to life</p>
+          <p class="case-desc">A retired scientist was told by a caller posing as Mumbai Police that he was under &quot;digital arrest&quot; and moved about ₹1 crore across several accounts. On 20 July 2025 a court in Kalyani, Nadia, sentenced nine members of the network to life imprisonment. The prosecutor called it India's first conviction in a digital arrest case; police said the gang had cheated at least 108 people.</p>
+          <span class="case-verdict case-verdict--maroon">⚖️ 9 life sentences · July 2025</span>
+          <p class="case-src">Reported by: <a href="https://trak.in/stories/digital-arrest-scamsters-sentenced-to-life-indias-1st-such-convinction/" target="_blank" rel="noopener">Trak.in</a> · <a href="https://www.varindia.com/news/West-Bengal-Court-Gives-Life-Sentence-to-9-in-%E2%82%B9100-Crore-%E2%80%98Digital-Arrest%E2%80%99-Cyber-Fraud-Case" target="_blank" rel="noopener">VARindia</a></p>
         </div>
       </div>
       <div class="case-card case-card--dark reveal reveal--d4">
-        <div class="case-yr">2025</div>
+        <div class="case-yr">2026</div>
         <div class="case-body">
-          <h3 class="case-title">Surat Mule Account Ring — Gujarat</h3>
-          <p class="case-amt">₹1,550 Crore · 8 bank employees arrested</p>
-          <p class="case-desc">Eight bank employees opened 62 mule accounts to launder ₹1,550 crore for a cybercrime syndicate. This landmark case exposed how fraud rings had infiltrated India's banking infrastructure itself — with insiders enabling stolen money movement.</p>
-          <span class="case-verdict case-verdict--navy">🔎 Investigation Ongoing · 2025</span>
+          <h3 class="case-title">Operation Octopus 2 — Hyderabad</h3>
+          <p class="case-amt">₹150 crore · 52 arrested, 32 of them bank officers</p>
+          <p class="case-desc">In April 2026 Hyderabad City Police arrested 52 people across nine states, including 32 bank officers, 15 mule-account holders and five middlemen. Police said 350 bank accounts linked to 850 cybercrime cases were used to move victims' money. The case shows why a stranger's account number is never a reason to trust a payment request.</p>
+          <span class="case-verdict case-verdict--navy">🔎 52 arrests · April 2026</span>
+          <p class="case-src">Reported by: <a href="https://www.siasat.com/hyderabad-police-bust-rs150-crore-cyber-fraud-32-bank-officers-held-3456452/" target="_blank" rel="noopener">Siasat, 19 April 2026</a></p>
         </div>
       </div>
+<!-- @/gen:cases -->
     </div>
   </div>
 </section>
@@ -1432,7 +1443,7 @@
           <div class="nsc-icon">👤</div>
           <div class="nsc-body">
             <p class="nsc-num">70 Years Old</p>
-            <p class="nsc-label">Age of victim — proves no one is safe. Seniors, IIT professors, judges, and generals have all been targeted</p>
+            <p class="nsc-label">Age of the victim. Older people are often targeted, but careful, educated people are caught too</p>
           </div>
         </div>
         <div class="news-stat-card reveal reveal--d3">
@@ -1495,29 +1506,29 @@
       <div class="r-bubble">02</div>
       <div class="r-icon" aria-hidden="true">📞</div>
       <h3 class="r-title">Call 1930</h3>
-      <p class="r-desc">Free, 24×7. CFCFRMS triggers a real-time freeze on the destination account. This has saved thousands of crores.</p>
-      <span class="r-time">Within 15 minutes</span>
+      <p class="r-desc">Free, 24×7. The CFCFRMS system can ask the receiving bank to freeze the money, and has saved or frozen <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> so far.</p>
+      <span class="r-time">Right away</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">03</div>
       <div class="r-icon" aria-hidden="true">🏦</div>
       <h3 class="r-title">Call Your Bank</h3>
-      <p class="r-desc">Request an immediate hold. Invoke RBI Zero Liability Policy rights. Get a complaint reference number.</p>
-      <span class="r-time">Within 30 minutes</span>
+      <p class="r-desc">Report it as a fraudulent transaction and ask them to act on the receiving account. Get a complaint reference number. If you did not share an OTP or PIN, ask whether RBI's limited-liability rules apply: they reward reporting within 3 working days.</p>
+      <span class="r-time">Right away</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">04</div>
       <div class="r-icon" aria-hidden="true">🌐</div>
       <h3 class="r-title">File at cybercrime.gov.in</h3>
-      <p class="r-desc">Submit all transaction IDs, screenshots, phone numbers, and fake documents shown by the fraudster.</p>
-      <span class="r-time">Within 24 hours</span>
+      <p class="r-desc">Submit all transaction IDs, screenshots, phone numbers and fake documents. Keep the 14-digit complaint number: if your money was frozen, you can apply to get it back through the Money Restoration Module on the same portal.</p>
+      <span class="r-time">The same day</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">05</div>
       <div class="r-icon" aria-hidden="true">🚔</div>
       <h3 class="r-title">File Police FIR</h3>
-      <p class="r-desc">FIR at nearest police station under IT Act Sec 66C/66D and BNS Sec 318/319. Keep a certified copy.</p>
-      <span class="r-time">Within 48 hours</span>
+      <p class="r-desc">FIR at the nearest police station under IT Act Sec 66C/66D and BNS Sec 318/319. Keep a certified copy. An FIR is compulsory to get back more than <span data-stat="mrm_threshold_inr">₹50,000</span> frozen in a single account.</p>
+      <span class="r-time">As soon as you can</span>
     </div>
   </div>
   <div class="recovery-cta">
@@ -1529,8 +1540,8 @@
 <section class="photo-quote">
   <div class="photo-quote__bg"></div>
   <div class="photo-quote__content">
-    <blockquote>"UPI-related frauds accounted for 67% of all digital payment fraud in India in 2023. Victims who reported within 24 hours had significantly higher chances of fund recovery through CFCFRMS interventions."</blockquote>
-    <cite>— Reserve Bank of India Annual Report 2024 · Chapter on Cybersecurity</cite>
+    <blockquote>From 1 January 2027, a victim of small-value digital fraud may be paid up to <span data-stat="rbi_comp_share_pct">85%</span> of the loss, capped at <span data-stat="rbi_comp_cap_inr">₹25,000</span> — but only if the fraud is reported to 1930 and to the bank within <span data-stat="rbi_report_days">5</span> calendar days. Report fast, whatever the date.</blockquote>
+    <cite>— Summary of the RBI (Commercial Banks – Responsible Business Conduct) Third Amendment Directions, 2026, issued 24 June 2026. Not yet in force; not a quotation.</cite>
     <div class="photo-quote__actions">
       <a href="report.html" class="btn-primary" data-snd="click">Report Your Fraud →</a>
       <a href="data.html" class="btn-outline-white" data-snd="click">View All Data</a>
@@ -1549,7 +1560,7 @@
       <div class="fviz-card fviz-card--orange reveal reveal--d1">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=700&q=85&fit=crop" alt="UPI fraud — phone payment scam" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">67% of all cases · NPCI</div>
+          <div class="fviz-over"></div><div class="fviz-badge">QR codes only take money out</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">📱</span>
           <div><p class="fviz-title">UPI Fraud</p><p class="fviz-rule">QR codes only DEBIT your account. Scanning one to "receive" money is physically impossible by design. If anyone says otherwise — hang up.</p></div>
@@ -1558,7 +1569,7 @@
       <div class="fviz-card fviz-card--navy reveal reveal--d2">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&fit=crop" alt="Indian man receiving suspicious call" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">12% of cases · I4C</div>
+          <div class="fviz-over"></div><div class="fviz-badge">Never share an OTP</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🔒</span>
           <div><p class="fviz-title">OTP Scam</p><p class="fviz-rule">No bank, RBI, NPCI, or government body ever asks for your OTP. Sharing it gives complete account control. Hang up, call your bank directly.</p></div>
@@ -1567,7 +1578,7 @@
       <div class="fviz-card fviz-card--maroon reveal reveal--d3">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=700&q=85&fit=crop" alt="Phishing — fake link on a dark screen" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">9% of cases · CERT-In</div>
+          <div class="fviz-over"></div><div class="fviz-badge">Check the web address</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🎣</span>
           <div><p class="fviz-title">Phishing</p><p class="fviz-rule">One wrong letter in a URL steals your login. "sbi-kyc-update.net" vs "sbi.co.in". Always type the address yourself. Never click SMS or WhatsApp links.</p></div>
@@ -1576,7 +1587,7 @@
       <div class="fviz-card fviz-card--olive reveal reveal--d1">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1596178060810-72f53ce9a65c?w=700&q=85&fit=crop" alt="Person stressed about fake loan app" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">Rising fastest · 2024</div>
+          <div class="fviz-over"></div><div class="fviz-badge">Uninstall it, then tell someone</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💰</span>
           <div><p class="fviz-title">Fake Loan Apps</p><p class="fviz-rule">Any loan app requesting contacts or media access is a blackmail trap. It harvests contacts and morphs photos to extort you. Uninstall immediately.</p></div>
@@ -1585,7 +1596,7 @@
       <div class="fviz-card fviz-card--maroon reveal reveal--d2">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=85&fit=crop" alt="Sextortion — privacy violation cybercrime" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">+300% since 2022</div>
+          <div class="fviz-over"></div><div class="fviz-badge"><span data-stat="case_share_2025_sextortion_pct">19%</span> of cases · <span data-stat="loss_share_2025_sextortion_pct">4%</span> of losses · 2025</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🚫</span>
           <div><p class="fviz-title">Sextortion</p><p class="fviz-rule">Do not pay a single rupee. Payment guarantees they return. Call 1930 immediately and say it is a sensitive case.</p></div>
@@ -1594,7 +1605,7 @@
       <div class="fviz-card fviz-card--orange reveal reveal--d3">
         <div class="fviz-img">
           <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=700&q=85&fit=crop" alt="Investment fraud app India" loading="lazy">
-          <div class="fviz-over"></div><div class="fviz-badge">76% of losses · 2025</div>
+          <div class="fviz-over"></div><div class="fviz-badge"><span data-stat="loss_share_2025_investment_pct">76%</span> of losses · <span data-stat="case_share_2025_investment_pct">35%</span> of cases · 2025</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💼</span>
           <div><p class="fviz-title">Investment Fraud</p><p class="fviz-rule">Real investments carry risk, so anyone promising guaranteed returns is a red flag. A big profit shown on a dashboard can be fabricated by the app itself.</p></div>
@@ -1611,20 +1622,19 @@
 <section class="hotspot-sec" aria-label="States with highest cybercrime complaints">
   <div class="hotspot-wrap">
     <div class="hotspot-head">
-      <span class="section-tag">Where It's Worst · NCRB 2023</span>
-      <h2>Top 5 States by Cybercrime FIRs</h2>
-      <p>These five states account for over 54% of all reported digital fraud FIRs. Data sourced from the National Crime Records Bureau — Crime in India 2023.</p>
-      <div class="h-stat"><div class="h-rank h-rank--1">1</div><div class="h-state"><p class="h-state-name">Telangana — 15,297 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">17.7%</span></div>
-      <div class="h-stat"><div class="h-rank h-rank--2">2</div><div class="h-state"><p class="h-state-name">Uttar Pradesh — 10,117 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">11.7%</span></div>
-      <div class="h-stat"><div class="h-rank h-rank--3">3</div><div class="h-state"><p class="h-state-name">Karnataka — 8,136 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">9.4%</span></div>
-      <div class="h-stat"><div class="h-rank h-rank--4">4</div><div class="h-state"><p class="h-state-name">Maharashtra — 7,152 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">8.3%</span></div>
-      <div class="h-stat"><div class="h-rank h-rank--5">5</div><div class="h-state"><p class="h-state-name">Rajasthan — 6,493 FIRs</p><div class="h-bar-wrap"><div class="h-bar"></div></div></div><span class="h-pct">7.5%</span></div>
+      <span class="section-tag">Where It's Worst · NCRB 2024</span>
+      <h2>The Two Highest States, 2024</h2>
+      <p>NCRB's Crime in India 2024 puts Telangana and Karnataka at the top. The full state table could not be read at the source, so only these two are shown. Counts reflect how readily each state registers cases as well as crime itself.</p>
+<!-- @gen:states -->
+      <div class="h-stat"><div class="h-rank h-rank--1">1</div><div class="h-state"><p class="h-state-name">Telangana — 27,230 cases</p><div class="h-bar-wrap"><div class="h-bar" style="width:100%"></div></div></div><span class="h-pct">26.7%</span></div>
+      <div class="h-stat"><div class="h-rank h-rank--2">2</div><div class="h-state"><p class="h-state-name">Karnataka — 21,003 cases</p><div class="h-bar-wrap"><div class="h-bar" style="width:77%"></div></div></div><span class="h-pct">20.6%</span></div>
+<!-- @/gen:states -->
     </div>
     <div class="hotspot-photo">
       <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop" alt="India NCRB cybercrime data" loading="lazy">
       <div class="hotspot-photo__over">
-        <h3 class="hotspot-photo__h">Source: NCRB<br>Crime in India 2023</h3>
-        <p class="hotspot-photo__p">National Crime Records Bureau · Ministry of Home Affairs · Government of India. 86,420 FIRs in 2023, up from 27,248 in 2018.</p>
+        <h3 class="hotspot-photo__h">Source: NCRB<br>Crime in India 2024</h3>
+        <p class="hotspot-photo__p">National Crime Records Bureau · Ministry of Home Affairs. <span data-stat="ncrb_cases_2024">1,01,928</span> cyber crime cases in 2024, up from <span data-stat="ncrb_cases_2023">86,420</span> in 2023.</p>
       </div>
     </div>
   </div>
@@ -1641,20 +1651,20 @@
     <div class="law-card">
       <p class="law-card__section">IT Act 2000 · Sec 66C</p>
       <p class="law-card__title">Identity Theft</p>
-      <p class="law-card__desc">Fraudulent use of your Aadhaar, OTP, password, or digital signature. Covers synthetic identity creation and AI deepfake impersonation.</p>
-      <p class="law-card__penalty">Up to 3 years · ₹1 Lakh fine</p>
+      <p class="law-card__desc">Fraudulently using another person's electronic signature, password or other unique identification feature.</p>
+      <p class="law-card__penalty">Up to 3 years · fine up to ₹1 lakh</p>
     </div>
     <div class="law-card">
       <p class="law-card__section">IT Act 2000 · Sec 66D</p>
       <p class="law-card__title">Cheating by Personation</p>
       <p class="law-card__desc">Anyone cheating you by pretending to be a bank officer, CBI agent, police, or any person via computer or mobile device.</p>
-      <p class="law-card__penalty">Up to 3 years · ₹1 Lakh fine</p>
+      <p class="law-card__penalty">Up to 3 years · fine up to ₹1 lakh</p>
     </div>
     <div class="law-card">
       <p class="law-card__section">BNS 2023 · Sec 318 &amp; 319</p>
       <p class="law-card__title">Digital Fraud &amp; Impersonation</p>
       <p class="law-card__desc">Replaced IPC Sections 415–420 from 1 July 2024. BNS recognises cybercrime as "organized crime" — enabling prosecution of entire fraud syndicates.</p>
-      <p class="law-card__penalty">Up to 7 years (organized crime)</p>
+      <p class="law-card__penalty">Cheating (318(4)): up to 7 years · Organised crime (111): 5 years to life</p>
     </div>
   </div>
 </section>
@@ -1665,7 +1675,7 @@
     <div class="quiz-header">
       <span class="section-tag">Test Your Awareness</span>
       <h2>Can You Spot the Scam?</h2>
-      <p>5 real scenarios that cost Indians crores in 2023–2024. One wrong answer could cost you lakhs. Take 3 minutes — it could be the most valuable 3 minutes of your year.</p>
+      <p>Five common scenarios. One wrong answer could cost you lakhs. Take 3 minutes — it could be the most valuable 3 minutes of your year.</p>
     </div>
     <div class="quiz-box">
       <div id="quizContent"></div>
@@ -1675,12 +1685,14 @@
 </section>
 
 <!-- FOOTER -->
+</main>
+<!-- @gen:footer -->
 <footer role="contentinfo">
   <div class="footer-inner">
     <div class="footer-col">
       <p class="footer-logo">🛡️ FraudShield</p>
       <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
-      <p class="footer-desc">India's frontline digital fraud awareness platform — free for every Indian. Not affiliated with any government body.</p>
+      <p class="footer-desc">India's frontline digital fraud awareness platform — free for every Indian. A community service project; not affiliated with any government body.</p>
     </div>
     <div class="footer-col">
       <p class="footer-col__heading">Emergency Helplines</p>
@@ -1704,17 +1716,27 @@
       <a href="data.html" class="footer-link">The Data</a>
       <a href="tips.html" class="footer-link">Protect Yourself</a>
       <a href="assistant.html" class="footer-link">Assistant</a>
+      <a href="about.html" class="footer-link">About</a>
       <a href="report.html" class="footer-link">Report Fraud</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023–24 · Ministry of Home Affairs I4C · Press Information Bureau · DoT 2024</p>
+    <p>Sources: NCRB Crime in India 2024 · MHA replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026 · PIB</p>
     <p>© 2026 FraudShield · Built to protect every Indian · National Cyber Crime Helpline: <a href="tel:1930" style="color:var(--orange);text-decoration:none" data-snd="click">1930</a></p>
   </div>
 </footer>
+<!-- @/gen:footer -->
 
 <script src="lib/core.js" defer></script>
 <script src="script.js" defer></script>
+<script src="lib/format.js" defer></script>
+<script src="lib/hero-scene.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var host = document.getElementById('heroScene');
+  if (host && window.FraudShieldHeroScene) window.FraudShieldHeroScene.mount(host);
+});
+</script>
 
 <!-- SOUNDS + CREATURE VOICES + INTERACTIONS -->
 <script>
@@ -1936,14 +1958,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Google UK English Male','Daniel','Rishi'],
       lang   : 'en-US',
       msg    : 'I am Sankhya. Data report begins. ' +
-               'India. Year twenty twenty four. Total fraud losses: twenty two thousand eight hundred crore rupees. ' +
-               'Fraud complaints in twenty twenty five: twenty eight lakh. That is two million eight hundred thousand complaints. ' +
-               'One Indian is cheated every seven minutes. ' +
-               'Government recovery system — C F C F R M S — has saved over eight thousand six hundred ninety crore rupees, as of early twenty twenty six. ' +
-               'Year on year increase in fraud: sixty percent. ' +
-               'Reporting speed matters: the sooner you report, the better the chance of freezing the money. ' +
-               'Required action: Call one nine three zero. It is free. Available twenty four hours. Do not wait. ' +
-               'Data report complete.'
+               'India. Year twenty twenty five. Cyber fraud cases recorded: twenty eight lakh fifteen thousand. That is up twenty four percent on the year before. ' +
+               'Reported losses: twenty two thousand four hundred ninety five crore rupees. ' +
+               'Money saved or frozen by the C F C F R M S system, up to thirty June twenty twenty six: more than eleven thousand one hundred fifty eight crore rupees. ' +
+               'Frozen money is not the same as returned money. A restoration module now lets victims apply to get frozen money back. ' +
+               'Report speed matters: the sooner you report, the better the chance of freezing the money. ' +
+               'Required action: call one nine three zero. It is free and open twenty four hours. Data report complete.'
     },
 
     /* THAG — Criminal devil, slow, menacing, revealing his own script */
@@ -1954,16 +1974,13 @@ document.addEventListener('DOMContentLoaded', function () {
       voices : ['Daniel','Microsoft David - English (United States)','Microsoft David',
                 'Alex','Google UK English Male','Rishi'],
       lang   : 'en-GB',
-      msg    : 'I will tell you exactly how I cheat your family. ' +
-               'I call your father or mother. I say — your Aadhaar number is connected to a drug case. They panic. ' +
-               'I say — do not tell anyone. This is a secret government investigation. ' +
-               'Now they are completely alone. No one to ask. No one to call. They are terrified. ' +
-               'Then I say — transfer one lakh rupees to clear your name. ' +
-               'They transfer. I am sitting in Cambodia or Myanmar. The money reaches me in thirty seconds. ' +
-               'I have done this to ten thousand Indian families. Retired army officers. Professors. Doctors. High Court judges. They all believed me. ' +
-               'But now you know my full script. ' +
-               'Tell every person in your family today. Tell your elderly neighbours. Tell your parents right now. ' +
-               'Because I am calling someone in India at this very moment. Do not let it be your family.'
+      msg    : 'I will tell you how I try to cheat your family, so that you can stop me. ' +
+               'I call and say I am from the police or a government agency. I say your name is linked to a crime, maybe a parcel with something illegal inside. ' +
+               'I tell you to stay on the video call and not to tell anyone. I want you frightened and alone. ' +
+               'Then I say there is a way to clear your name: move your money to a safe account. ' +
+               'There is no safe account. No real officer arrests anyone on a video call. The Prime Minister has said so himself. ' +
+               'The moment you hang up and tell someone, my plan falls apart. ' +
+               'So now you know my script. Tell your parents today. Tell your neighbours. And if I ever call you, put the phone down and call nineteen thirty.'
     },
 
     /* DOST — Friendly Hindi-speaking guardian, warm trustworthy male voice */
@@ -1989,16 +2006,16 @@ document.addEventListener('DOMContentLoaded', function () {
       voices : ['Veena','Microsoft Heera - English (India)','Microsoft Heera',
                 'Karen','Samantha','Google UK English Female'],
       lang   : 'en-IN',
-      msg    : 'Please hear me. I know this has been a very difficult time for you. ' +
-               'But I want you to know — if fraud has happened to you — you are not weak, and you are not stupid. ' +
-               'These criminals are professionals. They have fooled retired army officers, I A S officers, High Court judges, and professors from I I T. ' +
+      msg    : 'Please hear me. I know this may be a very difficult time. ' +
+               'If fraud has happened to you, you are not weak and you are not stupid. ' +
+               'These criminals are professionals, and they have fooled careful, educated people, including a retired scientist and a retired executive in cases reported by Indian media. ' +
                'You were targeted by experts. It is not your fault. ' +
                'Now let us act together, quickly. ' +
-               'One — call nineteen thirty. It is free. Any time of day. No paperwork needed on the call. ' +
-               'Two — call your bank right now. Say: freeze my last outgoing transaction. It was fraud. ' +
-               'Three — save all screenshots and messages. File them at cybercrime dot gov dot in. ' +
-               'The C F C F R M S system has already helped freeze thousands of crores, and speed is what makes it work. ' +
-               'You are not alone. India is fighting back. Umeed hai. There is always hope.'
+               'One — call nineteen thirty. It is free, any time of day. Tell them what happened and keep the complaint number they give you. ' +
+               'Two — call your bank right now and report it as a fraudulent transaction. ' +
+               'Three — save every screenshot and message, and file them at cybercrime dot gov dot in. ' +
+               'If your money was frozen, you can apply to get it back through the restoration module on the same portal, using your complaint number. ' +
+               'It is not guaranteed, but speed gives you the best chance. You are not alone. Umeed hai. There is always hope.'
     }
   };
 
@@ -2259,29 +2276,19 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ════════════════════════════════════════════════════════
-     7.  LIVE FRAUD COST COUNTER — ₹7,243 stolen per second
-         Based on: ₹22,848 Cr / year ÷ 31,536,000 seconds
-         Shows users visceral, real-time scale of the problem
+     7.  AVERAGE REPORTED-LOSS COUNTER
+         Rate comes from data/stats.json (written into data-target by scripts/sync_site.js).
+         It is an average of reported losses across 2025, not a live feed, and the page says so.
   ════════════════════════════════════════════════════════ */
   var costEl = document.getElementById('costSince');
-  if (costEl) {
+  if (costEl && window.FraudShieldFormat) {
     var pageOpenTime = Date.now();
-    var costPerSec = 7243; /* rupees per second — verified I4C 2024 data */
+    var costPerSec = Number(costEl.getAttribute('data-target')) || 0;
+    var fmtRupees = window.FraudShieldFormat.rupeesCompact;
 
     setInterval(function() {
       var elapsed = (Date.now() - pageOpenTime) / 1000;
-      var total = Math.floor(costPerSec * elapsed);
-      var fmt;
-      if (total >= 10000000) {
-        fmt = '₹' + (total / 10000000).toFixed(2) + ' Cr';
-      } else if (total >= 100000) {
-        fmt = '₹' + (total / 100000).toFixed(2) + ' Lakh';
-      } else if (total >= 1000) {
-        fmt = '₹' + (total / 1000).toFixed(1) + ',000';
-      } else {
-        fmt = '₹' + total.toLocaleString('en-IN');
-      }
-      costEl.textContent = fmt;
+      costEl.textContent = fmtRupees(Math.floor(costPerSec * elapsed));
     }, 1000);
   }
 

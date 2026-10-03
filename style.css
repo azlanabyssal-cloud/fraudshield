@@ -196,18 +196,6 @@ p  { font-family: 'DM Sans', sans-serif; font-size: 1rem; line-height: 1.75; col
   padding-top: 68px;
 }
 
-.hero-bg {
-  position: absolute; inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1612833606136-a97c6f2c5abb?w=1600&q=80&fit=crop');
-  background-size: cover;
-  background-position: center top;
-}
-
-.hero-bg::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(108deg, rgba(11,31,58,0.96) 0%, rgba(11,31,58,0.85) 45%, rgba(11,31,58,0.40) 100%);
-}
-
 .hero-content {
   position: relative; z-index: 2;
   max-width: 680px;
@@ -1294,3 +1282,22 @@ footer { background: var(--space); color: #94a3b8; }
 .cb-messages--big{padding:1.4rem}
 .cb-messages--big .cb-msg{font-size:.92rem;max-width:78%}
 @media (max-width:768px){.assistant-page-wrap{padding:0 1rem 3.5rem}.assistant-frame{height:80vh;border-radius:var(--radius)}.cb-header--big{border-radius:var(--radius) var(--radius) 0 0}}
+
+
+/* ── SOURCES: generated tables and links under facts ── */
+.case-src { font-size: .72rem; opacity: .72; margin-top: .6rem; line-height: 1.5; }
+.case-src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.source-table { margin: 1.6rem 0 0; border: 1px solid var(--border, #E2E8F0); border-radius: 12px; background: #fff; }
+.source-table > summary { cursor: pointer; padding: .9rem 1.1rem; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .9rem; color: var(--navy, #0B1F3A); }
+.source-table__wrap { overflow-x: auto; padding: 0 1.1rem 1rem; }
+.source-table table { width: 100%; border-collapse: collapse; font-family: 'DM Sans', sans-serif; font-size: .78rem; min-width: 640px; }
+.source-table th, .source-table td { text-align: left; padding: .5rem .6rem; border-top: 1px solid #EDF2F7; vertical-align: top; }
+.source-table th { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: #718096; }
+.source-table td:nth-child(2) { font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.source-table a { color: var(--orange, #E85D04); }
+.source-table .source-note { padding: 0 1.1rem 1rem; margin: 0; }
+
+
+/* ── ACCESSIBILITY: skip link, visible only on keyboard focus ── */
+.skip-link { position: absolute; left: .75rem; top: -4rem; z-index: 100000; background: var(--navy, #0B1F3A); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 700; text-decoration: none; transition: top .15s ease; }
+.skip-link:focus { top: .75rem; outline: 3px solid var(--orange, #E85D04); outline-offset: 2px; }

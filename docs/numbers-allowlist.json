@@ -1,0 +1,59 @@
+{
+  "_readme": "Every statistic-looking figure that is typed by hand into a page, with the reason it is allowed. Anything else must come from data/stats.json via data-stat. tests/site.test.js fails on a figure not listed here, and on an entry that no longer appears on its page.",
+  "entries": [
+    {
+      "page": "index.html",
+      "token": "₹0",
+      "count": 1,
+      "reason": "Initial text of the average-loss counter before it starts; the rate itself is data-driven."
+    },
+    {
+      "page": "index.html",
+      "token": "₹7.70 Lakh",
+      "count": 2,
+      "reason": "Amount in a cited news report about one victim (DCN News), quoted with its source on the page."
+    },
+    {
+      "page": "index.html",
+      "token": "₹7.70 lakh",
+      "count": 1,
+      "reason": "Same news report, in the card text."
+    },
+    {
+      "page": "about.html",
+      "token": "₹3.4 lakh",
+      "count": 1,
+      "reason": "Azlan's own account of his uncle's case; a personal story, not a statistic."
+    },
+    {
+      "page": "index.html",
+      "token": "₹1 lakh",
+      "count": 2,
+      "reason": "Maximum fine under IT Act 2000 sections 66C and 66D (statute text)."
+    },
+    {
+      "page": "tips.html",
+      "token": "₹5,000",
+      "count": 2,
+      "reason": "Illustrative amounts in scam scenarios (loan app, task job); not statistics."
+    },
+    {
+      "page": "tips.html",
+      "token": "₹50,000",
+      "count": 2,
+      "reason": "Illustrative amounts in scam scenarios; not statistics."
+    },
+    {
+      "page": "tips.html",
+      "token": "₹500",
+      "count": 1,
+      "reason": "Illustrative per-task payout in a scam scenario; not a statistic."
+    },
+    {
+      "page": "data.html",
+      "token": "100%",
+      "count": 1,
+      "reason": "Arithmetic note explaining how the 'everything else' share is calculated."
+    }
+  ]
+}

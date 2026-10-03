@@ -3,7 +3,7 @@
    Usage: node data_ops/add_message.js [--file <csv>]      (or FS_GOLDEN; default data_ops/golden_holdout.csv)
    Nothing leaves this machine, the original text is never printed again or stored, and only the scrubbed row is written. */
 const fs = require('node:fs'), path = require('node:path'), readline = require('node:readline');
-const { COLUMNS, CATEGORIES, SCAM_CATEGORIES, SOURCES, LANGUAGES, toCsvLine, findPii } = require('./holdout.js');
+const { COLUMNS, SCAM_CATEGORIES, SOURCES, LANGUAGES, toCsvLine, findPii } = require('./holdout.js');
 const { scrub, maskTerms, suggestLanguage, suggestObfuscation } = require('./scrub.js');
 const { buildRow } = require('./row_builder.js');
 
@@ -25,7 +25,9 @@ async function choose(q, options, dflt) {
   const raw = []; for (;;) { const l = await next(); if (l === '') break; raw.push(l); }
   if (!raw.length) fail('no message entered');
 
-  let { text, replaced } = scrub(raw.join('\n'));
+  const scrubbed = scrub(raw.join('\n'));
+  let text = scrubbed.text;
+  const replaced = scrubbed.replaced;
   const names = (await ask('Names still in the text? Type each exactly as written, comma-separated (blank = none)', '')).split(',');
   const addrs = (await ask('Street/flat/pincode that identifies a home? Same way (blank = none)', '')).split(',');
   const n1 = maskTerms(text, names, 'NAME'); const n2 = maskTerms(n1.text, addrs, 'ADDRESS');

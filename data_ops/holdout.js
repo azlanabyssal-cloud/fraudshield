@@ -28,7 +28,7 @@ const FINAL_MIN_ROWS = 1000;
 /* ---------- CSV (RFC 4180: quoted fields, embedded commas/quotes/newlines) ---------- */
 function parseCsv(text) {
   const rows = []; let row = []; let field = ''; let inQuotes = false;
-  const src = text.replace(/^﻿/, '');
+  const src = text.replace(/^\ufeff/, '');
   for (let i = 0; i < src.length; i++) {
     const c = src[i];
     if (inQuotes) {

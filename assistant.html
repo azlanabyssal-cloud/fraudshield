@@ -17,6 +17,8 @@
 </head>
 <body>
 
+<!-- @gen:nav -->
+<a class="skip-link" href="#main">Skip to main content</a>
 <nav id="navbar" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo" aria-label="FraudShield Home">
@@ -28,6 +30,7 @@
       <li><a href="data.html">The Data</a></li>
       <li><a href="tips.html">Protect Yourself</a></li>
       <li><a href="assistant.html" class="active">🤖 Assistant</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
     </ul>
     <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
@@ -43,8 +46,11 @@
   <a href="data.html">The Data</a>
   <a href="tips.html">Protect Yourself</a>
   <a href="assistant.html" class="active">🤖 Assistant</a>
+  <a href="about.html">About</a>
   <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
 </div>
+<!-- @/gen:nav -->
+<main id="main">
 
 <!-- PAGE HERO -->
 <section class="page-hero">
@@ -61,22 +67,29 @@
 </div>
 
 <!-- FOOTER -->
+</main>
+<!-- @gen:footer -->
 <footer role="contentinfo">
   <div class="footer-inner">
     <div class="footer-col">
       <p class="footer-logo">🛡️ FraudShield</p>
       <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
-      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+      <p class="footer-desc">India's frontline digital fraud awareness platform — free for every Indian. A community service project; not affiliated with any government body.</p>
     </div>
     <div class="footer-col">
-      <p class="footer-col__heading">Emergency</p>
-      <a href="tel:1930" class="footer-helpline-number">1930</a>
-      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+      <p class="footer-col__heading">Emergency Helplines</p>
+      <a href="tel:1930" class="footer-helpline-number" data-snd="click">1930</a>
+      <p class="footer-helpline-label">Cyber Crime · Free · 24×7 · No registration</p>
+      <a href="tel:112"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">112</a>
+      <p class="footer-helpline-label">Police Emergency</p>
+      <a href="tel:181"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">181</a>
+      <p class="footer-helpline-label">Women Safety Helpline</p>
     </div>
     <div class="footer-col">
       <p class="footer-col__heading">Official Resources</p>
       <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
       <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="https://cert-in.org.in" target="_blank" rel="noopener" class="footer-link">cert-in.org.in ↗</a>
       <a href="report.html" class="footer-link">File a Report</a>
     </div>
     <div class="footer-col">
@@ -85,15 +98,18 @@
       <a href="data.html" class="footer-link">The Data</a>
       <a href="tips.html" class="footer-link">Protect Yourself</a>
       <a href="assistant.html" class="footer-link">Assistant</a>
+      <a href="about.html" class="footer-link">About</a>
       <a href="report.html" class="footer-link">Report Fraud</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
-    <p>© 2026 FraudShield. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+    <p>Sources: NCRB Crime in India 2024 · MHA replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026 · PIB</p>
+    <p>© 2026 FraudShield · Built to protect every Indian · National Cyber Crime Helpline: <a href="tel:1930" style="color:var(--orange);text-decoration:none" data-snd="click">1930</a></p>
   </div>
 </footer>
+<!-- @/gen:footer -->
 
+<script src="lib/format.js" defer></script>
 <script src="lib/core.js" defer></script>
 <script src="script.js" defer></script>
 </body>

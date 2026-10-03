@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         4: { icon: '✅', msg: 'Great awareness. Review the one you missed on the Protect Yourself page.' },
         3: { icon: '📚', msg: 'Good start. Read the full fraud prevention guide to fill the gaps in your knowledge.' },
         2: { icon: '⚠️', msg: 'You are at risk. Please read the Protect Yourself page carefully — it could save you lakhs.' },
-        1: { icon: '🚨', msg: 'High risk. These exact scenarios have cost Indians crores in 2024. Read the guide immediately.' },
+        1: { icon: '🚨', msg: 'High risk. These are real tricks that criminals use. Read the guide now.' },
         0: { icon: '🚨', msg: 'High risk. Scammers specifically exploit this gap in awareness. Read the full guide now.' }
       };
       const m = messages[score] || messages[0];
@@ -372,21 +372,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
+    // Chart data is written into each canvas (data-series) by scripts/sync_site.js from data/stats.json.
+    // Nothing is typed in here, so a chart can never disagree with the page text next to it.
+    const seriesOf = id => {
+      const raw = document.getElementById(id).getAttribute('data-series');
+      if (!raw) throw new Error('canvas #' + id + ' has no data-series: run "npm run site:sync"');
+      return JSON.parse(raw);
+    };
+    const exact = n => (window.FraudShieldFormat ? window.FraudShieldFormat.indian(n) : String(n));
+
+    const cases = seriesOf('casesChart');
     new Chart(document.getElementById('casesChart'), {
       type: 'bar',
       data: {
-        labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+        labels: cases.labels,
         datasets: [{
-          label: 'FIRs Registered',
-          data: [27248, 44735, 50035, 52974, 65893, 86420],
-          backgroundColor: [
-            'rgba(11,31,58,0.5)',
-            'rgba(11,31,58,0.6)',
-            'rgba(11,31,58,0.65)',
-            'rgba(11,31,58,0.7)',
-            'rgba(232,93,4,0.75)',
-            '#7B1D1D'
-          ],
+          label: 'Cases registered',
+          data: cases.values,
+          backgroundColor: cases.values.map((_, i) => (i === cases.values.length - 1 ? '#7B1D1D' : 'rgba(11,31,58,' + (0.5 + 0.1 * i).toFixed(2) + ')')),
           borderRadius: 6,
           hoverBackgroundColor: '#E85D04'
         }]
@@ -396,23 +399,20 @@ document.addEventListener('DOMContentLoaded', () => {
         maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => '  ' + formatIndian(ctx.parsed.y) + ' FIRs registered'
-            }
-          }
+          tooltip: { callbacks: { label: ctx => '  ' + exact(ctx.parsed.y) + ' cases registered' } }
         },
         scales: baseScales
       }
     });
 
+    const shares = seriesOf('typeChart');
     new Chart(document.getElementById('typeChart'), {
       type: 'doughnut',
       data: {
-        labels: ['UPI / Payment Fraud', 'OTP & SIM Swap', 'Phishing', 'Fake Loan Apps', 'Other'],
+        labels: shares.labels,
         datasets: [{
-          data: [67, 12, 9, 7, 5],
-          backgroundColor: ['#7B1D1D', '#E85D04', '#0B1F3A', '#556B2F', '#94a3b8'],
+          data: shares.values,
+          backgroundColor: ['#7B1D1D', '#E85D04', '#0B1F3A', '#94a3b8'],
           borderWidth: 0,
           hoverOffset: 12
         }]
@@ -423,23 +423,20 @@ document.addEventListener('DOMContentLoaded', () => {
         cutout: '68%',
         plugins: {
           legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => '  ' + ctx.label + ': ' + ctx.parsed + '%'
-            }
-          }
+          tooltip: { callbacks: { label: ctx => '  ' + ctx.label + ': ' + ctx.parsed + '% of the money' } }
         }
       }
     });
 
+    const states = seriesOf('stateChart');
     new Chart(document.getElementById('stateChart'), {
       type: 'bar',
       data: {
-        labels: ['Telangana', 'Uttar Pradesh', 'Karnataka', 'Maharashtra', 'Rajasthan'],
+        labels: states.labels,
         datasets: [{
-          label: 'FIRs',
-          data: [15297, 10117, 8136, 7152, 6493],
-          backgroundColor: ['#7B1D1D', '#9B2C2C', '#E85D04', '#0B1F3A', '#1A3A5C'],
+          label: 'Cases',
+          data: states.values,
+          backgroundColor: ['#7B1D1D', '#E85D04'],
           borderRadius: 6,
           hoverBackgroundColor: '#E85D04'
         }]
@@ -450,11 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
         indexAxis: 'y',
         plugins: {
           legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => '  ' + formatIndian(ctx.parsed.x) + ' cases'
-            }
-          }
+          tooltip: { callbacks: { label: ctx => '  ' + exact(ctx.parsed.x) + ' cases' } }
         },
         scales: {
           x: {
@@ -467,22 +460,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    const losses = seriesOf('moneyChart');
     new Chart(document.getElementById('moneyChart'), {
       type: 'line',
       data: {
-        labels: ['2021', '2022', '2023', '2024', '2025'],
+        labels: losses.labels,
         datasets: [{
-          label: '₹ Crore Lost',
-          data: [551, null, 7465, 22845, 22495],
+          label: '₹ Crore lost',
+          data: losses.values,
           borderColor: '#E85D04',
           backgroundColor: 'rgba(232,93,4,0.08)',
           fill: true,
-          tension: 0.38,
-          pointBackgroundColor: ['#556B2F', '#E85D04', '#E85D04', '#7B1D1D', '#556B2F'],
+          tension: 0.3,
+          pointBackgroundColor: ['#E85D04', '#7B1D1D', '#556B2F'],
           pointRadius: 6,
           pointHoverRadius: 9,
-          borderWidth: 2.5,
-          spanGaps: false
+          borderWidth: 2.5
         }]
       },
       options: {
@@ -490,20 +483,14 @@ document.addEventListener('DOMContentLoaded', () => {
         maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ctx.parsed.y != null
-                ? '  ₹' + formatIndian(ctx.parsed.y) + ' Crore'
-                : '  Data not published'
-            }
-          }
+          tooltip: { callbacks: { label: ctx => '  ₹' + exact(ctx.parsed.y) + ' Crore' } }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: tickColor } },
           y: {
             beginAtZero: true,
             grid: { color: gridColor },
-            ticks: { color: tickColor, callback: v => '₹' + formatIndian(v) }
+            ticks: { color: tickColor, callback: v => '₹' + exact(v) }
           }
         }
       }
@@ -554,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '=== NEXT STEPS ===',
         '1. File at:     https://cybercrime.gov.in',
         '2. Call:        1930 (Free · 24x7 National Helpline)',
-        '3. Call bank:   Ask for dispute under RBI Zero Liability Policy',
+        '3. Call bank:   Report it as a fraudulent transaction and ask which RBI rules apply',
         '4. Evidence:    Save all SMS, screenshots, transaction IDs',
         '',
         '==============================',
@@ -1147,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function respondToGeneralLoss() {
       botSay([
-        "I'm sorry this happened — let's move fast. Call your bank's helpline right now and report it as a fraudulent transaction. Ask them to block your card or account, and note the complaint number. Under RBI's rules you are generally protected from losses that happen after you report an unauthorised transaction, and delay can cost you that protection. Then call 1930 and report at cybercrime.gov.in too: the sooner the report, the better the chance of freezing the money before it moves on.",
+        "I'm sorry this happened — let's move fast. Call your bank's helpline right now and report it as a fraudulent transaction. Ask them to block your card or account, and note the complaint number. Under RBI's rules you are generally protected from losses that happen after you report an unauthorised transaction, and delay can cost you that protection. Then call 1930 and report at cybercrime.gov.in too: the sooner the report, the better the chance of freezing the money before it moves on. If any of it is frozen, you can later apply to get it back through the Money Restoration Module on cybercrime.gov.in, using your complaint number.",
         'To get you more specific next steps, what caused it — a phone call, a link, a QR code, or something else? Or pick the closest match below.'
       ], { urgent: true, cta: [{ label: '📞 Call 1930 Now', href: 'tel:1930' }], options: buildMainMenuOptions() });
     }

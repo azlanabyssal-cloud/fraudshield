@@ -1,0 +1,82 @@
+[
+  {
+    "id": "cosmos",
+    "year": "2018",
+    "variant": "navy",
+    "title": "Cosmos Bank hack — Pune",
+    "amount": "₹94 crore taken on 11 and 13 August 2018",
+    "desc": "Hackers attacked the bank's card-payment system with malware and its SWIFT link. About ₹78 crore went out in more than 12,000 ATM withdrawals outside India, ₹13.92 crore was sent to a firm in Hong Kong, and about ₹2.5 crore was taken in transactions inside India. A Pune court convicted 11 people in April 2023.",
+    "verdict": {
+      "variant": "olive",
+      "text": "✅ 11 convicted · April 2023"
+    },
+    "status": "secondary",
+    "sources": [
+      {
+        "name": "Business Standard, 23 April 2023",
+        "url": "https://www.business-standard.com/india-news/pune-court-convicts-11-accused-in-cosmos-bank-s-rs-94-cr-cyber-fraud-case-123042300456_1.html"
+      }
+    ]
+  },
+  {
+    "id": "kerala",
+    "year": "2023",
+    "variant": "orange",
+    "title": "Kerala AI deepfake call — Kozhikode",
+    "amount": "₹40,000 lost to a fake video call",
+    "desc": "A retired executive in Kozhikode got a WhatsApp video call showing what looked like a friend, asking urgently for money for a sister's surgery. He sent ₹40,000, and grew suspicious only when the caller asked for ₹30,000 more. Kerala Police described it as the first case of its kind in Kerala to use AI-made video.",
+    "verdict": {
+      "variant": "orange",
+      "text": "🔴 First AI-video fraud reported in Kerala"
+    },
+    "status": "secondary",
+    "sources": [
+      {
+        "name": "Deccan Herald",
+        "url": "https://www.deccanherald.com/national/south/fraud-using-ai-based-deepfaking-reported-in-kerala-1237663.html"
+      }
+    ]
+  },
+  {
+    "id": "nadia",
+    "year": "2025",
+    "variant": "maroon",
+    "title": "Nadia digital arrest — West Bengal",
+    "amount": "About ₹1 crore lost · 9 sentenced to life",
+    "desc": "A retired scientist was told by a caller posing as Mumbai Police that he was under \"digital arrest\" and moved about ₹1 crore across several accounts. On 20 July 2025 a court in Kalyani, Nadia, sentenced nine members of the network to life imprisonment. The prosecutor called it India's first conviction in a digital arrest case; police said the gang had cheated at least 108 people.",
+    "verdict": {
+      "variant": "maroon",
+      "text": "⚖️ 9 life sentences · July 2025"
+    },
+    "status": "secondary",
+    "sources": [
+      {
+        "name": "Trak.in",
+        "url": "https://trak.in/stories/digital-arrest-scamsters-sentenced-to-life-indias-1st-such-convinction/"
+      },
+      {
+        "name": "VARindia",
+        "url": "https://www.varindia.com/news/West-Bengal-Court-Gives-Life-Sentence-to-9-in-%E2%82%B9100-Crore-%E2%80%98Digital-Arrest%E2%80%99-Cyber-Fraud-Case"
+      }
+    ]
+  },
+  {
+    "id": "octopus",
+    "year": "2026",
+    "variant": "dark",
+    "title": "Operation Octopus 2 — Hyderabad",
+    "amount": "₹150 crore · 52 arrested, 32 of them bank officers",
+    "desc": "In April 2026 Hyderabad City Police arrested 52 people across nine states, including 32 bank officers, 15 mule-account holders and five middlemen. Police said 350 bank accounts linked to 850 cybercrime cases were used to move victims' money. The case shows why a stranger's account number is never a reason to trust a payment request.",
+    "verdict": {
+      "variant": "navy",
+      "text": "🔎 52 arrests · April 2026"
+    },
+    "status": "secondary",
+    "sources": [
+      {
+        "name": "Siasat, 19 April 2026",
+        "url": "https://www.siasat.com/hyderabad-police-bust-rs150-crore-cyber-fraud-32-bank-officers-held-3456452/"
+      }
+    ]
+  }
+]

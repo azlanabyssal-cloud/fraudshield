@@ -76,7 +76,7 @@ function suggestLanguage(text) {
 }
 
 function suggestObfuscation(text) {
-  return /[A-Za-z][@$][A-Za-z]/.test(text) || /[​-‍﻿]/.test(text) || /\b(?:[A-Za-z][ .\-_]){2,}[A-Za-z]\b/.test(text)
+  return /[A-Za-z][@$][A-Za-z]/.test(text) || /[\u200b-\u200d\ufeff]/.test(text) || /\b(?:[A-Za-z][ .\-_]){2,}[A-Za-z]\b/.test(text)
     || (/[A-Za-z]/.test(text) && /[Ѐ-ӿͰ-Ͽ]/.test(text));
 }
 

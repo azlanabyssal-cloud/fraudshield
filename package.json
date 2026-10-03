@@ -9,9 +9,18 @@
     "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final",
     "mlops:gate": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0",
     "mlops:gate:strict": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0 --strict",
-    "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0"
+    "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0",
+    "site:sync": "node scripts/sync_site.js",
+    "site:check": "node scripts/sync_site.js --check",
+    "site:numbers": "node scripts/scan_numbers.js",
+    "lint": "eslint . --max-warnings 0",
+    "field:analyze": "node field/analyze.js"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.8"
+    "@electric-sql/pglite": "^0.5.8",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "jsdom": "^29.1.1"
   }
 }

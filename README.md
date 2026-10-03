@@ -50,7 +50,7 @@ FraudShield does **not** claim a detection accuracy. The assistant is a rule-bas
 | Claims register: every number, date and legal section with its source, and the wording that was removed | `docs/CLAIMS.md` | tests block the removed wording |
 | Decisions: ten ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
 
-122 tests run in CI. Guards were broken on purpose once to prove a test fails (mutation checks), and the weak ones found that way were fixed.
+CI runs the linter and the full suite on every push: unit and property tests, a DOM smoke test that loads every page and runs its real scripts, HTML structure checks, and site-integrity tests that fail if a page disagrees with the sourced data file or a statistic is typed by hand. Guards were broken on purpose to prove a test fails (mutation checks), and the weak ones found that way were fixed.
 
 **Deliberately not built:** Kafka, Kubernetes, a model-serving cluster, a vector database. Messages are scored on the device so they never leave it, and there is no traffic or model that would justify any of those. The shipped scoring is a small set of rules and, for experiments, a 40 KB word-weight model; ONNX Runtime was considered and declined (ADR-0010).
 
@@ -88,7 +88,9 @@ FraudShield does **not** claim a detection accuracy. The assistant is a rule-bas
 
 ```bash
 npm ci
-npm test                  # 122 tests
+npm run lint              # ESLint, zero warnings allowed
+npm test                  # unit, property, DOM smoke, HTML and site-integrity tests
+npm run site:sync         # regenerate pages from data/stats.json after changing a figure
 npm run mlops:gate        # evaluation gate on data_ops/golden_holdout.csv
 npm run data:add          # add one real message, scrubbed offline
 node mlops/benchmarks/run_sms.js   # proxy benchmark (downloads and hash-checks the public dataset)

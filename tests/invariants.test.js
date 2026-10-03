@@ -11,9 +11,9 @@ const root = path.join(__dirname, '..');
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const pages = ['index.html', 'tips.html', 'data.html', 'report.html', 'assistant.html'];
 
-// The only third-party scripts allowed. Chart.js renders public statistics and
-// never sees user input. Anything else needs a conscious decision.
-const ALLOWED_EXTERNAL_SCRIPTS = ['https://cdn.jsdelivr.net/npm/chart.js'];
+// No third-party script is allowed on any page. Chart.js and the OCR engine are vendored locally at a pinned version;
+// adding any other external script needs a conscious decision and a pinned, hash-checked local copy instead.
+const ALLOWED_EXTERNAL_SCRIPTS = [];
 
 test('no page loads an unexpected third-party script', () => {
   for (const page of pages) {

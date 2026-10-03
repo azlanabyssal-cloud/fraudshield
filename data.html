@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FraudShield — The Real Data</title>
-  <meta name="description" content="Official cybercrime statistics for India — sourced from RBI, NCRB, and I4C. Every number verified.">
+  <title>FraudShield — The Data, 2026 Edition</title>
+  <meta name="description" content="Cyber fraud figures for India from NCRB and the Ministry of Home Affairs, updated to 2026, each with its source and how sure we are about it.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -17,6 +17,8 @@
 </head>
 <body>
 
+<!-- @gen:nav -->
+<a class="skip-link" href="#main">Skip to main content</a>
 <nav id="navbar" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo" aria-label="FraudShield Home">
@@ -28,6 +30,7 @@
       <li><a href="data.html" class="active">The Data</a></li>
       <li><a href="tips.html">Protect Yourself</a></li>
       <li><a href="assistant.html">🤖 Assistant</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
     </ul>
     <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu"
@@ -43,23 +46,26 @@
   <a href="data.html" class="active">The Data</a>
   <a href="tips.html">Protect Yourself</a>
   <a href="assistant.html">🤖 Assistant</a>
+  <a href="about.html">About</a>
   <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
 </div>
+<!-- @/gen:nav -->
+<main id="main">
 
 <!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero__bg page-hero__bg--data"></div>
   <div class="page-hero__content">
-    <span class="page-hero__badge page-hero__badge--navy">📊 VERIFIED · RBI · NCRB · I4C · MHA</span>
+    <span class="page-hero__badge page-hero__badge--navy">📊 SOURCED · NCRB · MHA · NPCI · RBI · 2026</span>
     <h1>The Real Numbers</h1>
-    <p>Every figure sourced from official Indian government reports. No estimates. No fabrication.</p>
+    <p>Official figures from NCRB and the Ministry of Home Affairs, updated to 2026. Each number below lists its source and how sure we are of it; calculated numbers are marked.</p>
   </div>
 </section>
 
 <!-- TAB BAR -->
 <div class="tab-bar" role="tablist" aria-label="Data categories">
-  <button class="tab-btn active" data-tab="cases" role="tab" aria-selected="true">📈 FIR Cases</button>
-  <button class="tab-btn" data-tab="types" role="tab" aria-selected="false">🍩 Fraud Types</button>
+  <button class="tab-btn active" data-tab="cases" role="tab" aria-selected="true">📈 Cases</button>
+  <button class="tab-btn" data-tab="types" role="tab" aria-selected="false">🍩 Where the money went</button>
   <button class="tab-btn" data-tab="states" role="tab" aria-selected="false">🗺️ By State</button>
   <button class="tab-btn" data-tab="money" role="tab" aria-selected="false">💸 Money Lost</button>
 </div>
@@ -69,87 +75,80 @@
   <div class="chart-card">
     <div class="chart-card__header">
       <div>
-        <h3>Cybercrime FIRs Registered in India</h3>
-        <p>Source: National Crime Records Bureau (NCRB) — Crime in India 2023</p>
+        <h3>Cyber Crime Cases Registered in India</h3>
+        <p>Source: National Crime Records Bureau (NCRB), Crime in India 2021–2024 (the 2024 report came out in May 2026)</p>
       </div>
     </div>
-    <canvas id="casesChart" height="340"
-            role="img" aria-label="Bar chart showing cybercrime FIRs from 2018 to 2023"></canvas>
+    <canvas id="casesChart" height="340" data-series-key="ncrb_cases" data-series='{"labels":["2021","2022","2023","2024"],"values":[52974,65893,86420,101928]}'
+            role="img" aria-label="Bar chart of cyber crime cases registered in India, 2021 to 2024"></canvas>
     <div class="chart-insight chart-insight--navy">
-      📌 Cases grew <strong>217%</strong> between 2018 and 2023. In 2023, the NCRB recorded
-      86,420 FIRs — but the I4C helpline received 15.96 lakh complaints.
-      Only <strong>5.4%</strong> of victims got a formal case registered.
+      📌 Registered cases rose <strong><span data-stat="ncrb_growth_2021_2024_pct">92%</span></strong> between 2021 and 2024. In 2024 the NCRB recorded
+      <strong><span data-stat="ncrb_cases_2024">1,01,928</span></strong> cases, and <strong><span data-stat="ncrb_fraud_share_2024_pct">72.6%</span></strong> of them (<span data-stat="ncrb_fraud_2024">73,987</span>) were fraud.
+    </div>
+    <div class="chart-insight chart-insight--maroon">
+      📌 Registered cases are a small part of what people report. In 2025, <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases were recorded and
+      <span data-stat="ncrp_firs_2025">55,484</span> FIRs were registered, about <span data-stat="fir_rate_2025_pct">2%</span>. The two numbers come from different registers, so read the gap as a guide, not an exact rate.
     </div>
   </div>
 </div>
 
 <div class="tab-panel" id="tab-types" hidden>
   <div class="chart-card">
-    <h3>Fraud Type Breakdown 2023</h3>
-    <p>Source: Indian Cyber Crime Coordination Centre (I4C) — MHA 2023</p>
+    <h3>Where the Money Went, 2025</h3>
+    <p>Share of the rupees reported lost, by type of fraud. Source: Ministry of Home Affairs reply in Parliament, as reported by ThePrint</p>
     <div class="donut-layout">
-      <canvas id="typeChart" class="donut-canvas"
-              role="img" aria-label="Doughnut chart of fraud types"></canvas>
+      <canvas id="typeChart" class="donut-canvas" data-series-key="loss_shares_2025" data-series='{"labels":["Investment fraud","Digital arrest","Sextortion","Everything else"],"values":[76,9,4,11]}'
+              role="img" aria-label="Doughnut chart of the share of money lost in 2025 by type of fraud"></canvas>
       <ul class="legend-list">
         <li class="legend-item">
           <span class="legend-dot legend-dot--maroon"></span>
-          <div><strong>UPI / Payment Fraud — 67%</strong><br>
-          <small>Most common. Fake collect requests, QR codes, malicious apps.</small></div>
+          <div><strong>Investment fraud — <span data-stat="loss_share_2025_investment_pct">76%</span> of the money</strong> (<span data-stat="case_share_2025_investment_pct">35%</span> of cases)<br>
+          <small>Fake trading apps, Ponzi schemes and crypto scams.</small></div>
         </li>
         <li class="legend-item">
           <span class="legend-dot legend-dot--orange"></span>
-          <div><strong>OTP &amp; SIM Swap — 12%</strong><br>
-          <small>Caller tricks victim into sharing one-time password.</small></div>
+          <div><strong>Digital arrest — <span data-stat="loss_share_2025_digital_arrest_pct">9%</span> of the money</strong> (<span data-stat="case_share_2025_digital_arrest_pct">6%</span> of cases)<br>
+          <small>Fake police or agency calls that keep you on a video call.</small></div>
         </li>
         <li class="legend-item">
           <span class="legend-dot legend-dot--navy"></span>
-          <div><strong>Phishing &amp; Fake Sites — 9%</strong><br>
-          <small>Fake bank and government websites steal login credentials.</small></div>
-        </li>
-        <li class="legend-item">
-          <span class="legend-dot legend-dot--olive"></span>
-          <div><strong>Fake Loan Apps — 7%</strong><br>
-          <small>Apps steal contacts and photos then blackmail victims.</small></div>
+          <div><strong>Sextortion — <span data-stat="loss_share_2025_sextortion_pct">4%</span> of the money</strong> (<span data-stat="case_share_2025_sextortion_pct">19%</span> of cases)<br>
+          <small>Many cases, little money per case.</small></div>
         </li>
         <li class="legend-item">
           <span class="legend-dot legend-dot--gray"></span>
-          <div><strong>Other — 5%</strong><br>
-          <small>Sextortion, job fraud, investment scams, digital arrest.</small></div>
+          <div><strong>Everything else — <span data-stat="loss_share_2025_other_pct">11%</span> of the money</strong><br>
+          <small>Calculated: 100% minus the three types above.</small></div>
         </li>
       </ul>
     </div>
     <div class="chart-insight chart-insight--orange">
-      📌 UPI fraud alone (67%) is more than all other fraud types combined.
-      India processes 13.9 billion UPI transactions monthly — making this the
-      largest payment fraud surface in the world.
+      📌 Investment fraud was <span data-stat="case_share_2025_investment_pct">35%</span> of cases but <span data-stat="loss_share_2025_investment_pct">76%</span> of the money. The scams that cost the most are not the most common.
     </div>
   </div>
 </div>
 
 <div class="tab-panel" id="tab-states" hidden>
   <div class="chart-card">
-    <h3>Top 5 States by Cybercrime FIRs — 2023</h3>
-    <p>Source: NCRB — Crime in India 2023</p>
-    <canvas id="stateChart" height="300"
-            role="img" aria-label="Horizontal bar chart showing top 5 states"></canvas>
+    <h3>The Two Highest States, 2024</h3>
+    <p>Source: NCRB, Crime in India 2024 (cyber crime cases). The full state table could not be read at the source, so only these two are shown.</p>
+    <canvas id="stateChart" height="300" data-series-key="states_2024" data-series='{"labels":["Telangana","Karnataka"],"values":[27230,21003]}'
+            role="img" aria-label="Horizontal bar chart of cyber crime cases in the two highest states, 2024"></canvas>
     <div class="chart-insight chart-insight--maroon">
-      📌 Telangana leads partly due to strong reporting infrastructure and a
-      dedicated state cybercrime unit. High numbers reflect both crime volume
-      AND better reporting — not all states register complaints equally.
+      📌 Telangana recorded <span data-stat="ncrb_telangana_2024">27,230</span> cases and Karnataka <span data-stat="ncrb_karnataka_2024">21,003</span>. Counts also depend on how readily each state registers cases, so a high count is not by itself a measure of risk.
     </div>
   </div>
 </div>
 
 <div class="tab-panel" id="tab-money" hidden>
   <div class="chart-card">
-    <h3>Financial Losses Reported — ₹ Crore</h3>
-    <p>Source: I4C / Ministry of Home Affairs — Annual Reports 2021–2025</p>
-    <canvas id="moneyChart" height="300"
-            role="img" aria-label="Line chart of financial losses 2021 to 2025"></canvas>
+    <h3>Reported Losses, ₹ Crore</h3>
+    <p>Source: Ministry of Home Affairs replies in Parliament, as reported (2023–2025)</p>
+    <canvas id="moneyChart" height="300" data-series-key="losses" data-series='{"labels":["2023","2024","2025"],"values":[7465,22845,22495]}'
+            role="img" aria-label="Line chart of reported fraud losses in rupees crore, 2023 to 2025"></canvas>
     <div class="chart-insight chart-insight--olive">
-      📌 The first-ever decline (2024: ₹22,845 Cr → 2025: ₹22,495 Cr) despite
-      a 24% rise in complaint volume is direct evidence that the CFCFRMS system
-      is working — freezing funds in real-time before criminals can launder them.
+      📌 Reported losses were <span data-stat="loss_2024_cr">₹22,845 Cr</span> in 2024 and <span data-stat="loss_2025_cr">₹22,495 Cr</span> in 2025, a change of <span data-stat="loss_change_2025_pct">-1.5</span>%, while cases rose <span data-stat="cases_growth_2025_pct">24%</span>.
+      The average reported loss per case fell from <span data-stat="avg_loss_per_case_2024">₹1,00,728</span> to <span data-stat="avg_loss_per_case_2025">₹79,911</span>. These figures cannot say why: more small cases, faster freezing and changes in how people report could all play a part.
     </div>
   </div>
 </div>
@@ -159,22 +158,83 @@
   <div class="container">
     <div class="facts-grid">
       <div class="fact-card fact-card--orange">
-        <div class="fact-num">₹1.2 Lakh Cr</div>
-        <div class="fact-label">Projected annual fraud loss by 2025 (0.7% of GDP)</div>
-        <div class="fact-src">MHA Study 2025</div>
+        <div class="fact-num"><span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span></div>
+        <div class="fact-label">Saved or frozen through CFCFRMS, cumulative to 30 June 2026, across more than <span data-stat="cfcfrms_complaints">32.80 lakh</span> complaints. Frozen is not the same as returned: see the Money Restoration Module below.</div>
+        <div class="fact-src">MHA reply in Parliament, as reported</div>
       </div>
       <div class="fact-card fact-card--maroon">
-        <div class="fact-num">5.4%</div>
-        <div class="fact-label">Percentage of complaints that became FIRs in 2023 — 94.6% go unregistered</div>
-        <div class="fact-src">NCRB / I4C 2023</div>
+        <div class="fact-num"><span data-stat="fir_rate_2025_pct">2%</span></div>
+        <div class="fact-label">of the cyber fraud cases recorded in 2025 led to an FIR (<span data-stat="ncrp_firs_2025">55,484</span> FIRs for <span data-stat="ncrp_cases_2025">28.15 lakh</span> cases)</div>
+        <div class="fact-src">MHA reply in Parliament, as reported · calculated here</div>
       </div>
       <div class="fact-card fact-card--olive">
-        <div class="fact-num">₹8,690 Cr</div>
-        <div class="fact-label">Saved or frozen by the CFCFRMS real-time system (cumulative, as of January 2026)</div>
-        <div class="fact-src">MHA I4C 2026</div>
+        <div class="fact-num"><span data-stat="rbi_comp_cap_inr">₹25,000</span></div>
+        <div class="fact-label">The most the RBI's new small-value compensation will pay, once, from 1 January 2027: up to <span data-stat="rbi_comp_share_pct">85%</span> of the loss, if reported to 1930 and the bank within <span data-stat="rbi_report_days">5</span> days</div>
+        <div class="fact-src">RBI directions, 24 June 2026, as summarised</div>
       </div>
     </div>
-    <p class="source-note">Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI Annual Report 2023-24 · Ministry of Home Affairs I4C Annual Report</p>
+    <p class="source-note">Sources: NCRB Crime in India 2024 · Ministry of Home Affairs replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026.</p>
+<!-- @gen:sources -->
+<details class="source-table">
+        <summary>How sure are we about each number? (50 figures, sources and status)</summary>
+        <div class="source-table__wrap"><table>
+          <thead><tr><th>Figure</th><th>Value</th><th>Source</th><th>Status</th></tr></thead>
+          <tbody>
+          <tr><td>cyber crime cases registered, 2021</td><td>52,974</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2021</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases registered, 2022</td><td>65,893</td><td><a href="https://www.ncrb.gov.in/uploads/nationalcrimerecordsbureau/custom/1701607577CrimeinIndia2022Book1.pdf" target="_blank" rel="noopener">NCRB, Crime in India 2022</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases registered, 2023</td><td>86,420</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2023</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases registered, 2024</td><td>1,01,928</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024 (released May 2026)</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>growth in cyber crime cases, 2024 over 2023</td><td>17.9%</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime rate per lakh population, 2024 (6.2 in 2023)</td><td>7.3</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases with fraud as the motive, 2024</td><td>73,987</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of cyber crime cases that were fraud, 2024</td><td>72.6%</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases in Telangana, 2024 (highest of any state)</td><td>27,230</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber crime cases in Karnataka, 2024 (second highest)</td><td>21,003</td><td><a href="https://ncrb.gov.in/crime-in-india" target="_blank" rel="noopener">NCRB, Crime in India 2024</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber fraud cases recorded, 2024</td><td>22.68 lakh</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>cyber fraud cases recorded, 2025</td><td>28.15 lakh</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>FIRs registered on those cases, 2024</td><td>66,370</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>FIRs registered on those cases, 2025</td><td>55,484</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>reported fraud losses, 2023</td><td>₹7,465 Cr</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Lok Sabha, as reported by outlets</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>reported fraud losses, 2024</td><td>₹22,845 Cr</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Lok Sabha, as reported by ThePrint and others</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>reported fraud losses, 2025</td><td>₹22,495 Cr</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of 2025 money lost that was investment fraud (35% of cases)</td><td>76%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of 2025 money lost that was digital arrest (6% of cases)</td><td>9%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of 2025 money lost that was sextortion (19% of cases)</td><td>4%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of 2025 cases that were investment fraud</td><td>35%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>share of 2025 cases that were sextortion</td><td>19%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>saved or frozen through CFCFRMS, cumulative, as of 30 June 2026</td><td>₹11,158 Cr</td><td><a href="https://www.sarkaritel.com/ai-enabled-cyber-crime-i4c-digital-protection/" target="_blank" rel="noopener">Rajya Sabha written reply by the MoS Home Affairs (PIB, July 2026), as reported by Sarkaritel and Cyraacs</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>complaints in which money was saved or frozen, cumulative, as of 30 June 2026</td><td>32.80 lakh</td><td><a href="https://www.sarkaritel.com/ai-enabled-cyber-crime-i4c-digital-protection/" target="_blank" rel="noopener">same reply</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>UPI transactions in August 2026, a record month</td><td>24.51 billion</td><td><a href="https://www.medianama.com/2026/09/223-upi-transactions-august-2026/" target="_blank" rel="noopener">NPCI data, as reported by Medianama and Business Standard</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>rise in reported losses, 2024 over 2023</td><td>206%</td><td>Calculated: round((loss 2024 cr / loss 2023 cr - 1) * 100)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>rise in cases, 2025 over 2024</td><td>24%</td><td>Calculated: round((ncrp cases 2025 / ncrp cases 2024 - 1) * 100)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>share of 2025 cases that led to an FIR (about)</td><td>2%</td><td>Calculated: round(ncrp firs 2025 / ncrp cases 2025 * 100)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>average rupees reported lost per second across 2025</td><td>₹7,133</td><td>Calculated: round(loss 2025 cr * 10000000 / 31536000)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>average seconds between cases recorded in 2025</td><td>11</td><td>Calculated: round(31536000 / ncrp cases 2025)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>rise in NCRB cyber crime cases, 2024 over 2021</td><td>92%</td><td>Calculated: round((ncrb cases 2024 / ncrb cases 2021 - 1) * 100)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>money lost to investment fraud in 2025 (76% of the total)</td><td>₹17,096 Cr</td><td>Calculated: round(loss 2025 cr * loss share 2025 investment pct / 100)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>share of 2025 money lost to all other fraud types</td><td>11%</td><td>Calculated: 100 - loss share 2025 investment pct - loss share 2025 digital arrest pct - loss share 2025 sextortion pct</td><td>Calculated here from other rows</td></tr>
+          <tr><td>change in reported losses, 2025 against 2024 (percent)</td><td>-1.5</td><td>Calculated: Math.round((loss 2025 cr / loss 2024 cr - 1) * 1000) / 10</td><td>Calculated here from other rows</td></tr>
+          <tr><td>suspect identifiers received from banks for the Suspect Registry, cumulative to 30 June 2026</td><td>30.48 lakh</td><td><a href="https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/" target="_blank" rel="noopener">Reply in Parliament, as reported by Organiser</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>Layer 1 mule accounts shared with Suspect Registry participants, cumulative to 30 June 2026</td><td>32.08 lakh</td><td><a href="https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/" target="_blank" rel="noopener">same reply</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>transactions declined through the Suspect Registry, cumulative to 30 June 2026</td><td>₹25,698 Cr</td><td><a href="https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/" target="_blank" rel="noopener">same reply</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>SIM cards blocked on police reports, cumulative to 30 June 2026</td><td>15.75 lakh</td><td><a href="https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/" target="_blank" rel="noopener">same reply</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>IMEIs made inactive, cumulative to 30 June 2026</td><td>5.77 lakh</td><td><a href="https://organiser.org/2026/08/26/377008/bharat/indias-digital-shield-how-i4c-is-winning-the-war-against-cybercrime/" target="_blank" rel="noopener">same reply</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>banks where MuleHunter.AI is live</td><td>26</td><td><a href="https://www.pib.gov.in/" target="_blank" rel="noopener">PIB release, 24 March 2026 (read in the earlier claims audit, C-14)</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>Money Restoration Module: frozen-amount threshold per bank account (a police report is enough up to this level; above it an FIR is compulsory)</td><td>₹50,000</td><td><a href="https://the420.in/national-crime-reporting-portal-money-restoration-module/" target="_blank" rel="noopener">The420.in, and India TV (September 2026) for the process</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>RBI small-value fraud compensation: share of net loss (from 1 January 2027)</td><td>85%</td><td><a href="https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/" target="_blank" rel="noopener">RBI Third Amendment Directions 2026, as summarised by Vajiram &amp; Ravi</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>RBI small-value fraud compensation: cap (from 1 January 2027, once in a lifetime)</td><td>₹25,000</td><td><a href="https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/" target="_blank" rel="noopener">same summary</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>RBI small-value fraud compensation: largest gross loss that qualifies</td><td>₹50,000</td><td><a href="https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/" target="_blank" rel="noopener">same summary</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>RBI small-value fraud compensation: calendar days to report to 1930 and the bank</td><td>5</td><td><a href="https://vajiramandravi.com/current-affairs/rbi-digital-fraud-compensation-rules-to-protect-victims-of-online-banking-fraud/" target="_blank" rel="noopener">same summary</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          <tr><td>Telangana share of all cyber crime cases, 2024</td><td>26.7%</td><td>Calculated: Math.round(ncrb telangana 2024 / ncrb cases 2024 * 1000) / 10</td><td>Calculated here from other rows</td></tr>
+          <tr><td>Karnataka share of all cyber crime cases, 2024</td><td>20.6%</td><td>Calculated: Math.round(ncrb karnataka 2024 / ncrb cases 2024 * 1000) / 10</td><td>Calculated here from other rows</td></tr>
+          <tr><td>average rupees reported lost per case, 2024</td><td>₹1,00,728</td><td>Calculated: round(loss 2024 cr * 10000000 / ncrp cases 2024)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>average rupees reported lost per case, 2025</td><td>₹79,911</td><td>Calculated: round(loss 2025 cr * 10000000 / ncrp cases 2025)</td><td>Calculated here from other rows</td></tr>
+          <tr><td>share of 2025 cases that were digital arrest</td><td>6%</td><td><a href="https://theprint.in/india/cybercrime-saw-24-spike-in-2025-indians-lost-rs-22495-crore-mainly-in-investment-scams/2859930/" target="_blank" rel="noopener">MHA reply in Parliament, as reported by ThePrint</a></td><td>Official figure, reported by named outlets; the official document could not be read</td></tr>
+          </tbody>
+        </table></div>
+        <p class="source-note">Parliamentary replies and the NCRB tables were not machine-readable from here, so "secondary" means the figure was confirmed in at least one named news or analysis page. Different replies sometimes give different counts for the same year; each figure here comes from one source and is not mixed with another.</p>
+      </details>
+<!-- @/gen:sources -->
   </div>
 </section>
 
@@ -191,25 +251,23 @@
       <div class="evo-era">
         <div class="evo-era__marker">2000–2010</div>
         <h3 class="evo-era__title">Incubation &amp; Anonymity</h3>
-        <p class="evo-era__stat">~70 registered cases in 2002</p>
         <p class="evo-era__body">Fraud lived in public cyber cafés — Nigerian "419" advance-fee emails and rudimentary stalking. Low sophistication, high friction: India's banking sector wasn't yet digitised enough for fast money movement.</p>
       </div>
       <div class="evo-era">
         <div class="evo-era__marker">2011–2018</div>
         <h3 class="evo-era__title">The Jamtara Vishing Boom</h3>
-        <p class="evo-era__stat">4,356 (2013) → 27,248 cases (2018)</p>
         <p class="evo-era__body">Cheap smartphones decentralised fraud from urban hackers to rural syndicates. The "Jamtara model" — named after a Jharkhand district — turned voice phishing into an industry: fake bank executives harvesting OTPs and CVVs by phone.</p>
       </div>
       <div class="evo-era">
         <div class="evo-era__marker">2019–2023</div>
         <h3 class="evo-era__title">Real-Time Payments Exploitation</h3>
-        <p class="evo-era__stat">44,735 (2019) → 86,420 cases (2023)</p>
+        <p class="evo-era__stat">NCRB cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2023">86,420</span> (2023)</p>
         <p class="evo-era__body">UPI's frictionless rails became the getaway car. Fake "receive money" QR codes, remote-access apps disguised as customer support, and predatory loan apps harvesting entire contact lists for blackmail — some cases ending in tragedy.</p>
       </div>
       <div class="evo-era evo-era--current">
         <div class="evo-era__marker">2024–2026</div>
         <h3 class="evo-era__title">Industrialisation &amp; Synthetic Deception</h3>
-        <p class="evo-era__stat">₹22,845 Cr lost in 2024 — a 206% jump</p>
+        <p class="evo-era__stat"><span data-stat="ncrb_cases_2024">1,01,928</span> cases in 2024 · reported losses up <span data-stat="loss_growth_2024_pct">206%</span> on 2023</p>
         <p class="evo-era__body">AI-driven deepfake voice and video, multi-day psychological "digital arrests," and automated mule-account networks that launder stolen funds into crypto within minutes. The most sophisticated era yet — met by the most sophisticated countermeasures yet.</p>
       </div>
     </div>
@@ -229,53 +287,61 @@
       <div class="cm-card">
         <p class="cm-card__icon">🧭</p>
         <h3>Pratibimb</h3>
-        <p class="cm-card__stat">21,857 arrests</p>
-        <p class="cm-card__body">I4C's GIS-based tracking module maps the physical location of active fraud numbers in real time, giving police direct visibility into "fraud factories."</p>
+        <p class="cm-card__stat">Maps fraud infrastructure</p>
+        <p class="cm-card__body">I4C's GIS-based tracking module maps the physical location of active fraud numbers, giving police direct visibility into "fraud factories."</p>
       </div>
       <div class="cm-card">
         <p class="cm-card__icon">🤖</p>
         <h3>MuleHunter.AI</h3>
-        <p class="cm-card__stat">Live in 26 banks</p>
+        <p class="cm-card__stat">Live in <span data-stat="mulehunter_banks">26</span> banks</p>
         <p class="cm-card__body">RBI's machine-learning tool for detecting mule accounts, rolled out to banks and being scaled up (PIB, March 2026). It looks for patterns such as rapid fund-out right after a credit.</p>
       </div>
       <div class="cm-card">
         <p class="cm-card__icon">📋</p>
         <h3>Suspect Registry</h3>
-        <p class="cm-card__stat">27.37 lakh accounts flagged</p>
-        <p class="cm-card__body">A centralised ledger shared across banks and I4C, built from 23.05 lakh suspect data points reported by financial institutions since late 2024. Together with MuleHunter.AI it is credited with blocking transactions worth over ₹9,518 Cr (figures as reported through early 2026).</p>
+        <p class="cm-card__stat"><span data-stat="suspect_registry_mules">32.08 lakh</span> mule accounts shared</p>
+        <p class="cm-card__body">A shared registry of suspect identifiers run by I4C with banks. By 30 June 2026 it had received <span data-stat="suspect_registry_ids">30.48 lakh</span> suspect identifiers from banks, shared <span data-stat="suspect_registry_mules">32.08 lakh</span> Layer 1 mule accounts with participants, and declined transactions worth <span data-stat="suspect_registry_declined_cr">₹25,698 Cr</span>.</p>
       </div>
       <div class="cm-card">
         <p class="cm-card__icon">📵</p>
         <h3>SIM &amp; Device Blocking</h3>
-        <p class="cm-card__stat">12.94 lakh SIMs · 3.03 lakh IMEIs</p>
-        <p class="cm-card__body">The Department of Telecommunications has permanently blacklisted this many fraud-linked SIM cards and device identities, cutting off the physical tools of the trade.</p>
+        <p class="cm-card__stat"><span data-stat="sims_blocked_police">15.75 lakh</span> SIMs · <span data-stat="imeis_blocked">5.77 lakh</span> IMEIs</p>
+        <p class="cm-card__body">Blocked on police reports, cumulative to 30 June 2026, according to the Ministry of Home Affairs reply in Parliament, cutting off the physical tools of the trade.</p>
       </div>
     </div>
 
     <div class="chart-insight chart-insight--olive evo-callout">
-      💰 <strong>New in 2026:</strong> in March 2026 the RBI published draft rules to widen customer protection beyond unauthorised transactions and add a compensation mechanism for small-value fraud. That mechanism is time-limited (one year from its effective date, then reviewed), and later reports describe final directions issued in June 2026. Terms may have changed, so ask your bank or check the RBI notice for the current ones, and report fast to both your bank and 1930.
+      💰 <strong>New rules, not yet in force:</strong> on 24 June 2026 the RBI issued final directions that widen customer protection beyond unauthorised transactions and add compensation for small-value fraud: up to <span data-stat="rbi_comp_share_pct">85%</span> of the loss, capped at <span data-stat="rbi_comp_cap_inr">₹25,000</span>, once in a lifetime, if reported to 1930 and the bank within <span data-stat="rbi_report_days">5</span> days. They apply to transactions from 1 January 2027.<br><br>
+      🔓 <strong>Frozen money:</strong> since April 2026 the Money Restoration Module on the National Cyber Crime Reporting Portal lets victims apply to get frozen money back, using the 14-digit complaint number. A police report is enough up to <span data-stat="mrm_threshold_inr">₹50,000</span> in a single account; above that an FIR is compulsory. Only money that was frozen before it was withdrawn can be returned, and recovery is not guaranteed.
     </div>
-    <p class="source-note">Sources: Indian Cyber Crime Coordination Centre (I4C) · Ministry of Home Affairs · RBI Annual Report · Department of Telecommunications, as reported through early 2026</p>
+    <p class="source-note">Sources: Ministry of Home Affairs replies in Parliament (as reported) · I4C · RBI and PIB releases · Money Restoration Module reports (The420.in, India TV).</p>
   </div>
 </section>
 
 <!-- FOOTER -->
+</main>
+<!-- @gen:footer -->
 <footer role="contentinfo">
   <div class="footer-inner">
     <div class="footer-col">
       <p class="footer-logo">🛡️ FraudShield</p>
       <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
-      <p class="footer-desc">A free public resource for every Indian affected by digital fraud.</p>
+      <p class="footer-desc">India's frontline digital fraud awareness platform — free for every Indian. A community service project; not affiliated with any government body.</p>
     </div>
     <div class="footer-col">
-      <p class="footer-col__heading">Emergency</p>
-      <a href="tel:1930" class="footer-helpline-number">1930</a>
-      <p class="footer-helpline-label">National Cyber Crime Helpline<br>Free · 24 hours · 7 days</p>
+      <p class="footer-col__heading">Emergency Helplines</p>
+      <a href="tel:1930" class="footer-helpline-number" data-snd="click">1930</a>
+      <p class="footer-helpline-label">Cyber Crime · Free · 24×7 · No registration</p>
+      <a href="tel:112"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">112</a>
+      <p class="footer-helpline-label">Police Emergency</p>
+      <a href="tel:181"  class="footer-helpline-number" data-snd="click" style="font-size:1.4rem;margin-top:.6rem">181</a>
+      <p class="footer-helpline-label">Women Safety Helpline</p>
     </div>
     <div class="footer-col">
       <p class="footer-col__heading">Official Resources</p>
       <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
       <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
+      <a href="https://cert-in.org.in" target="_blank" rel="noopener" class="footer-link">cert-in.org.in ↗</a>
       <a href="report.html" class="footer-link">File a Report</a>
     </div>
     <div class="footer-col">
@@ -284,16 +350,19 @@
       <a href="data.html" class="footer-link">The Data</a>
       <a href="tips.html" class="footer-link">Protect Yourself</a>
       <a href="assistant.html" class="footer-link">Assistant</a>
+      <a href="about.html" class="footer-link">About</a>
       <a href="report.html" class="footer-link">Report Fraud</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>Sources: RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI 2023-24 · Ministry of Home Affairs I4C</p>
-    <p>© 2026 FraudShield. Built to protect every Indian. · National Cyber Crime Helpline: 1930</p>
+    <p>Sources: NCRB Crime in India 2024 · MHA replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026 · PIB</p>
+    <p>© 2026 FraudShield · Built to protect every Indian · National Cyber Crime Helpline: <a href="tel:1930" style="color:var(--orange);text-decoration:none" data-snd="click">1930</a></p>
   </div>
 </footer>
+<!-- @/gen:footer -->
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="vendor/chart/chart.umd.min.js" defer></script>
+<script src="lib/format.js" defer></script>
 <script src="lib/core.js" defer></script>
 <script src="script.js" defer></script>
 </body>
