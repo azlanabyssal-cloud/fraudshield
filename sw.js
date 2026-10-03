@@ -3,7 +3,7 @@
 // Bump this on every deploy that touches script.js/HTML/CSS. It's the only
 // thing that forces old caches (and the stale code inside them) to be
 // thrown out on activate — see the note below for why that matters.
-const CACHE_NAME = 'fraudshield-v5';
+const CACHE_NAME = 'fraudshield-v6';
 
 const PRECACHE_URLS = [
   './',
@@ -60,13 +60,14 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Network-first for everything else (HTML, script.js, style.css, and
-  // cross-origin CDN assets): always serve the live version when online —
-  // this is an actively developed site, and a visitor should never be stuck
-  // looking at yesterday's bug just because a service worker cached it.
-  // Cache is only a fallback for when the network genuinely isn't there.
+  // Network-first for everything else (HTML, scripts, styles, and cross-origin assets such as fonts): always serve the
+  // live version when online, so a visitor is never stuck on yesterday's bug. For our own files the request goes out with
+  // cache: 'no-cache', which revalidates with the server (a cheap conditional request) instead of trusting the browser's
+  // 10-minute HTTP cache; without it a deploy stays invisible to returning visitors for up to ten minutes.
+  // The cache is only the fallback for when the network genuinely is not there.
+  const network = isSameOrigin ? fetch(req, { cache: 'no-cache' }) : fetch(req);
   event.respondWith(
-    fetch(req)
+    network
       .then(res => {
         if (res && res.status === 200) {
           const clone = res.clone();
@@ -74,6 +75,6 @@ self.addEventListener('fetch', event => {
         }
         return res;
       })
-      .catch(() => caches.match(req))
+      .catch(() => caches.match(req, { ignoreSearch: true }).then(hit => hit || (req.mode === 'navigate' ? caches.match('./index.html') : undefined)))
   );
 });
