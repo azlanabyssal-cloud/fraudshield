@@ -7,5 +7,8 @@
     "data:validate": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report",
     "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final",
     "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8"
   }
 }

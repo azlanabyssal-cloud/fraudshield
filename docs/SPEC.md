@@ -53,8 +53,9 @@ Enforced by a test (tests/invariants.test.js).
   messages and public advisories and shrink the targets honestly.
 
 ## 8. Non-goals (and why)
-Kafka, Kubernetes, Feast/Redis, Terraform, Postgres: no workload or team that needs them (ADR-0004,
-ADR-0005). Deep learning: only after a cheap probe shows a gain. Voice: breaks the privacy promise
+Kafka, Kubernetes, Feast/Redis, Terraform, a model-serving cluster: no workload or team that needs
+them, and serving off-device would break the privacy promise (ADR-0004, ADR-0005, ADR-0008).
+Postgres is used for the label store only (ADR-0005). Deep learning: only after a cheap probe shows a gain. Voice: breaks the privacy promise
 (ADR-0003). Beating Truecaller on detection: not a credible claim.
 
 ## 9. Privacy invariants (tested)

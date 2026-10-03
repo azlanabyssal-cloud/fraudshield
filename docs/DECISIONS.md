@@ -27,11 +27,17 @@ Decision: score on the device. A hashed char n-gram linear model is a sparse dot
 JS with a Python/JS parity test; ONNX Runtime Web only if a model needs it.
 Consequences: no live monitoring in V1. Revisit if: opt-in telemetry is added with consent.
 
-## ADR-0005: Defer PostgreSQL, and skip Kafka/Kubernetes/Feast/Terraform
-Context: one labeler, a few thousand rows, no streaming workload, no team.
-Decision: a validated CSV is the system of record. Adopt Postgres when a second labeler works
-concurrently (it then earns constraints, per-annotator labels and agreement queries).
-Consequences: fewer résumé keywords, a defensible architecture. Revisit when the trigger is met.
+## ADR-0005: PostgreSQL for the label store only; skip Kafka/Kubernetes/Feast/Terraform
+Context: the golden holdout needs two labelers who must not see each other's labels, an audit trail,
+and a measurable agreement score. A CSV cannot enforce any of that.
+Decision: `db/schema.sql` holds the label store. Row-level security makes labeling blind, labels are
+append-only, PII and dedup are CHECK/unique constraints, Cohen's kappa is a SQL function, and
+`export_rows()` produces the CSV the validator already accepts. Tests run it on real PostgreSQL
+(PGlite, WASM) and compare the SQL PII rules against the JS rules on one corpus.
+Still rejected: Kafka, Kubernetes, Feast/Redis, Terraform. There is no event stream, no fleet and no
+online feature store; inference happens on the device (ADR-0004).
+Consequences: one devDependency; CI needs `npm ci`. The schema is not run against a production server
+yet (see db/README.md). Revisit if labeling moves to more than a handful of people.
 
 ## ADR-0006: Staged gates (200 real rows, then 1,000)
 Context: golden sets of 50-200 are common practice for regression gating; collection is the
