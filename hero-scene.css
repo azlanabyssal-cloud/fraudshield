@@ -98,3 +98,9 @@
 /* Headline: keep the amount on one line so it never reads "₹22,495 / Crore" */
 .hero-h1 { font-size: clamp(2.3rem, 5.1vw, 3.9rem); }
 .hero-h1__accent { white-space: nowrap; }
+
+/* the lens breathes: rings leave it like ripples on water */
+.hs__lens::before, .hs__lens::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(232,93,4,.55); opacity: 0; animation: hs-ring 5s cubic-bezier(.22,1,.36,1) infinite; pointer-events: none; }
+.hs__lens::after { animation-delay: 2.5s; }
+@keyframes hs-ring { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.55); opacity: 0; } }
+.hs__motes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }

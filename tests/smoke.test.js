@@ -350,3 +350,37 @@ test('with "reduce motion" on, the hero lens drops its drift but still follows t
     assert.equal(scene.style.getPropertyValue('--lx'), '420.0px'); assert.equal(scene.style.getPropertyValue('--ly'), '260.0px'); assert.notEqual(before, '420.0px');
   } finally { p.close(); }
 });
+
+/* ---------- the living hero and the flowing steps, on the real home page ---------- */
+test('the home page arms the water: every step has an awake-ness, the line a fill, and none of it breaks the page', async () => {
+  const p = await loadPage('index.html', { settle: 500 });
+  try {
+    const grid = p.document.querySelector('.funnel-grid'); assert.ok(grid.classList.contains('flow-armed'));
+    const steps = [...grid.querySelectorAll('.funnel-step')]; assert.equal(steps.length, 4);
+    for (const el of steps) { const s = parseFloat(el.style.getPropertyValue('--s')); assert.ok(s >= 0 && s <= 1, 'awake-ness is a fraction'); assert.ok(!/\breveal\b/.test(el.className), 'the flow, not a second reveal, owns the steps'); }
+    const flow = parseFloat(grid.style.getPropertyValue('--flow')); assert.ok(flow >= 0 && flow <= 1);
+    assert.ok(grid.querySelector('.funnel-drop') && grid.querySelector('.funnel-connector'));
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('the hero gets a motes canvas that is actually drawn on, inside the animation loop', async () => {
+  const calls = { arc: 0, clear: 0 };
+  const setup = w => {
+    Object.defineProperty(w.HTMLElement.prototype, 'clientWidth', { get() { return 1000; }, configurable: true }); Object.defineProperty(w.HTMLElement.prototype, 'clientHeight', { get() { return 600; }, configurable: true });
+    const ctx = new Proxy({}, { get: (_, k) => (...a) => { if (k === 'arc') calls.arc++; if (k === 'clearRect') calls.clear++; return a; }, set: () => true });
+    w.HTMLCanvasElement.prototype.getContext = () => ctx;
+  };
+  const p = await loadPage('index.html', { settle: 900, setup });
+  try {
+    const canvas = p.document.querySelector('#heroScene canvas.hs__motes'); assert.ok(canvas, 'the canvas exists'); assert.equal(canvas.width, 1000);
+    assert.ok(calls.clear > 3 && calls.arc > 50, `drawn repeatedly: ${calls.clear} clears, ${calls.arc} circles`);
+  } finally { p.close(); }
+});
+
+test('under Reduce Motion the hero adds no canvas and the steps stay fully visible', async () => {
+  const p = await loadPage('index.html', { settle: 500, setup: w => { w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} }); } });
+  try {
+    assert.equal(p.document.querySelector('#heroScene canvas'), null); assert.ok(!p.document.querySelector('.funnel-grid').classList.contains('flow-armed'));
+  } finally { p.close(); }
+});

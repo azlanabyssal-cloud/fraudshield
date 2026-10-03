@@ -34,6 +34,9 @@ test('every page loads the motion tokens before the stylesheet that uses them, a
   const engine = js.indexOf('lib/motion.js');
   if (engine < 0) bad('lib/motion.js is not loaded');
   for (const needs of ['lib/hero-scene.js', 'script.js']) if (js.indexOf(needs) >= 0 && js.indexOf(needs) < engine) bad(needs + ' is loaded before lib/motion.js');
+  const scene = js.indexOf('lib/hero-scene.js');
+  if (scene >= 0 && (js.indexOf('lib/motes.js') < 0 || js.indexOf('lib/motes.js') > scene)) bad('lib/motes.js must load before lib/hero-scene.js, which draws with it');
+  if (d.querySelector('.funnel-grid') && (js.indexOf('lib/flow.js') < 0 || js.indexOf('lib/flow.js') > js.indexOf('script.js'))) bad('lib/flow.js must load before script.js on a page with a .funnel-grid');
 }));
 
 test('every --mo- token the pages and stylesheets use is defined in motion.css', () => {

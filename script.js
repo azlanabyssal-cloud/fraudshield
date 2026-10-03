@@ -78,6 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('data/urlmodel.json').then(r => (r.ok ? r.json() : Promise.reject(new Error('model-unavailable')))).then(m => Model.install(m)).catch(() => {});
   }
 
+  // Sequenced sections ("How criminals trap you in 4 steps") fill like water as you scroll. A no-op without the module or under Reduce Motion.
+  function initFlow() {
+    const Flow = window.FraudShieldFlow;
+    if (!Flow) return;
+    document.querySelectorAll('.funnel-grid').forEach(grid => Flow.mount(grid, { Motion: window.FraudShieldMotion, win: window }));
+  }
+
   // Primary calls to action lean towards a nearby pointer (fine pointers only; a no-op on touch and under reduced motion).
   function initMagnetic() {
     const Motion = window.FraudShieldMotion;
@@ -1627,6 +1634,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHamburger();
   initCounters();
   initMagnetic();
+  initFlow();
   initUrlModel();
   initQuiz();
   initTabs();
