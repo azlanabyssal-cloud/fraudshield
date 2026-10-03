@@ -1172,7 +1172,7 @@ footer { background: var(--space); color: #94a3b8; }
 .page-hero__bg--tips::after { background: rgba(11,31,58,0.82); }
 
 /* ── PHOTO QUOTE BACKGROUND IMAGE ── */
-.photo-quote__bg { background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=80&fit=crop'); }
+.photo-quote__bg { background-image: url('images/quote-bg.webp'); }
 
 /* ── OLIVE EYEBROW VARIANT (victim section) ── */
 .hero-eyebrow--olive { background: rgba(85,107,47,0.2); border-color: rgba(85,107,47,0.6); color: #a3c956; }
