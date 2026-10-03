@@ -20,12 +20,14 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
 
 | ID | Claim | Issue | Action |
 |---|---|---|---|
-| C-06 | RBI's June 2026 amendment: compensation of 85% of net loss up to Rs 25,000, once per lifetime, for losses up to Rs 50,000, covering transactions made under pressure or deception; report to bank AND the cyber portal/helpline within 5 days | Sources disagree on cost split (65/10/10 in the March draft vs 70/15 elsewhere). Final text not read. data.html still says "proposed" | Read the amendment on rbi.org.in. Until then the chatbot does not state figures or the 5-day rule |
+| C-06 | RBI compensation mechanism for small-value fraud. **Verified at primary (RBI press release, 6 Mar 2026; PIB 24 Mar 2026):** draft Amendment Directions issued for comment until 6 Apr 2026; scope widened beyond unauthorised transactions; faster complaint handling; compensation mechanism **in force for one year** from its effective date, then reviewed. **Secondary only:** 85% of net loss up to Rs 25,000, once per lifetime, losses up to Rs 50,000, report to bank AND cyber portal/helpline within 5 days, cost split (65/10/10 in the draft vs 70/15 elsewhere), and a final version dated 24 June 2026 | Final directions and figures not read at the source (rbidocs PDF is behind a CAPTCHA, which I did not bypass) | data.html now states only what is primary-verified plus a pointer to check current terms. Read the final notification by hand, then add figures and the 5-day rule |
 | C-07 | Investment scams 76% of 2025 losses, digital arrest 9%, sextortion 4% | Via the user's PDF, which cites secondary articles | Trace to an I4C or PIB release |
 | C-08 | CFCFRMS saved or froze Rs 8,690 Cr | Via the PDF. It is cumulative as of Jan 2026, not "January alone" (fixed) | Trace to the PIB release |
 | C-09 | Fraud type shares (UPI 67%, OTP/SIM 12%, phishing 9%, loan apps 7%) | Provenance unknown; not in the PDF | Find the original source or remove |
 | C-10 | 5.4% of complaints become FIRs (2023) | Derived in the PDF (86,420 FIRs vs ~15.96 lakh complaints) | Check the arithmetic and sources |
 | C-11 | 1930, 112, 181 numbers; cybercrime.gov.in | Widely documented, not re-checked this session | Confirm on cybercrime.gov.in |
+| C-14 | MuleHunter.AI is live in 26 banks; RBI incorporated IDPIC in Oct 2025 | PIB release 24 Mar 2026 | VERIFIED (primary govt) |
+| C-15 | Rs 9,518 Cr blocked is credited to the Suspect Registry and MuleHunter.AI **together**, not MuleHunter alone | Your PDF's wording; secondary | Corrected on data.html; trace to source |
 | C-12 | BNS 336/338 (forgery), 294/77 (obscenity/voyeurism), IT Act 66E | Removed from the product: unverified, and the deepfake and "confidential" readings were not supported | Re-add only with a primary source |
 
 ## Removed (were shipped, unsourced or wrong)
@@ -45,6 +47,7 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
 - "Is prosecuted as ...": charges are decided by police and courts. Now "can be charged as ...".
 - "Used in 12% of all fraud cases" (OTP quiz): no source.
 - "Frozen in January 2026 alone": the figure is cumulative.
+- "Industry-funded" compensation and "automatic payouts" (data.html): the draft has RBI bearing most of the cost, and "automatic" was never sourced.
 - **C-13: absolute legal promises to sextortion victims** ("completely confidential by law (IT Act Sec 66E)",
   "IT Act Sec 66E and Sec 67 guarantee complete victim privacy", "the police cannot reveal your identity under any
   circumstance", "100% confidential"). The Act sections do not say this and the product cannot promise police behaviour.

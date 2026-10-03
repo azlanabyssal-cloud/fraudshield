@@ -21,6 +21,8 @@ const REMOVED = [
   [/is prosecuted as|are prosecuted (as|under)/i, 'charges are decided by police and courts'],
   [/Doordarshan National/i, 'fabricated broadcast credit'],
   [/in January 2026 alone/i, 'the CFCFRMS figure is cumulative (C-08)'],
+  [/industry-funded|automatic payouts/i, 'unsourced description of the RBI compensation scheme (C-06)'],
+  [/MuleHunter\.AI<\/h3>\s*<p class="cm-card__stat">₹9,518/, 'the 9,518 Cr figure belongs to Suspect Registry + MuleHunter together (C-15)'],
   [/completely confidential|100% confid|guarantee[sd]? complete|cannot reveal your identity|under any circumstance|guaranteed by law/i, 'absolute legal/confidentiality promise we cannot make (C-13)']
 ];
 
