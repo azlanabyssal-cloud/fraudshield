@@ -190,7 +190,13 @@
     .pstrip-stat{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--orange);line-height:1;margin-bottom:.28rem}
     .pstrip-label{font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.92);line-height:1.4}
     .pstrip-src{font-family:'DM Sans',sans-serif;font-size:.67rem;color:rgba(255,255,255,.5);margin-top:.2rem}
-    @media(max-width:768px){.pstrip-grid{grid-template-columns:1fr 1fr;height:auto}.pstrip-cell{height:200px}}
+    .pstrip-cell img{object-position:50% 0}   /* faces sit high in these photos: keep the top of every picture, trim from the bottom, under the text */
+    @media(max-width:768px){
+      .pstrip-grid{grid-template-columns:1fr 1fr;height:auto}.pstrip-cell{height:290px}
+      .pstrip-over{padding:.9rem .8rem;background-size:100% 100%}
+      .pstrip-stat{font-size:1.3rem}.pstrip-label{font-size:.74rem;line-height:1.35}.pstrip-src{font-size:.6rem}
+    }
+    @media(max-width:420px){.pstrip-cell{height:260px}.pstrip-stat{font-size:1.15rem}}
 
     /* ── VIDEO SECTION ── */
     .vid-sec{background:var(--off-white);padding:5.5rem 2rem;border-top:4px solid var(--navy)}

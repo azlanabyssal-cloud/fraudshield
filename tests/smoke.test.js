@@ -404,3 +404,20 @@ test('under Reduce Motion the characters stay still: no offsets, no transforms, 
     assert.ok([...p.document.querySelectorAll('.creature .cr-pupil')].every(el => !el.style.transform)); assert.ok([...p.document.querySelectorAll('.creature svg')].every(el => !el.style.transform));
   } finally { p.close(); }
 });
+
+/* ---------- the microphone is never touched without a tap ---------- */
+for (const page of pages) {
+  test(`${page}: loading, idling and moving the pointer never creates a speech recognizer or asks for the microphone`, async () => {
+    const seen = { made: 0, started: 0, media: 0, permissions: 0 };
+    const setup = w => {
+      class Counting { constructor() { seen.made++; } start() { seen.started++; } stop() {} static available() { seen.permissions++; return Promise.resolve('unavailable'); } }
+      w.webkitSpeechRecognition = Counting; w.SpeechRecognition = Counting;
+      Object.defineProperty(w.navigator, 'mediaDevices', { value: { getUserMedia() { seen.media++; return Promise.reject(new Error('blocked')); } }, configurable: true });
+    };
+    const p = await loadPage(page, { settle: 900, setup });
+    try {
+      p.window.dispatchEvent(Object.assign(new p.window.Event('pointermove'), { clientX: 300, clientY: 200 })); await new Promise(r => setTimeout(r, 400));
+      assert.deepEqual(seen, { made: 0, started: 0, media: 0, permissions: 0 }, 'nothing may touch speech or the microphone before a tap');
+    } finally { p.close(); }
+  });
+}
