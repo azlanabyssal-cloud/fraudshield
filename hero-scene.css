@@ -91,3 +91,7 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-scene, .hero-scene * { animation: none !important; }
 }
+
+/* Headline: keep the amount on one line so it never reads "₹22,495 / Crore" */
+.hero-h1 { font-size: clamp(2.3rem, 5.1vw, 3.9rem); }
+.hero-h1__accent { white-space: nowrap; }
