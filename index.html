@@ -450,8 +450,9 @@
     .news-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:2.2rem;max-width:1100px;margin:0 auto;align-items:start}
     .news-card--featured{background:#fff;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);border:2.5px solid var(--maroon)}
     /* news screenshot must show fully — use contain so no text is cropped */
-    .news-card__img{background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:200px}
-    .news-card__img img{width:100%;height:auto;max-height:380px;object-fit:contain;display:block;transition:transform .45s ease}
+    .news-card__img{background:#111;position:relative;overflow:hidden;aspect-ratio:3/1;min-height:200px}
+    .news-card__img img{width:100%;height:100%;object-fit:cover;object-position:50% 45%;display:block;transition:transform .45s ease}
+    .news-card__illo{position:absolute;left:.9rem;top:.9rem;background:rgba(11,31,58,.78);color:#fff;font:700 .68rem/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:.4rem .65rem;border-radius:999px}
     .news-card--featured:hover .news-card__img img{transform:scale(1.02)}
     .news-card__body{padding:1.6rem 1.8rem}
     .news-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.22rem .72rem;border-radius:999px;background:var(--maroon-pale);color:var(--maroon);margin-bottom:.65rem}
@@ -1114,8 +1115,7 @@
 <!-- SPLIT -->
 <section class="split">
   <div class="split__photo reveal reveal--left">
-    <img src="images/india-woman-phone.png"
-         alt="Indian woman reading a suspicious message on her phone — the moment before fraud strikes" loading="lazy">
+    <img src="images/split-woman-phone.webp" width="825" height="870" alt="A woman by a window reading a message on her phone with an uneasy frown, the moment before a mistake" loading="lazy">
     <div class="split__photo-caption"><span data-stat="ncrb_fraud_share_2024_pct">72.6%</span> of cyber crime cases registered in 2024 were fraud · NCRB</div>
   </div>
   <div class="split__body reveal reveal--right">
@@ -1239,7 +1239,7 @@
       <div class="vid-aside">
         <div class="vid-sm-card">
           <a class="vid-sm-thumb" href="https://www.youtube.com/watch?v=UasqK0JA6co" target="_blank" rel="noopener" aria-label="NPCI Official — UPI Fraud Awareness Video">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=85&fit=crop" alt="UPI QR code fraud India" loading="lazy">
+            <img src="images/video-upi.webp" width="880" height="491" alt="A customer's hand holding a phone over a payment stand at a roadside tea stall" loading="lazy">
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
@@ -1249,7 +1249,7 @@
         </div>
         <div class="vid-sm-card">
           <a class="vid-sm-thumb" href="https://www.youtube.com/watch?v=ENjcdVL_dY0" target="_blank" rel="noopener" aria-label="PM Modi warns of Digital Arrest scam — India awareness video">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=85&fit=crop" alt="Digital arrest scam India" loading="lazy">
+            <img src="images/video-digital-arrest.webp" width="880" height="491" alt="An older woman at a laptop in a dark room, on a video call with a figure in uniform" loading="lazy">
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
@@ -1335,9 +1335,8 @@
       <!-- FEATURED NEWS CARD: real local image -->
       <div class="news-card--featured reveal">
         <div class="news-card__img">
-          <img src="images/digital-arrest-news.png"
-               alt="DCN News report: 70-Year-Old Woman Duped of ₹7.70 Lakh in Digital Arrest Cyber Scam in Mumbai"
-               loading="lazy">
+          <img src="images/news-digital-arrest.webp" width="1024" height="343" alt="An elderly woman with her hands pressed to her forehead in front of a laptop showing a video call with a figure in uniform" loading="lazy">
+          <span class="news-card__illo">Illustration · not the victim</span>
         </div>
         <div class="news-card__body">
           <span class="news-tag">🚨 Digital Arrest Scam · Mumbai · Verified Case</span>
@@ -1480,7 +1479,7 @@
       </div>
       <div class="fviz-card fviz-card--navy reveal reveal--d2">
         <div class="fviz-img">
-          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&fit=crop" alt="Indian man receiving suspicious call" loading="lazy">
+          <img src="images/scam-otp.webp" width="1024" height="563" alt="A man sitting on his bed with a phone at his ear, hand raised in a firm no" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Never share an OTP</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🔒</span>
@@ -1489,7 +1488,7 @@
       </div>
       <div class="fviz-card fviz-card--maroon reveal reveal--d3">
         <div class="fviz-img">
-          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=700&q=85&fit=crop" alt="Phishing — fake link on a dark screen" loading="lazy">
+          <img src="images/scam-phishing.webp" width="1024" height="563" alt="A thumb hovering over a text message with a link, beside a glass of chai on a street table" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Check the web address</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🎣</span>
@@ -1498,7 +1497,7 @@
       </div>
       <div class="fviz-card fviz-card--olive reveal reveal--d1">
         <div class="fviz-img">
-          <img src="https://images.unsplash.com/photo-1596178060810-72f53ce9a65c?w=700&q=85&fit=crop" alt="Person stressed about fake loan app" loading="lazy">
+          <img src="images/scam-loan-app.webp" width="1024" height="577" alt="A young man on the edge of a bed at night, anxious, lit by a loan app on his phone" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Uninstall it, then tell someone</div>
         </div>
         <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💰</span>
@@ -1543,7 +1542,7 @@
 <!-- @/gen:states -->
     </div>
     <div class="hotspot-photo">
-      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop" alt="India NCRB cybercrime data" loading="lazy">
+      <img src="images/hotspot-ncrb.webp" width="1024" height="642" alt="Two analysts at monitors showing heat maps in a police cyber crime cell" loading="lazy">
       <div class="hotspot-photo__over">
         <h3 class="hotspot-photo__h">Source: NCRB<br>Crime in India 2024</h3>
         <p class="hotspot-photo__p">National Crime Records Bureau · Ministry of Home Affairs. <span data-stat="ncrb_cases_2024">1,01,928</span> cyber crime cases in 2024, up from <span data-stat="ncrb_cases_2023">86,420</span> in 2023.</p>
