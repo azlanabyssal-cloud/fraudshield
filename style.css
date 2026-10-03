@@ -1345,3 +1345,32 @@ html { scroll-padding-top: 84px; }
 .field-band__text p:not(.field-band__kicker) { font-family: 'DM Sans', sans-serif; font-size: 1.04rem; line-height: 1.75; color: rgba(255,255,255,.78); margin: 0 0 1.4rem; }
 @media (max-width: 760px) { .field-band { padding: 3rem 1.1rem; } .field-band__inner { grid-template-columns: 1fr; gap: 1.5rem; } }
 @media (prefers-reduced-motion: reduce) { .field-band__photo img { transition: none; } }
+
+/* ───── motion across every page ───── */
+/* Page to page: the old page lets go, the new one rises in. The navbar is its own layer, so it never flickers. */
+@view-transition { navigation: auto; }
+#navbar { view-transition-name: site-nav; }
+::view-transition-old(root) { animation: 160ms ease-in both vt-out; }
+::view-transition-new(root) { animation: 460ms var(--mo-out, cubic-bezier(.22,1,.36,1)) both vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(16px); } }
+
+/* Cards, headings and photos arrive as they enter the screen, in a short stagger. Armed by script only; without it everything is visible. */
+html.rv-on .rv { opacity: 0; transform: translateY(24px); transition: opacity 600ms var(--mo-out, ease-out), transform 750ms var(--mo-out, ease-out); transition-delay: var(--rv-d, 0ms); }
+html.rv-on .rv.rv-in { opacity: 1; transform: none; }
+html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tab-panel:not([hidden]) { animation: panel-in 480ms var(--mo-out, ease-out) both; }
+  @keyframes panel-in { from { opacity: 0; transform: translateY(14px); } }
+  .accordion-body { transition: max-height 520ms var(--mo-out, ease), padding 520ms var(--mo-out, ease); }
+  .accordion-item { transition: box-shadow .3s var(--mo-out, ease), transform var(--mo-soft-d) var(--mo-soft); }
+  .accordion-item:hover { transform: translateY(-2px); }
+  .fraud-card:hover, .cm-card:hover, .chart-card:hover, .about-card:hover, .about-person:hover, .csp-gap:hover { transform: translateY(-4px); }
+  .about-card, .about-person, .csp-gap { transition: transform var(--mo-soft-d) var(--mo-soft), box-shadow .3s var(--mo-out, ease); }
+  .about-card:hover, .about-person:hover, .csp-gap:hover { box-shadow: 0 16px 40px rgba(11,31,58,.14); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  html.rv-on .rv { opacity: 1; transform: none; transition: none; }
+}

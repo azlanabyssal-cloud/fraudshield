@@ -133,6 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
     container.querySelectorAll('.counter-number').forEach(el => observer.observe(el));
   }
 
+  // Every page: cards, headings and photos rise into place as they scroll in. Nothing is hidden unless this runs, and it never runs
+  // under Reduce Motion, so a visitor who asked for stillness (or has no scripts) simply sees the page.
+  function initArrivals() {
+    if (document.getElementById('heroScene')) return;   // the home page has its own, older choreography
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const picks = '.fraud-card, .cm-card, .chart-card, .evo-era, .section-head, .golden-rule, .victim-section, .form-card, .action-box, .accordion-item, .assistant-frame, .about-card, .about-person, .fw-photo, .about-section h2, .about-lead';
+    const els = Array.from(document.querySelectorAll(picks)).filter(el => !el.closest('.csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .csp-nums'));
+    if (!els.length) return;
+    const peers = new Map();
+    els.forEach(el => { const k = el.parentElement; const n = peers.get(k) || 0; peers.set(k, n + 1); el.style.setProperty('--rv-d', Math.min(n, 5) * 70 + 'ms'); el.classList.add('rv'); });
+    document.documentElement.classList.add('rv-on');
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting || e.boundingClientRect.bottom < 0) { e.target.classList.add('rv-in'); io.unobserve(e.target); }
+    }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    els.forEach(el => io.observe(el));
+  }
+
   // About page: counts, the eight-week rail and the card reveals run once, when they scroll into view. Without
   // IntersectionObserver, or under Reduce Motion, everything is simply there.
   function initCampaign() {
@@ -184,16 +202,23 @@ document.addEventListener('DOMContentLoaded', () => {
     root.className = 'lb'; root.hidden = true; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Photo viewer');
     const many = links.length > 1;
     root.innerHTML = '<div class="lb__scrim" data-close></div>' +
-      '<figure class="lb__fig"><img class="lb__img" alt=""><figcaption class="lb__cap"></figcaption></figure>' +
+      '<figure class="lb__fig"><div class="lb__stage"><img class="lb__img" alt=""></div><figcaption class="lb__cap"></figcaption></figure>' +
+      '<button class="lb__btn lb__zoom" type="button" aria-pressed="false" aria-label="Show at actual size">&#10529;</button>' +
       '<button class="lb__btn lb__close" type="button" aria-label="Close photo" data-close>&#10005;</button>' +
       (many ? '<button class="lb__btn lb__prev" type="button" aria-label="Previous photo">&#8592;</button><button class="lb__btn lb__next" type="button" aria-label="Next photo">&#8594;</button><p class="lb__count" aria-live="polite"></p>' : '');
     document.body.appendChild(root);
     const img = root.querySelector('.lb__img'), cap = root.querySelector('.lb__cap'), count = root.querySelector('.lb__count');
     const buttons = () => Array.from(root.querySelectorAll('button'));
+    const zoomBtn = root.querySelector('.lb__zoom');
     let at = -1, opener = null, touchX = null;
+    function zoom(on) {
+      root.classList.toggle('is-zoom', on); zoomBtn.setAttribute('aria-pressed', String(on));
+      zoomBtn.setAttribute('aria-label', on ? 'Fit the photo to the screen' : 'Show at actual size');
+      const stage = root.querySelector('.lb__stage'); stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2; stage.scrollTop = (stage.scrollHeight - stage.clientHeight) / 2;
+    }
 
     function show(i) {
-      at = (i + links.length) % links.length;
+      at = (i + links.length) % links.length; zoom(false);
       const a = links[at], thumb = a.querySelector('img'), fig = a.closest('figure'), note = fig && fig.querySelector('figcaption');
       img.src = a.getAttribute('href'); img.alt = thumb ? thumb.alt : '';
       img.width = +a.dataset.w || 0; img.height = +a.dataset.h || 0;
@@ -222,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     root.addEventListener('click', ev => {
       if (ev.target.closest('[data-close]')) close();
+      else if (ev.target.closest('.lb__zoom') || ev.target.closest('.lb__img')) zoom(!root.classList.contains('is-zoom'));
       else if (ev.target.closest('.lb__prev')) show(at - 1);
       else if (ev.target.closest('.lb__next')) show(at + 1);
     });
@@ -1755,6 +1781,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHamburger();
   initCounters();
   initMagnetic();
+  initArrivals();
   initCampaign();
   initLightbox();
   initFlow();

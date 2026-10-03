@@ -114,3 +114,40 @@ test('under Reduce Motion nothing is hidden and nothing counts: every number and
     assert.deepEqual([...d.querySelectorAll('.csp-num b')].map(b => b.textContent), ['8', '48', '5', '4']);
   } finally { p.close(); }
 });
+
+test('the published field photos are the whole 4:3 frame at full resolution, and the viewer never crops them', () => {
+  const fw = sync.loadData().fieldwork, css = fs.readFileSync(path.join(ROOT, 'about.css'), 'utf8');
+  for (const p of fw.photos) { assert.equal(p.width, 1600); assert.equal(p.height, 1200); }
+  const lb = css.match(/\.lb__img \{[^}]*\}/)[0]; assert.ok(/object-fit: contain/.test(lb) && !/cover/.test(lb));
+});
+
+test('the viewer can go to actual size and back, and resets when you change photo', async () => {
+  const p = await loadPage('about.html', { settle: 300, setup: stubObserver });
+  try {
+    const { window: w, document: d } = p, root = d.querySelector('.lb'), btn = root.querySelector('.lb__zoom');
+    d.querySelector('a[data-lightbox]').dispatchEvent(new w.MouseEvent('click', { bubbles: true, cancelable: true }));
+    assert.equal(btn.getAttribute('aria-pressed'), 'false'); btn.click();
+    assert.ok(root.classList.contains('is-zoom')); assert.equal(btn.getAttribute('aria-pressed'), 'true'); assert.match(btn.getAttribute('aria-label'), /Fit/);
+    root.querySelector('.lb__next').click(); assert.ok(!root.classList.contains('is-zoom'), 'a new photo starts fitted');
+    root.querySelector('.lb__img').click(); assert.ok(root.classList.contains('is-zoom'), 'clicking the picture also zooms');
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('cards and headings arrive on scroll on the inner pages, and are simply there under Reduce Motion', async () => {
+  for (const calm of [false, true]) {
+    const p = await loadPage('tips.html', { settle: 300, setup: w => { stubObserver(w); if (calm) w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} }); } });
+    try {
+      const d = p.document, cards = d.querySelectorAll('.fraud-card');
+      assert.ok(cards.length >= 6);
+      if (calm) { assert.ok(!d.documentElement.classList.contains('rv-on')); assert.equal(d.querySelectorAll('.rv').length, 0); }
+      else {
+        assert.ok(d.documentElement.classList.contains('rv-on')); assert.ok(cards[0].classList.contains('rv') && !cards[0].classList.contains('rv-in'));
+        const o = p.window.__seen.find(x => x.els.includes(cards[0])); o.cb([{ target: cards[0], isIntersecting: true, boundingClientRect: { bottom: 100 } }]);
+        assert.ok(cards[0].classList.contains('rv-in'));
+        o.cb([{ target: cards[1], isIntersecting: false, boundingClientRect: { bottom: -50 } }]); assert.ok(cards[1].classList.contains('rv-in'), 'a card already scrolled past is shown, not left invisible');
+      }
+      assert.deepEqual(p.errors, []);
+    } finally { p.close(); }
+  }
+});

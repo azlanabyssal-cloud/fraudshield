@@ -42,8 +42,8 @@ test('every image has real alt text, written for the picture, not a keyword list
   assert.deepEqual(bad, []);
 });
 
-test('no local image is bloated: web files stay small', () => {
-  const big = []; const walk = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory() && !/node_modules|\.git|vendor|mlops|icons/.test(e.name)) walk(p); else if (/\.(webp|png|jpe?g)$/i.test(e.name) && fs.statSync(p).size > 260 * 1024) big.push(`${path.relative(ROOT, p)} ${(fs.statSync(p).size / 1024) | 0} KB`); });
+test('no local image is bloated: web files stay small (the full-frame field photos get 400 KB, everything else 260 KB)', () => {
+  const big = []; const walk = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory() && !/node_modules|\.git|vendor|mlops|icons/.test(e.name)) walk(p); else if (/\.(webp|png|jpe?g)$/i.test(e.name) && fs.statSync(p).size > (/[\\/]field[\\/]/.test(p) ? 400 : 260) * 1024) big.push(`${path.relative(ROOT, p)} ${(fs.statSync(p).size / 1024) | 0} KB`); });
   walk(path.join(ROOT, 'images')); assert.deepEqual(big, []);
 });
 
