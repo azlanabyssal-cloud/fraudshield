@@ -141,3 +141,56 @@ test('payload router: web addresses, UPI links, phone numbers and plain text eac
     const r = L.analyzePayload(trick); assert.equal(r.kind, 'url', trick); assert.equal(r.level, 'scam', trick);
   } assert.equal(L.analyzePayload('').kind, 'text');
 });
+
+/* ---------- red-team pass: gaps found by attacking the analyzer ---------- */
+const lv = u => L.analyzeUrl(u);
+const pay = u => L.analyzePayload(u);
+
+test('a brand named in a short folder of someone else\'s address is how a phishing kit is laid out, and is flagged; news about the brand is not', () => {
+  for (const u of ['https://evil-shop.com/sbi/kyc-update', 'https://mysite.in/hdfcbank/login.php', 'https://example.org/paytm/refund?id=1', 'https://random.xyz/icici-netbanking', 'https://sites.google.com/view/sbi-kyc', 'https://linktr.ee/sbi.kyc']) {
+    const r = lv(u); assert.equal(r.level, 'suspicious', u); assert.ok(r.codes.includes('brand-in-path') || r.codes.includes('official-in-query'), u);
+  }
+  for (const u of ['https://news.example.com/blog/how-sbi-protects-you', 'https://www.thehindu.com/business/sbi-profit/', 'https://economictimes.indiatimes.com/sbi-kyc-fraud-warning', 'https://www.thehindu.com/topic/sbi', 'https://www.sbi.co.in/web/personal-banking', 'https://www.google.com/search?q=sbi+login']) assert.notEqual(lv(u).level, 'suspicious', u);
+  assert.notEqual(lv('https://evil-shop.com/sbi/kyc-update').level, 'scam', 'a path alone never makes a scam verdict');
+});
+
+test('a link that forwards to another address is judged by where it ends up, and the worse verdict wins', () => {
+  const wrapped = lv('https://www.google.com/url?q=https://sbi-kyc-update.tk/login'); assert.equal(wrapped.level, 'scam'); assert.ok(wrapped.codes.includes('forwards-to')); assert.equal(wrapped.forwardsTo, 'sbi-kyc-update.tk'); assert.match(wrapped.reasons[0], /only a doorway/);
+  const bank = lv('https://sbi.co.in/login?next=https://evil-claim.tk'); assert.notEqual(bank.level, 'official', 'a real bank page that sends you elsewhere is not "official"'); assert.ok(bank.codes.includes('forwards-to'));
+  assert.equal(lv('https://accounts.google.com/signin?continue=https://mail.google.com').level, 'unverified', 'forwarding to something harmless does not raise it');
+  assert.equal(lv('https://www.bing.com/search?q=https://sbi.co.in').codes.includes('forwards-to'), false, 'a search for an address is not a forward');
+  const deep = lv('https://a.example/r?u=' + encodeURIComponent('https://b.example/r?u=' + encodeURIComponent('https://c.example/r?u=https://sbi-kyc.tk/')));
+  assert.ok(deep.codes.includes('forwards-to'), 'two hops are followed'); assert.doesNotThrow(() => lv('https://a.example/?u=https://a.example/?u=https://a.example/?u=https://a.example/?u=https://a.example/'), 'and a long chain stops');
+  assert.equal(lv('https://abc.top/?redirect=sbi.co.in').level, 'suspicious', 'an official address tucked into a query value');
+});
+
+test('a backslash in the address, or invisible characters inside it, are called out; invisible characters at the ends (a chat-app artefact) are ignored', () => {
+  assert.equal(lv('https://sbi.co.in\\@evil.com').level, 'scam'); assert.ok(lv('https://sbi.co.in\\@evil.com').codes.includes('backslash'));
+  assert.equal(lv('https://sbi.co.in/a\\b').level, 'official', 'a backslash in the path is harmless');
+  for (const u of ['https://sbi\u200b.co.in', 'https://sbi.co.in/\u202egpj.exe']) { const r = lv(u); assert.equal(r.level, 'scam', JSON.stringify(u)); assert.ok(r.codes.includes('hidden-characters')); }
+  assert.equal(lv('\u200ehttps://www.irctc.co.in/\u200b').level, 'official'); assert.equal(lv('https://www.irctc.co.in/\u200b').level, 'official');
+});
+
+test('UPI codes: parameter names are case-insensitive, a payee named like bank support is flagged, two payees are flagged, and payment-app links are read like UPI codes', () => {
+  assert.deepEqual(pay('UPI://PAY?PA=SHOP@OKAXIS&PN=Ravi&AM=250').codes, ['amount']);
+  const imp = pay('upi://pay?pa=sbi.support.helpline@ybl&pn=SBI%20Support&am=1'); assert.equal(imp.level, 'scam'); assert.ok(imp.codes.includes('payee-impersonation'));
+  for (const ok of ['upi://pay?pa=paytmqr281005050101abc@paytm&pn=Ravi%20Kirana&am=250', 'upi://pay?pa=rahul@sbi&pn=Rahul%20Kumar', 'upi://pay?pa=sbicard@sbi&pn=SBI%20Card']) assert.ok(!pay(ok).codes.includes('payee-impersonation'), ok);
+  const dup = pay('upi://pay?pa=shop@okaxis&PA=evil@ybl&am=10'); assert.ok(dup.codes.includes('duplicate-pa')); assert.notEqual(dup.level, 'unverified'); assert.ok(pay('upi://pay?pa=a@ybl&am=1&am=9999').codes.includes('duplicate-am'));
+  assert.ok(!pay('upi://pay?pa=shop@okaxis&pa=shop@okaxis&am=10').codes.includes('duplicate-pa'), 'the same value twice is only repetition');
+  assert.equal(pay('upi:pay?pa=shop@okaxis&pn=Shop').kind, 'upi');
+  for (const u of ['paytmmp://pay?pa=shop@ybl&am=100', 'phonepe://pay?pa=shop@ybl&am=100', 'tez://upi/pay?pa=shop@okaxis&am=1', 'gpay://upi/pay?pa=shop@okaxis&am=1']) { const r = pay(u); assert.equal(r.kind, 'upi', u); assert.ok(r.codes.includes('app-link')); }
+  assert.equal(pay('paytmmp://pay?pa=refund@ybl&pn=Refund&am=500').level, 'scam'); assert.equal(pay('bhim://nothing').kind, 'text', 'a deep link with no payment inside is just text');
+});
+
+test('fuzz: 40,000 hostile strings through the link, payload and message analyzers never throw, always return a level, and never take long', () => {
+  const M = require('../lib/msgcheck.js'), C = require('../lib/core.js');
+  let seed = 42; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296, pick = a => a[Math.floor(rnd() * a.length)];
+  const frag = ['http://', 'https://', '//', 'www.', 'sbi', '.co.in', '.com', '@', ':', '%', '%2e', '%00', '\\', '\u202e', '\u200b', 'xn--', '-', '.', '..', '/', '?', '=', '&', '#', '[', ']', '::1', '192.168.0.1', 'login', 'kyc', '\u0000', '\n', ' ', '日本', 'ｓｂｉ', 'a'.repeat(70), '9999999999', '%zz', '?u=https://x.y', '?next=https://sbi.co.in', 'upi://pay?pa=', 'am=', '&pn=', 'javascript:', 'data:', 'paytmmp://', 'accidentally ', 'scan the qr to receive '];
+  const t0 = Date.now(); let worst = 0;
+  for (let i = 0; i < 10000; i++) {
+    let str = ''; for (let j = 0, k = 1 + Math.floor(rnd() * 9); j < k; j++) str += pick(frag) + (rnd() < 0.3 ? String.fromCharCode(32 + Math.floor(rnd() * 0xD000)) : '');
+    for (const f of [x => L.analyzeUrl(x), x => L.analyzePayload(x), x => M.analyzeMessage(x), x => C.findLinkIn(x)]) { const a = Date.now(); const r = f(str); worst = Math.max(worst, Date.now() - a); if (r && r.level !== undefined) assert.ok(['scam', 'suspicious', 'unverified', 'official', 'nothing'].includes(r.level), str); }
+  }
+  assert.ok(worst < 100, `slowest single call ${worst} ms`); assert.ok(Date.now() - t0 < 20000);
+  for (const bomb of ['accidentally '.repeat(20000), 'scan '.repeat(30000) + 'qr', 'have your '.repeat(15000), 'https://x.com/' + 'sbi/'.repeat(20000) + 'login', 'https://x.com/?' + 'u=https://a.b&'.repeat(5000)]) { const a = Date.now(); M.analyzeMessage(bomb); L.analyzeUrl(bomb); assert.ok(Date.now() - a < 500, 'no catastrophic backtracking'); }
+});

@@ -175,3 +175,44 @@ test('the thresholds: one strong sign is "suspicious", it takes two signs of wei
   const busy = run('urgent, immediately, last chance, act now, hurry'); assert.equal(busy.score, 1); assert.equal(busy.level, 'nothing', 'deadline words do not stack into an accusation');
   const claims = run('guaranteed returns, double your money, risk free'); assert.equal(claims.score, 5); assert.equal(claims.level, 'scam', 'separate strong claims of one kind do stack');
 });
+
+/* ---------- four more Indian scam families, each with the honest look-alike that must be left alone ---------- */
+test('electricity or SIM cut-off pressure, wrong-transfer "return it", sextortion and "scan to receive" are caught', () => {
+  const caught = [
+    ['utility', 'URGENT: Your electricity connection will be disconnected tonight at 9:30 pm. Call 98XXXXXX01 now to update bill.'],
+    ['utility', 'Dear consumer your power supply will be disconnected today. Contact officer on 9876543210 to update your bill'],
+    ['misdirected', 'Sir I accidentally sent Rs 5000 to your PhonePe. Please return it, I am in a hospital emergency.'],
+    ['misdirected', 'Bhai galti se tumhare account me 5000 chale gaye, wapas bhej do plz'],
+    ['misdirected', 'I mistakenly transferred money to your account, kindly return the amount'],
+    ['sextortion', 'I have recorded your video. Pay Rs 30,000 or I will send it to all your contacts.'],
+    ['sextortion', 'We have your private photos. Send money unless you want us to share them with your family and friends'],
+    ['upi', 'You have received Rs 10,000 cashback on PhonePe. Scan this QR to accept the money.'],
+    ['upi', 'To receive your refund amount scan the QR code below']
+  ];
+  for (const [family, text] of caught) { const v = M.analyzeMessage(text); assert.ok(v.level !== 'nothing', text); assert.ok(v.codes.length && v.family === family || v.evidence.some(e => e.family === family), `${family}: ${text}`); }
+  assert.equal(M.analyzeMessage('I have recorded your video. Pay Rs 30,000 or I will send it to all your contacts.').level, 'scam', 'sextortion is conclusive on its own');
+});
+
+test('the look-alikes stay quiet: a planned power cut, a bill reminder, a friend with your photos, a file sent by mistake, a boarding-pass code, a third party who will return money', () => {
+  for (const text of [
+    'Planned maintenance: power supply will be disconnected 10am to 2pm tomorrow in your area. Sorry for the inconvenience.',
+    'Your electricity bill of Rs 1,450 is due on 12-Oct. Failing which supply will be disconnected. Pay at the official portal or app. Helpline 1912',
+    'I have your photos from the wedding, will share with everyone in the family group',
+    'I have your video from the trip, I will send it to all the friends who came',
+    'I accidentally sent you the file, send it back please',
+    'Hi, I accidentally paid the wrong amount in the hotel bill, they will return it by evening',
+    'Scan the code at the gate to get your boarding pass',
+    'Scan this QR code to download the app and receive updates',
+    'Your gas cylinder booking is confirmed. It will be delivered tomorrow. Delivery code 4521.'
+  ]) assert.equal(M.analyzeMessage(text).level, 'nothing', text);
+});
+
+test('each new rule needs both of its signs: one alone does not fire it', () => {
+  const fires = (id, text) => M.analyzeMessage(text).codes.includes(id);
+  assert.ok(!fires('sextortion', 'I have recorded your video.')); assert.ok(!fires('sextortion', 'Pay money or I will send it to all your contacts.'));
+  assert.ok(fires('sextortion', 'I got your videos, pay up or else I will send them to everyone'));
+  assert.ok(!fires('wrong-transfer', 'Please return it.')); assert.ok(!fires('wrong-transfer', 'I accidentally sent Rs 500 to you'));
+  assert.ok(!fires('qr-receive', 'Scan the QR code to pay Rs 500.')); assert.ok(fires('qr-receive', 'Scan the QR code to receive your Rs 500 cashback'));
+  assert.ok(!fires('utility-cutoff', 'Your electricity will be disconnected for maintenance.')); assert.ok(!fires('utility-cutoff', 'Call 9876543210 about your bill'));
+  for (const f of ['sextortion', 'misdirected', 'utility']) assert.ok(M.FAMILIES[f].next.length >= 1);
+});

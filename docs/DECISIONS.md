@@ -215,3 +215,20 @@ changing wording, shows in labelled messages, not in a score histogram.
 Instead: model age is a failing test (400 days), the feature fingerprint guards skew, PSI over the S0 messages by date is in the evaluation report, and drift is observed where it is honest: from
 volunteers who donate messages through data_ops, with labels. If aggregated monitoring is ever wanted it must be opt-in, histogram counts only, sent by an explicit tap, to a service with a published
 retention rule, with the policy change and the About-page wording shipped in the same commit.
+
+## ADR-0019: Red-team pass on the working models (links, QR payloads, messages)
+Method: about 150 hand-written realistic and hostile inputs (official and look-alike domains, Indian scam families, parser-differential tricks, UPI payloads), then 120,000 random hostile strings and
+catastrophic-backtracking bombs through every analyzer. No crash, no verdict outside the allowed set, slowest call 7 ms. What it found, each a real gap, each fixed with a test and with its honest look-alike
+left alone:
+- Links: a brand named in the folder of someone else's address (`/sbi/kyc-update`, `/hdfcbank/login.php`, `sites.google.com/view/sbi-kyc`) was "unverified"; it is now "suspicious" (never "scam" on a path alone),
+  while news slugs and topic pages are untouched. A link that forwards (`google.com/url?q=...`, `bank/login?next=...`) was judged only by its front door; the destination is now judged too and the worse verdict wins.
+  A backslash in the address (read as a slash by browsers, as user-info by many apps) and invisible or direction-changing characters inside a link are called out; the same characters at the ends, which chat apps add, are ignored.
+- QR and payment links: parameter names are now case-insensitive; a payee named like "SBI Support" on a personal address, and a code giving two payees or two amounts, are flagged; payment-app deep links (paytmmp, phonepe, tez, gpay, bhim)
+  were read as plain text and are now analysed as UPI codes.
+- Messages: four common Indian families were missed: electricity or SIM cut-off pressure, "sent to you by mistake, please return it", sextortion, and "scan this QR to receive money". Each rule needs two separate signs, and each has
+  look-alikes that must stay quiet (a planned power cut, a friend with your wedding photos, "scan the code to get your pass", a hotel that will return money): a first version of three rules flagged some of them, which is why they were
+  tightened before shipping.
+Measured, and what it does not show: the public English benchmark is unchanged (independent slice: flags 19.6%, 0.5% false alarms; "scam" 7.2%, none false), because it contains none of these families. So there is no measured recall for the new
+rules and none is claimed; they are written from known scam patterns and tested against hand-made positives and look-alikes. The real test is the S0 set of Indian messages.
+Not changed, deliberately: "pay.google.com" and "accounts.google.com" stay "unverified" (the official list is banks, payments and government, not every large company), and a malformed punycode address stays "can't check"
+(browsers refuse it too).
