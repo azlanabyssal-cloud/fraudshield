@@ -22,7 +22,7 @@ function loadData(root = ROOT_DEFAULT) {
   if (!raw.stats || !raw.series || !raw.site) throw new Error('data/stats.json needs "stats", "series" and "site"');
   return {
     stats: raw.stats, series: raw.series, site: raw.site, rbi: raw.rbi_directions, cases: JSON.parse(read('data/cases.json')), fieldwork: JSON.parse(read('data/fieldwork.json')), campaign: JSON.parse(read('data/campaign.json')),
-    partials: { nav: read('partials/nav.html').trim(), footer: read('partials/footer.html').trim() }
+    partials: { nav: read('partials/nav.html').trim(), footer: read('partials/footer.html').trim(), csp: read('partials/csp.txt').trim() }
   };
 }
 
@@ -119,6 +119,14 @@ function renderFooter(data) {
   });
 }
 
+// One policy for every page, from partials/csp.txt. A <meta> policy cannot carry frame-ancestors or report-uri (the browser ignores them
+// there), so the policy sticks to what a meta tag can enforce; the referrer policy is set beside it so outbound links carry no address.
+function renderCsp(data) {
+  const policy = data.partials.csp;
+  if (!/default-src 'self'/.test(policy) || /'unsafe-eval'|script-src[^;]*'unsafe-inline'/.test(policy)) throw new Error('partials/csp.txt must keep default-src \'self\' and must allow neither eval nor inline scripts');
+  return `<meta http-equiv="Content-Security-Policy" content="${esc(policy)}">\n<meta name="referrer" content="no-referrer">`;
+}
+
 function renderCases(data) {
   return data.cases.map((c, i) => {
     const src = c.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(' · ');
@@ -211,6 +219,7 @@ function syncRegions(html, data, page, root = ROOT_DEFAULT) {
     let body;
     if (name === 'nav') body = renderNav(data, page);
     else if (name === 'footer') body = renderFooter(data);
+    else if (name === 'csp') body = renderCsp(data);
     else if (name === 'cases') body = renderCases(data);
     else if (name === 'states') body = renderStates(data);
     else if (name === 'sources') body = renderSources(data);

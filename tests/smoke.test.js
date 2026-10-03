@@ -74,8 +74,11 @@ const until = async (fn, ms = 6000) => { const t0 = Date.now(); while (Date.now(
 const say = (doc, text) => { doc.getElementById('cbInput').value = text; doc.getElementById('cbSend').click(); };
 const transcript = doc => doc.getElementById('cbMessages').textContent;
 const finished = doc => /Never enter your OTP/.test(transcript(doc));   // the closing line of every link verdict; the bot types its lines one at a time
+// jsdom has no canvas, so the picture preparer (tested on its own in imageprep.test.js) is replaced by one that returns a recognisable stand-in blob.
+const prepared = new Set();
 const attach = (win, name = 'photo.png') => {
   const input = win.document.getElementById('cbFile');
+  win.FraudShieldImagePrep.prepare = async () => { const b = new win.Blob([new Uint8Array(8)], { type: 'image/jpeg' }); prepared.add(b); return b; };
   Object.defineProperty(input, 'files', { value: [new win.File([new Uint8Array(32)], name, { type: 'image/png' })], configurable: true });
   win.URL.createObjectURL = () => 'blob:fraudshield-test'; win.URL.revokeObjectURL = () => {};
   input.dispatchEvent(new win.Event('change'));
@@ -244,9 +247,11 @@ test('a screenshot of a scam text is read by OCR and then analysed as a message'
   const p = await loadPage('assistant.html');
   try {
     p.window.FraudShieldQR.scan = async () => null;
-    p.window.Tesseract = { recognize: async () => ({ data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }) };
+    let got = null;
+    p.window.Tesseract = { recognize: async img => { got = img; return { data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }; } };
     attach(p.window);
     await until(() => /Walk me through/.test(transcript(p.document)), 9000);
+    assert.ok(prepared.has(got), 'the reader was given the prepared picture, not the original camera file');
     assert.match(transcript(p.document), /Here's what I read from the image/); assert.match(transcript(p.document), /What gave it away/);
   } finally { p.close(); }
 });

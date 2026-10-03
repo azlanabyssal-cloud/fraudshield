@@ -70,12 +70,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   // ANIMATED COUNTERS
   // ═══════════════════════════════════════════════════════
-  // The domain-name model is a soft warning added to link checks. Its weights load after the page is usable; until they arrive the link
-  // analyzer simply runs on its rules, so nothing waits on the download and a failed download costs nothing.
+  // The domain-name model is a soft warning added to link checks. Its weights load after the page is usable, so nothing waits on the
+  // download, but a failed or corrupt download is never silent: it is retried, validated before use, announced on the page
+  // (data-name-model, the fs:model event, the console) and said out loud in every link verdict that it would have informed.
+  // The rules keep working without it, and no verdict ever reads as "safe", so a missing model makes the answer weaker and says so.
+  const modelState = window.FraudShieldModelState = { status: 'loading', attempts: 0, error: null };
+  const MODEL_RETRY_MS = window.FraudShieldModelRetryMs || [1500, 4000, 9000];   // a global so a test need not wait 14 seconds
+  function setModelStatus(status, error) {
+    modelState.status = status; modelState.error = error || null;
+    document.documentElement.setAttribute('data-name-model', status);
+    try { window.dispatchEvent(new CustomEvent('fs:model', { detail: { status, attempts: modelState.attempts } })); } catch (e) { /* no CustomEvent */ }
+  }
   function initUrlModel() {
     const Model = window.FraudShieldUrlModel;
-    if (!Model || typeof fetch !== 'function') return;
-    fetch('data/urlmodel.json').then(r => (r.ok ? r.json() : Promise.reject(new Error('model-unavailable')))).then(m => Model.install(m)).catch(() => {});
+    if (!Model || typeof fetch !== 'function') { setModelStatus('failed', new Error('unsupported')); return; }
+    function attempt() {
+      modelState.attempts++;
+      fetch('data/urlmodel.json', { cache: 'no-cache' })
+        .then(r => (r.ok ? r.json() : Promise.reject(new Error('http-' + r.status))))
+        .then(m => { Model.install(m); setModelStatus('ready'); })
+        .catch(err => {
+          if (modelState.attempts <= MODEL_RETRY_MS.length) { setTimeout(attempt, MODEL_RETRY_MS[modelState.attempts - 1]); return; }
+          setModelStatus('failed', err);
+          console.error('FraudShield: the domain-name check could not be loaded (' + (err && err.message) + '). Link checks are running on the written rules only.');
+        });
+    }
+    modelState.retry = () => { modelState.attempts = 0; setModelStatus('loading'); attempt(); };
+    setModelStatus('loading'); attempt();
+  }
+  // The sentence a link verdict carries when the name check was not part of it. Empty when it was, or when it would not have mattered.
+  function modelNotice(result) {
+    if (!result || result.nameModel !== 'not-loaded') return '';
+    return modelState.status === 'failed'
+      ? ' Note: the domain-name check could not load on this device, so this result uses the written rules only. Reload the page to try again.'
+      : ' Note: the domain-name check is still loading, so this result uses the written rules only. Check again in a few seconds.';
   }
 
   // One event tells the characters how the page feels: { reaction: 'scam' | 'curious' | 'cheer' | 'numbers' } or { mood, who }. See lib/emotion.js.
@@ -112,7 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function render(el, value) {
       const prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
-      el.textContent = prefix + (el.dataset.format === 'lakh' ? formatIndian(value) : value.toLocaleString('en-IN')) + suffix;
+      // the final frame must read exactly as the page was built ("28.15 lakh"), so lakh values use the same formatter the build used
+      const F = window.FraudShieldFormat, big = el.dataset.format === 'lakh' && value >= 100000 && F && F.formatStat;
+      el.textContent = prefix + (el.dataset.format === 'lakh' ? (big ? F.formatStat(value, 'lakh') : formatIndian(value)) : value.toLocaleString('en-IN')) + suffix;
     }
 
     function animateCounter(el) {
@@ -1307,7 +1337,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
         icon + ' ' + result.headline,
-        result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link or scanning a code, even if it looks official.'
+        result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link or scanning a code, even if it looks official.' + modelNotice(result)
       ], { urgent: scam, cta: scam ? [{ label: '📞 Paid or shared details? Call 1930', href: 'tel:1930' }] : undefined });
     }
     // A pasted scam talks TO the reader ("your KYC expires"); a person describing what happened talks about themselves ("I got a call").
@@ -1412,27 +1442,42 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollToBottom();
     }
 
+    // One picture at a time, and never the raw camera frame: lib/imageprep.js reads the size from the file header, asks the browser for a
+    // reduced decode, and hands back a JPEG inside a 2.8 megapixel budget. That blob is what the chat shows, what the QR scan reads and
+    // what the text reader gets, so a 48 megapixel photo never sits in memory in full anywhere in this path.
+    let imageJobActive = false;
     function handleImageFile(file) {
       if (!file || file.type.indexOf('image/') !== 0) return;
-      if (file.size > 10 * 1024 * 1024) {
-        botSay(['That image is quite large — try a tighter screenshot crop (under 10MB) and I\'ll read it.']);
+      if (imageJobActive) { botSay(['One picture at a time, please. Let me finish reading the last one first.']); return; }
+      if (file.size > 25 * 1024 * 1024) {
+        botSay(['That file is over 25 MB. Take a screenshot of the message instead of sending the original photo, and I\'ll read it.']);
         return;
       }
-      const objectUrl = URL.createObjectURL(file);
-      addImageMessage(objectUrl);
-      const progressEl = showOcrProgress('🔍 Looking for a QR code…');
-      const qr = window.FraudShieldQR;
-      (qr ? qr.scan(file, { decoderUrl: QR_DECODER_URL }) : Promise.resolve(null)).catch(() => null).then(code => {
-        if (!code) { readTextFromImage(objectUrl, progressEl); return; }
+      const Prep = window.FraudShieldImagePrep;
+      if (!Prep) { botSay(['The image reader did not load on this page. Reload the page, or type or say what the message says.']); return; }
+      imageJobActive = true;
+      const progressEl = showOcrProgress('🖼️ Preparing the picture…');
+      Prep.prepare(file).then(blob => {
+        addImageMessage(URL.createObjectURL(blob));
+        updateOcrProgress(progressEl, '🔍 Looking for a QR code…');
+        const qr = window.FraudShieldQR;
+        return (qr ? qr.scan(blob, { decoderUrl: QR_DECODER_URL }) : Promise.resolve(null)).catch(() => null).then(code => {
+          if (!code) return readTextFromImage(blob, progressEl);
+          progressEl.remove();
+          botSay(['I found a QR code in that image. It contains: "' + code.replace(/\s+/g, ' ').slice(0, 200) + '"'], { noMenuChip: true, onDone: () => respondToLink(code) });
+        });
+      }).catch(err => {
         progressEl.remove();
-        botSay(['I found a QR code in that image. It contains: "' + code.replace(/\s+/g, ' ').slice(0, 200) + '"'], { noMenuChip: true, onDone: () => respondToLink(code) });
-      });
+        botSay([err && err.code === 'too-large'
+          ? 'That picture is enormous (over 150 megapixels), which is not a normal photo. Take a screenshot of the message instead.'
+          : 'I could not open that picture. It may be damaged or not an image this browser can read. Try a screenshot, or type or say what the message says.']);
+      }).then(() => { imageJobActive = false; });
     }
 
-    function readTextFromImage(objectUrl, progressEl) {
+    function readTextFromImage(blob, progressEl) {
       updateOcrProgress(progressEl, '🔍 Preparing image reader…');
-      loadOcrEngine()
-        .then(Tesseract => Tesseract.recognize(objectUrl, 'eng+hin', {
+      return loadOcrEngine()
+        .then(Tesseract => Tesseract.recognize(blob, 'eng+hin', {
           workerPath: OCR_BASE + 'worker.min.js',
           corePath: OCR_BASE,
           langPath: OCR_BASE + 'lang',
@@ -1456,9 +1501,10 @@ document.addEventListener('DOMContentLoaded', () => {
             onDone: () => respondToFreeText(text)
           });
         })
-        .catch(() => {
+        .catch(err => {
           progressEl.remove();
-          botSay(["I couldn't read that image right now — image analysis needs an internet connection the first time it's used on this device. You can type or say what the message said instead."]);
+          console.error('FraudShield: the text reader failed (' + (err && err.message ? err.message : err) + ').');
+          botSay(["The image reader could not run on this device (the page may not have finished loading it, or the browser ran out of memory). Reload the page and try a smaller screenshot, or type or say what the message said."]);
         });
     }
 

@@ -42,7 +42,7 @@ test('scoring is deterministic, finite for hostile input, and bands are ordered'
 
 test('the soft warning can lift an unexplained address to "suspicious" but never to "scam", and never touches an official one', () => {
   const spec = { hashBits: 4, ngram: [1, 2], bins: M.ENGINEERED.map(() => []), tlds: [] };
-  const fake = band => ({ version: 1, scale: 20, spec, bias: band === 'high' ? 1000 : -1000, ngram: { idx: [], q: [] }, eng: new Array(M.ENGINEERED.length).fill(0), tld: [0], calibration: { a: 1, b: 0 },
+  const fake = band => ({ version: 1, scale: 20, spec, bias: band === 'high' ? 1000 : -1000, ngram: { idx: [0], q: [0] }, eng: new Array(M.ENGINEERED.length).fill(0), tld: [0], calibration: { a: 1, b: 0 },
     thresholds: { high: { score: 1 }, elevated: { score: 0 } }, card: { high: { recall: 0.14, falseAlarm: 0.0012 }, elevated: { recall: 0.24, falseAlarm: 0.011 } } });
   try {
     M.install(null); assert.equal(L.analyzeUrl('https://random-shop.com/').level, 'unverified');
@@ -60,4 +60,35 @@ test('the soft warning can lift an unexplained address to "suspicious" but never
 test('when the model is not loaded the analyzer behaves exactly as its rules say', () => {
   M.install(null); const before = L.analyzeUrl('https://random-shop.com/'); M.install(shipped); M.install(null);
   assert.equal(before.level, 'unverified'); assert.ok(!before.codes.includes('name-model')); M.install(shipped);
+});
+
+test('a damaged model file is refused with a precise reason, and a refusal leaves the working model and the rules untouched', () => {
+  const good = () => JSON.parse(JSON.stringify(shipped)), refused = (mut, re) => { const m = good(); mut(m); assert.throws(() => M.install(m), re); };
+  assert.doesNotThrow(() => M.validate(good()), 'the shipped file is valid');
+  refused(m => { delete m.ngram; }, /ngram weights/);
+  refused(m => { m.ngram.q.pop(); }, /ragged/);
+  refused(m => { m.ngram.idx = []; m.ngram.q = []; }, /missing/);
+  refused(m => { m.ngram.q[3] = NaN; }, /out of range/);
+  refused(m => { m.ngram.idx[0] = 1 << 30; }, /out of range/);
+  refused(m => { m.eng.length = 3; }, /engineered/);
+  refused(m => { m.tld.pop(); }, /ending weights/);
+  refused(m => { m.scale = 0; }, /scale/);
+  refused(m => { m.scale = 'x'; }, /scale/);
+  refused(m => { m.spec.hashBits = 40; }, /hashBits/);
+  refused(m => { m.spec.bins[2] = [5, 1]; }, /bins/);
+  refused(m => { m.spec.bins.pop(); }, /bins/);
+  refused(m => { m.calibration.a = Infinity; }, /calibration/);
+  refused(m => { m.thresholds.elevated.score = m.thresholds.high.score + 1; }, /thresholds/);
+  refused(m => { m.thresholds = null; }, /thresholds/);
+  assert.throws(() => M.install('{}'), /not an object/); assert.throws(() => M.install([]), /scale/);
+  const before = M.score('sbi-kyc-update-now.tk', M.current()); const bad = good(); bad.eng = [];
+  assert.throws(() => M.install(bad)); assert.equal(M.current(), shipped, 'the working model is still the one installed'); assert.deepEqual(M.score('sbi-kyc-update-now.tk', M.current()), before);
+  assert.equal(L.analyzeUrl('https://random-shop.com/').nameModel, 'applied');
+  M.install(null); assert.equal(L.analyzeUrl('https://random-shop.com/').nameModel, 'not-loaded'); assert.equal(L.analyzeUrl('https://sbi.co.in/').nameModel, 'not-applicable'); assert.equal(L.analyzeUrl('https://bit.ly/3abc').nameModel, 'not-applicable');
+  M.install(shipped);
+});
+
+test('if scoring itself ever throws, the analyzer carries on with its rules instead of crashing', () => {
+  const broken = JSON.parse(JSON.stringify(shipped)); M.install(broken); broken._w = { get() { throw new Error('boom'); } };
+  try { assert.doesNotThrow(() => L.analyzeUrl('https://random-shop.com/')); assert.equal(L.analyzeUrl('https://random-shop.com/').level, 'unverified'); } finally { M.install(shipped); }
 });

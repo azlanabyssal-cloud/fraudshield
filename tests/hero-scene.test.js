@@ -48,7 +48,7 @@ test('weak and narrow devices get fewer bubbles, never fewer than three', () => 
 });
 
 test('the page wires the scene in, caches it offline, leaves no photo in the hero, and keeps the intro untouched', () => {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8') + fs.readFileSync(path.join(ROOT, 'home.js'), 'utf8'), sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
   assert.match(html, /id="heroScene"/); assert.match(html, /hero-scene\.css/); assert.match(html, /lib\/hero-scene\.js/);
   assert.ok(!/class="hero-bg"/.test(html));
   assert.ok(sw.includes("'./hero-scene.css'") && sw.includes("'./lib/hero-scene.js'"));

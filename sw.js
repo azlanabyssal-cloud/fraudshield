@@ -3,7 +3,7 @@
 // Bump this on every deploy that touches script.js/HTML/CSS. It's the only
 // thing that forces old caches (and the stale code inside them) to be
 // thrown out on activate — see the note below for why that matters.
-const CACHE_NAME = 'fraudshield-v16';
+const CACHE_NAME = 'fraudshield-v17';
 
 const PRECACHE_URLS = [
   './',
@@ -16,6 +16,16 @@ const PRECACHE_URLS = [
   './style.css',
   './hero-scene.css',
   './about.css',
+  './fonts/fonts.css',
+  './fonts/dm-sans-normal-latin.woff2',
+  './fonts/dm-sans-normal-latin-ext.woff2',
+  './fonts/playfair-display-normal-latin.woff2',
+  './fonts/playfair-display-normal-latin-ext.woff2',
+  './fonts/playfair-display-italic-latin.woff2',
+  './fonts/playfair-display-italic-latin-ext.woff2',
+  './fonts/jetbrains-mono-normal-latin.woff2',
+  './fonts/jetbrains-mono-normal-latin-ext.woff2',
+  './home.js',
   './motion.css',
   './lib/motion.js',
   './lib/motes.js',
@@ -27,6 +37,7 @@ const PRECACHE_URLS = [
   './lib/urlmodel.js',
   './data/urlmodel.json',
   './lib/qr.js',
+  './lib/imageprep.js',
   './vendor/jsqr/jsQR.js',
   './lib/core.js',
   './lib/msgcheck.js',

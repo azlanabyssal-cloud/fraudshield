@@ -17,7 +17,7 @@ module.exports = [
   js.configs.recommended,
   { rules },
   // code that runs in the visitor's browser
-  { files: ['script.js', 'lib/**/*.js'], languageOptions: { sourceType: 'script', globals: { ...globals.browser, module: 'writable', require: 'readonly', __dirname: 'readonly', Chart: 'readonly', Tesseract: 'readonly', jsQR: 'readonly' } } },
+  { files: ['script.js', 'home.js', 'lib/**/*.js'], languageOptions: { sourceType: 'script', globals: { ...globals.browser, module: 'writable', require: 'readonly', __dirname: 'readonly', Chart: 'readonly', Tesseract: 'readonly', jsQR: 'readonly' } } },
   { files: ['sw.js'], languageOptions: { sourceType: 'script', globals: { ...globals.serviceworker } } },
   // everything else is Node
   { files: ['scripts/**', 'tests/**', 'mlops/**', 'data_ops/**', 'db/**', 'field/**', 'eslint.config.js'], languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } } }

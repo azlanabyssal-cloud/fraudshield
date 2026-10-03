@@ -167,3 +167,36 @@ matched short brand names inside ordinary words ("trai" in "training"). Fixed on
 split, so the rule figures above are post-hoc for that defect. Training-split false "scam" fell from 4 to 0 and false "suspicious" from 336 to 70.
 Consequences: most reported phishing hides behind ordinary-looking or compromised sites and free hosting, so a name cannot reveal it. Real gains
 need the page, the registration date or the certificate, none of which a browser may fetch without sending the link to a server. Not claimable.
+
+## ADR-0015: The page may only talk to itself (Content-Security-Policy), fonts self-hosted
+Context: the product says "nothing leaves your device", and a code-review report pointed out that nothing enforced it: one compromised script, font or image host
+could have sent a pasted message anywhere. Decision: one policy, from partials/csp.txt, written into every page by the build (`default-src 'self'`;
+scripts from this site only, with no eval and no inline script; `connect-src 'self'`; frames, objects and forms locked; `wasm-unsafe-eval` only because
+the text reader is WebAssembly). The home page's two inline scripts moved into home.js. The three Google fonts were copied onto the site (OFL, Latin and
+Latin-extended, 208 KB), which removes the last third party that every visitor's address was sent to. Images may still come from images.unsplash.com until
+the last stock photo is replaced; that is the only outside host, and a test fails if another appears.
+Verified in a real browser (headless Chrome, all six pages): no violations, fonts and model load. Attacks tried against the live policy and refused: fetch,
+XHR and sendBeacon to a foreign host, a foreign image, a foreign script, an iframe, an inline script, eval, new Function, a string timer. The text reader
+still reads a 12 MP photo of an SMS under the policy.
+Limits, stated plainly: a <meta> policy cannot carry frame-ancestors, report-uri or a report-only mode (browsers ignore them there), and GitHub Pages
+cannot send headers, so clickjacking protection and violation reports need a host that can. `style-src` keeps 'unsafe-inline' because the animations
+are driven by style attributes; stylesheets cannot run code, and image and font sources are locked so styles cannot send data out.
+
+## ADR-0016: When the name model does not load, say so loudly and keep the rules running; do not lock the checker
+Context: the report asked that a model that fails to load should disable the check button and fail fatally, because the app would "scan with a dead model and return
+no known pattern". What was true: the download failure was swallowed in silence, and a damaged file would have been installed unchecked. What was not: the app never
+returns "safe" or "no known pattern" (a link it cannot judge is "unverified: nothing here proves it is genuine or fake"), and the model is a hint that can only lift
+"unverified" to "suspicious"; the written rules do the work.
+Decision: validate the file before installing (shape, ranges, lengths; a refusal changes nothing), retry three times, then set data-name-model="failed" on the document,
+raise an `fs:model` event, log an error, and add to every link verdict the model would have informed: "the domain-name check could not load on this device, so this result
+uses the written rules only". The checker stays up. Rejected: locking it. The people with the flakiest connections are the people most likely to need the rules, and a
+checker that switches off whenever a 15 KB file is late protects them less, not more. The invariant that matters, never a reassuring answer from a degraded check, holds
+and is tested.
+
+## ADR-0017: Pictures are shrunk before they are read, using a pixel budget, not 1080 pixels
+Context: a raw 12 to 48 MP camera frame went straight to the text reader, which can exhaust memory on a mid-range phone. Decision: lib/imageprep.js reads the size from the
+file header (JPEG, PNG, WebP, GIF) without decoding, asks the browser for a reduced decode so the full frame is never allocated, then draws once on white and exports a JPEG
+within 2.8 megapixels and 2,600 px on the long side. One picture at a time; files over 25 MB, headers claiming more than 150 MP and undecodable files get a plain answer.
+Why not "1080 px on the long side": a phone screenshot is 1080 x 2400, and cutting its long side to 1080 would halve the height of the text the reader must recognise. A pixel
+budget leaves a screenshot untouched (2.59 MP) and still cuts a 12 MP photo to a quarter. Measured: a 4000 x 3000 photo of an SMS became 1932 x 1449 in 46 ms and was read
+perfectly in 276 ms, under the policy above.
