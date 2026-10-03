@@ -78,6 +78,8 @@ function findPii(text) {
   for (const m of t.matchAll(/\[([^\]]*)\]/g)) {
     if (!known.has(m[1])) problems.push(`unknown placeholder [${m[1]}] (allowed: ${PLACEHOLDERS.map(p => '[' + p + ']').join(' ')})`);
   }
+  // "[HANDLE]_63" or "[PHONE]12": letters or digits glued right after a placeholder are the unmasked rest of the token
+  for (const m of t.matchAll(/\[[A-Z_]+\]([A-Za-z0-9_])/g)) problems.push(`text glued to a placeholder ("${m[0]}"): mask the whole token`);
   return problems;
 }
 

@@ -151,8 +151,14 @@ Still stuck: use `other_scam` and add the row id to your private edge-case log.
 
 1. `node data_ops/generate_template.js` once, then copy the file to `data_ops/golden_holdout.csv`
    (it is gitignored: it contains real messages).
-2. Scrub in a private place, then add rows. Aim for 50-100 per day with a break each hour: error rate
-   climbs with fatigue.
+2. Add each message with `npm run data:add`. It runs fully offline: you paste the raw message, it masks phone numbers,
+   UPI IDs, emails, handles, PAN, Aadhaar-shaped and card/account numbers and one-time codes, asks you to type any names
+   or addresses (it cannot find those), shows exactly what will be stored, asks you to confirm the message is real,
+   collects the labels, validates the row and appends it. The original text is never printed back or saved. It changes
+   nothing but the personal tokens, so typos, obfuscation, URLs and spacing survive. It refuses to write if anything
+   unsafe remains. **You are still the last line of defence:** read the scrubbed text every time, and check URL query
+   strings by hand. Aim for 50-100 per day with a break each hour: error rate climbs with fatigue.
+   Use `FS_GOLDEN=<path>` or `--file <path>` to write somewhere else.
 3. After every batch: `npm run data:validate`. Fix everything it reports. It checks the schema, dates,
    duplicates and any leftover phone number, UPI ID, email, handle or PAN.
 4. For counts against targets: `node data_ops/validate_csv.js data_ops/golden_holdout.csv --report`.

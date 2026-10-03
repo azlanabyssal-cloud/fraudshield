@@ -41,7 +41,7 @@ test('PII check: SQL and JavaScript implementations agree on one corpus (they mu
     'your kyc p@nding, upd@te now', 'my PAN ABCDE1234F', 'my PAN abcde1234f',
     'Call [PHONE] or pay [UPI]. Rs 1,00,000 debited on 12/10/2025. Use code [OTP]. Dial 1930.',
     'call [PHONNE] now', 'code [OTP] valid for 10 minutes', 'आपका खाता बंद हो जाएगा 1930 पर कॉल करें',
-    'Rs500 only', 'OTP123456 received', 'win Rs 25 lakh send fee', 'a@b', '@', 'x@'
+    'Rs500 only', 'OTP123456 received', 'dm @wy7udc_63', 'ref [HANDLE]_63 today', 'call [PHONE]x now', 'ok [OTP]s', 'ok [PHONE] then [NAME].', 'win Rs 25 lakh send fee', 'a@b', '@', 'x@'
   ];
   const disagreements = [];
   for (const t of corpus) {

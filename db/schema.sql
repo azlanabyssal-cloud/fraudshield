@@ -47,6 +47,9 @@ begin
       problems := array_append(problems, 'unknown placeholder [' || m[1] || ']');
     end if;
   end loop;
+  if t ~ '\[[A-Z_]+\][A-Za-z0-9_]' then
+    problems := array_append(problems, 'text glued to a placeholder');
+  end if;
   return problems;
 end $$;
 
