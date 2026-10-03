@@ -190,6 +190,22 @@ function renderLearned(data) {
   return `<ul class="fw-learned">\n` + l.map(t => `  <li>${esc(t)}</li>`).join('\n') + '\n</ul>';
 }
 
+// Cases against money: one row per fraud type, two bars drawn from the same stats the text uses, so the picture cannot disagree with the words.
+const SHARE_TYPES = [['Investment fraud', 'investment'], ['Digital arrest', 'digital_arrest'], ['Sextortion', 'sextortion']];
+function renderShareBars(data) {
+  const rows = SHARE_TYPES.map(([name, k], i) => {
+    const c = data.stats[`case_share_2025_${k}_pct`], m = data.stats[`loss_share_2025_${k}_pct`];
+    if (!c || !m) throw new Error(`share bars need case_share_2025_${k}_pct and loss_share_2025_${k}_pct`);
+    for (const v of [c.value, m.value]) if (!Number.isFinite(v) || v < 0 || v > 100) throw new Error(`share for ${k} must be between 0 and 100`);
+    return `  <div class="share-row" style="--i:${i}">
+    <p class="share-row__name">${esc(name)}</p>
+    <div class="share-track"><span class="share-bar share-bar--cases" style="--w:${c.value}"></span><b>${statText(data.stats, `case_share_2025_${k}_pct`)} of cases</b></div>
+    <div class="share-track"><span class="share-bar share-bar--money" style="--w:${m.value}"></span><b>${statText(data.stats, `loss_share_2025_${k}_pct`)} of the money</b></div>
+  </div>`;
+  }).join('\n');
+  return `<div class="share-bars" role="group" aria-label="Share of cases and share of money lost in 2025, by type of fraud">\n${rows}\n</div>`;
+}
+
 function syncRegions(html, data, page, root = ROOT_DEFAULT) {
   return html.replace(/<!-- @gen:(\w+) -->[\s\S]*?<!-- @\/gen:\1 -->/g, (m, name) => {
     let body;
@@ -201,6 +217,8 @@ function syncRegions(html, data, page, root = ROOT_DEFAULT) {
     else if (name === 'fieldwork_numbers') body = renderFieldworkNumbers(data);
     else if (name === 'fieldwork_gallery') body = renderFieldworkGallery(data, root);
     else if (name === 'fieldwork_learned') body = renderLearned(data);
+    else if (name === 'share_bars') body = renderShareBars(data);
+    else if (name === 'csp_days') body = Campaign.renderDays(data.campaign);
     else if (name === 'csp_numbers') body = Campaign.renderNumbers(data.campaign);
     else if (name === 'csp_timeline') body = Campaign.renderTimeline(data.campaign);
     else if (name === 'csp_gaps') body = Campaign.renderGaps(data.campaign);
@@ -229,7 +247,7 @@ function run({ root = ROOT_DEFAULT, check = false, log = console.log } = {}) {
   return { ok: !(check && stale.length), stale, problems };
 }
 
-module.exports = { weekdayOf, clockText, longDate, renderFieldworkNumbers, renderFieldworkGallery, renderLearned, renderSources, renderStates, PAGES, loadData, checkDerived, syncPage, syncStats, syncRegions, renderCases, renderNav, renderFooter, seriesFor, statText, evalFormula, run };
+module.exports = { renderShareBars, weekdayOf, clockText, longDate, renderFieldworkNumbers, renderFieldworkGallery, renderLearned, renderSources, renderStates, PAGES, loadData, checkDerived, syncPage, syncStats, syncRegions, renderCases, renderNav, renderFooter, seriesFor, statText, evalFormula, run };
 
 if (require.main === module) {
   const r = run({ check: process.argv.includes('--check') });

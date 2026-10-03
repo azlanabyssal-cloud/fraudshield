@@ -13,12 +13,18 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm run lint
+      - name: Pages match the data files (nothing statistical typed by hand, no stale generated region)
+        run: npm run site:check
+      - name: Motion tokens match the spring solver
+        run: npm run motion:check
       - run: npm test
       - name: Syntax check browser scripts
         run: |
           node --check script.js
           node --check sw.js
           node --check lib/core.js
+          node --check lib/river.js
+          node --check lib/flow.js
 
   # The release gate exits 1 whenever there is no evidence, which is true until the S0 dataset exists.
   # It runs as its own job so that state is visible without hiding test results. To make it blocking,

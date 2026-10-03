@@ -139,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('heroScene')) return;   // the home page has its own, older choreography
     if (!('IntersectionObserver' in window)) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const picks = '.fraud-card, .cm-card, .chart-card, .evo-era, .section-head, .golden-rule, .victim-section, .form-card, .action-box, .accordion-item, .assistant-frame, .about-card, .about-person, .fw-photo, .about-section h2, .about-lead';
-    const els = Array.from(document.querySelectorAll(picks)).filter(el => !el.closest('.csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .csp-nums'));
+    const picks = '.fraud-card, .cm-card, .chart-card, .evo-era, .section-head, .golden-rule, .victim-section, .form-card, .action-box, .accordion-item, .assistant-frame, .about-card, .about-person, .fw-photo, .about-section h2, .about-lead, .share-card';
+    const els = Array.from(document.querySelectorAll(picks)).filter(el => !el.closest('.csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .csp-nums, .share-bars'));
     if (!els.length) return;
     const peers = new Map();
     els.forEach(el => { const k = el.parentElement; const n = peers.get(k) || 0; peers.set(k, n + 1); el.style.setProperty('--rv-d', Math.min(n, 5) * 70 + 'ms'); el.classList.add('rv'); });
@@ -154,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // About page: counts, the eight-week rail and the card reveals run once, when they scroll into view. Without
   // IntersectionObserver, or under Reduce Motion, everything is simply there.
   function initCampaign() {
-    const blocks = document.querySelectorAll('.csp-nums, .csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules');
+    const blocks = document.querySelectorAll('.csp-nums, .csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .share-bars');
     if (!blocks.length) return;
     const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!('IntersectionObserver' in window) || calm) return;
-    const Motion = window.FraudShieldMotion;
+    const Motion = window.FraudShieldMotion, River = window.FraudShieldRiver;
     const ease = Motion ? Motion.bezier.apply(null, Motion.CURVES.out) : t => t * (2 - t);
 
     function countUp(el) {
@@ -169,24 +169,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const countAll = root => root.querySelectorAll('[data-count]').forEach(countUp);
 
-    blocks.forEach(b => b.classList.add('is-armed'));
+    // The eight-week rail is one column of water that follows the scroll; it replaces the card-by-card reveal when it can run.
+    const rail = document.querySelector('.csp-weeks');
+    const railRiver = rail && River ? River.mount(rail, { items: Array.from(rail.children), Motion, win: window, litClass: 'is-on', drop: true, centre: it => it.querySelector('.csp-week__n').offsetHeight / 2 }) : null;
+
+    // The 48 days fill as the same water reaches them, and a readout names the day it is at.
+    const days = document.querySelector('.csp-river');
+    if (days && River) {
+      const ro = k => days.querySelector('[data-ro="' + k + '"]'), tickBox = days.querySelector('.csp-readout__day');
+      River.mount(days, { items: Array.from(days.querySelectorAll('.csp-day')), Motion, win: window, onLit: (count, total, last) => {
+        ro('day').textContent = String(count);
+        ro('date').textContent = last ? last.dataset.date : 'Scroll to start';
+        ro('tag').textContent = last ? last.dataset.tag : '';
+        ro('title').textContent = last ? last.dataset.title : '';
+        tickBox.classList.remove('tick'); void tickBox.offsetWidth; tickBox.classList.add('tick');
+      } });
+    }
+
+    blocks.forEach(b => { if (!(b === rail && railRiver)) b.classList.add('is-armed'); });
     const once = new IntersectionObserver(entries => entries.forEach(e => {
       if (!e.isIntersecting) return;
       once.unobserve(e.target); e.target.classList.add('is-in');
       if (e.target.classList.contains('csp-nums')) { countAll(e.target); emitMood({ reaction: 'numbers', hold: 3 }); }
     }), { threshold: 0.25 });
-    blocks.forEach(b => { if (!b.classList.contains('csp-weeks')) once.observe(b); });
+    blocks.forEach(b => { if (b !== rail) once.observe(b); });
 
-    const rail = document.querySelector('.csp-weeks');
-    if (rail) {
-      const items = Array.from(rail.children);
+    if (rail && !railRiver) {
       const lit = new IntersectionObserver(entries => entries.forEach(e => {
         if (!e.isIntersecting) return;
         lit.unobserve(e.target); e.target.classList.add('is-on');
         const reach = e.target.offsetTop + 30;
         rail.style.setProperty('--fill', String(Math.min(1, Math.max(parseFloat(rail.style.getPropertyValue('--fill')) || 0, reach / rail.offsetHeight))));
       }), { threshold: 0.4, rootMargin: '0px 0px -12% 0px' });
-      items.forEach(li => lit.observe(li));
+      Array.from(rail.children).forEach(li => lit.observe(li));
     }
     document.querySelectorAll('.csp-sdg__count [data-count]').forEach(el => {
       const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { o.disconnect(); countUp(el); } }, { threshold: 0.6 });
@@ -507,6 +522,18 @@ document.addEventListener('DOMContentLoaded', () => {
     Chart.defaults.color       = '#4A5568';
     Chart.defaults.borderColor = '#E2E8F0';
 
+    // A chart is drawn when it scrolls into view (or its tab opens), so its entrance is seen and not spent off-screen.
+    // Under Reduce Motion, or without IntersectionObserver, it is drawn at once and does not animate.
+    const calm = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (calm) Chart.defaults.animation = false;
+    else Chart.defaults.animation = { duration: 1400, easing: 'easeOutQuart', delay: ctx => (ctx.type === 'data' && ctx.mode === 'default' ? ctx.dataIndex * 90 : 0) };
+    const whenSeen = (id, make) => {
+      const canvas = document.getElementById(id);
+      if (calm || !('IntersectionObserver' in window)) { make(canvas); return; }
+      const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); make(canvas); } }, { threshold: 0.2 });
+      io.observe(canvas);
+    };
+
     const gridColor = '#E2E8F0';
     const tickColor = '#718096';
 
@@ -529,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exact = n => (window.FraudShieldFormat ? window.FraudShieldFormat.indian(n) : String(n));
 
     const cases = seriesOf('casesChart');
-    new Chart(document.getElementById('casesChart'), {
+    whenSeen('casesChart', canvas => new Chart(canvas, {
       type: 'bar',
       data: {
         labels: cases.labels,
@@ -550,10 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         scales: baseScales
       }
-    });
+    }));
 
     const shares = seriesOf('typeChart');
-    new Chart(document.getElementById('typeChart'), {
+    whenSeen('typeChart', canvas => new Chart(canvas, {
       type: 'doughnut',
       data: {
         labels: shares.labels,
@@ -573,10 +600,10 @@ document.addEventListener('DOMContentLoaded', () => {
           tooltip: { callbacks: { label: ctx => '  ' + ctx.label + ': ' + ctx.parsed + '% of the money' } }
         }
       }
-    });
+    }));
 
     const states = seriesOf('stateChart');
-    new Chart(document.getElementById('stateChart'), {
+    whenSeen('stateChart', canvas => new Chart(canvas, {
       type: 'bar',
       data: {
         labels: states.labels,
@@ -605,10 +632,10 @@ document.addEventListener('DOMContentLoaded', () => {
           y: { grid: { display: false }, ticks: { color: tickColor } }
         }
       }
-    });
+    }));
 
     const losses = seriesOf('moneyChart');
-    new Chart(document.getElementById('moneyChart'), {
+    whenSeen('moneyChart', canvas => new Chart(canvas, {
       type: 'line',
       data: {
         labels: losses.labels,
@@ -641,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       }
-    });
+    }));
   }
 
   // ═══════════════════════════════════════════════════════

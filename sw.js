@@ -3,7 +3,7 @@
 // Bump this on every deploy that touches script.js/HTML/CSS. It's the only
 // thing that forces old caches (and the stale code inside them) to be
 // thrown out on activate — see the note below for why that matters.
-const CACHE_NAME = 'fraudshield-v15';
+const CACHE_NAME = 'fraudshield-v16';
 
 const PRECACHE_URLS = [
   './',
@@ -22,6 +22,7 @@ const PRECACHE_URLS = [
   './lib/emotion.js',
   './lib/creatures.js',
   './lib/flow.js',
+  './lib/river.js',
   './lib/linkcheck.js',
   './lib/urlmodel.js',
   './data/urlmodel.json',
@@ -42,6 +43,17 @@ const PRECACHE_URLS = [
 // cache first since they never change without changing their filename/path.
 const CACHE_FIRST_PATTERN = /\/icons\//;
 
+// Photos are the heaviest thing on the site and almost never change, so they get their own cache: shown from it at once, refreshed
+// in the background (stale-while-revalidate), and capped so it can never grow without limit. It is separate from the code cache so a
+// code deploy does not throw away megabytes of pictures the visitor already has.
+const IMG_CACHE = 'fraudshield-img-v1';
+const IMG_LIMIT = 60;
+const IMAGE_PATTERN = /\.(?:webp|png|jpe?g|avif|gif)$/i;
+
+function trimImages(cache) {
+  return cache.keys().then(keys => Promise.all(keys.slice(0, Math.max(0, keys.length - IMG_LIMIT)).map(k => cache.delete(k))));
+}
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -53,7 +65,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME && k !== IMG_CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -68,6 +80,20 @@ self.addEventListener('fetch', event => {
   if (isSameOrigin && CACHE_FIRST_PATTERN.test(url.pathname)) {
     event.respondWith(
       caches.match(req).then(cached => cached || fetch(req))
+    );
+    return;
+  }
+
+  if (isSameOrigin && IMAGE_PATTERN.test(url.pathname)) {
+    event.respondWith(
+      caches.open(IMG_CACHE).then(cache => cache.match(req).then(hit => {
+        const refresh = fetch(req, { cache: 'no-cache' }).then(res => {
+          if (res && res.status === 200) cache.put(req, res.clone()).then(() => trimImages(cache));
+          return res;
+        });
+        if (hit) { refresh.catch(() => {}); if (event.waitUntil) event.waitUntil(refresh.catch(() => {})); return hit; }
+        return refresh;
+      }))
     );
     return;
   }

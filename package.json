@@ -16,6 +16,7 @@
     "motion:build": "node scripts/build_motion.js",
     "motion:check": "node scripts/build_motion.js --check",
     "lint": "eslint . --max-warnings 0",
+    "check": "npm run lint && npm run site:check && npm run motion:check && npm test",
     "field:analyze": "node field/analyze.js"
   },
   "devDependencies": {

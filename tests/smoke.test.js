@@ -44,7 +44,7 @@ test('the hero scene mounts: bubbles, an x-ray copy with red flags, a lens, and 
 });
 
 test('the data page hands each chart exactly the numbers in the data file', async () => {
-  const p = await loadPage('data.html');
+  const p = await loadPage('data.html', { setup: w => { w.IntersectionObserver = class { constructor(cb) { this.cb = cb; } observe(el) { Promise.resolve().then(() => this.cb([{ target: el, isIntersecting: true, boundingClientRect: { bottom: 1 } }])); } unobserve() {} disconnect() {} }; } });
   try {
     assert.deepEqual(p.errors, [], p.errors.join('\n'));
     const plain = x => JSON.parse(JSON.stringify(x));   // arrays made inside jsdom belong to another realm

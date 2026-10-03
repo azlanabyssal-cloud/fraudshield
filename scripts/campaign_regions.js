@@ -78,4 +78,31 @@ function renderSdg(c) {
   return `<p class="csp-sdg__count"><b data-count="${f.mapped}">${f.mapped}</b> of ${f.goals} UN Sustainable Development Goals, as mapped in the college's evidence form</p>\n<ul class="csp-sdgs" aria-label="UN Sustainable Development Goals; ${f.mapped} are mapped to this project">\n${tiles}\n</ul>`;
 }
 
-module.exports = { figures, renderNumbers, renderTimeline, renderGaps, renderRules, renderSdg, short, day };
+
+// Every logged day as a cell, one row per week. The page lights them as the water reaches them and reads out the day it is at.
+function renderDays(c) {
+  const f = figures(c);
+  let n = 0;
+  const rows = c.weeks.map(w => {
+    const start = day(w.from);
+    return Array.from({ length: w.days }, (_, k) => {
+      n++;
+      const t = new Date(start + k * DAY), date = `${t.getUTCDate()} ${MONTHS[t.getUTCMonth()]}`;
+      return `    <li class="csp-day" style="--w:${w.n - 1}" data-day="${n}" data-date="${date}" data-tag="${esc(w.tag)}" data-title="${esc(w.title)}"></li>`;
+    }).join('\n');
+  }).join('\n');
+  return `<div class="csp-river">
+  <ol class="csp-days" aria-hidden="true">\n${rows}\n  </ol>
+  <div class="csp-readout" aria-hidden="true">
+    <p class="csp-readout__k">Day</p>
+    <p class="csp-readout__day"><b data-ro="day">${f.days}</b><span> / ${f.days}</span></p>
+    <p class="csp-readout__date" data-ro="date">${short(c.end)}</p>
+    <p class="csp-readout__tag" data-ro="tag">${esc(c.weeks[c.weeks.length - 1].tag)}</p>
+    <p class="csp-readout__title" data-ro="title">${esc(c.weeks[c.weeks.length - 1].title)}</p>
+    <div class="csp-readout__bar"><i></i></div>
+  </div>
+  <p class="sr-only">${f.days} consecutive days, ${short(c.start)} to ${short(c.end)}, one cell for each day in the activity log.</p>
+</div>`;
+}
+
+module.exports = { renderDays, figures, renderNumbers, renderTimeline, renderGaps, renderRules, renderSdg, short, day };

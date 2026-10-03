@@ -43,9 +43,10 @@ test('the About page is faithful to the verified report: the people, the place, 
   assert.ok(/not percentages or head-counts/.test(text));
 });
 
-test('the two field photos name Shakira aunty and the Balaji Nagar house-to-house outreach, and carry a full-size link', () => {
+test('the home photo says why: house to house in Balaji Nagar, for women and senior citizens, and no private name is published', () => {
   const fw = sync.loadData().fieldwork, home = fw.photos.find(p => p.file.includes('home'));
-  assert.match(home.caption, /Shakira aunty/); assert.match(home.caption, /house to house/); assert.match(home.caption, /Balaji Nagar/); assert.match(home.alt, /Shakira aunty/);
+  assert.match(home.caption, /House to house in Balaji Nagar/); assert.match(home.caption, /women and senior citizens/); assert.match(home.alt, /a woman inside her home/);
+  for (const f of ['about.html', 'index.html', 'data/fieldwork.json']) assert.ok(!/aunty|shak/i.test(fs.readFileSync(path.join(ROOT, f), 'utf8')), f + ' names no private person');
   assert.equal((html.match(/<a class="fw-open" href="images\/field\/csp-(shop|home)\.webp" data-lightbox/g) || []).length, 2);
   for (const p of fw.photos) assert.ok(html.includes(`href="${p.file}" data-lightbox data-w="${p.width}" data-h="${p.height}"`));
 });
@@ -66,7 +67,7 @@ test('clicking a photo opens it full size with its caption; arrows move between 
     const ev = new w.MouseEvent('click', { bubbles: true, cancelable: true }); links[1].dispatchEvent(ev);
     assert.ok(ev.defaultPrevented, 'the link does not navigate away'); assert.equal(root.hidden, false);
     assert.equal(d.querySelector('.lb__img').getAttribute('src'), 'images/field/csp-home.webp');
-    assert.match(d.querySelector('.lb__cap').textContent, /Shakira aunty/); assert.match(d.querySelector('.lb__cap').textContent, /12:14 pm IST/);
+    assert.match(d.querySelector('.lb__cap').textContent, /women and senior citizens/); assert.match(d.querySelector('.lb__cap').textContent, /12:14 pm IST/);
     assert.equal(d.querySelector('.lb__count').textContent, '2 / 2'); assert.ok(d.documentElement.classList.contains('lb-lock'));
     assert.equal(d.querySelector('main').inert, true, 'the page behind is inert while the viewer is open');
     press(w, root, 'ArrowRight'); assert.equal(d.querySelector('.lb__count').textContent, '1 / 2'); assert.match(d.querySelector('.lb__img').src, /csp-shop/);
@@ -91,7 +92,7 @@ test('a modified click (open in a new tab) is left to the browser, and Tab stays
   } finally { p.close(); }
 });
 
-test('numbers count up from zero and land exactly on the data value; the rail lights week by week', async () => {
+test('numbers count up from zero and land exactly on the data value; the rail and the 48-day grid run on scroll-driven water', async () => {
   const p = await loadPage('about.html', { settle: 300, setup: stubObserver });
   try {
     const { window: w, document: d } = p, fire = (el, on = true) => w.__seen.filter(o => o.els.includes(el)).forEach(o => o.cb([{ target: el, isIntersecting: on }]));
@@ -100,8 +101,14 @@ test('numbers count up from zero and land exactly on the data value; the rail li
     fire(nums); assert.ok(nums.classList.contains('is-in'));
     await new Promise(r => setTimeout(r, 200)); assert.ok(+first.textContent < 8, 'mid-count it is below the target');
     await new Promise(r => setTimeout(r, 2200)); assert.deepEqual([...nums.querySelectorAll('b')].map(b => b.textContent), ['8', '48', '5', '4']);
-    const weeks = [...d.querySelectorAll('.csp-week')]; assert.equal(weeks.length, 8); weeks.forEach(li => assert.ok(!li.classList.contains('is-on')));
-    fire(weeks[0]); fire(weeks[1]); assert.ok(weeks[0].classList.contains('is-on') && weeks[1].classList.contains('is-on') && !weeks[2].classList.contains('is-on'));
+    const weeks = [...d.querySelectorAll('.csp-week')], rail = d.querySelector('.csp-weeks'); assert.equal(weeks.length, 8);
+    assert.ok(rail.classList.contains('river-armed') && !rail.classList.contains('is-armed'), 'the rail is driven by the water, not by card-by-card reveals');
+    assert.ok(rail.querySelector('.river-drop') && /px$/.test(rail.style.getPropertyValue('--head')), 'the droplet and the edge position exist');
+    const river = d.querySelector('.csp-river'), cells = [...river.querySelectorAll('.csp-day')];
+    assert.equal(cells.length, 48); assert.ok(river.classList.contains('river-armed'));
+    assert.equal(river.querySelector('[data-ro="day"]').textContent, '48', 'the page loaded with the water already at the end, so the readout is at the last day');
+    assert.equal(river.querySelector('[data-ro="date"]').textContent, '20 Jun'); assert.equal(river.querySelector('[data-ro="tag"]').textContent, 'Measure');
+    assert.equal(cells[0].dataset.date, '4 May'); assert.equal(cells[17].dataset.date, '21 May'); assert.equal(cells[17].dataset.tag, 'Name the scam');
     assert.deepEqual(p.errors, []);
   } finally { p.close(); }
 });
@@ -150,4 +157,33 @@ test('cards and headings arrive on scroll on the inner pages, and are simply the
       assert.deepEqual(p.errors, []);
     } finally { p.close(); }
   }
+});
+
+test('the 48-day grid is computed from the weeks: right count, right dates, right week for each day, and it breaks if the weeks do', () => {
+  const c = data(), html2 = camp.renderDays(c), cells = [...html2.matchAll(/<li class="csp-day" style="--w:(\d)" data-day="(\d+)" data-date="([^"]+)" data-tag="([^"]+)"/g)];
+  assert.equal(cells.length, 48);
+  const at = n => cells[n - 1].slice(1, 5);
+  assert.deepEqual(at(1), ['0', '1', '4 May', 'Plan']); assert.deepEqual(at(7), ['1', '7', '10 May', 'Listen']); assert.deepEqual(at(31), ['5', '31', '3 Jun', 'Respond']); assert.deepEqual(at(48), ['7', '48', '20 Jun', 'Measure']);
+  const bad = data(); bad.weeks[0].days = 5; assert.throws(() => camp.renderDays(bad), /is 6 days, not 5/);
+  assert.ok(/48 consecutive days, 4 May to 20 Jun/.test(html2));
+});
+
+test('the cases-against-money bars are drawn from the same stats as the words, and refuse a share outside 0 to 100', () => {
+  const d = sync.loadData(), out = sync.renderShareBars(d);
+  assert.equal((out.match(/class="share-row"/g) || []).length, 3);
+  for (const [k, name] of [['investment', 'Investment fraud'], ['digital_arrest', 'Digital arrest'], ['sextortion', 'Sextortion']]) {
+    assert.ok(out.includes(`--w:${d.stats[`case_share_2025_${k}_pct`].value}`) && out.includes(`--w:${d.stats[`loss_share_2025_${k}_pct`].value}`), name);
+  }
+  assert.match(out, /35% of cases/); assert.match(out, /76% of the money/);
+  const bad = clone(d); bad.stats.case_share_2025_investment_pct.value = 135; assert.throws(() => sync.renderShareBars(bad), /between 0 and 100/);
+  delete bad.stats.loss_share_2025_sextortion_pct; bad.stats.case_share_2025_investment_pct.value = 35; assert.throws(() => sync.renderShareBars(bad), /need case_share/);
+});
+
+test('the data page opens on four counted headline numbers whose targets come from the data file', async () => {
+  const d = sync.loadData(), p = await loadPage('data.html', { settle: 300, setup: stubObserver });
+  try {
+    const nums = [...p.document.querySelectorAll('#stat-counters .counter-number')];
+    assert.deepEqual(nums.map(n => +n.dataset.target), ['ncrp_cases_2025', 'loss_2025_cr', 'ncrb_cases_2024', 'cfcfrms_saved_cr'].map(k => d.stats[k].value));
+    assert.ok(p.document.querySelector('.share-bars')); assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
 });
