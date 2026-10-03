@@ -1263,6 +1263,7 @@ footer { background: var(--space); color: #94a3b8; }
 .cb-mic{background:var(--off-white);color:var(--navy)}
 .cb-mic.cb-mic--live{background:var(--maroon-mid);color:#fff;animation:cb-mic-pulse 1s ease-in-out infinite}
 .cb-attach{background:var(--off-white);color:var(--navy)}
+.cb-lang{font:700 .7rem 'DM Sans',sans-serif;letter-spacing:.02em}
 .cb-attach:hover{background:var(--border-light)}
 .cb-send{background:var(--orange);color:#fff}
 .cb-send:hover{transform:scale(1.08)}

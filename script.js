@@ -913,14 +913,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const {
     isGeneralMoneyLoss, checkLink, findLinkIn, detectIntent,
-    extractIntroducedName, matchSmallTalk
+    extractIntroducedName, matchSmallTalk, speechProvider
   } = window.FraudShieldCore;
   const { analyzeMessage } = window.FraudShieldMessage;
 
-  // V1 privacy mandate: speech *recognition* in Chrome streams the user's audio to
-  // Google, which contradicts "nothing you share leaves your device". It stays
-  // off until it can ship with an explicit consent step (planned V1.5).
-  const FEATURES = { voiceInput: false };
+  // Voice input. A browser's speech recognition normally sends the audio to its maker (Google for Chrome, Microsoft for Edge, Apple
+  // for Safari), which would break "nothing you share leaves your device". So the microphone works in one of two honest ways:
+  // on this device, when the browser offers local recognition (nothing leaves, no question asked), or after an explicit one-time choice
+  // that names who receives the audio. FraudShield itself never receives it either way.
+  const VOICE_CONSENT_KEY = 'fs_voice_consent_v1';
 
   // ── Shared session state (sessionStorage — survives navigating between pages
   //    AND switching between the floating widget and the full assistant page) ──
@@ -929,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = sessionStorage.getItem('fs_cb_state');
       if (raw) return JSON.parse(raw);
     } catch (e) { /* ignore corrupt state */ }
-    return { flow: null, node: null, awaitingLink: false, voiceOut: false, userName: null, log: [] };
+    return { flow: null, node: null, awaitingLink: false, voiceOut: false, voiceLang: 'en-IN', userName: null, log: [] };
   }
   function saveChatState(state) {
     try { sessionStorage.setItem('fs_cb_state', JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
@@ -1280,10 +1281,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Voice input (live mic — real speech-to-text via the browser) ──
+    // ── Voice input: on this device when the browser can, otherwise only after an explicit choice ──
     const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
-    let micBlocked = false;
+    let voiceModeInUse = null;      // 'device' or 'cloud', set when the person starts the microphone
+    let skipDevice = false;         // the browser said it has no on-device model for this language
+    let consentThisVisit = false;
     // Set right before a voice-submitted message is handled; consumed the
     // moment the bot's reply finishes rendering (see addChips below) to
     // re-open the mic automatically — a real back-and-forth conversation
@@ -1292,11 +1295,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // trigger itself (no feedback loop).
     let voiceTurnPending = false;
 
+    const voiceLang = () => (state.voiceLang === 'hi-IN' ? 'hi-IN' : 'en-IN');
+    const readConsent = () => { try { return localStorage.getItem(VOICE_CONSENT_KEY) === 'cloud'; } catch (e) { return false; } };
+    const saveConsent = () => { consentThisVisit = true; try { localStorage.setItem(VOICE_CONSENT_KEY, 'cloud'); } catch (e) { /* the choice then lasts for this visit only */ } };
+    const listeningLabel = () => (voiceModeInUse === 'device' ? 'Listening… (on this device)' : 'Listening… (audio goes to ' + speechProvider(navigator.userAgent) + ')');
+
+    // 'device' when the browser can recognise speech locally (nothing leaves), 'cloud' once the person has agreed, otherwise 'ask'.
+    async function voiceMode() {
+      if (!skipDevice && typeof SRClass.available === 'function') {
+        try { if ((await SRClass.available({ langs: [voiceLang()], processLocally: true })) === 'available') return 'device'; } catch (e) { /* not offered here: fall through */ }
+      }
+      return consentThisVisit || readConsent() ? 'cloud' : 'ask';
+    }
+
     function ensureRecognition() {
       if (recognition || !SRClass) return recognition;
       const micPlaceholder = dom.inputEl.placeholder;
       recognition = new SRClass();
-      recognition.lang = 'en-IN';
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
       recognition.onresult = e => {
@@ -1315,20 +1330,23 @@ document.addEventListener('DOMContentLoaded', () => {
           handleUserInput(finalTranscript);
         }
       };
-      recognition.onstart = () => { dom.inputEl.placeholder = 'Listening…'; };
+      recognition.onstart = () => { dom.inputEl.placeholder = listeningLabel(); };
       recognition.onend = () => {
-        dom.micBtn.classList.remove('cb-mic--live');
+        dom.micBtn.classList.remove('cb-mic--live'); dom.micBtn.setAttribute('aria-pressed', 'false');
         dom.inputEl.placeholder = micPlaceholder;
       };
       recognition.onerror = e => {
-        dom.micBtn.classList.remove('cb-mic--live');
+        dom.micBtn.classList.remove('cb-mic--live'); dom.micBtn.setAttribute('aria-pressed', 'false');
         dom.inputEl.placeholder = micPlaceholder;
-        // Every branch here ends in a message — a voice feature that fails
-        // with zero explanation is indistinguishable from "broken", which
-        // is exactly what was happening for error codes this didn't cover.
-        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-          micBlocked = true;
-          botSay(['Microphone access was blocked — check the 🔒 icon next to the address bar, allow microphone for this site, then try again. You can still type any time.']);
+        // Every branch ends in a message and none latches: a denied permission can be fixed in the browser, so the next tap must be
+        // allowed to try again. (Before, one denial switched the microphone off until the page was reloaded.)
+        if (e.error === 'not-allowed') {
+          botSay(['The microphone is blocked. Click the 🔒 (or site settings) next to the address bar and allow the microphone for this site. On a Mac also open System Settings → Privacy & Security → Microphone and tick your browser. Then tap 🎤 again, or just type.']);
+        } else if (e.error === 'service-not-allowed') {
+          botSay(["Voice recognition is switched off for this browser. On a Mac using Safari, turn on Dictation in System Settings → Keyboard → Dictation, then tap 🎤 again. You can still type any time."]);
+        } else if (e.error === 'language-not-supported') {
+          skipDevice = true;
+          botSay(["That language isn't available for on-device voice in this browser. Tap 🎤 again to use your browser's speech service instead (I'll ask first), or type."]);
         } else if (e.error === 'no-speech') {
           botSay(["I didn't catch that — try again, or type your message."]);
         } else if (e.error === 'audio-capture') {
@@ -1344,12 +1362,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return recognition;
     }
 
-    function startListening() {
+    function startListening(mode) {
       const rec = ensureRecognition();
-      if (!rec || micBlocked) return;
+      if (!rec) return;
+      if (mode) voiceModeInUse = mode;
+      if (!voiceModeInUse) return;                    // never open the microphone before a mode, and so a consent, exists
+      rec.lang = voiceLang();
+      if ('processLocally' in rec) rec.processLocally = voiceModeInUse === 'device';
       try {
         rec.start();
-        dom.micBtn.classList.add('cb-mic--live');
+        dom.micBtn.classList.add('cb-mic--live'); dom.micBtn.setAttribute('aria-pressed', 'true');
       } catch (e) {
         // InvalidStateError just means it's already running — safe to ignore.
         // Anything else was failing completely silently before this fix.
@@ -1359,20 +1381,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (dom.micBtn && !FEATURES.voiceInput) {
-      dom.micBtn.hidden = true;
-    } else if (dom.micBtn) {
-      dom.micBtn.addEventListener('click', () => {
+    function askVoiceConsent() {
+      const who = speechProvider(navigator.userAgent);
+      botSay(['🎤 Voice needs one decision from you. To turn speech into text, this browser sends your audio to ' + who + ". FraudShield never receives it, and nothing else on this site uses your microphone. If you'd rather not, type instead: everything else here stays on your device."], {
+        noMenuChip: true,
+        options: [
+          { label: '🎤 Allow voice (audio goes to ' + who + ')', action: () => { saveConsent(); startListening('cloud'); } },
+          { label: '⌨️ No, I will type', action: () => botSay(['Understood. Nothing was recorded.'], { noMenuChip: true }) }
+        ]
+      });
+    }
+
+    if (dom.micBtn) {
+      dom.micBtn.setAttribute('aria-pressed', 'false');
+      dom.micBtn.addEventListener('click', async () => {
         if (!SRClass) {
           // Never fail silently — a hidden/dead button with no explanation
           // looks exactly like "voice doesn't work" when it's really just
           // unsupported here. Say so plainly instead.
-          botSay(["Voice input isn't supported in this browser — it needs Chrome, Edge, or Safari on iOS 14.5+. You can still type, or paste a screenshot."]);
+          botSay(["Voice input isn't supported in this browser — it needs Chrome, Edge, or Safari. You can still type, or paste a screenshot."]);
           return;
         }
-        ensureRecognition();
-        if (dom.micBtn.classList.contains('cb-mic--live')) { recognition.stop(); return; }
-        startListening();
+        if (dom.micBtn.classList.contains('cb-mic--live') && recognition) { recognition.stop(); return; }
+        const mode = await voiceMode();
+        if (mode === 'ask') { askVoiceConsent(); return; }
+        startListening(mode);
+      });
+    }
+    if (dom.langBtn) {
+      const paint = () => {
+        const hindi = voiceLang() === 'hi-IN';
+        dom.langBtn.textContent = hindi ? 'हिं' : 'EN';
+        dom.langBtn.setAttribute('aria-label', 'Voice language: ' + (hindi ? 'Hindi' : 'English') + '. Tap to switch to ' + (hindi ? 'English' : 'Hindi'));
+        dom.langBtn.title = dom.langBtn.getAttribute('aria-label');
+      };
+      paint();
+      dom.langBtn.addEventListener('click', () => {
+        state.voiceLang = voiceLang() === 'hi-IN' ? 'en-IN' : 'hi-IN'; persist(); skipDevice = false; paint();
+        if (recognition && dom.micBtn.classList.contains('cb-mic--live')) recognition.stop();
       });
     }
 
@@ -1475,7 +1521,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
           <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
           <input id="cbFile" type="file" accept="image/*" hidden>
-          <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
+          <button id="cbLang" class="cb-attach cb-lang" type="button">EN</button>
+        <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
           <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>
         </div>
       </div>
@@ -1495,6 +1542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       messagesEl: document.getElementById('cbMessages'),
       inputEl: document.getElementById('cbInput'),
       micBtn: document.getElementById('cbMic'),
+      langBtn: document.getElementById('cbLang'),
       sendBtn: document.getElementById('cbSend'),
       voiceToggleBtn: document.getElementById('cbVoiceToggle'),
       attachBtn: document.getElementById('cbAttach'),
@@ -1550,6 +1598,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
         <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
         <input id="cbFile" type="file" accept="image/*" hidden>
+        <button id="cbLang" class="cb-attach cb-lang" type="button">EN</button>
         <button id="cbMic" class="cb-mic" type="button" aria-label="Speak your message" title="Speak">🎤</button>
         <button id="cbSend" class="cb-send" type="button" aria-label="Send message">➤</button>
       </div>
@@ -1560,6 +1609,7 @@ document.addEventListener('DOMContentLoaded', () => {
       messagesEl: document.getElementById('cbMessages'),
       inputEl: document.getElementById('cbInput'),
       micBtn: document.getElementById('cbMic'),
+      langBtn: document.getElementById('cbLang'),
       sendBtn: document.getElementById('cbSend'),
       voiceToggleBtn: document.getElementById('cbVoiceToggle'),
       attachBtn: document.getElementById('cbAttach'),

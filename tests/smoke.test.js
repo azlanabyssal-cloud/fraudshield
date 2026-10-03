@@ -250,3 +250,103 @@ test('a screenshot of a scam text is read by OCR and then analysed as a message'
     assert.match(transcript(p.document), /Here's what I read from the image/); assert.match(transcript(p.document), /What gave it away/);
   } finally { p.close(); }
 });
+
+/* ---------- the microphone: honest about where audio goes, and it works ---------- */
+const CHROME_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
+const SAFARI_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+const withSpeech = (opts = {}) => w => {
+  Object.defineProperty(w.navigator, 'userAgent', { value: opts.ua || CHROME_UA, configurable: true });
+  if (opts.none) return;
+  // a browser that offers on-device recognition also defines processLocally on its recognizer
+  class FakeSR { constructor() { FakeSR.last = this; this.started = 0; if (opts.available) this.processLocally = false; } start() { this.started++; if (opts.startError) { const e = new Error('x'); e.name = opts.startError; throw e; } if (this.onstart) this.onstart(); } stop() { if (this.onend) this.onend(); } }
+  if (opts.available) FakeSR.available = opts.available;
+  w.webkitSpeechRecognition = FakeSR; w.__FakeSR = FakeSR;
+};
+const tapMic = async p => { p.document.getElementById('cbMic').click(); await new Promise(r => setTimeout(r, 120)); };
+const chipNamed = (p, re) => [...p.document.querySelectorAll('#cbMessages button')].find(b => re.test(b.textContent));
+const speak = (rec, text, final = true) => rec.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: text }], { isFinal: final })] });
+
+test('the microphone is present, and it never opens before the person has decided where their audio may go', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech() });
+  try {
+    const mic = p.document.getElementById('cbMic'); assert.equal(mic.hidden, false, 'the microphone button is visible');
+    await tapMic(p); await until(() => /Voice needs one decision/.test(transcript(p.document)));
+    assert.match(transcript(p.document), /sends your audio to Google/); assert.match(transcript(p.document), /FraudShield never receives it/);
+    assert.equal((p.window.__FakeSR.last || { started: 0 }).started, 0, 'no audio before consent');
+    assert.ok(chipNamed(p, /Allow voice \(audio goes to Google\)/) && chipNamed(p, /No, I will type/));
+  } finally { p.close(); }
+});
+
+test('saying yes starts the microphone in English, discloses where the audio goes while listening, and is remembered', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech() });
+  try {
+    await tapMic(p); await until(() => chipNamed(p, /Allow voice/)); chipNamed(p, /Allow voice/).click();
+    const rec = p.window.__FakeSR.last; assert.equal(rec.started, 1); assert.equal(rec.lang, 'en-IN');
+    assert.match(p.document.getElementById('cbInput').placeholder, /Listening… \(audio goes to Google\)/);
+    assert.equal(p.window.localStorage.getItem('fs_voice_consent_v1'), 'cloud');
+    rec.stop(); await tapMic(p); assert.equal(rec.started, 2, 'the second time it does not ask again');
+  } finally { p.close(); }
+});
+
+test('saying no records nothing and leaves the microphone shut', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech() });
+  try {
+    await tapMic(p); await until(() => chipNamed(p, /No, I will type/)); chipNamed(p, /No, I will type/).click();
+    await until(() => /Nothing was recorded/.test(transcript(p.document)));
+    assert.equal(p.window.__FakeSR.last ? p.window.__FakeSR.last.started : 0, 0); assert.equal(p.window.localStorage.getItem('fs_voice_consent_v1'), null);
+  } finally { p.close(); }
+});
+
+test('where the browser can recognise speech on the device, nothing leaves and no question is asked', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech({ available: async () => 'available' }) });
+  try {
+    await tapMic(p); const rec = p.window.__FakeSR.last;
+    assert.equal(rec.started, 1); assert.equal(rec.processLocally, true); assert.doesNotMatch(transcript(p.document), /Voice needs one decision/);
+    assert.match(p.document.getElementById('cbInput').placeholder, /Listening… \(on this device\)/);
+  } finally { p.close(); }
+});
+
+test('what is said is captioned live, then answered like typed text', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech({ available: async () => 'available' }) });
+  try {
+    await tapMic(p); const rec = p.window.__FakeSR.last;
+    speak(rec, 'someone asked for my', false); assert.equal(p.document.getElementById('cbInput').value, 'someone asked for my');
+    speak(rec, 'please share your OTP now'); await until(() => /What gave it away/.test(transcript(p.document)), 9000);
+    assert.match(transcript(p.document), /please share your OTP now/); assert.match(transcript(p.document), /OTP/);
+  } finally { p.close(); }
+});
+
+test('a blocked microphone gets instructions that fit a Mac, and the next tap may try again (nothing latches)', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech({ available: async () => 'available', ua: SAFARI_UA }) });
+  try {
+    await tapMic(p); const rec = p.window.__FakeSR.last; rec.onerror({ error: 'not-allowed' });
+    await until(() => /System Settings/.test(transcript(p.document))); assert.match(transcript(p.document), /Privacy & Security → Microphone/);
+    await tapMic(p); assert.equal(rec.started, 2, 'after fixing the permission, tapping again tries again');
+    rec.onerror({ error: 'service-not-allowed' }); await until(() => /Dictation/.test(transcript(p.document))); assert.match(transcript(p.document), /Keyboard → Dictation/);
+  } finally { p.close(); }
+});
+
+test('Safari names Apple, and a browser without speech recognition says so instead of doing nothing', async () => {
+  const s = await loadPage('assistant.html', { setup: withSpeech({ ua: SAFARI_UA }) });
+  try { await tapMic(s); await until(() => /Voice needs one decision/.test(transcript(s.document))); assert.match(transcript(s.document), /sends your audio to Apple/); } finally { s.close(); }
+  const n = await loadPage('assistant.html', { setup: withSpeech({ none: true }) });
+  try { await tapMic(n); await until(() => /isn't supported in this browser/.test(transcript(n.document))); assert.match(transcript(n.document), /Chrome, Edge, or Safari/); } finally { n.close(); }
+});
+
+test('the Hindi switch changes the language the microphone listens in', async () => {
+  const p = await loadPage('assistant.html', { setup: withSpeech({ available: async () => 'available' }) });
+  try {
+    const lang = p.document.getElementById('cbLang'); assert.equal(lang.textContent, 'EN'); lang.click(); assert.equal(lang.textContent, 'हिं'); assert.match(lang.getAttribute('aria-label'), /Hindi.*switch to English/);
+    await tapMic(p); assert.equal(p.window.__FakeSR.last.lang, 'hi-IN');
+  } finally { p.close(); }
+});
+
+test('with "reduce motion" on, the hero lens drops its drift but still follows the pointer exactly', async () => {
+  const p = await loadPage('index.html', { settle: 600, setup: w => { w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} }); } });
+  try {
+    const scene = p.document.getElementById('heroScene'); assert.ok(scene.classList.contains('hs--still'));
+    const before = scene.style.getPropertyValue('--lx');
+    scene.parentElement.dispatchEvent(new p.window.MouseEvent('pointermove', { clientX: 420, clientY: 260, bubbles: true }));
+    assert.equal(scene.style.getPropertyValue('--lx'), '420.0px'); assert.equal(scene.style.getPropertyValue('--ly'), '260.0px'); assert.notEqual(before, '420.0px');
+  } finally { p.close(); }
+});

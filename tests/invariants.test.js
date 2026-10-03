@@ -28,8 +28,14 @@ test('script.js never fetches code or models from a CDN (OCR is bundled locally)
   assert.doesNotMatch(read('script.js'), /https?:\/\/[^'"\s]*(cdn|jsdelivr|unpkg|cdnjs)[^'"\s]*/i);
 });
 
-test('speech recognition stays off in V1 (it streams audio to a third party)', () => {
-  assert.match(read('script.js'), /voiceInput:\s*false/);
+test('speech recognition cannot open the microphone without either on-device recognition or a recorded, informed choice', () => {
+  const src = read('script.js');
+  assert.doesNotMatch(src, /voiceInput:\s*(true|false)/, 'no hidden feature flag: the button is always visible and always explains itself');
+  assert.match(src, /processLocally: true/, 'on-device recognition is preferred where the browser offers it');
+  assert.match(src, /if \(!voiceModeInUse\) return;/, 'startListening refuses to run before a mode, and so a consent, exists');
+  assert.match(src, /askVoiceConsent/); assert.match(src, /FraudShield never receives it/);
+  assert.match(src, /audio goes to ' \+ speechProvider/, 'the consent button and the listening label both name who receives the audio');
+  assert.doesNotMatch(src, /micBlocked/, 'a denied permission must never latch the microphone off for the visit');
 });
 
 test('every page loads lib/core.js before script.js', () => {

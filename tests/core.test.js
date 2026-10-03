@@ -95,3 +95,16 @@ test('no browser file uses regex lookbehind (a SyntaxError on Safari before 16.4
     assert.doesNotMatch(code, /\(\?<[!=]/, f + ' uses regex lookbehind');
   }
 });
+
+test('speechProvider names whose servers hear the audio, checking Edge and Chrome before Safari because their agents contain both', () => {
+  const ua = {
+    edge: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0',
+    chrome: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+    safari: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
+    ios: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+    chromeIos: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/139.0 Mobile/15E148 Safari/604.1'
+  };
+  assert.equal(core.speechProvider(ua.edge), 'Microsoft'); assert.equal(core.speechProvider(ua.chrome), 'Google'); assert.equal(core.speechProvider(ua.safari), 'Apple');
+  assert.equal(core.speechProvider(ua.ios), 'Apple'); assert.equal(core.speechProvider(ua.chromeIos), 'Google');
+  for (const odd of ['', null, undefined, 'curl/8.0', 'Mozilla/5.0 Gecko/20100101 Firefox/130.0']) assert.equal(core.speechProvider(odd), "your browser's speech service");
+});

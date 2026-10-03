@@ -41,13 +41,13 @@ function installStubs(window, record) {
   window.Chart.defaults = { font: {}, color: '', borderColor: '' };
 }
 
-async function loadPage(page, { settle = 400 } = {}) {
+async function loadPage(page, { settle = 400, setup } = {}) {
   const errors = [], record = { charts: [], observers: [] }, vc = new VirtualConsole();
   vc.on('jsdomError', e => errors.push(String(e.stack || e.message || e)));
   vc.on('error', (...a) => errors.push('console.error: ' + a.join(' ')));
   const dom = new JSDOM(fs.readFileSync(path.join(ROOT, page), 'utf8'), {
     url: `${ORIGIN}/${page}`, runScripts: 'dangerously', resources: { interceptors: [offline] }, pretendToBeVisual: true,
-    virtualConsole: vc, beforeParse: w => installStubs(w, record)
+    virtualConsole: vc, beforeParse: w => { installStubs(w, record); if (setup) setup(w); }
   });
   await new Promise(res => (dom.window.document.readyState === 'complete' ? res() : dom.window.addEventListener('load', res)));
   await new Promise(res => setTimeout(res, settle));
