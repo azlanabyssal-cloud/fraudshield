@@ -88,3 +88,31 @@ catches 0.7% (only 39.2% of those messages contain a link at all; ADR-0012), the
 classes differ in style, so treat the model's 100% as weak evidence. Hard negatives (long genuine bank alerts) are the
 missing piece, and only real S0 data will contain them.
 
+
+## Lineage and reproducibility (the shipped domain-name model)
+```bash
+npm run model:lineage:check   # fast; runs in CI and in `npm run check`: exit 1 if anything no longer matches the record
+npm run model:reproduce       # retrains from the pinned public data, exit 1 unless the model file is byte-for-byte the shipped one
+git checkout <commit> && npm run model:reproduce   # restores and proves a model from any past commit
+```
+`mlops/lineage.json` ties one model file to everything it came from: its SHA-256 and size, the pinned digests of both datasets, the trainer's
+files, a fingerprint of the feature code, the hyper-parameters, the one-shot test result, and a reproduction proof (date, hash, seconds). The check
+fails, naming the broken link, when: the model file is not the recorded one; the evaluation scored a different file; the trainer changed since
+the record; the feature code computes different numbers from the ones the weights were trained on (train/serve skew, which crashes nothing and
+silently degrades every verdict); a weight is no longer an int8; or the reproduction proof is for a different model. Each of those is broken on
+purpose in `tests/lineage.test.js`; one test failure found a real gap on the first run (a new keyword the probe names did not contain slipped past a
+behaviour-only fingerprint), so the keyword and brand lists are hashed too.
+
+Measured: retraining from the pinned data takes 16 s and gives the shipped file exactly (SHA-256 `bf96eb26eca8…`), including after unrelated edits to
+`lib/urlmodel.js`. A rollback is a revert of `data/urlmodel.json` and `mlops/lineage.json`; the site is static, so redeploying is the rollout.
+`.github/workflows/reproduce.yml` repeats the retraining on demand and monthly on a clean machine.
+
+### What is deliberately not here
+- **A blocking gate in CI today.** The SPEC section 5 gate (adjusted precision at least 0.90, exact McNemar against the baseline, Wilson intervals, latency, leakage)
+  is built and tested, and exits 1 on `FAIL` and on `NO_EVIDENCE`. With no real message set it can only say `NO_EVIDENCE`, so a blocking job would stop every deploy,
+  including a typo fix, while measuring nothing. It runs as its own visible job and becomes blocking by deleting one line once the S0 set exists.
+- **DVC.** The training data is two public corpora, pinned by SHA-256 in `mlops/urlmodel/data.js`, downloaded and verified on demand, never committed. That is the same content-addressing a
+  data-versioning tool provides, without a remote to run, and `model:reproduce` proves it works. DVC earns its place for the private S0 messages, which cannot live in git: use a private remote then.
+- **ONNX and a runtime.** The model is a 127 KB linear model whose 14,602 weights are all int8 (4x smaller than float32). A WebAssembly runtime would be tens of times larger than the model it runs
+  (ADR-0010). A model that needs one is a different decision, made when the S0 data shows a simple model is not enough.
+- **Telemetry from the browser.** See ADR-0018.

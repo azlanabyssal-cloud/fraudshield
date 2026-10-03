@@ -200,3 +200,18 @@ within 2.8 megapixels and 2,600 px on the long side. One picture at a time; file
 Why not "1080 px on the long side": a phone screenshot is 1080 x 2400, and cutting its long side to 1080 would halve the height of the text the reader must recognise. A pixel
 budget leaves a screenshot untouched (2.59 MP) and still cuts a 12 MP photo to a quarter. Measured: a 4000 x 3000 photo of an SMS became 1932 x 1449 in 46 ms and was read
 perfectly in 276 ms, under the policy above.
+
+## ADR-0018: Provenance and reproducibility yes; telemetry from the browser no
+Context: an MLOps review said the project is "a web app, not a pipeline" and asked for four things: an automated kill gate, versioned data and model artifacts with rollback, INT8/ONNX
+edge optimisation, and a silent telemetry ping of prediction scores to compute PSI in production.
+What already existed and was not visible enough: the gate (exit 1 on adjusted precision below 0.90, flags-nothing, latency, leakage, exact McNemar regression against the baseline; Wilson
+intervals; prevalence-adjusted precision), PSI on the dataset's category mix, int8 weights. What was missing: nothing tied a model file to its data, code and features, and nothing proved that
+it can be rebuilt. Built: mlops/lineage.js (record, check, reproduce), a CI check on every push, a monthly clean-machine reproduction, and a feature fingerprint that catches train/serve skew.
+Measured: the shipped model is reproduced bit for bit in 16 s.
+Refused: telemetry. (1) The product promises that nothing leaves the device, and the Content-Security-Policy (ADR-0015) now makes the browser enforce `connect-src 'self'`; a ping would
+break the promise and need that line weakened. (2) A score sent with a time and an address to a server is not anonymous, and a hint-grade score carries little information to justify the
+exposure under the DPDP Act. (3) It would not work at this scale: PSI needs hundreds of observations per bin, and a student project's traffic is dozens. (4) The drift that matters, scammers
+changing wording, shows in labelled messages, not in a score histogram.
+Instead: model age is a failing test (400 days), the feature fingerprint guards skew, PSI over the S0 messages by date is in the evaluation report, and drift is observed where it is honest: from
+volunteers who donate messages through data_ops, with labels. If aggregated monitoring is ever wanted it must be opt-in, histogram counts only, sent by an explicit tap, to a service with a published
+retention rule, with the policy change and the About-page wording shipped in the same commit.

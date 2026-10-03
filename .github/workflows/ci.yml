@@ -17,6 +17,8 @@ jobs:
         run: npm run site:check
       - name: Motion tokens match the spring solver
         run: npm run motion:check
+      - name: Model lineage (the shipped model, its data digests, trainer and feature code match the record)
+        run: npm run model:lineage:check
       - run: npm test
       - name: Syntax check browser scripts
         run: |

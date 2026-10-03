@@ -1,0 +1,23 @@
+name: Reproduce the model
+# Retrains the domain-name model from the pinned public data and fails unless the result is byte-for-byte the shipped file.
+# It downloads about 80 MB of public datasets (hash-checked against the digests in mlops/urlmodel/data.js), so it runs on demand and monthly,
+# not on every push. The fast guard that runs on every push is `npm run model:lineage:check`.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 1 * *'
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Retrain from pinned data and compare the model hash
+        run: node mlops/lineage.js --reproduce
+      - name: The record must not have changed (a different date is fine, a different hash is not)
+        run: |
+          git diff --quiet -- mlops/lineage.json || git diff --stat -- mlops/lineage.json
+          node mlops/lineage.js --check

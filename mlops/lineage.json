@@ -1,0 +1,130 @@
+{
+  "_readme": "Written by mlops/lineage.js. Everything here is recomputed and compared by `npm run model:lineage:check` (tests and CI run it). Do not edit by hand.",
+  "schema": 1,
+  "model": {
+    "file": "data/urlmodel.json",
+    "sha256": "bf96eb26eca8efbbf9cc421a203622937602a9b729546c4c3ed0f752b7d4a49a",
+    "bytes": 126705,
+    "version": 1,
+    "trained": "2026-10-03",
+    "quantisation": {
+      "type": "int8",
+      "weights": 14602,
+      "min": -80,
+      "max": 103,
+      "scale": 20,
+      "note": "every stored weight is an integer in [-128, 127]; the browser divides by the scale"
+    },
+    "format": "JSON, evaluated in plain JavaScript (ADR-0010: no ONNX runtime for a 127 KB linear model)"
+  },
+  "features": {
+    "fingerprint": "14a63e6bbdf67d4fcfe88fbee95ce41a891216304624ad64409f5410f0918a6c",
+    "probes": 35,
+    "inScope": 32,
+    "hashBits": 14,
+    "ngram": [
+      1,
+      5
+    ],
+    "engineered": 15,
+    "keywords": 32,
+    "brands": 25
+  },
+  "trainer": {
+    "mlops/urlmodel/train.js": "1d0502b374cda3eaadc6af4418b046b616f9e850661dc5ec29161e9f8b262737",
+    "mlops/urlmodel/data.js": "fc3dbeb3b601856a5a7c23d4816dbea4c1df7cb27fa617751876fee595a75ae2",
+    "mlops/metrics.js": "9952721e0a735785374b4b49d499a1dde7bb0586e6626f12a7b16b808e6056ab"
+  },
+  "data": {
+    "sources": {
+      "phiusiil": {
+        "url": "https://archive.ics.uci.edu/static/public/967/phiusiil+phishing+url+dataset.zip",
+        "zipSha256": "0a639fd03aea6308c5b1c10c92aa23c2ce1505447a9137271865cd0badc9a59a",
+        "csvSha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+        "licence": "CC BY 4.0"
+      },
+      "tranco": {
+        "listId": "94GG2",
+        "csvSha256": "c5a05417a5a7a816e55b4527e29fa95bce35e31b79664aacaa1c5a632d44167b"
+      }
+    },
+    "artifacts": {
+      "https": {
+        "phishing": 0.487,
+        "legitimate": 1
+      },
+      "www": {
+        "phishing": 0.414,
+        "legitimate": 1
+      },
+      "path": {
+        "phishing": 0.272,
+        "legitimate": 0
+      },
+      "query": {
+        "phishing": 0.061,
+        "legitimate": 0
+      },
+      "trailingSlash": {
+        "phishing": 0.365,
+        "legitimate": 0
+      },
+      "bareHost": {
+        "phishing": 0.716,
+        "legitimate": 1
+      }
+    },
+    "counts": {
+      "phishing": 42595,
+      "legitimate": 228395,
+      "bySplit": {
+        "train": {
+          "phishing": 29782,
+          "legitimate": 159954
+        },
+        "val": {
+          "phishing": 6312,
+          "legitimate": 34493
+        },
+        "test": {
+          "phishing": 6501,
+          "legitimate": 33948
+        }
+      }
+    },
+    "note": "public corpora, fetched on demand and hash-checked against the digests pinned in mlops/urlmodel/data.js; never committed"
+  },
+  "protocol": {
+    "hyperparameters": {
+      "hashBits": 14,
+      "l2": 0.001,
+      "epochs": 3,
+      "lr": 0.2
+    },
+    "calibration": "Platt on validation",
+    "thresholds": "chosen on validation at fixed false-alarm rates",
+    "split": "by owner-chosen name; test scored once"
+  },
+  "evaluation": {
+    "proxy": true,
+    "claimable": false,
+    "testAuc": 0.7684,
+    "testAucCi95": [
+      0.7611,
+      0.7747
+    ],
+    "strict": {
+      "recall": 0.1377,
+      "falseAlarm": 0.00115
+    },
+    "resultFile": "mlops/benchmarks/results/url_domain_model.json",
+    "resultSha256": "cf642380508de869211ee39d61b340e12542467d050d524336632a5384fcfe2c"
+  },
+  "reproduction": {
+    "sha256": "bf96eb26eca8efbbf9cc421a203622937602a9b729546c4c3ed0f752b7d4a49a",
+    "seconds": 18,
+    "node": "v25.8.0",
+    "verifiedAt": "2026-10-03",
+    "method": "retrained from the pinned public data into a temporary folder; the model file is byte-for-byte identical"
+  }
+}

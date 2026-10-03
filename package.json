@@ -8,6 +8,9 @@
     "data:validate": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report",
     "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final",
     "mlops:gate": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0",
+    "model:lineage": "node mlops/lineage.js",
+    "model:lineage:check": "node mlops/lineage.js --check",
+    "model:reproduce": "node mlops/lineage.js --reproduce",
     "mlops:gate:strict": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0 --strict",
     "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0",
     "site:sync": "node scripts/sync_site.js",
@@ -16,7 +19,7 @@
     "motion:build": "node scripts/build_motion.js",
     "motion:check": "node scripts/build_motion.js --check",
     "lint": "eslint . --max-warnings 0",
-    "check": "npm run lint && npm run site:check && npm run motion:check && npm test",
+    "check": "npm run lint && npm run site:check && npm run motion:check && npm run model:lineage:check && npm test",
     "field:analyze": "node field/analyze.js"
   },
   "devDependencies": {
