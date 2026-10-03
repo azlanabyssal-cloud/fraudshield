@@ -1223,7 +1223,7 @@ footer { background: var(--space); color: #94a3b8; }
 .cb-header{background:var(--navy);color:#fff;padding:.9rem 1rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0}
 .cb-header__icon{font-size:1.3rem;flex-shrink:0}
 .cb-header__text{flex:1;min-width:0}
-.cb-header__title{font-family:'DM Sans',sans-serif;font-weight:800;font-size:.92rem;line-height:1.2}
+.cb-header__title{font-family:'DM Sans',sans-serif;font-weight:800;font-size:.92rem;line-height:1.2;color:#fff}   /* a <p>: without this the global p colour made it a 2.4:1 grey on navy */
 .cb-header__sub{font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:.02em}
 .cb-header__btn{background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;flex-shrink:0;transition:background .18s ease}
 .cb-header__btn:hover{background:rgba(255,255,255,.24)}

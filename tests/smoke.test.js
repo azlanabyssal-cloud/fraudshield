@@ -421,3 +421,17 @@ for (const page of pages) {
     } finally { p.close(); }
   });
 }
+
+test('the assistant header title is readable on its navy header on every page that has the chat: contrast of at least 7:1', async () => {
+  const lum = rgb => { const [r, g, b] = rgb.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const parse = c => { const m = /rgba?\(([^)]+)\)/.exec(c); return (m ? m[1] : '0,0,0').split(',').slice(0, 3).map(Number); };
+  for (const page of ['assistant.html', 'index.html']) {
+    const p = await loadPage(page);
+    try {
+      p.document.querySelector('.cb-fab') && p.document.querySelector('.cb-fab').click();
+      const title = p.document.querySelector('.cb-header__title'), head = title.closest('.cb-header'), w = p.window;
+      const fg = parse(w.getComputedStyle(title).color), bg = parse(w.getComputedStyle(head).backgroundColor), [a, b] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+      assert.ok((a + 0.05) / (b + 0.05) >= 7, `${page}: title ${fg} on ${bg} is ${(((a + 0.05) / (b + 0.05))).toFixed(2)}:1`);
+    } finally { p.close(); }
+  }
+});
