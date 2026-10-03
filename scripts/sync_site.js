@@ -9,6 +9,7 @@
 const fs = require('node:fs'), path = require('node:path');
 const { formatStat, indian } = require('../lib/format.js');
 const CreatureArt = require('../lib/creature-art.js');
+const Campaign = require('./campaign_regions.js');
 
 const ROOT_DEFAULT = path.join(__dirname, '..');
 const PAGES = { 'index.html': 'home', 'data.html': 'data', 'tips.html': 'tips', 'assistant.html': 'assistant', 'about.html': 'about', 'report.html': 'report' };
@@ -20,7 +21,7 @@ function loadData(root = ROOT_DEFAULT) {
   const raw = JSON.parse(read('data/stats.json'));
   if (!raw.stats || !raw.series || !raw.site) throw new Error('data/stats.json needs "stats", "series" and "site"');
   return {
-    stats: raw.stats, series: raw.series, site: raw.site, rbi: raw.rbi_directions, cases: JSON.parse(read('data/cases.json')), fieldwork: JSON.parse(read('data/fieldwork.json')),
+    stats: raw.stats, series: raw.series, site: raw.site, rbi: raw.rbi_directions, cases: JSON.parse(read('data/cases.json')), fieldwork: JSON.parse(read('data/fieldwork.json')), campaign: JSON.parse(read('data/campaign.json')),
     partials: { nav: read('partials/nav.html').trim(), footer: read('partials/footer.html').trim() }
   };
 }
@@ -176,8 +177,9 @@ function renderFieldworkGallery(data, root) {
     if (!Number.isInteger(p.width) || !Number.isInteger(p.height)) throw new Error(`${where}: needs integer width and height`);
     if (!p.alt || !p.caption) throw new Error(`${where}: needs alt text and a caption`);
     // the caption states where and when from the photo's own stamp: date defaults to the first visit; time is optional
-    const date = p.date || fw.first_visit, stamp = [fw.village, `${weekdayOf(date)} ${longDate(date)}`, p.time ? `${clockText(p.time)} IST` : null].filter(Boolean).join(' · ');
-    return `  <figure class="fw-photo"><img src="${esc(p.file)}" width="${p.width}" height="${p.height}" alt="${esc(p.alt)}" loading="lazy" decoding="async"><figcaption>${esc(p.caption)}<span class="fw-stamp">${esc(stamp)}</span></figcaption></figure>`;
+    const date = p.date || fw.first_visit, stamp = [p.place || fw.village, `${weekdayOf(date)} ${longDate(date)}`, p.time ? `${clockText(p.time)} IST` : null].filter(Boolean).join(' · ');
+    // the link is the no-script fallback: without JavaScript it opens the full image itself; the page script turns it into a viewer
+    return `  <figure class="fw-photo"><a class="fw-open" href="${esc(p.file)}" data-lightbox data-w="${p.width}" data-h="${p.height}" aria-label="Open the full photo: ${esc(p.alt)}"><img src="${esc(p.file)}" width="${p.width}" height="${p.height}" alt="${esc(p.alt)}" loading="lazy" decoding="async"><span class="fw-open__hint" aria-hidden="true">Tap to open full size</span></a><figcaption>${esc(p.caption)}<span class="fw-stamp">${esc(stamp)}</span></figcaption></figure>`;
   });
   return `<div class="fw-gallery">\n${figs.join('\n')}\n</div>`;
 }
@@ -199,6 +201,11 @@ function syncRegions(html, data, page, root = ROOT_DEFAULT) {
     else if (name === 'fieldwork_numbers') body = renderFieldworkNumbers(data);
     else if (name === 'fieldwork_gallery') body = renderFieldworkGallery(data, root);
     else if (name === 'fieldwork_learned') body = renderLearned(data);
+    else if (name === 'csp_numbers') body = Campaign.renderNumbers(data.campaign);
+    else if (name === 'csp_timeline') body = Campaign.renderTimeline(data.campaign);
+    else if (name === 'csp_gaps') body = Campaign.renderGaps(data.campaign);
+    else if (name === 'csp_rules') body = Campaign.renderRules(data.campaign);
+    else if (name === 'csp_sdg') body = Campaign.renderSdg(data.campaign);
     else if (name.startsWith('creature_') && CreatureArt.ART[name.slice(9)]) body = CreatureArt.art(name.slice(9));
     else throw new Error(`unknown generated region "${name}"`);
     return `<!-- @gen:${name} -->\n${body ? body + '\n' : ''}<!-- @/gen:${name} -->`;

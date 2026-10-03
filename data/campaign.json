@@ -1,0 +1,57 @@
+{
+  "_readme": "The Community Service Project as the mentor-verified report records it (GPREC, CSE-AIML, 4 May to 20 June 2026). Dates, weeks, themes, the five gaps found, the rules taught and the SDG mapping come from that report. The report holds findings, not survey counts, so no percentage or head-count appears here or on the site. The About page numbers are computed from this file; scripts/campaign_regions.js refuses a file whose weeks do not join up.",
+  "title": "FraudShield - A Simulation-Based Digital Fraud Immunity System",
+  "place": "Balaji Nagar, Munagalapadu, Kurnool",
+  "start": "2026-05-04",
+  "end": "2026-06-20",
+  "weeks": [
+    { "n": 1, "from": "2026-05-04", "to": "2026-05-09", "days": 6, "tag": "Plan", "title": "Plan it like a campaign", "did": "Researched the frauds hurting people most: phishing, OTP, UPI, QR and digital arrest. Wrote a questionnaire that collects no personal data. Printed the safety checklists. Fixed the eight-week plan." },
+    { "n": 2, "from": "2026-05-10", "to": "2026-05-15", "days": 6, "tag": "Listen", "title": "Go out and listen first", "did": "First visits. Put the questionnaire in people's hands, asked how they pay and what they use, then analysed the answers. The gaps were phishing links, OTP sharing and fake payment methods." },
+    { "n": 3, "from": "2026-05-16", "to": "2026-05-21", "days": 6, "tag": "Name the scam", "title": "Call the scam by its name", "did": "First awareness sessions. Phishing, smishing and vishing in plain words, with real examples, and the warning signs: urgency, odd links, spelling errors, unknown senders." },
+    { "n": 4, "from": "2026-05-22", "to": "2026-05-27", "days": 6, "tag": "Privacy and AI", "title": "Think before you share", "did": "How scammers stitch your public details into an attack. Then deepfakes and voice cloning: seeing is no longer believing. A hands-on check of what each person's own online presence gives away." },
+    { "n": 5, "from": "2026-05-28", "to": "2026-06-02", "days": 6, "tag": "Rules", "title": "Four rules people can remember", "did": "Stop and think. Keep it secret. Don't accept. Use strong passwords. Practised with two-factor authentication and real fake-support-call examples." },
+    { "n": 6, "from": "2026-06-03", "to": "2026-06-08", "days": 6, "tag": "Respond", "title": "What to do after it happens", "did": "Don't panic. Don't delete. Tell the bank or platform. Call 1930 and report at cybercrime.gov.in. Practised until people stopped being afraid to report." },
+    { "n": 7, "from": "2026-06-09", "to": "2026-06-14", "days": 6, "tag": "Defenders", "title": "Make them the teachers", "did": "The Digital Defender idea: the people who learned it teach their neighbours. App permissions, privacy settings, and a session where the community shared the rules themselves." },
+    { "n": 8, "from": "2026-06-15", "to": "2026-06-20", "days": 6, "tag": "Measure", "title": "Measure it, then hand it over", "did": "Post-campaign assessment, a review meeting with community representatives, and the full report written to the college's guidelines." }
+  ],
+  "gaps": [
+    { "title": "Weak passwords", "saw": "Easy passwords, one password everywhere, logins shared with staff and family for convenience.", "did": "Strong, unique passwords, never shared, with two-factor authentication switched on." },
+    { "title": "Payment scams", "saw": "Fake payment messages, fake support calls, QR scams and cashback links that lean on urgency.", "did": "A zero-trust rule: any unexpected OTP, bank detail or payment request is suspect until verified." },
+    { "title": "Oversharing", "saw": "Shop names, phone numbers, payment QR codes and locations posted where anyone can collect them.", "did": "Protect your private information, and audit what you have already put out." },
+    { "title": "Afraid to report", "saw": "People unsure what to do, scared of losing face or money, deleting the very messages police need.", "did": "A calm four-step response, and the official channels: 1930 and cybercrime.gov.in." },
+    { "title": "AI scams unseen", "saw": "Hard to tell a real message from a fake. Deepfakes and cloned voices were new to most people.", "did": "Stop and verify before you answer, whoever it sounds like." }
+  ],
+  "rules": {
+    "golden": [
+      { "name": "Stop and think", "line": "Pause before you answer any unknown link, message or request." },
+      { "name": "Keep it secret", "line": "Passwords and OTPs are never shared with anyone." },
+      { "name": "Don't accept", "line": "Unknown contacts, odd messages and unverified requests get declined." },
+      { "name": "Use strong passwords", "line": "Letters, numbers and symbols. Nothing guessable." }
+    ],
+    "response": [
+      { "name": "Don't panic", "line": "It can happen to anyone, including careful people." },
+      { "name": "Don't delete", "line": "Keep the messages, the transaction details and the link. They are evidence." },
+      { "name": "Tell them fast", "line": "Inform your bank or the platform and change the passwords." },
+      { "name": "Report it", "line": "Call 1930. File at cybercrime.gov.in." }
+    ]
+  },
+  "sdgs": [
+    { "n": 1, "name": "No Poverty", "why": "Stops fraud from wiping out savings and livelihoods." },
+    { "n": 2, "name": "Zero Hunger" },
+    { "n": 3, "name": "Good Health and Well-being", "why": "Less stress and trauma for fraud victims." },
+    { "n": 4, "name": "Quality Education", "why": "Digital literacy through awareness and fraud simulations." },
+    { "n": 5, "name": "Gender Equality" },
+    { "n": 6, "name": "Clean Water and Sanitation" },
+    { "n": 7, "name": "Affordable and Clean Energy" },
+    { "n": 8, "name": "Decent Work and Economic Growth", "why": "Secure digital transactions that protect businesses." },
+    { "n": 9, "name": "Industry, Innovation and Infrastructure", "why": "Simulation technology used to strengthen digital security." },
+    { "n": 10, "name": "Reduced Inequalities", "why": "Elderly and first-time internet users learn what fraud looks like." },
+    { "n": 11, "name": "Sustainable Cities and Communities" },
+    { "n": 12, "name": "Responsible Consumption and Production" },
+    { "n": 13, "name": "Climate Action" },
+    { "n": 14, "name": "Life Below Water" },
+    { "n": 15, "name": "Life on Land" },
+    { "n": 16, "name": "Peace, Justice and Strong Institutions", "why": "Trust in digital services and safer online communities." },
+    { "n": 17, "name": "Partnerships for the Goals", "why": "Colleges, banks, cyber bodies and government working on awareness together." }
+  ]
+}

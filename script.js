@@ -133,6 +133,116 @@ document.addEventListener('DOMContentLoaded', () => {
     container.querySelectorAll('.counter-number').forEach(el => observer.observe(el));
   }
 
+  // About page: counts, the eight-week rail and the card reveals run once, when they scroll into view. Without
+  // IntersectionObserver, or under Reduce Motion, everything is simply there.
+  function initCampaign() {
+    const blocks = document.querySelectorAll('.csp-nums, .csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules');
+    if (!blocks.length) return;
+    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!('IntersectionObserver' in window) || calm) return;
+    const Motion = window.FraudShieldMotion;
+    const ease = Motion ? Motion.bezier.apply(null, Motion.CURVES.out) : t => t * (2 - t);
+
+    function countUp(el) {
+      const target = parseInt(el.dataset.count, 10);
+      if (!Motion || !Motion.engine || !(target > 0)) return;
+      el.textContent = '0';
+      Motion.engine.tween(1500 + target * 12, ease, p => { el.textContent = String(Math.floor(p * target)); }, () => { el.textContent = String(target); });
+    }
+    const countAll = root => root.querySelectorAll('[data-count]').forEach(countUp);
+
+    blocks.forEach(b => b.classList.add('is-armed'));
+    const once = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      once.unobserve(e.target); e.target.classList.add('is-in');
+      if (e.target.classList.contains('csp-nums')) { countAll(e.target); emitMood({ reaction: 'numbers', hold: 3 }); }
+    }), { threshold: 0.25 });
+    blocks.forEach(b => { if (!b.classList.contains('csp-weeks')) once.observe(b); });
+
+    const rail = document.querySelector('.csp-weeks');
+    if (rail) {
+      const items = Array.from(rail.children);
+      const lit = new IntersectionObserver(entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        lit.unobserve(e.target); e.target.classList.add('is-on');
+        const reach = e.target.offsetTop + 30;
+        rail.style.setProperty('--fill', String(Math.min(1, Math.max(parseFloat(rail.style.getPropertyValue('--fill')) || 0, reach / rail.offsetHeight))));
+      }), { threshold: 0.4, rootMargin: '0px 0px -12% 0px' });
+      items.forEach(li => lit.observe(li));
+    }
+    document.querySelectorAll('.csp-sdg__count [data-count]').forEach(el => {
+      const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { o.disconnect(); countUp(el); } }, { threshold: 0.6 });
+      o.observe(el);
+    });
+  }
+
+  // Click a field photo to open the whole picture. The link underneath still works without scripts (it opens the image itself).
+  function initLightbox() {
+    const links = Array.from(document.querySelectorAll('a[data-lightbox]'));
+    if (!links.length) return;
+    const root = document.createElement('div');
+    root.className = 'lb'; root.hidden = true; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Photo viewer');
+    const many = links.length > 1;
+    root.innerHTML = '<div class="lb__scrim" data-close></div>' +
+      '<figure class="lb__fig"><img class="lb__img" alt=""><figcaption class="lb__cap"></figcaption></figure>' +
+      '<button class="lb__btn lb__close" type="button" aria-label="Close photo" data-close>&#10005;</button>' +
+      (many ? '<button class="lb__btn lb__prev" type="button" aria-label="Previous photo">&#8592;</button><button class="lb__btn lb__next" type="button" aria-label="Next photo">&#8594;</button><p class="lb__count" aria-live="polite"></p>' : '');
+    document.body.appendChild(root);
+    const img = root.querySelector('.lb__img'), cap = root.querySelector('.lb__cap'), count = root.querySelector('.lb__count');
+    const buttons = () => Array.from(root.querySelectorAll('button'));
+    let at = -1, opener = null, touchX = null;
+
+    function show(i) {
+      at = (i + links.length) % links.length;
+      const a = links[at], thumb = a.querySelector('img'), fig = a.closest('figure'), note = fig && fig.querySelector('figcaption');
+      img.src = a.getAttribute('href'); img.alt = thumb ? thumb.alt : '';
+      img.width = +a.dataset.w || 0; img.height = +a.dataset.h || 0;
+      cap.textContent = '';
+      if (note) Array.from(note.childNodes).forEach(n => { const el = n.nodeType === 3 ? document.createElement('span') : n.cloneNode(true); if (n.nodeType === 3) { el.className = 'lb__line'; el.textContent = n.textContent; } cap.appendChild(el); });
+      if (count) count.textContent = (at + 1) + ' / ' + links.length;
+    }
+    function setInert(on) { Array.from(document.body.children).forEach(el => { if (el === root) return; try { el.inert = on; } catch (e) { /* older browsers: the focus trap still holds */ } }); }
+    function open(i, from) {
+      opener = from; show(i); root.hidden = false; setInert(true);
+      document.documentElement.classList.add('lb-lock');
+      void root.offsetWidth; root.classList.add('is-open');
+      root.querySelector('.lb__close').focus();
+    }
+    function close() {
+      if (root.hidden) return;
+      root.classList.remove('is-open'); setInert(false); document.documentElement.classList.remove('lb-lock');
+      const done = () => { root.hidden = true; img.removeAttribute('src'); };
+      const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (calm) done(); else setTimeout(done, 260);
+      if (opener) opener.focus();
+    }
+    links.forEach((a, i) => a.addEventListener('click', ev => {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button) return;   // let "open in new tab" do what the visitor asked
+      ev.preventDefault(); open(i, a);
+    }));
+    root.addEventListener('click', ev => {
+      if (ev.target.closest('[data-close]')) close();
+      else if (ev.target.closest('.lb__prev')) show(at - 1);
+      else if (ev.target.closest('.lb__next')) show(at + 1);
+    });
+    root.addEventListener('keydown', ev => {
+      if (ev.key === 'Escape') { ev.preventDefault(); close(); }
+      else if (ev.key === 'ArrowLeft' && many) show(at - 1);
+      else if (ev.key === 'ArrowRight' && many) show(at + 1);
+      else if (ev.key === 'Tab') {
+        const b = buttons(), first = b[0], last = b[b.length - 1];
+        if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+        else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+      }
+    });
+    root.addEventListener('touchstart', ev => { touchX = ev.touches.length === 1 ? ev.touches[0].clientX : null; }, { passive: true });
+    root.addEventListener('touchend', ev => {
+      if (touchX === null || !many) return;
+      const dx = ev.changedTouches[0].clientX - touchX; touchX = null;
+      if (Math.abs(dx) > 60) show(at + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
   // ═══════════════════════════════════════════════════════
   // AWARENESS QUIZ
   // ═══════════════════════════════════════════════════════
@@ -1645,6 +1755,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initHamburger();
   initCounters();
   initMagnetic();
+  initCampaign();
+  initLightbox();
   initFlow();
   initCreatures();
   initUrlModel();

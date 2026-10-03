@@ -1,6 +1,6 @@
 {
-  "_readme": "Azlan's real field work, in his own numbers. Nothing here is guessed: a null number is simply not shown. A photo appears on the About page only when its file exists, it has width and height, and consent is true (the people in it agreed to it being published). Process photos first with: npm run photo:prepare -- <file>",
-  "village": "Munagalapadu, Andhra Pradesh",
+  "_readme": "Azlan's real field work, in his own numbers. Nothing here is guessed: a null number is simply not shown. A photo appears on the About page only when its file exists, it has width and height, and consent is true (the people in it agreed to it being published). Each photo may carry its own \"place\"; the stamp falls back to the village. Process photos first with: npm run photo:prepare -- <file>",
+  "village": "Balaji Nagar, Munagalapadu, Andhra Pradesh",
   "programme": "Community Service Project, G. Pulla Reddy Engineering College, Kurnool",
   "first_visit": "2026-05-03",
   "numbers": {
@@ -23,8 +23,9 @@
       "height": 828,
       "time": "12:42",
       "consent": true,
-      "alt": "Azlan, wearing a college lanyard, talking with a shopkeeper at the counter of his small shop",
-      "caption": "At a shop counter, explaining digital fraud and what to do when it happens."
+      "alt": "Azlan, wearing a college lanyard, talking with a shopkeeper at the counter of his small shop in Balaji Nagar",
+      "caption": "At a shop counter in Balaji Nagar. Fake payment screenshots, QR scams, and who to call in the first hour.",
+      "place": "Balaji Nagar, Munagalapadu, Andhra Pradesh"
     },
     {
       "file": "images/field/csp-home.webp",
@@ -32,8 +33,9 @@
       "height": 828,
       "time": "12:14",
       "consent": true,
-      "alt": "Azlan, wearing a college lanyard, talking with a woman inside her home",
-      "caption": "At a family's home, explaining the same: the first hour, and the 1930 helpline."
+      "alt": "Azlan, wearing a college lanyard, talking with Shakira aunty inside her home in Balaji Nagar",
+      "caption": "Shakira aunty, at home in Balaji Nagar. I went house to house across the colony, knocking on every door I could reach, to spread awareness about digital fraud and the 1930 helpline.",
+      "place": "Balaji Nagar, Munagalapadu, Andhra Pradesh"
     }
   ],
   "timezone": "IST (GMT +05:30)",
