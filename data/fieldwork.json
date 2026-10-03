@@ -16,20 +16,26 @@
     "hours": "hours on the ground"
   },
   "learned": [],
-  "photos": [],
-  "timezone": "IST (GMT +05:30)",
-  "pending_photos": [
+  "photos": [
     {
-      "id": "shop",
-      "date": "2026-05-03",
+      "file": "images/field/csp-shop.webp",
+      "width": 1248,
+      "height": 828,
       "time": "12:42",
-      "note": "Azlan with a shopkeeper and a second man in a small shop. GPS stamp: 12:42:26 PM. Needs consent from the people shown, and the GPS panel cropped out."
+      "consent": true,
+      "alt": "Azlan, wearing a college lanyard, talking with a shopkeeper at the counter of his small shop",
+      "caption": "At a shop counter, explaining digital fraud and what to do when it happens."
     },
     {
-      "id": "home",
-      "date": "2026-05-03",
+      "file": "images/field/csp-home.webp",
+      "width": 1242,
+      "height": 828,
       "time": "12:14",
-      "note": "Azlan speaking with a woman inside a home. GPS stamp: 12:14 PM. Needs her consent, and the GPS panel (it shows the house address and coordinates) cropped out."
+      "consent": true,
+      "alt": "Azlan, wearing a college lanyard, talking with a woman inside her home",
+      "caption": "At a family's home, explaining the same: the first hour, and the 1930 helpline."
     }
-  ]
+  ],
+  "timezone": "IST (GMT +05:30)",
+  "pending_photos": []
 }

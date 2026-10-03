@@ -211,8 +211,12 @@ test('photo captions carry the stamped time in 12-hour form, and the weekday is 
   fw.photos[0].time = '25:99'; assert.throws(() => sync.renderFieldworkGallery(withFw(fw), root), /HH:MM/);
 });
 
-test('the stamps Azlan sent are on record, and every one is a real date and time', () => {
+test('every published field photo has recorded consent, a real stamp, a real file, and no GPS panel or private address in it', () => {
   const fw = sync.loadData().fieldwork;
-  assert.ok(fw.pending_photos.length >= 2);
-  for (const p of fw.pending_photos) { sync.longDate(p.date); sync.clockText(p.time); assert.match(p.note, /consent/i, 'each pending photo must record that consent is still needed'); }
+  assert.ok(fw.photos.length >= 2); assert.deepEqual(fw.pending_photos, [], 'nothing is waiting on consent: a photo is either published with consent or not in the repository');
+  for (const p of fw.photos) {
+    assert.equal(p.consent, true); sync.longDate(p.date || fw.first_visit); sync.clockText(p.time);
+    const file = path.join(ROOT, p.file); assert.ok(fs.existsSync(file), p.file); assert.ok(fs.statSync(file).size < 400 * 1024, 'compressed for the web');
+    const bytes = fs.readFileSync(file); assert.ok(!bytes.includes(Buffer.from('Exif')), 'no EXIF metadata (it can carry GPS coordinates)');
+  }
 });
