@@ -1,11 +1,13 @@
 'use strict';
 /* Release gate. Three-valued on purpose: with a few hundred rows many claims can be neither
    confirmed nor rejected, and the gate says so instead of rounding up.
-   PASS          every criterion met with its 95% interval on the right side
+   PASS          every criterion met with its 95% interval on the right side (precision is prevalence-adjusted)
    INCONCLUSIVE  nothing failed, but at least one criterion is not proven at this sample size
    FAIL          a criterion failed, a regression is significant, or the test data leaks
    NO_EVIDENCE   the dataset is missing or below its stage minimum, so nothing was measured */
 const { finalChecks, normalizeForDedup } = require('../data_ops/holdout.js');
+const { negativesNeededToProve } = require('./metrics.js');
+const { adjusted } = require('./evaluate.js');
 
 function tokens(text) { return new Set(normalizeForDedup(text).split(' ').filter(Boolean)); }
 function jaccard(a, b) {
@@ -32,43 +34,57 @@ function findLeakage(dev, sealed, threshold = 0.85) {
   return hits;
 }
 
-function against(ci, threshold) {
-  if (ci.n === 0) return 'unproven';
-  if (ci.lo >= threshold) return 'met';
-  if (ci.hi < threshold) return 'failed';
-  return 'unproven';
+// Gate decision on prevalence-adjusted precision. Raw precision on a test set depends on how many genuine
+// messages the test set happens to hold, so it is reported but never used to decide.
+//   failed   the measured (point) adjusted precision is below the target
+//   met      even the conservative bound (low recall, high false-alarm rate) reaches the target
+//   unproven the point estimate reaches the target but the data cannot prove it
+function adjustedVerdict(report, policy) {
+  const adj = adjusted(report, policy.prevalence);
+  if (adj.point === null) return { ...adj, verdict: 'failed', reason: 'recall or false-alarm rate cannot be measured (no scam rows or no genuine rows)' };
+  if (adj.point < policy.minPrecision) return { ...adj, verdict: 'failed', reason: `prevalence-adjusted precision ${(100 * adj.point).toFixed(1)}% at ${policy.prevalence * 100}% scam share is below ${policy.minPrecision * 100}%` };
+  if (adj.conservative >= policy.minPrecision) return { ...adj, verdict: 'met' };
+  const need = negativesNeededToProve(report.recall.lo, policy.minPrecision, policy.prevalence);
+  return { ...adj, verdict: 'unproven', reason: `adjusted precision ${(100 * adj.point).toFixed(1)}% at ${policy.prevalence * 100}% scam share reaches ${policy.minPrecision * 100}% but is not proven: worst case ${(100 * adj.conservative).toFixed(1)}%. Proving it needs about ${need} genuine messages with no false alarms; there are ${report.fpr.n}` };
 }
 
 function gate({ stats, stage, report, comparison, leakage, policy }) {
-  const reasons = [];
   const evidenceProblems = stats ? finalChecks(stats, stage) : ['no dataset'];
   if (evidenceProblems.length) return { status: 'NO_EVIDENCE', reasons: evidenceProblems, criteria: {} };
 
+  const reasons = [];
+  const adj = adjustedVerdict(report, policy);
   const criteria = {
-    // a detector that never catches a scam is worthless whatever its precision says
+    // a model that flags nothing is broken, not "inconclusive" (0/0 precision is defined as 0)
+    flagsSomething: report.precision.flagsNothing ? 'failed' : 'met',
     catchesScams: report.tp > 0 ? 'met' : 'failed',
-    precision: against(report.precision, policy.minPrecision),
+    adjustedPrecision: adj.verdict,
     latency: report.latencyMs.p95 <= policy.maxP95LatencyMs ? 'met' : 'failed'
   };
+  if (report.precision.flagsNothing) reasons.push('FATAL: Model Flags Nothing (TP+FP = 0, precision 0/0 defined as 0, recall 0)');
+  else if (report.tp === 0) reasons.push('detector caught no scams');
+  if (adj.reason && !report.precision.flagsNothing) reasons.push(adj.reason);
+  if (criteria.latency === 'failed') reasons.push(`p95 latency ${report.latencyMs.p95.toFixed(2)} ms exceeds ${policy.maxP95LatencyMs} ms`);
+
   let leaked = false, regressed = false;
   if (leakage && leakage.length) { leaked = true; reasons.push(`${leakage.length} sealed row(s) overlap the dev set (first: ${leakage[0].sealedId} ~ ${leakage[0].devId}, ${leakage[0].kind})`); }
   if (comparison && comparison.better < 0 && comparison.p < policy.regressionAlpha) {
     regressed = true;
     reasons.push(`significantly worse than baseline: right on ${comparison.baselineOnlyCorrect} rows where baseline was wrong vs ${comparison.candidateOnlyCorrect} the other way (p=${comparison.p.toFixed(4)})`);
   }
-  for (const [name, v] of Object.entries(criteria)) {
-    if (v === 'failed') reasons.push(name === 'latency' ? `p95 latency ${report.latencyMs.p95.toFixed(2)} ms exceeds ${policy.maxP95LatencyMs} ms` : name === 'catchesScams' ? 'detector caught no scams' : `${name} failed (95% interval upper bound is below the target)`);
-    if (v === 'unproven') {
-      const p = report.precision;
-      reasons.push(p.n === 0 ? 'precision undefined: the detector flagged no messages'
-        : `precision not proven: point ${(p.value * 100).toFixed(1)}%, 95% interval ${(p.lo * 100).toFixed(1)}-${(p.hi * 100).toFixed(1)}% vs target ${policy.minPrecision * 100}%`);
-    }
-  }
   const vals = Object.values(criteria);
   let status = 'PASS';
   if (vals.includes('unproven')) status = 'INCONCLUSIVE';
   if (vals.includes('failed') || leaked || regressed) status = 'FAIL';
-  return { status, reasons, criteria };
+  return { status, reasons, criteria, adjusted: adj };
+}
+
+// Fails loudly on a missing or nonsensical policy instead of gating against undefined.
+function validatePolicy(p) {
+  const prob = k => { if (!(typeof p[k] === 'number' && p[k] > 0 && p[k] < 1)) throw new RangeError(`policy.${k} must be a number strictly between 0 and 1`); };
+  const pos = k => { if (!(typeof p[k] === 'number' && p[k] > 0)) throw new RangeError(`policy.${k} must be a positive number`); };
+  ['minPrecision', 'prevalence', 'regressionAlpha', 'nearDuplicateJaccard'].forEach(prob); ['maxP95LatencyMs', 'maxModelBytes'].forEach(pos);
+  return p;
 }
 
 const HEX64 = /^[0-9a-f]{64}$/;
@@ -90,4 +106,4 @@ function verifyRegistry(entries) {
   return problems;
 }
 
-module.exports = { gate, findLeakage, verifyRegistry, jaccard };
+module.exports = { gate, adjustedVerdict, validatePolicy, findLeakage, verifyRegistry, jaccard };

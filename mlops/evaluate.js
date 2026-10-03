@@ -2,6 +2,9 @@
 const { COLUMNS, SCAM_CATEGORIES } = require('../data_ops/holdout.js');
 const { wilson, mcnemarExact, psi, precisionAtPrevalence, percentile } = require('./metrics.js');
 
+const WARMUP_CALLS = 5; // untimed calls so JIT/first-call cost is not counted in latency
+const PREVALENCES = [0.01, 0.05, 0.2, 0.5];
+
 const MIN_SLICE = 30; // below this a slice is reported but marked underpowered
 
 // parseCsv output (already validated, header first) -> examples
@@ -17,16 +20,30 @@ function toExamples(csvRows) {
 function rates(items) {
   let tp = 0, fp = 0, fn = 0, tn = 0;
   for (const it of items) { if (it.y) { it.p ? tp++ : fn++; } else { it.p ? fp++ : tn++; } }
+  // 0/0: nothing flagged. Precision is defined as 0 (never 1) and the result is marked so the gate can fail it loudly.
+  const precision = tp + fp === 0 ? { k: 0, n: 0, value: 0, lo: 0, hi: 0, flagsNothing: true } : wilson(tp, tp + fp);
   return {
     n: items.length, tp, fp, fn, tn,
-    precision: wilson(tp, tp + fp), recall: wilson(tp, tp + fn), fpr: wilson(fp, fp + tn),
+    precision, recall: wilson(tp, tp + fn), fpr: wilson(fp, fp + tn),
     underpowered: items.length < MIN_SLICE
+  };
+}
+
+// Precision at a real-world scam prevalence. `point` uses the measured rates; `conservative` uses the worst ends of
+// their 95% intervals (lowest recall, highest false-alarm rate). Null when either rate cannot be measured.
+function adjusted(r, prevalence) {
+  if (!r.recall.n || !r.fpr.n) return { prevalence, point: null, conservative: null };
+  return {
+    prevalence,
+    point: precisionAtPrevalence(r.recall.value, r.fpr.value, prevalence),
+    conservative: precisionAtPrevalence(r.recall.lo, r.fpr.hi, prevalence)
   };
 }
 
 // Runs the detector once per example and times each call.
 function evaluate(examples, detect) {
   const times = [];
+  if (examples.length) for (let i = 0; i < WARMUP_CALLS; i++) detect(examples[0].text);
   const items = examples.map(e => {
     const t0 = process.hrtime.bigint();
     const p = Boolean(detect(e.text));
@@ -48,13 +65,9 @@ function evaluate(examples, detect) {
   return {
     ...overall,
     prevalence: overall.n ? (overall.tp + overall.fn) / overall.n : null,
-    atPrevalence: [0.05, 0.2, 0.5].map(pi => ({
-      prevalence: pi,
-      // conservative: lower bound of recall with upper bound of false-positive rate
-      precision: precisionAtPrevalence(overall.recall.lo ?? 0, overall.fpr.hi ?? 1, pi)
-    })),
+    atPrevalence: PREVALENCES.map(pi => adjusted(overall, pi)),
     slices: { language: group(it => it.language), obfuscated: group(it => (it.obfuscated ? 'obfuscated' : 'plain')), category: byCategory },
-    latencyMs: { p50: percentile(times, 0.5), p95: percentile(times, 0.95), note: 'Node on this machine, not a phone' },
+    latencyMs: { p50: percentile(times, 0.5), p95: percentile(times, 0.95), warmupCalls: WARMUP_CALLS, note: 'Node on this machine after warm-up, not a phone' },
     predictions: items.map(it => it.p)
   };
 }
@@ -77,4 +90,4 @@ function driftReport(examples) {
   return { psiCategory: psi(count(dated.slice(0, mid)), count(dated.slice(mid))), olderRows: mid, newerRows: dated.length - mid };
 }
 
-module.exports = { toExamples, evaluate, compare, driftReport, rates, MIN_SLICE };
+module.exports = { toExamples, evaluate, compare, driftReport, rates, adjusted, PREVALENCES, MIN_SLICE };

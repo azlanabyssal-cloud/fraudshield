@@ -31,8 +31,13 @@ Wording rule: the product never says "safe". The best verdict is "no known red f
 Enforced by a test (tests/invariants.test.js).
 
 ## 5. Metrics (proposal)
-- Primary: recall on scams at precision >= 0.90, on the real regression set (stage S0) and later the
-  sealed holdout (stage S1), reported with bootstrap intervals and at assumed base rates.
+- Primary: recall on scams at **prevalence-adjusted precision >= 0.90**, assuming 1% of messages are scams
+  (ADR-0010), on the real regression set (stage S0) and later the sealed holdout (stage S1). Raw precision on a
+  test set is reported but never decides, because it depends on how many genuine messages the set holds. All
+  proportions use Wilson intervals; classifier updates are compared with exact McNemar.
+- Consequence: at 1% prevalence the false-alarm rate must be about 0.1% or lower, and proving that needs about
+  3,600 genuine messages with no false alarms. The planned S1 (>= 250 genuine) cannot prove it. Open decision:
+  collect more genuine messages, or justify a higher assumed prevalence.
 - Secondary: per-category and per-language slices (indicative only below ~50 rows per cell),
   obfuscated-text slice, end-to-end through OCR.
 - Budgets: p95 on-device latency < 50 ms for text scoring (proposal); model + bundle size limits set

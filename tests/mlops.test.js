@@ -12,12 +12,18 @@ const g = require('../mlops/gate.js');
 const detectors = require('../mlops/detectors.js');
 const policy = require('../mlops/policy.json');
 
+// Pollution guard: nothing in this file may change the real registry or the committed benchmark results.
+const REAL = ['mlops/registry.json', 'mlops/benchmarks/results/uci_sms_spam.json'].map(f => path.join(__dirname, '..', f));
+const snapshot = () => REAL.map(f => (fs.existsSync(f) ? require('node:crypto').createHash('sha256').update(fs.readFileSync(f)).digest('hex') : 'absent'));
+const BEFORE = snapshot();
+test.after(() => assert.deepEqual(snapshot(), BEFORE, 'a test wrote to the real registry or results file'));
+
 const near = (a, b, eps = 1e-3) => assert.ok(Math.abs(a - b) < eps, `${a} vs ${b}`);
 const letters = n => { let s = ''; do { s = String.fromCharCode(97 + n % 26) + s; n = Math.floor(n / 26); } while (n > 0); return s; };
 
 /* Builds a valid S0-sized dataset: `scam` scam rows and `safe` safe rows.
    flaggedScam / flaggedSafe say how many of each carry SCAMWORD (the toy detector's trigger). */
-function fixture({ scam = 100, safe = 100, flaggedScam = scam, flaggedSafe = 0, obf = 12 } = {}) {
+function fixture({ scam = 100, safe = 100, flaggedScam = scam, flaggedSafe = 0, obf = Math.ceil(0.03 * (scam + safe)) } = {}) {
   const langs = ['en', 'hi', 'hinglish'], lines = [h.COLUMNS.join(',')];
   const add = (i, isScam, flagged) => {
     const text = `fixture ${isScam ? 'scam' : 'safe'} ${letters(i)} ${flagged ? 'SCAMWORD' : 'plainword'} for testing only`;
@@ -65,9 +71,32 @@ test('PSI: [50,50] vs [25,75] is 0.2747; identical is 0; different bucket sets h
   assert.equal(m.psi({}, { a: 1 }), null);
 });
 
-test('precision at prevalence: recall .9, fpr .1 -> .9 at 50%, .32 at 5%', () => {
+test('precision at prevalence: recall .9, fpr .1 -> .9 at 50%, .32 at 5%; 0/0 is defined as 0, never 1', () => {
   near(m.precisionAtPrevalence(0.9, 0.1, 0.5), 0.9); near(m.precisionAtPrevalence(0.9, 0.1, 0.05), 0.0450 / (0.045 + 0.095), 1e-9);
-  assert.equal(m.precisionAtPrevalence(0, 0, 0.5), null);
+  assert.equal(m.precisionAtPrevalence(0, 0, 0.01), 0);
+  near(m.precisionAtPrevalence(0.95, 0.013, 0.01), 0.0095 / (0.0095 + 0.01287), 1e-4);   // the 1% prevalence case from the benchmark
+});
+
+test('negativesNeededToProve is exact: n genuine messages suffice, n-1 do not', () => {
+  for (const [r, pi, mp] of [[0.95, 0.01, 0.9], [0.9, 0.05, 0.9], [0.99, 0.01, 0.95]]) {
+    const n = m.negativesNeededToProve(r, mp, pi), f = r * pi * (1 - mp) / (mp * (1 - pi));
+    assert.ok(m.wilson(0, n).hi <= f, 'n suffices'); assert.ok(m.wilson(0, n - 1).hi > f, 'n-1 does not');
+  }
+  assert.equal(m.negativesNeededToProve(0.95, 0.9, 0.01), 3600);
+  assert.equal(m.negativesNeededToProve(0, 0.9, 0.01), Infinity);
+});
+
+test('the maths rejects impossible inputs instead of returning a number', () => {
+  assert.throws(() => m.wilson(5, 3), RangeError); assert.throws(() => m.wilson(-1, 3), RangeError); assert.throws(() => m.wilson(1.5, 3), RangeError);
+  assert.throws(() => m.mcnemarExact(-1, 2), RangeError); assert.throws(() => m.psi({ a: -1 }, { a: 1 }), RangeError);
+  for (const bad of [0, 1, -0.1, 1.1, NaN]) assert.throws(() => m.precisionAtPrevalence(0.9, 0.1, bad), RangeError);
+  assert.throws(() => m.precisionAtPrevalence(1.2, 0.1, 0.5), RangeError);
+});
+
+test('validatePolicy rejects a missing or nonsensical policy', () => {
+  assert.doesNotThrow(() => g.validatePolicy(policy));
+  for (const k of ['minPrecision', 'prevalence', 'maxP95LatencyMs']) assert.throws(() => g.validatePolicy({ ...policy, [k]: undefined }), RangeError);
+  assert.throws(() => g.validatePolicy({ ...policy, prevalence: 1 }), RangeError);
 });
 
 /* ---------- evaluation harness ---------- */
@@ -110,6 +139,10 @@ test('drift: too few rows is reported as not measured; a category shift is large
 });
 
 /* ---------- the gate ---------- */
+// At 1% scam prevalence, 0.90 adjusted precision needs a false-alarm rate near 0.1%, which only thousands of
+// genuine messages can prove. PASS therefore needs a large genuine set: 100 scams and 4,000 genuine, none flagged wrongly.
+const PASS_CSV = fixture({ scam: 100, safe: 4000, flaggedScam: 100, flaggedSafe: 0 });
+
 test('NO_EVIDENCE when the dataset is missing or under the stage minimum', () => {
   assert.equal(g.gate({ stats: null, stage: 's0', policy }).status, 'NO_EVIDENCE');
   const small = run(fixture({ scam: 40, safe: 40, flaggedScam: 40 }));
@@ -117,38 +150,58 @@ test('NO_EVIDENCE when the dataset is missing or under the stage minimum', () =>
   assert.match(small.result.reasons.join(' '), /at least 200 rows/);
 });
 
-test('PASS only when the precision interval clears 0.90', () => {
+test('PASS needs the worst case of the prevalence-adjusted precision to clear 0.90', () => {
+  const r = run(PASS_CSV);
+  assert.ok(r.result.adjusted.conservative >= 0.9 && r.result.adjusted.point === 1); assert.equal(r.result.status, 'PASS');
+});
+
+test('INCONCLUSIVE when the measured value passes but the data cannot prove it, and the reason says how much data is missing', () => {
+  const r = run(fixture({ flaggedScam: 98, flaggedSafe: 0 }));   // 0 false alarms in 100 genuine messages
+  assert.equal(r.result.adjusted.point, 1); assert.ok(r.result.adjusted.conservative < 0.9);
+  assert.equal(r.result.status, 'INCONCLUSIVE');
+  assert.match(r.result.reasons.join(' '), /needs about \d+ genuine messages with no false alarms; there are 100/);
+});
+
+test('raw precision is never the decision: 98% raw precision still FAILS when adjusted precision at 1% is poor', () => {
   const r = run(fixture({ flaggedScam: 98, flaggedSafe: 2 }));
-  assert.ok(r.report.precision.lo >= 0.9, 'fixture should clear the bar'); assert.equal(r.result.status, 'PASS');
+  assert.ok(r.report.precision.value > 0.97, 'raw precision looks excellent');
+  assert.ok(r.result.adjusted.point < 0.4); assert.equal(r.result.status, 'FAIL');
 });
 
-test('INCONCLUSIVE when the point estimate passes but the interval does not', () => {
-  const r = run(fixture({ flaggedScam: 60, flaggedSafe: 6 }));
-  assert.ok(r.report.precision.value > 0.9 && r.report.precision.lo < 0.9);
-  assert.equal(r.result.status, 'INCONCLUSIVE'); assert.match(r.result.reasons.join(' '), /not proven/);
+test('FAIL when the model flags nothing: precision 0/0 is 0 (not null, not 1) with a fatal message', () => {
+  const r = run(fixture({ flaggedScam: 0, flaggedSafe: 0 }));
+  assert.equal(r.report.precision.value, 0); assert.equal(r.report.precision.flagsNothing, true); assert.equal(r.report.recall.value, 0);
+  assert.equal(r.result.status, 'FAIL'); assert.equal(r.result.criteria.flagsSomething, 'failed');
+  assert.match(r.result.reasons.join(' '), /FATAL: Model Flags Nothing/);
 });
 
-test('FAIL when the whole interval is below 0.90', () => {
-  const r = run(fixture({ flaggedScam: 50, flaggedSafe: 50 }));
-  assert.equal(r.result.status, 'FAIL');
-});
-
-test('FAIL for a detector that flags nothing (no crash on undefined precision)', () => {
-  const r = run(fixture({ flaggedScam: 0 }));
+test('FAIL when the model flags only genuine messages (catches no scam)', () => {
+  const r = run(fixture({ flaggedScam: 0, flaggedSafe: 5 }));
   assert.equal(r.result.status, 'FAIL'); assert.match(r.result.reasons.join(' '), /caught no scams/);
 });
 
+test('adjustedVerdict: unmeasurable rates fail instead of passing silently', () => {
+  const none = { recall: { n: 0 }, fpr: { n: 10 }, precision: {}, tp: 0 };
+  assert.equal(g.adjustedVerdict(none, policy).verdict, 'failed');
+});
+
 test('FAIL on a significant regression against the baseline, not on a tie', () => {
-  const good = fixture({ flaggedScam: 98, flaggedSafe: 2 });
-  const worse = run(good, { comparison: { better: -12, candidateOnlyCorrect: 0, baselineOnlyCorrect: 12, p: m.mcnemarExact(0, 12) } });
+  const worse = run(PASS_CSV, { comparison: { better: -12, candidateOnlyCorrect: 0, baselineOnlyCorrect: 12, p: m.mcnemarExact(0, 12) } });
   assert.equal(worse.result.status, 'FAIL');
-  const tie = run(good, { comparison: { better: -1, candidateOnlyCorrect: 4, baselineOnlyCorrect: 5, p: m.mcnemarExact(4, 5) } });
+  const tie = run(PASS_CSV, { comparison: { better: -1, candidateOnlyCorrect: 4, baselineOnlyCorrect: 5, p: m.mcnemarExact(4, 5) } });
   assert.equal(tie.result.status, 'PASS');
 });
 
 test('FAIL when p95 latency exceeds the budget', () => {
-  const r = run(fixture({ flaggedScam: 98, flaggedSafe: 2 }), { tweak: rep => { rep.latencyMs.p95 = 51; } });
+  const r = run(PASS_CSV, { tweak: rep => { rep.latencyMs.p95 = 51; } });
   assert.equal(r.result.status, 'FAIL'); assert.match(r.result.reasons.join(' '), /latency/);
+});
+
+test('latency excludes the cold start: a detector whose first call is slow is measured after warm-up', () => {
+  let calls = 0;
+  const cold = t => { if (calls++ === 0) { const end = Date.now() + 40; while (Date.now() < end); } return t.length > 0; };
+  const five = Array.from({ length: 5 }, (_, i) => ({ text: 'x' + i, y: true }));   // p95 of 5 samples is the maximum
+  assert.ok(ev.evaluate(five, cold).latencyMs.p95 < 20, 'the 40 ms cold call must not be timed');
 });
 
 /* ---------- leakage ---------- */
@@ -164,9 +217,8 @@ test('leakage: exact copies (digits differ) and near copies are found, distinct 
 });
 
 test('a leaking sealed set fails the gate even when every metric is perfect', () => {
-  const csv = fixture({ flaggedScam: 98, flaggedSafe: 2 });
-  const sealed = h.parseCsv(csv).slice(1).slice(0, 3).map(r => ({ id: 'X' + r[0], text: r[1] }));
-  const r = run(csv, { sealed });
+  const sealed = h.parseCsv(PASS_CSV).slice(1).slice(0, 3).map(r => ({ id: 'X' + r[0], text: r[1] }));
+  const r = run(PASS_CSV, { sealed });
   assert.equal(r.result.status, 'FAIL'); assert.match(r.result.reasons.join(' '), /overlap/);
 });
 
@@ -186,47 +238,69 @@ test('the committed registry is valid', () => {
 });
 
 /* ---------- CLI end to end ---------- */
-const cli = (args, env = {}) => spawnSync(process.execPath, [path.join(__dirname, '..', 'mlops', 'run.js'), ...args], { encoding: 'utf8', env: { ...process.env, ...env } });
-
-test('CLI: no dataset -> NO_EVIDENCE, exit 0, and exit 1 under --require-evidence', () => {
-  const missing = path.join(os.tmpdir(), 'fs-no-such-file.csv');
-  const a = cli(['--data', missing]); assert.equal(a.status, 0); assert.match(a.stdout, /NO_EVIDENCE/);
-  assert.equal(cli(['--data', missing, '--require-evidence']).status, 1);
-});
-
-function cliEnv() {
+const crypto = require('node:crypto');
+const cli = (args, env = {}) => spawnSync(process.execPath, [path.join(__dirname, '..', 'mlops', 'run.js'), ...args], { encoding: 'utf8', env: { ...process.env, FS_REGISTRY: '', FS_DATA: '', FS_POLICY: '', FS_SEALED: '', ...env } });
+function sandbox() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fs-mlops-'));
-  const data = path.join(dir, 'd.csv'), reg = path.join(dir, 'reg.json'), det = path.join(dir, 'toy.js');
-  fs.writeFileSync(reg, '[]'); fs.writeFileSync(det, "module.exports = t => t.includes('SCAMWORD');");
-  return { dir, data, reg, det };
+  const o = { dir, data: path.join(dir, 'd.csv'), reg: path.join(dir, 'reg.json'), det: path.join(dir, 'toy.js'), pol: path.join(dir, 'policy.json') };
+  fs.writeFileSync(o.reg, '[]'); fs.writeFileSync(o.det, "module.exports = t => t.includes('SCAMWORD');"); fs.writeFileSync(o.pol, JSON.stringify(policy));
+  return o;
 }
-const repoReg = () => fs.readFileSync(path.join(__dirname, '..', 'mlops', 'registry.json'), 'utf8');
 
-test('CLI: a detector that fails is not registered and exits 1; the repo registry is untouched', () => {
-  const { data, reg } = cliEnv(), before = repoReg();
-  fs.writeFileSync(data, fixture({ flaggedScam: 98, flaggedSafe: 2 }));
-  // router_v0 has never heard of the fixture's trigger word: recall 0, so the gate must refuse it
-  const r = cli(['--data', data, '--register', '--json'], { FS_REGISTRY: reg });
-  assert.equal(r.status, 1); assert.equal(JSON.parse(r.stdout).status, 'FAIL');
-  assert.deepEqual(JSON.parse(fs.readFileSync(reg, 'utf8')), []);
-  assert.equal(repoReg(), before);
+test('CLI: missing data exits 1 (never 0)', () => {
+  const r = cli(['--data', path.join(os.tmpdir(), 'fs-no-such-file.csv')]);
+  assert.equal(r.status, 1); assert.match(r.stdout, /NO_EVIDENCE/);
 });
 
-test('CLI: a passing candidate file is registered with real hashes of the code and the data', () => {
-  const { data, reg, det } = cliEnv(), before = repoReg();
-  fs.writeFileSync(data, fixture({ flaggedScam: 98, flaggedSafe: 2 }));
-  const r = cli(['--data', data, '--detector-file', det, '--register', '--json'], { FS_REGISTRY: reg });
+test('CLI: corrupt data, a missing policy and a corrupt registry all exit non-zero', () => {
+  const { data, reg, pol } = sandbox();
+  fs.writeFileSync(data, fixture().replace('RS1,', 'RS0,'));   // duplicate id
+  assert.equal(cli(['--data', data, '--registry', reg, '--policy', pol]).status, 1);
+  fs.writeFileSync(data, PASS_CSV);
+  assert.notEqual(cli(['--data', data, '--registry', reg, '--policy', path.join(os.tmpdir(), 'nope.json')]).status, 0);
+  fs.writeFileSync(reg, '{not json');
+  assert.notEqual(cli(['--data', data, '--registry', reg, '--policy', pol]).status, 0);
+});
+
+test('CLI: every path is injectable by environment variable alone', () => {
+  const { data, reg, det, pol } = sandbox();
+  fs.writeFileSync(data, PASS_CSV);
+  const env = { FS_DATA: data, FS_REGISTRY: reg, FS_POLICY: pol };
+  const ok = cli(['--detector-file', det, '--json'], env);
+  assert.equal(ok.status, 0); assert.equal(JSON.parse(ok.stdout).status, 'PASS');
+  fs.writeFileSync(pol, JSON.stringify({ ...policy, maxP95LatencyMs: 1e-9 }));   // a policy only the env var can reach
+  const strict = cli(['--detector-file', det, '--json'], env);
+  assert.equal(strict.status, 1); assert.match(JSON.parse(strict.stdout).reasons.join(' '), /latency/);
+});
+
+test('CLI: INCONCLUSIVE warns and exits 0, and exits 1 under --strict', () => {
+  const { data, reg, det, pol } = sandbox();
+  fs.writeFileSync(data, fixture({ flaggedScam: 98, flaggedSafe: 0 }));
+  const base = ['--data', data, '--registry', reg, '--policy', pol, '--detector-file', det];
+  const lax = cli(base); assert.equal(lax.status, 0); assert.match(lax.stdout, /INCONCLUSIVE/); assert.match(lax.stderr, /not proven/);
+  assert.equal(cli([...base, '--strict']).status, 1);
+});
+
+test('CLI: failing detectors exit 1 and are never registered; a detector that flags nothing is called out as fatal', () => {
+  const { dir, data, reg, pol } = sandbox();
+  fs.writeFileSync(data, PASS_CSV);
+  const base = ['--data', data, '--registry', reg, '--policy', pol, '--register', '--json'];
+  const never = path.join(dir, 'never.js'); fs.writeFileSync(never, 'module.exports = () => false;');
+  const a = cli([...base, '--detector-file', never]), outA = JSON.parse(a.stdout);
+  assert.equal(a.status, 1); assert.equal(outA.status, 'FAIL'); assert.match(outA.reasons.join(' '), /FATAL: Model Flags Nothing/); assert.equal(outA.report.precision.value, 0);
+  const b = cli(base), outB = JSON.parse(b.stdout);   // shipped router: knows nothing about the fixture's trigger word
+  assert.equal(b.status, 1); assert.equal(outB.status, 'FAIL');
+  assert.deepEqual(JSON.parse(fs.readFileSync(reg, 'utf8')), []);
+});
+
+test('CLI: a passing candidate is registered with real hashes of the code and the data, in the injected registry only', () => {
+  const { data, reg, det, pol } = sandbox();
+  fs.writeFileSync(data, PASS_CSV);
+  const r = cli(['--data', data, '--registry', reg, '--policy', pol, '--detector-file', det, '--register', '--json']);
   assert.equal(r.status, 0); assert.equal(JSON.parse(r.stdout).status, 'PASS');
   const [e, ...rest] = JSON.parse(fs.readFileSync(reg, 'utf8'));
-  assert.equal(rest.length, 0); assert.equal(e.detector, 'toy'); assert.equal(e.rows, 200);
-  assert.equal(e.data_sha256, require('node:crypto').createHash('sha256').update(fs.readFileSync(data)).digest('hex'));
-  assert.equal(e.detector_sha256, require('node:crypto').createHash('sha256').update(fs.readFileSync(det)).digest('hex'));
-  assert.deepEqual(g.verifyRegistry([e]), []);
-  assert.equal(repoReg(), before);
-});
-
-test('CLI: an invalid dataset is rejected before any evaluation', () => {
-  const { data, reg } = cliEnv();
-  fs.writeFileSync(data, fixture().replace('RS1,', 'RS0,'));   // duplicate id
-  assert.equal(cli(['--data', data], { FS_REGISTRY: reg }).status, 1);
+  const sha = f => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+  assert.equal(rest.length, 0); assert.equal(e.detector, 'toy'); assert.equal(e.rows, 4100);
+  assert.equal(e.data_sha256, sha(data)); assert.equal(e.detector_sha256, sha(det));
+  assert.equal(e.adjusted_precision.prevalence, 0.01); assert.deepEqual(g.verifyRegistry([e]), []);
 });

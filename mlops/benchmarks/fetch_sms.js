@@ -7,7 +7,7 @@ const fs = require('node:fs'), path = require('node:path'), zlib = require('node
 const SOURCE = 'https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip';
 const ZIP_SHA256 = '1587ea43e58e82b14ff1f5425c88e17f8496bfcdb67a583dbff9eefaf9963ce3';
 const TXT_SHA256 = '7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d';
-const DIR = path.join(__dirname, 'data');
+const DEFAULT_DIR = process.env.FS_BENCH_DATA || path.join(__dirname, 'data');   // injectable: argument or FS_BENCH_DATA
 const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
 
 // Minimal zip reader (stored or deflate entries), so there is no dependency on an unzip tool.
@@ -43,8 +43,8 @@ function parseSms(txt) {
   });
 }
 
-async function load() {
-  const file = path.join(DIR, 'SMSSpamCollection');
+async function load({ dir = DEFAULT_DIR } = {}) {
+  const file = path.join(dir, 'SMSSpamCollection');
   if (fs.existsSync(file) && sha(fs.readFileSync(file)) === TXT_SHA256) return fs.readFileSync(file, 'utf8');
   const res = await fetch(SOURCE);
   if (!res.ok) throw new Error(`download failed: HTTP ${res.status}`);
@@ -52,7 +52,7 @@ async function load() {
   if (sha(zip) !== ZIP_SHA256) throw new Error('downloaded zip does not match the pinned sha-256; refusing to use it');
   const txt = extractEntry(zip, 'SMSSpamCollection');
   if (sha(txt) !== TXT_SHA256) throw new Error('extracted file does not match the pinned sha-256');
-  fs.mkdirSync(DIR, { recursive: true }); fs.writeFileSync(file, txt);
+  fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(file, txt);
   return txt.toString('utf8');
 }
 

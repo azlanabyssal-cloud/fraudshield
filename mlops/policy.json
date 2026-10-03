@@ -1,6 +1,8 @@
 {
-  "_source": "docs/SPEC.md section 5. No other thresholds are set until there is data to justify them.",
+  "_source": "minPrecision, maxP95LatencyMs: docs/SPEC.md section 5. prevalence: owner's rule (ADR-0010). Nothing else is invented.",
   "minPrecision": 0.90,
+  "prevalence": 0.01,
+  "_prevalence_note": "Assumed share of scams among ALL messages. People who check a message are likely above this, so 1% is a conservative, not a measured, base rate.",
   "maxP95LatencyMs": 50,
   "regressionAlpha": 0.05,
   "nearDuplicateJaccard": 0.85,

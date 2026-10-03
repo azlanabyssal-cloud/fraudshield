@@ -7,11 +7,19 @@
   "license": "CC BY 4.0",
   "dataset_sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
   "date": "2026-10-03",
+  "gateAtPolicyPrevalence": {
+    "verdict": "failed",
+    "reason": "prevalence-adjusted precision 43.2% at 1% scam share is below 90%",
+    "adjustedPrecision": 0.43156664068589246,
+    "worstCase": 0.2959123492523152,
+    "prevalence": 0.01,
+    "target": 0.9
+  },
   "testLooks": 2,
   "disclosure": "The test split was read twice. Look 1 used naive Bayes chosen on one validation split: precision 89.7% [83.1-93.9], recall 95.0% [89.4-97.7]. That result prompted replacing single-split selection with cross-validation on train+val. Look 2 is the headline below. Every configuration was compared without the test split.",
   "code_sha256": {
     "text_models.js": "d76d904eb572bab0c6aee7f2eb39ddb5297c16d57a00439ad7f31b1eb0caba84",
-    "pipeline.js": "76b3b4c36be0cc5b1063c1a089946837a1795da0c13d515b9ebe9d3583033b4d"
+    "pipeline.js": "1f56b1fb4f7639d22d5e7ded36ec077f1c065fa815b708fc833308cdd9274848"
   },
   "data": {
     "rows": 5574,
@@ -44,6 +52,10 @@
     "exact": 0
   },
   "selection": {
+    "policy": {
+      "minPrecision": 0.9,
+      "prevalence": 0.01
+    },
     "method": "grouped 5-fold cross-validation on train+val",
     "minPrecisionLowerBound": 0.9,
     "maxModelBytes": 250000,
@@ -71,14 +83,21 @@
           "lo": 0.005572349364181739,
           "hi": 0.011322140206378723
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.5463652124642403,
+            "conservative": 0.45193845937537247
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.8112019802082445
+            "point": 0.8625551174786216,
+            "conservative": 0.8112019802082445
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9532910259917992
+            "point": 0.9675422762941918,
+            "conservative": 0.9532910259917992
           }
         ],
         "foldPrecisionMin": 0.9148936170212766,
@@ -110,14 +129,21 @@
           "lo": 0.001439534591371404,
           "hi": 0.004869700492734793
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.7681657550641742,
+            "conservative": 0.6343561212699916
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.9003959264839699
+            "point": 0.9452495693574203,
+            "conservative": 0.9003959264839699
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9772410782190899
+            "point": 0.9879528680250051,
+            "conservative": 0.9772410782190899
           }
         ],
         "foldPrecisionMin": 0.9148936170212766,
@@ -149,14 +175,21 @@
           "lo": 0.004063367396286438,
           "hi": 0.00912628310401503
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.6110429591526779,
+            "conservative": 0.5056897676433466
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.8420340466244898
+            "point": 0.8911342128234929,
+            "conservative": 0.8420340466244898
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9620057480540224
+            "point": 0.9749258468406193,
+            "conservative": 0.9620057480540224
           }
         ],
         "foldPrecisionMin": 0.9042553191489362,
@@ -188,14 +221,21 @@
           "lo": 0.000145299616363919,
           "hi": 0.0019298336731605743
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.9387895910891885,
+            "conservative": 0.8006325524007608
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.9543894768588854
+            "point": 0.9876412473370126,
+            "conservative": 0.9543894768588854
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9900391098022354
+            "point": 0.9973725212605277,
+            "conservative": 0.9900391098022354
           }
         ],
         "foldPrecisionMin": 0.978021978021978,
@@ -227,14 +267,21 @@
           "lo": 0.0032245588651151104,
           "hi": 0.007848040737895506
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.6485140010307507,
+            "conservative": 0.534478184638057
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.8567816638493504
+            "point": 0.9057826121730784,
+            "conservative": 0.8567816638493504
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9660050620313816
+            "point": 0.9785708113712953,
+            "conservative": 0.9660050620313816
           }
         ],
         "foldPrecisionMin": 0.9444444444444444,
@@ -266,14 +313,21 @@
           "lo": 0.0007286253724822522,
           "hi": 0.003463558814333093
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.8516363987946566,
+            "conservative": 0.7182283204374095
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.9299792917452864
+            "point": 0.9676474357800685,
+            "conservative": 0.9299792917452864
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9843962295308271
+            "point": 0.9930104092292662,
+            "conservative": 0.9843962295308271
           }
         ],
         "foldPrecisionMin": 0.967741935483871,
@@ -305,14 +359,21 @@
           "lo": 0.0032245588651151104,
           "hi": 0.007848040737895506
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.6485140010307507,
+            "conservative": 0.534478184638057
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.8567816638493504
+            "point": 0.9057826121730784,
+            "conservative": 0.8567816638493504
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9660050620313816
+            "point": 0.9785708113712953,
+            "conservative": 0.9660050620313816
           }
         ],
         "foldPrecisionMin": 0.9431818181818182,
@@ -344,14 +405,21 @@
           "lo": 0.000145299616363919,
           "hi": 0.0019298336731605743
         },
-        "precisionAtPrevalence": [
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.9387895910891885,
+            "conservative": 0.8006325524007608
+          },
           {
             "prevalence": 0.05,
-            "precision": 0.9543894768588854
+            "point": 0.9876412473370126,
+            "conservative": 0.9543894768588854
           },
           {
             "prevalence": 0.2,
-            "precision": 0.9900391098022354
+            "point": 0.9973725212605277,
+            "conservative": 0.9900391098022354
           }
         ],
         "foldPrecisionMin": 0.9767441860465116,
@@ -407,22 +475,31 @@
     "prevalence": 0.10365853658536585,
     "atPrevalence": [
       {
+        "prevalence": 0.01,
+        "point": 0.43156664068589246,
+        "conservative": 0.2959123492523152
+      },
+      {
         "prevalence": 0.05,
-        "precision": 0.6865074134729562
+        "point": 0.7982220086496876,
+        "conservative": 0.6865074134729562
       },
       {
         "prevalence": 0.2,
-        "precision": 0.9122951150102269
+        "point": 0.9494712775078594,
+        "conservative": 0.9122951150102269
       },
       {
         "prevalence": 0.5,
-        "precision": 0.976529950241475
+        "point": 0.986870247148289,
+        "conservative": 0.976529950241475
       }
     ],
     "latencyMs": {
-      "p50": 0.001584,
-      "p95": 0.004875,
-      "note": "Node on this machine, not a phone"
+      "p50": 0.001458,
+      "p95": 0.004167,
+      "warmupCalls": 5,
+      "note": "Node on this machine after warm-up, not a phone"
     }
   },
   "baselines": {
@@ -457,22 +534,31 @@
       "prevalence": 0.10365853658536585,
       "atPrevalence": [
         {
+          "prevalence": 0.01,
+          "point": 0,
+          "conservative": 6.390059288568681e-18
+        },
+        {
           "prevalence": 0.05,
-          "precision": 3.329557208254207e-17
+          "point": 0,
+          "conservative": 3.329557208254207e-17
         },
         {
           "prevalence": 0.2,
-          "precision": 1.5815396739207477e-16
+          "point": 0,
+          "conservative": 1.5815396739207477e-16
         },
         {
           "prevalence": 0.5,
-          "precision": 6.326158695682989e-16
+          "point": 0,
+          "conservative": 6.326158695682989e-16
         }
       ],
       "latencyMs": {
-        "p50": 0.146833,
-        "p95": 0.231,
-        "note": "Node on this machine, not a phone"
+        "p50": 0.139458,
+        "p95": 0.159875,
+        "warmupCalls": 5,
+        "note": "Node on this machine after warm-up, not a phone"
       }
     },
     "always_scam": {
@@ -506,22 +592,31 @@
       "prevalence": 0.10365853658536585,
       "atPrevalence": [
         {
+          "prevalence": 0.01,
+          "point": 0.01,
+          "conservative": 0.009690302492482606
+        },
+        {
           "prevalence": 0.05,
-          "precision": 0.04851221594670734
+          "point": 0.05,
+          "conservative": 0.04851221594670734
         },
         {
           "prevalence": 0.2,
-          "precision": 0.19496486045103403
+          "point": 0.2,
+          "conservative": 0.19496486045103403
         },
         {
           "prevalence": 0.5,
-          "precision": 0.49205761126290926
+          "point": 0.5,
+          "conservative": 0.49205761126290926
         }
       ],
       "latencyMs": {
         "p50": 0.000042,
         "p95": 0.000042,
-        "note": "Node on this machine, not a phone"
+        "warmupCalls": 5,
+        "note": "Node on this machine after warm-up, not a phone"
       }
     },
     "never_scam": {
@@ -533,9 +628,10 @@
       "precision": {
         "k": 0,
         "n": 0,
-        "value": null,
-        "lo": null,
-        "hi": null
+        "value": 0,
+        "lo": 0,
+        "hi": 0,
+        "flagsNothing": true
       },
       "recall": {
         "k": 0,
@@ -555,22 +651,31 @@
       "prevalence": 0.10365853658536585,
       "atPrevalence": [
         {
+          "prevalence": 0.01,
+          "point": 0,
+          "conservative": 9.422076715117896e-18
+        },
+        {
           "prevalence": 0.05,
-          "precision": 4.9093978673509044e-17
+          "point": 0,
+          "conservative": 4.9093978673509044e-17
         },
         {
           "prevalence": 0.2,
-          "precision": 2.3319639869916785e-16
+          "point": 0,
+          "conservative": 2.3319639869916785e-16
         },
         {
           "prevalence": 0.5,
-          "precision": 9.327855947966708e-16
+          "point": 0,
+          "conservative": 9.327855947966708e-16
         }
       ],
       "latencyMs": {
-        "p50": 0.000041,
+        "p50": 0,
         "p95": 0.000042,
-        "note": "Node on this machine, not a phone"
+        "warmupCalls": 5,
+        "note": "Node on this machine after warm-up, not a phone"
       }
     }
   },

@@ -6,14 +6,17 @@
    2. choose the model configuration by grouped 5-fold cross-validation on train+val only
    3. fit the winner on train, set its threshold on val, then read the test split
    4. headline numbers use the test split with near-duplicates of training rows removed */
-const crypto = require('node:crypto');
+const crypto = require('node:crypto'), fs = require('node:fs'), path = require('node:path');
 const { normalizeForDedup } = require('../../data_ops/holdout.js');
 const { wilson, precisionAtPrevalence } = require('../metrics.js');
 const { evaluate, compare } = require('../evaluate.js');
 const { findLeakage } = require('../gate.js');
 const detectors = require('../detectors.js');
 const tm = require('./text_models.js');
-const policy = require('../policy.json');
+const { validatePolicy } = require('../gate.js');
+
+// Policy is injectable: pass `policy`, or set FS_POLICY, or the repo default is used.
+const loadPolicy = () => validatePolicy(JSON.parse(fs.readFileSync(process.env.FS_POLICY || path.join(__dirname, '..', 'policy.json'), 'utf8')));
 
 const SEED = 'fs-sms-v1';
 const SPLITS = { train: 0.6, val: 0.2 };   // the remaining 20% is test
@@ -56,7 +59,7 @@ function fit(candidate, train, val, margin) {
 /* Grouped k-fold over `pool`. Each held-out fold is scored by models fitted on the other folds, with the
    threshold set on a hash-chosen slice of those folds. Near-duplicates of the fitting rows are dropped from
    the held-out fold. Nothing outside `pool` is touched. */
-function crossValidate(pool, seed) {
+function crossValidate(pool, seed, policy) {
   const folds = Array.from({ length: FOLDS }, () => []);
   pool.forEach(r => folds[Math.min(FOLDS - 1, Math.floor(unit(r.text, seed + '|cv') * FOLDS))].push(r));
   const tally = {};   // config name -> pooled confusion + per-fold precision
@@ -82,7 +85,9 @@ function crossValidate(pool, seed) {
   });
   return Object.entries(tally).map(([name, t]) => ({
     name, precision: wilson(t.tp, t.tp + t.fp), recall: wilson(t.tp, t.tp + t.fn), fpr: wilson(t.fp, t.fp + t.tn),
-    precisionAtPrevalence: [0.05, 0.2].map(pi => ({ prevalence: pi, precision: precisionAtPrevalence(wilson(t.tp, t.tp + t.fn).lo, wilson(t.fp, t.fp + t.tn).hi, pi) })),
+    atPrevalence: [policy.prevalence, 0.05, 0.2].map(pi => ({ prevalence: pi,
+      point: precisionAtPrevalence(wilson(t.tp, t.tp + t.fn).value ?? 0, wilson(t.fp, t.fp + t.tn).value ?? 0, pi),
+      conservative: precisionAtPrevalence(wilson(t.tp, t.tp + t.fn).lo ?? 0, wilson(t.fp, t.fp + t.tn).hi ?? 1, pi) })),
     foldPrecisionMin: t.foldPrecision.length ? Math.min(...t.foldPrecision) : null, foldPrecisionMax: t.foldPrecision.length ? Math.max(...t.foldPrecision) : null,
     foldsWithoutThreshold: t.foldsWithoutThreshold
   }));
@@ -96,13 +101,13 @@ function selectWinner(ranked, minPrecision) {
   return eligible.reduce((a, b) => (b.recall.value > a.recall.value || (b.recall.value === a.recall.value && b.sizeBytes < a.sizeBytes) ? b : a));
 }
 
-function runBenchmark(rows, { seed = SEED, maxModelBytes = policy.maxModelBytes } = {}) {
+function runBenchmark(rows, { seed = SEED, policy = loadPolicy(), maxModelBytes = policy.maxModelBytes } = {}) {
   const groups = { train: [], val: [], test: [] };
   rows.forEach(r => groups[splitOf(r.text, seed)].push(r));
   const split = { train: counts(groups.train), val: counts(groups.val), test: counts(groups.test) };
 
   // 2. configuration chosen on train+val only
-  const cv = crossValidate([...groups.train, ...groups.val], seed);
+  const cv = crossValidate([...groups.train, ...groups.val], seed, policy);
   const sizes = Object.fromEntries(CANDIDATES.map(c => [c.name, tm.sizeBytes(c.train(groups.train))]));
   const ranked = cv.map(c => ({ ...c, sizeBytes: sizes[c.name.split('@')[0]], overBudget: sizes[c.name.split('@')[0]] > maxModelBytes }));
   const winner = selectWinner(ranked, policy.minPrecision);
@@ -129,7 +134,7 @@ function runBenchmark(rows, { seed = SEED, maxModelBytes = policy.maxModelBytes 
   return {
     seed, split: { ...split, testAfterRemovingNearDuplicates: counts(test) },
     leakage: { nearOrExactDuplicatesRemovedFromTest: leaks.length, exact: leaks.filter(l => l.kind === 'exact').length },
-    selection: { method: `grouped ${FOLDS}-fold cross-validation on train+val`, minPrecisionLowerBound: policy.minPrecision, maxModelBytes, cv: ranked, winner: winner.name },
+    selection: { policy: { minPrecision: policy.minPrecision, prevalence: policy.prevalence }, method: `grouped ${FOLDS}-fold cross-validation on train+val`, minPrecisionLowerBound: policy.minPrecision, maxModelBytes, cv: ranked, winner: winner.name },
     model: { kind: model.kind, sizeBytes: tm.sizeBytes(model), features: Object.keys(model.weights).length, threshold: model.threshold, thresholdChosenOn: 'validation', validation: pick },
     candidate: strip(cand), baselines: Object.fromEntries(Object.entries(base).map(([k, v]) => [k, strip(v)])),
     vsRouterV0: compare(test, base.router_v0.predictions, cand.predictions),
@@ -138,4 +143,4 @@ function runBenchmark(rows, { seed = SEED, maxModelBytes = policy.maxModelBytes 
   };
 }
 
-module.exports = { selectWinner, runBenchmark, crossValidate, splitOf, naiveSplit, fit, CANDIDATES, MARGINS, SEED };
+module.exports = { loadPolicy, selectWinner, runBenchmark, crossValidate, splitOf, naiveSplit, fit, CANDIDATES, MARGINS, SEED };
