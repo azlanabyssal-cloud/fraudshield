@@ -72,3 +72,19 @@ on purpose once and the suite failed (two weak guards were found this way and st
 Not tested offline: `run_sms.js` itself (it needs the network); its parts are all tested.
 Not done: no Hindi or Hinglish data, no UPI/KYC/digital-arrest messages, no on-device latency, no OCR path.
 
+## External validation (Mendeley SMS Phishing)
+```bash
+node mlops/benchmarks/run_external.js   # downloads both datasets on first run, verifies publisher/pinned hashes
+```
+Question: does a detector hold up on a corpus it was not built on? Protocol, fixed before any result: positives are
+"smishing", negatives "ham"; marketing "spam" is excluded (the SOP says honest marketing is not a scam); texts that
+appear with conflicting labels are dropped; the **independent slice** removes every exact or near duplicate of the UCI
+corpus (the Mendeley set is largely a relabelled copy of UCI: 4,549 exact and 120 near duplicates were removed);
+detectors are fixed in advance, never tuned on this data, and individual failures are not inspected.
+
+Result on the independent slice (153 smishing, 436 genuine): the shipped router catches none, the strict link checker
+catches 3.3%, the word-weight model flags all of them with 2.5% false alarms, which fails the 1% gate (28.6% adjusted precision).
+`shortcutCheck` compares against message length alone (AUC 0.884 vs the model's 0.998): the slice is easy because the
+classes differ in style, so treat the model's 100% as weak evidence. Hard negatives (long genuine bank alerts) are the
+missing piece, and only real S0 data will contain them.
+

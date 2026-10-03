@@ -57,6 +57,9 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
   not FraudShield. They must not appear in product copy as the product's accuracy. The README may report them only in its
   "Measured so far" section, labelled as a proxy. Enforced by tests/benchmark.test.js, which fails if the headline
   numbers or the dataset name appear on any page or anywhere else in the README.
+- **C-17: external-validation numbers (Mendeley smishing)**. The recall, false-alarm and AUC figures in
+  `mlops/benchmarks/results/mendeley_smishing_external.json` come from English public SMS corpora and a slice that is
+  confounded by message length. Same rule as C-16: not product accuracy, README "Measured so far" section only.
 
 ## Maintenance rule
 Before adding any number, deadline, legal section or "never/always" to the product, add it here with a

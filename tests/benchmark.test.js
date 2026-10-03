@@ -163,12 +163,18 @@ test('an impossible precision floor is reported as an error, not papered over', 
 
 /* ---------- claims guard ---------- */
 test('proxy benchmark numbers are never presented as FraudShield results on any page', () => {
-  const file = path.join(ROOT, 'mlops', 'benchmarks', 'results', 'uci_sms_spam.json');
-  if (!fs.existsSync(file)) return;
-  const res = JSON.parse(fs.readFileSync(file, 'utf8'));
-  assert.equal(res.proxy, true); assert.equal(res.claimable, false); assert.match(res.warning, /NOT a measure of FraudShield/);
+  const dir = path.join(ROOT, 'mlops', 'benchmarks', 'results');
+  if (!fs.existsSync(dir)) return;
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
   const pct = c => (100 * c.value).toFixed(1) + '%';
-  const needles = [pct(res.candidate.precision), pct(res.candidate.recall), 'sms spam collection', 'uci-sms'];
+  const needles = ['sms spam collection', 'uci-sms', 'mendeley-smishing'];
+  for (const f of files) {
+    const res = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+    assert.equal(res.proxy, true, f); assert.equal(res.claimable, false, f); assert.match(res.warning, /NOT a measure of FraudShield/, f);
+    // headline numbers: the UCI candidate, and the independent-slice recall and false-alarm of every external detector
+    if (res.candidate) needles.push(pct(res.candidate.precision), pct(res.candidate.recall));
+    if (res.results && res.results.independent) for (const d of Object.values(res.results.independent)) if (d.recall && d.recall.value !== null && d.recall.value > 0 && d.recall.value < 1) needles.push(pct(d.recall));
+  }
   const shipped = fs.readdirSync(ROOT).filter(f => /\.(html|md)$/.test(f)).concat(['script.js', 'sw.js', 'lib/core.js']);
   for (const f of shipped) {
     let text = fs.readFileSync(path.join(ROOT, f), 'utf8');

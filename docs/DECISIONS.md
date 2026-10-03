@@ -95,3 +95,14 @@ planned S1 (about 250) can reach at best INCONCLUSIVE. Open decision for the own
 a higher assumed prevalence (people who check a message are likely above 1%, which makes 1% conservative, not measured).
 CI runs the gate as a separate non-blocking job until S0 exists.
 
+## ADR-0011: External validation, with the shortcut check as a first-class output
+Context: a score on one corpus says little about a different one, and one public set (Mendeley) turned out to be mostly
+a relabelled copy of another (UCI), so a naive "second dataset" would have been contaminated.
+Decision: evaluate on an independent slice (exact and near duplicates of the reference corpus removed), report the
+contaminated set beside it, and always report a trivial-baseline AUC (message length) next to the model's.
+Findings (measured, proxy data): the shipped router catches none of 153 independent real smishing messages and the strict link
+checker 3.3%; the word-weight model flags all of them with 2.5% false alarms (gate fails at 1% prevalence); length alone
+reaches AUC 0.884, so the slice is easy and the model's recall is weak evidence.
+Consequences: the evidence points at the router and link checker as the product's weak parts, but only S0, with long genuine
+bank alerts as hard negatives, can justify changing them. Nothing was tuned on this data.
+

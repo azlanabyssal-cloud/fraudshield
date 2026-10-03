@@ -68,9 +68,27 @@ function negativesNeededToProve(recallLow, minPrecision, prevalence, z = 1.96) {
   return Math.ceil(z * z * (1 / f - 1));
 }
 
+/* ROC AUC = P(a random positive scores above a random negative), ties counting half (Mann-Whitney U).
+   0.5 means the score carries no information; used here to compare a model against trivial shortcuts. */
+function auc(scores, labels) {
+  if (scores.length !== labels.length) throw new RangeError('scores and labels must have the same length');
+  const pos = [], neg = [];
+  scores.forEach((s, i) => { if (!Number.isFinite(s)) throw new RangeError(`score ${i} is not a finite number`); (labels[i] ? pos : neg).push(s); });
+  if (!pos.length || !neg.length) return null;
+  const order = scores.map((s, i) => [s, labels[i]]).sort((a, b) => a[0] - b[0]);
+  let rankSumPos = 0;
+  for (let i = 0; i < order.length;) {
+    let j = i; while (j < order.length && order[j][0] === order[i][0]) j++;
+    const avgRank = (i + 1 + j) / 2;                       // ranks are 1-based; tied scores share the average rank
+    for (let k = i; k < j; k++) if (order[k][1]) rankSumPos += avgRank;
+    i = j;
+  }
+  return (rankSumPos - pos.length * (pos.length + 1) / 2) / (pos.length * neg.length);
+}
+
 function percentile(sorted, q) {
   if (!sorted.length) return null;
   return sorted[Math.min(sorted.length - 1, Math.ceil(q * sorted.length) - 1)];
 }
 
-module.exports = { wilson, mcnemarExact, psi, precisionAtPrevalence, negativesNeededToProve, percentile };
+module.exports = { wilson, mcnemarExact, psi, precisionAtPrevalence, negativesNeededToProve, auc, percentile };

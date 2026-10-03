@@ -58,14 +58,18 @@ FraudShield does **not** claim a detection accuracy. The assistant is a rule-bas
 
 ## Measured so far
 
-**Proxy benchmark, not FraudShield:** the public UCI SMS Spam Collection (English SMS spam from about 2011), used only to prove the pipeline on real data. A test blocks these numbers from appearing anywhere on the site.
+**Proxy benchmarks, not FraudShield:** two public English SMS datasets (UCI SMS Spam, about 2011; Mendeley SMS Phishing), used only to prove the pipeline on real data. A test blocks these numbers from appearing anywhere on the site.
 
 | | result |
 |---|---|
 | Naive random split vs. grouped split | 10.7% of the naive split's test rows were also in training. It reported 97.1% precision; the grouped, de-duplicated evaluation gave 94.0% (cross-validation) and 89.7% (test split, wide interval). The true gap is a few points, and the leak is real. |
 | Small word-weight model, held-out test, 95% intervals | precision 89.7% [83.1–93.9], recall 95.0% [89.4–97.7] |
 | Same model against the project's 1% scam-rate gate | **fails**: adjusted precision 43.2% against a 90% target |
-| The shipped keyword router on the same data | caught 0 of 119 spam messages |
+| **Shipped keyword router on real smishing it was never built on** (153 independent messages) | **caught none: recall 0.0% [0.0–2.4]** |
+| Shipped link checker on the same messages | strict "danger" verdict: recall 3.3% [1.4–7.4]; it calls most unknown links "caution", which flags 35.3% but is not detection |
+| The word-weight model on the same slice | recall 100% [97.6–100], false alarms 2.5% [1.4–4.5], adjusted precision 28.6%: fails the gate |
+
+**Read the last row with suspicion.** On that slice smishing is long (median 139 characters) and genuine texts are short (median 51), so message length alone scores an AUC of 0.884; the model scores 0.998. The slice has no hard negatives such as long genuine bank alerts, so it proves less than it looks. Texts that duplicate the UCI data (4,549 exact, 120 near) were removed first, and the same model scores a similar 99.5% recall on the contaminated set, so contamination was not the main driver here.
 
 **The release gate currently reports `NO_EVIDENCE` and exits 1**, because the real regression set does not exist yet. At a 1% scam rate, proving 90% precision needs about 3,600 genuine messages with no false alarms, which is an open decision for the dataset plan (ADR-0010). Details, protocol and limits: [`mlops/README.md`](mlops/README.md).
 
