@@ -1166,8 +1166,8 @@ footer { background: var(--space); color: #94a3b8; }
 
 /* ── PAGE HERO BACKGROUND IMAGES (per-page classes) ── */
 .page-hero__bg--data   { background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80&fit=crop'); }
-.page-hero__bg--tips   { background-image: url('https://images.unsplash.com/photo-1609220136736-443140cfeaa5?w=1600&q=80&fit=crop'); }
-.page-hero__bg--report { background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1600&q=80&fit=crop'); }
+.page-hero__bg--tips   { background-image: url('images/hero-tips.webp'); }
+.page-hero__bg--report { background-image: url('images/hero-report.webp'); }
 .page-hero__bg--assistant { background-image: url('https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&q=80&fit=crop'); }
 .page-hero__bg--tips::after { background: rgba(11,31,58,0.82); }
 
