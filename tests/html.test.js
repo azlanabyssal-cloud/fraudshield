@@ -23,6 +23,9 @@ test('every page that loads the shared core also loads the link analyzer first, 
   const srcs = [...d.querySelectorAll('script[src]')].map(s => s.getAttribute('src'));
   const core = srcs.indexOf('lib/core.js'), link = srcs.indexOf('lib/linkcheck.js');
   if (core >= 0 && (link < 0 || link > core)) bad('lib/core.js is loaded without lib/linkcheck.js before it');
+  const msg = srcs.indexOf('lib/msgcheck.js');
+  if (core >= 0 && (msg < 0 || msg < core)) bad('lib/msgcheck.js must be loaded after lib/core.js, which it depends on');
+  if (srcs.indexOf('script.js') >= 0 && srcs.indexOf('script.js') < msg) bad('script.js is loaded before lib/msgcheck.js');
 }));
 
 test('every page loads the motion tokens before the stylesheet that uses them, and the engine before the scripts that need it', () => each((page, d, bad) => {

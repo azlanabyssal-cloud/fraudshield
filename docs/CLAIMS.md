@@ -70,6 +70,11 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
   "scan to receive" fraud. Status: secondary confirmation; add the primary NPCI page when it can be fetched.
 - **C-20: analyzer measurements**. The link-presence and recall figures for the analyzer in `mlops/benchmarks/results/mendeley_smishing_external.json`
   are proxy figures (English, public corpus, not tuned on) and follow rule C-17.
+- **C-21: advice lines in the message check**. The "next step" lines in `lib/msgcheck.js` state that no agency arrests or
+  interrogates anyone over a video call, that banks do not ask for KYC through an SMS link, that a UPI PIN is only for paying,
+  and that a genuine refund or prize never costs you money first. Sources: I4C and MHA public advisories on "digital arrest"
+  and the NPCI and RBI public guidance on UPI and KYC fraud. Status: consistent with the advisories as reported; the primary
+  pages returned 403 and were not re-fetched, so re-verify before launch.
 
 ## Maintenance rule
 Before adding any number, deadline, legal section or "never/always" to the product, add it here with a

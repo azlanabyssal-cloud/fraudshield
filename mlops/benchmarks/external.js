@@ -7,6 +7,7 @@
    4. detectors are fixed in advance and never tuned on this data; individual failures are not inspected */
 const { normalizeForDedup } = require('../../data_ops/holdout.js');
 const core = require('../../lib/core.js');
+const { analyzeMessage } = require('../../lib/msgcheck.js');
 const { evaluate, compare } = require('../evaluate.js');
 const { auc } = require('../metrics.js');
 const { adjustedVerdict, findLeakage } = require('../gate.js');
@@ -54,7 +55,9 @@ function linkDetector(strict) {
 function evaluateExternal(sets, policy, extra = {}) {
   const dets = {
     router_v0: detectors.router_v0, link_danger: linkDetector(true), link_danger_or_caution: linkDetector(false),
-    shipped_router_or_link_danger: t => detectors.router_v0(t) || linkDetector(true)(t), ...extra,
+    shipped_router_or_link_danger: t => detectors.router_v0(t) || linkDetector(true)(t),
+    // the message check, written before this benchmark was run and never tuned on it (ADR-0013)
+    message_scam: t => analyzeMessage(t).level === 'scam', message_flag: t => analyzeMessage(t).level !== 'nothing', ...extra,
     always_scam: detectors.always_scam, never_scam: detectors.never_scam
   };
   const out = {};

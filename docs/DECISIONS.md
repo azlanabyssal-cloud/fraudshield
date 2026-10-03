@@ -125,3 +125,23 @@ this ADR removes.
 Consequences: a bare shortener or a random domain stays "unverified", because the address alone cannot prove it fake. Catching
 message-level smishing needs the message text plus the link, which is the S0 dataset's job, not stronger link rules. A
 domain-grouped URL model (PhiUSIIL) is not built; if it is, it may only raise a soft warning, never a "scam" verdict.
+
+## ADR-0013: A message check that quotes its evidence, measured once and left alone
+Context: the router that decides what the assistant answers was built to route chat questions, not to read messages, and it
+caught 0 of 153 real smishing messages (ADR-0011). A person who pastes an SMS got almost nothing back, and a screenshot of
+one was read by OCR and then ignored.
+Decision: `lib/msgcheck.js` reads a pasted message or its OCR text and answers three things: which scam it resembles, the exact
+words that gave it away, and what to do next. It is a rule list because every rule can then name the phrase it matched and be
+argued with. Rules are grouped by what makes a scam work (asking for a secret, paying first to receive, staying on a call,
+secrecy, impersonating an agency, installing an app, guaranteed returns, prizes, KYC and refund pretexts) and add up to
+"suspicious" at 3 and "scam" at 5. Four design points matter more than the word lists: "do not share your OTP" must never be
+flagged (a negation guard, property-tested); the one honest exception (a delivery partner at your door) excuses an OTP ask only in
+the same sentence, because a property test showed a global exception could be bought by appending two words; a link inside the
+message is judged by the link analyzer and outweighs the wording; and it never says "genuine", only "I found no known pattern".
+Measured once, rules fixed beforehand, not tuned afterwards (proxy: English public corpus, not Indian messages):
+independent slice, 153 smishing and 436 genuine. Flagging at "suspicious" or "scam": recall 19.6% [14.1-26.6], false alarms
+0.5% [0.1-1.7]. At "scam" only: recall 7.2% [4.1-12.4], 0 of 436 false alarms. The old router: 0.0%. On the full set of
+4,833 genuine messages, 0.1% [0.0-0.2] were flagged.
+Consequences: a real gain over the router, and still weak: four in five of these messages are missed. The slice is Western
+smishing (parcel, bank, prize lures in English) and the rules were written for Indian scam families, so this number says little about
+the target. Only the S0 set can: collect it, run the gate, then change rules against it. Until then no accuracy is claimed.

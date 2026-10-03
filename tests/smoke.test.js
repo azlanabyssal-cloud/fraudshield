@@ -81,13 +81,13 @@ const attach = (win, name = 'photo.png') => {
   input.dispatchEvent(new win.Event('change'));
 };
 
-test('a pasted scam link gets a scam verdict, a 1930 button, and never the word "safe"', async () => {
+test('a pasted scam link with a few words around it gets a scam verdict, a 1930 button, and never the word "safe"', async () => {
   const p = await loadPage('assistant.html');
   try {
     say(p.document, 'check this http://rto-challan-pay.top/echallan.apk');
-    await until(() => finished(p.document));
+    await until(() => /Walk me through/.test(transcript(p.document)));
     const text = transcript(p.document);
-    assert.match(text, /🚫 This looks like a scam link/); assert.match(text, /app file|\.apk/);
+    assert.match(text, /🚫 This looks like a fake app or remote-access scam/); assert.match(text, /app file|\.apk/);
     assert.ok(p.document.querySelector('#cbMessages a[href="tel:1930"]'), 'the 1930 button is offered');
     assert.doesNotMatch(text, /\bsafe\b/i);
     assert.deepEqual(p.errors, []);
@@ -125,9 +125,9 @@ test('an image with no QR code falls back to reading its text, and a link in tha
     p.window.FraudShieldQR.scan = async () => null;
     p.window.Tesseract = { recognize: async () => ({ data: { text: 'Dear customer your KYC is expired. Update now at http://sbi-kyc-update.tk to avoid block' } }) };
     attach(p.window);
-    await until(() => finished(p.document), 9000);
+    await until(() => /Walk me through/.test(transcript(p.document)), 9000);
     const text = transcript(p.document);
-    assert.match(text, /Here's what I read from the image/); assert.match(text, /🚫 This looks like a scam link/);
+    assert.match(text, /Here's what I read from the image/); assert.match(text, /🚫 This looks like a fake KYC/); assert.match(text, /sbi-kyc-update\.tk/);
   } finally { p.close(); }
 });
 
@@ -190,5 +190,63 @@ test('on a touch device no control is magnetic', async () => {
   try {
     p.window.matchMedia = q => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {} });
     assert.equal(p.window.FraudShieldMotion.magnetic(p.document.querySelector('[data-magnetic]')), null);
+  } finally { p.close(); }
+});
+
+/* ---------- the assistant reads pasted messages, not just links ---------- */
+test('a pasted KYC scam is named, its words are quoted back, and the person is offered the next step', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'Dear customer, your KYC expires today. Update now at bankkyc-verify.xyz or your account will be blocked.');
+    await until(() => /Walk me through/.test(transcript(p.document)));
+    const text = transcript(p.document);
+    assert.match(text, /🚫 This looks like a fake KYC or account-block message/); assert.match(text, /What gave it away:/);
+    assert.match(text, /• "kyc … expires"/); assert.match(text, /Do not use the link or phone number/);
+    assert.ok(p.document.querySelector('#cbMessages a[href="tel:1930"]'), 'the 1930 button is offered');
+    assert.doesNotMatch(text, /\bsafe\b/i); assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('"Walk me through what to do" continues into the existing step-by-step flow for that scam', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'This is the Cyber Crime Branch. A parcel in your name has illegal items. Stay on this video call. Do not tell anyone.');
+    await until(() => /Walk me through/.test(transcript(p.document)));
+    assert.match(transcript(p.document), /fake-officer or "digital arrest" call/);
+    const chip = [...p.document.querySelectorAll('#cbMessages button')].find(b => /Walk me through/.test(b.textContent)); assert.ok(chip);
+    const before = transcript(p.document).length; chip.click();
+    await until(() => transcript(p.document).length > before + 40);
+    assert.ok(transcript(p.document).length > before + 40, 'the flow started');
+  } finally { p.close(); }
+});
+
+test('a real bank warning is not flagged, and a long message with no known pattern gets an honest "found nothing", never "genuine"', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'Rs 2,000.00 debited from A/c XX1234 on 03-Oct-26 to VPA shop@oksbi. If not you, call 1930 or your bank.');
+    await until(() => /does not make it genuine/.test(transcript(p.document)));
+    const text = transcript(p.document);
+    assert.match(text, /❔ I found no known scam pattern in this message/); assert.match(text, /does not make it genuine/);
+    assert.doesNotMatch(text, /🚫|⚠️/); assert.doesNotMatch(text, /\b(?:is|looks) (?:safe|genuine)\b/i);
+  } finally { p.close(); }
+});
+
+test('a person describing what happened is not interrogated as if they had pasted a scam: the old guided flow still answers', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    say(p.document, 'I got a call from someone saying they are from CBI and my Aadhaar is linked to a drug case');
+    await until(() => /That sounds like Digital Arrest/.test(transcript(p.document)));
+    assert.match(transcript(p.document), /That sounds like Digital Arrest/); assert.doesNotMatch(transcript(p.document), /What gave it away/);
+  } finally { p.close(); }
+});
+
+test('a screenshot of a scam text is read by OCR and then analysed as a message', async () => {
+  const p = await loadPage('assistant.html');
+  try {
+    p.window.FraudShieldQR.scan = async () => null;
+    p.window.Tesseract = { recognize: async () => ({ data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }) };
+    attach(p.window);
+    await until(() => /Walk me through/.test(transcript(p.document)), 9000);
+    assert.match(transcript(p.document), /Here's what I read from the image/); assert.match(transcript(p.document), /What gave it away/);
   } finally { p.close(); }
 });

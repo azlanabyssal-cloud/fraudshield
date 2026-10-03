@@ -14,7 +14,7 @@
   "date": "2026-10-03",
   "protocol": "Fixed before results: positives = smishing, negatives = ham, marketing spam excluded; conflicting-label texts dropped; independent slice removes every exact or near duplicate of the UCI corpus; detectors fixed in advance, never tuned on this data.",
   "code_sha256": {
-    "external.js": "00290c21691c5024a19b5f4d885d1e13debcff2318d4210135d6ec3a8e43f034",
+    "external.js": "c8f338d8995fcb6b98891769d22dcef3c8003a5139c8194f3a56d130f3f3b2f8",
     "pipeline.js": "1f56b1fb4f7639d22d5e7ded36ec077f1c065fa815b708fc833308cdd9274848",
     "text_models.js": "d76d904eb572bab0c6aee7f2eb39ddb5297c16d57a00439ad7f31b1eb0caba84"
   },
@@ -136,8 +136,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.14575,
-          "p95": 0.190083,
+          "p50": 0.145,
+          "p95": 0.181833,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -200,8 +200,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000584,
-          "p95": 0.104875,
+          "p50": 0.000541,
+          "p95": 0.07575,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -264,8 +264,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000541,
-          "p95": 0.055792,
+          "p50": 0.000459,
+          "p95": 0.055875,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -328,8 +328,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.146084,
-          "p95": 0.2525,
+          "p50": 0.146208,
+          "p95": 0.248167,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -338,6 +338,134 @@
           "adjusted": 0.009503672864398282,
           "worstCase": 0.0005818733192172645,
           "reason": "prevalence-adjusted precision 1.0% at 1% scam share is below 90%"
+        }
+      },
+      "message_scam": {
+        "n": 589,
+        "tp": 11,
+        "fp": 0,
+        "fn": 142,
+        "tn": 436,
+        "precision": {
+          "k": 11,
+          "n": 11,
+          "value": 1,
+          "lo": 0.7411599827511859,
+          "hi": 1
+        },
+        "recall": {
+          "k": 11,
+          "n": 153,
+          "value": 0.0718954248366013,
+          "lo": 0.04061618900345252,
+          "hi": 0.12414622096941183
+        },
+        "fpr": {
+          "k": 0,
+          "n": 436,
+          "value": 0,
+          "lo": 0,
+          "hi": 0.008734053350115132
+        },
+        "underpowered": false,
+        "prevalence": 0.2597623089983022,
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 1,
+            "conservative": 0.044865515451819576
+          },
+          {
+            "prevalence": 0.05,
+            "point": 1,
+            "conservative": 0.19662838531392962
+          },
+          {
+            "prevalence": 0.2,
+            "point": 1,
+            "conservative": 0.5375896425677247
+          },
+          {
+            "prevalence": 0.5,
+            "point": 1,
+            "conservative": 0.823019038335407
+          }
+        ],
+        "latencyMs": {
+          "p50": 0.047584,
+          "p95": 0.144333,
+          "warmupCalls": 5,
+          "note": "Node on this machine after warm-up, not a phone"
+        },
+        "gate": {
+          "verdict": "unproven",
+          "adjusted": 1,
+          "worstCase": 0.044865515451819576,
+          "reason": "adjusted precision 100.0% at 1% scam share reaches 90% but is not proven: worst case 4.5%. Proving it needs about 84270 genuine messages with no false alarms; there are 436"
+        }
+      },
+      "message_flag": {
+        "n": 589,
+        "tp": 30,
+        "fp": 2,
+        "fn": 123,
+        "tn": 434,
+        "precision": {
+          "k": 30,
+          "n": 32,
+          "value": 0.9375,
+          "lo": 0.7985253275199642,
+          "hi": 0.9826897968048427
+        },
+        "recall": {
+          "k": 30,
+          "n": 153,
+          "value": 0.19607843137254902,
+          "lo": 0.14094165512787293,
+          "hi": 0.26610341454751935
+        },
+        "fpr": {
+          "k": 2,
+          "n": 436,
+          "value": 0.0045871559633027525,
+          "lo": 0.0012588399337193044,
+          "hi": 0.016569396413183765
+        },
+        "underpowered": false,
+        "prevalence": 0.2597623089983022,
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.301563148429935,
+            "conservative": 0.07912239014697915
+          },
+          {
+            "prevalence": 0.05,
+            "point": 0.6922832645284217,
+            "conservative": 0.30924521086911794
+          },
+          {
+            "prevalence": 0.2,
+            "point": 0.9144295302013423,
+            "conservative": 0.6801571832660751
+          },
+          {
+            "prevalence": 0.5,
+            "point": 0.9771402958314657,
+            "conservative": 0.8948048644773042
+          }
+        ],
+        "latencyMs": {
+          "p50": 0.044667,
+          "p95": 0.133417,
+          "warmupCalls": 5,
+          "note": "Node on this machine after warm-up, not a phone"
+        },
+        "gate": {
+          "verdict": "failed",
+          "adjusted": 0.301563148429935,
+          "worstCase": 0.07912239014697915,
+          "reason": "prevalence-adjusted precision 30.2% at 1% scam share is below 90%"
         }
       },
       "uci_model": {
@@ -392,8 +520,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.001833,
-          "p95": 0.005042,
+          "p50": 0.001583,
+          "p95": 0.0045,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -593,8 +721,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.142459,
-          "p95": 0.179625,
+          "p50": 0.141708,
+          "p95": 0.198084,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -658,7 +786,7 @@
         ],
         "latencyMs": {
           "p50": 0.000292,
-          "p95": 0.000959,
+          "p95": 0.001,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -722,7 +850,7 @@
         ],
         "latencyMs": {
           "p50": 0.000292,
-          "p95": 0.001041,
+          "p95": 0.000958,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -785,8 +913,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.143584,
-          "p95": 0.211958,
+          "p50": 0.139875,
+          "p95": 0.203791,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -795,6 +923,134 @@
           "adjusted": 0.027914955554400375,
           "worstCase": 0.003981681098160529,
           "reason": "prevalence-adjusted precision 2.8% at 1% scam share is below 90%"
+        }
+      },
+      "message_scam": {
+        "n": 5258,
+        "tp": 13,
+        "fp": 2,
+        "fn": 412,
+        "tn": 4831,
+        "precision": {
+          "k": 13,
+          "n": 15,
+          "value": 0.8666666666666667,
+          "lo": 0.6211750079348376,
+          "hi": 0.9626395301086407
+        },
+        "recall": {
+          "k": 13,
+          "n": 425,
+          "value": 0.03058823529411765,
+          "lo": 0.01796136838919065,
+          "hi": 0.0516251642606269
+        },
+        "fpr": {
+          "k": 2,
+          "n": 4833,
+          "value": 0.0004138216428719222,
+          "lo": 0.00011348978132276,
+          "hi": 0.0015077334565852172
+        },
+        "underpowered": false,
+        "prevalence": 0.08082921262837581,
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.4274692302982059,
+            "conservative": 0.10740712010525684
+          },
+          {
+            "prevalence": 0.05,
+            "point": 0.7955152635510706,
+            "conservative": 0.3853684177053019
+          },
+          {
+            "prevalence": 0.2,
+            "point": 0.9486629724138973,
+            "conservative": 0.7486304660485346
+          },
+          {
+            "prevalence": 0.5,
+            "point": 0.9866518004365646,
+            "conservative": 0.922557626513606
+          }
+        ],
+        "latencyMs": {
+          "p50": 0.040584,
+          "p95": 0.071958,
+          "warmupCalls": 5,
+          "note": "Node on this machine after warm-up, not a phone"
+        },
+        "gate": {
+          "verdict": "failed",
+          "adjusted": 0.4274692302982059,
+          "worstCase": 0.10740712010525684,
+          "reason": "prevalence-adjusted precision 42.7% at 1% scam share is below 90%"
+        }
+      },
+      "message_flag": {
+        "n": 5258,
+        "tp": 63,
+        "fp": 5,
+        "fn": 362,
+        "tn": 4828,
+        "precision": {
+          "k": 63,
+          "n": 68,
+          "value": 0.9264705882352942,
+          "lo": 0.839146060418006,
+          "hi": 0.9681856248451285
+        },
+        "recall": {
+          "k": 63,
+          "n": 425,
+          "value": 0.14823529411764705,
+          "lo": 0.11760786118751199,
+          "hi": 0.1851650041315242
+        },
+        "fpr": {
+          "k": 5,
+          "n": 4833,
+          "value": 0.0010345541071798054,
+          "lo": 0.0004419715719606056,
+          "hi": 0.0024197305768135034
+        },
+        "underpowered": false,
+        "prevalence": 0.08082921262837581,
+        "atPrevalence": [
+          {
+            "prevalence": 0.01,
+            "point": 0.5913890151382721,
+            "conservative": 0.3292851100364933
+          },
+          {
+            "prevalence": 0.05,
+            "point": 0.8829214682155347,
+            "conservative": 0.7189502978367296
+          },
+          {
+            "prevalence": 0.2,
+            "point": 0.972841628352062,
+            "conservative": 0.923959722749597
+          },
+          {
+            "prevalence": 0.5,
+            "point": 0.9930692358873334,
+            "conservative": 0.9798402138937798
+          }
+        ],
+        "latencyMs": {
+          "p50": 0.04,
+          "p95": 0.069708,
+          "warmupCalls": 5,
+          "note": "Node on this machine after warm-up, not a phone"
+        },
+        "gate": {
+          "verdict": "failed",
+          "adjusted": 0.5913890151382721,
+          "worstCase": 0.3292851100364933,
+          "reason": "prevalence-adjusted precision 59.1% at 1% scam share is below 90%"
         }
       },
       "uci_model": {
@@ -979,7 +1235,7 @@
         ],
         "latencyMs": {
           "p50": 0,
-          "p95": 0,
+          "p95": 0.000041,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },

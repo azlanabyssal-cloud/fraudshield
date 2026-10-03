@@ -907,6 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isGeneralMoneyLoss, checkLink, findLinkIn, detectIntent,
     extractIntroducedName, matchSmallTalk
   } = window.FraudShieldCore;
+  const { analyzeMessage } = window.FraudShieldMessage;
 
   // V1 privacy mandate: speech *recognition* in Chrome streams the user's audio to
   // Google, which contradicts "nothing you share leaves your device". It stays
@@ -1117,9 +1118,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
         icon + ' ' + result.headline,
-        result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link, even if it looks official.'
+        result.reasons.join(' ') + ' Never enter your OTP, UPI PIN, or password after clicking a link or scanning a code, even if it looks official.'
       ], { urgent: scam, cta: scam ? [{ label: '📞 Paid or shared details? Call 1930', href: 'tel:1930' }] : undefined });
     }
+    // A pasted scam talks TO the reader ("your KYC expires"); a person describing what happened talks about themselves ("I got a call").
+    const DESCRIBING_SELF = /^\s*(?:i|my|me|we|mera|meri|mujhe|hum)\b|\b(?:i|we)\s+(?:got|received|have|was|am|just|clicked|paid|shared|lost)\b/i;
+    const justALink = (text, link) => !!link && link.length >= text.trim().length * 0.8;
+
+    function respondToMessage(v) {
+      const scam = v.level === 'scam', why = v.evidence.slice(0, 4).map(e => '• "' + e.quote + '": ' + e.label).join('\n');
+      botSay([
+        (scam ? '🚫 ' : '⚠️ ') + v.headline,
+        'What gave it away:\n' + why,
+        v.next.join(' ')
+      ], {
+        urgent: scam, noMenuChip: true,
+        cta: scam ? [{ label: '📞 Paid or shared details? Call 1930', href: 'tel:1930' }] : undefined,
+        options: [
+          ...(v.intent ? [{ label: '🧭 Walk me through what to do', action: () => goToNode(v.intent, CHAT_FLOWS[v.intent].start) }] : []),
+          { label: '😟 I already clicked, paid or shared', action: respondToGeneralLoss },
+          { label: '🏠 Main Menu', action: showMainMenu }
+        ]
+      });
+    }
+
+    function respondToNothingFound(v) {
+      botSay(['❔ ' + v.headline, v.next.join(' ')], { options: buildMainMenuOptions(), noMenuChip: true });
+    }
+
     function respondToGeneralLoss() {
       botSay([
         "I'm sorry this happened — let's move fast. Call your bank's helpline right now and report it as a fraudulent transaction. Ask them to block your card or account, and note the complaint number. Under RBI's rules you are generally protected from losses that happen after you report an unauthorised transaction, and delay can cost you that protection. Then call 1930 and report at cybercrime.gov.in too: the sooner the report, the better the chance of freezing the money before it moves on. If any of it is frozen, you can later apply to get it back through the Money Restoration Module on cybercrime.gov.in, using your complaint number.",
@@ -1127,12 +1153,16 @@ document.addEventListener('DOMContentLoaded', () => {
       ], { urgent: true, cta: [{ label: '📞 Call 1930 Now', href: 'tel:1930' }], options: buildMainMenuOptions() });
     }
     function respondToFreeText(text) {
+      const linkMatch = findLinkIn(text);
       if (state.awaitingLink) {
         state.awaitingLink = false; persist();
-        respondToLink(text);
+        const asked = justALink(text, linkMatch) ? null : analyzeMessage(text);
+        if (asked && asked.level !== 'nothing') respondToMessage(asked); else respondToLink(text);
         return;
       }
-      const linkMatch = findLinkIn(text);
+      if (justALink(text, linkMatch)) { respondToLink(linkMatch); return; }
+      const pasted = DESCRIBING_SELF.test(text) ? null : analyzeMessage(text);
+      if (pasted && pasted.level !== 'nothing') { respondToMessage(pasted); return; }
       if (linkMatch) { respondToLink(linkMatch); return; }
 
       const intent = detectIntent(text);
@@ -1156,6 +1186,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (text.length >= 60) {
+        const late = analyzeMessage(text);
+        if (late.level !== 'nothing') { respondToMessage(late); return; }
+        respondToNothingFound(late);
+        return;
+      }
       botSay(["I couldn't quite match that to a scam type — tell me a bit more, or pick the closest below:"], { options: buildMainMenuOptions(), noMenuChip: true });
     }
 
