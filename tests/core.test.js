@@ -63,3 +63,15 @@ test('matchSmallTalk', () => {
   assert.equal(core.matchSmallTalk('bye').noMenu, true);
   assert.equal(core.matchSmallTalk('asdkjh qwe'), null);
 });
+
+test('inflected forms of stem keywords still match (recall regression from whole-word matching)', () => {
+  assert.equal(core.detectIntent('he is blackmailing me'), 'Sextortion');
+  assert.equal(core.detectIntent('she was blackmailed'), 'Sextortion');
+  assert.equal(core.detectIntent('they sent nudes'), 'Sextortion');
+  assert.equal(core.detectIntent('my pics were morphing'), 'Sextortion');
+});
+
+test('stems do not over-match unrelated words', () => {
+  assert.equal(core.detectIntent('morphine tablets after surgery'), null);
+  assert.equal(core.detectIntent('the nudity debate'), null);
+});

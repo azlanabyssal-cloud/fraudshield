@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Share the Aadhaar but not the OTP'
         ],
         correct: 2,
-        explain: 'RBI, banks, and government bodies never call asking for your OTP or Aadhaar. This social engineering tactic is used in 12% of all fraud cases. Always hang up and call your bank directly on the number on your card — never on a number the caller provides.'
+        explain: 'RBI, banks, and government bodies never call asking for your OTP or Aadhaar. This social engineering tactic is behind a large share of fraud cases. Always hang up and call your bank directly on the number on your card — never on a number the caller provides.'
       },
       {
         q: 'You want to receive ₹8,000 from an OLX buyer. He sends you a QR code and says "scan this to receive your payment." What do you do?',
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         options: [
           'Invest a small amount to test if it works',
           'Invest — your friend\'s proof is convincing',
-          'Refuse. Guaranteed returns above 12% annually are a Ponzi scheme warning sign.',
+          'Refuse. Any guarantee of high returns is a Ponzi scheme warning sign.',
           'Research it carefully on Google then decide'
         ],
         correct: 2,
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
           urgent: true,
           say: [
             'Every minute matters. Call 1930 right now and describe it as a digital-arrest fraud so they act fast. Then call your bank and ask them to freeze the transaction.',
-            'For reference: syndicates running this scam are prosecuted as organised crime under BNS Section 111, with extortion under Section 308 and forgery of the fake warrants they show you under Sections 336/338.'
+            'For reference: rings running this scam can be charged under BNS Section 111 (organised crime, which includes cyber-crimes) and Section 308 (extortion). The police and courts decide the charges.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -666,8 +666,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         facts: {
           say: [
-            'Three facts worth remembering: PM Modi has publicly confirmed on Mann Ki Baat that digital arrest has no basis in Indian law. Real police never investigate over WhatsApp video call. And if it ever happens to you or family — hang up, then call 1930.',
-            'Since July 2024, these syndicates are prosecuted under BNS Section 111 — India\'s new law explicitly recognising cyber-fraud rings as organised crime, not isolated cheating cases.'
+            'Three facts worth remembering: on Mann Ki Baat (27 October 2024) PM Modi said there is no such thing as "digital arrest" in the law. No investigative agency questions or arrests people over a phone or video call. And if it ever happens to you or family — hang up, then call 1930.',
+            'Since July 2024, BNS Section 111 defines organised crime to include cyber-crimes, so a fraud ring can be charged as a syndicate, not just as isolated cases of cheating.'
           ],
           options: [{ label: 'What if it happens to my parents?', goto: 'elderly' }]
         },
@@ -717,8 +717,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lost: {
           urgent: true,
           say: [
-            "Call your bank immediately and request a dispute under RBI's rules — UPI transactions can sometimes be reversed if reported within minutes. Then call 1930.",
-            'This is prosecuted as cheating using a computer resource under BNS Section 318 — worth quoting if your bank or the police are slow to act.'
+            "Call your bank immediately and report it as a fraudulent transaction, then call 1930 so a freeze can be requested on the receiving account. UPI payments are hard to reverse, so speed is the one thing you control.",
+            'This can be charged as cheating under BNS Section 318 — worth quoting if your bank or the police are slow to act.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -754,7 +754,7 @@ document.addEventListener('DOMContentLoaded', () => {
           urgent: true,
           say: [
             'If you entered your bank login, card number, or OTP, call your bank right now and ask them to block or freeze your account, then change that password everywhere else you used it. This is time-sensitive.',
-            'Phishing for financial details is cheating under BNS Section 318; if it used a spoofed bank or government page, that adds forgery under Sections 336/338.'
+            'Phishing for financial details can be charged as cheating under BNS Section 318.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -782,8 +782,8 @@ document.addEventListener('DOMContentLoaded', () => {
         threatening: {
           urgent: true,
           say: [
-            'This is illegal blackmail, not debt collection — real recovery agents can\'t threaten to contact your family or morph your photos. Call 1930 immediately and mention "loan app harassment."',
-            'This is extortion under BNS Section 308, and if they\'ve morphed or shared your photos, obscenity/deepfake provisions under Sections 294 and 77 also apply — say this explicitly when you report it.'
+            'This is illegal blackmail, not debt collection — lenders and their agents are not allowed to harass or threaten you. Call 1930 immediately and mention "loan app harassment."',
+            'Threats like this can amount to extortion (BNS Section 308). If photos were morphed or shared, say so when you report it.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -791,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ]
         },
         noLoan: {
-          say: ['That upfront-fee pattern is the scam itself — no legitimate lender ever charges a fee before disbursing a loan. Report it so the app can be taken down before it catches someone else.'],
+          say: ['Being asked to pay before the loan is released, especially to a personal account or UPI ID, is a classic scam pattern. Report it so the app can be taken down before it catches someone else.'],
           cta: [{ label: '📋 File a Report →', href: 'report.html?type=Fake%20Loan%20App' }]
         },
         research: {
@@ -817,8 +817,8 @@ document.addEventListener('DOMContentLoaded', () => {
         now: {
           urgent: true,
           say: [
-            "Don't reply, don't pay, and don't delete the chat — it's evidence. Call 1930 immediately; this is handled confidentially under IT Act Section 66E, with a dedicated process for exactly this.",
-            'It is also extortion under BNS Section 308, and if any image was morphed or shared, that adds Sections 294/77 (obscenity and synthetic/deepfake media) — the law treats this very seriously.'
+            "Don't reply, don't pay, and don't delete the chat — it's evidence. Call 1930 immediately and say this is a sensitive case.",
+            'Threatening to share images to get money can amount to extortion (BNS Section 308). Tell the officer if any image was morphed or already shared.'
           ],
           cta: [
             { label: '📞 Call 1930 (Confidential)', href: 'tel:1930' },
@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ]
         },
         before: {
-          say: ['Same steps apply even after time has passed: save all messages as evidence, then call 1930. Reporting does not mean it becomes public — the process protects your identity.'],
+          say: ['Same steps apply even after time has passed: save all messages as evidence, then call 1930 or report at cybercrime.gov.in.'],
           cta: [
             { label: '📞 Call 1930 (Confidential)', href: 'tel:1930' },
             { label: '📋 File a Report →', href: 'report.html?type=Sextortion' }
@@ -839,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
       start: 'entry',
       nodes: {
         entry: {
-          say: ['Number to remember: no genuine investment guarantees more than about 12% a year. Anything higher, especially with a friend\'s dashboard as "proof", is designed to look real right up until you can\'t withdraw. What\'s your situation?'],
+          say: ['Rule to remember: real investments carry risk, so anyone promising guaranteed returns is a red flag. A friend\'s dashboard showing big profits is not proof: the app itself can fabricate it. What\'s your situation?'],
           options: [
             { label: "I already invested and can't withdraw", goto: 'stuck' },
             { label: 'Someone is pitching me right now', goto: 'pitched' }
@@ -849,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
           urgent: true,
           say: [
             'Stop sending any more money — "unlock fees" or "tax payments" to release your funds are just another layer of the same scam. Save every chat and transaction screenshot, then report it.',
-            'Fake trading platforms account for the largest single share of India\'s digital fraud losses — this is cheating under BNS Section 318, and organised ones fall under Section 111.'
+            'Fake trading platforms account for the largest single share of India\'s digital fraud losses, per I4C figures reported for 2025. This can be charged as cheating (BNS Section 318), and organised rings under Section 111.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
       start: 'entry',
       nodes: {
         entry: {
-          say: ["Real employers never ask you to pay a registration, training-kit, or refundable security fee before you start working. That request alone means it's a scam. What happened?"],
+          say: ["Genuine employers do not charge you a registration, training-kit or refundable security fee to give you a job. That request alone is a strong sign of a scam. What happened?"],
           options: [
             { label: 'I already paid a fee', goto: 'paid' },
             { label: 'They are asking me to pay now', goto: 'asking' }
@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paid: {
           say: [
             'Stop any further payments immediately — paying more never gets your money back or a real job. Report it so the listing can be taken down before it catches someone else.',
-            'This is cheating under BNS Section 318 — mention that when filing, along with the exact account or UPI ID the fee went to.'
+            'This can be charged as cheating under BNS Section 318 — mention that when filing, along with the exact account or UPI ID the fee went to.'
           ],
           cta: [{ label: '📋 File a Report →', href: 'report.html?type=Job%20Fraud' }]
         },
@@ -900,8 +900,8 @@ document.addEventListener('DOMContentLoaded', () => {
         active: {
           urgent: true,
           say: [
-            "Go to a phone with internet access right now and call your bank's helpline to freeze your account — SIM swap is almost always paired with a bank fraud attempt within minutes. Then contact your telecom operator to block the port.",
-            'SIM swap is prosecuted as identity theft/personation under BNS Sections 319(1) and 319(2) — file with your telecom operator and 1930 in parallel, don\'t wait for one before starting the other.'
+            "Go to a phone with internet access right now and call your bank's helpline to freeze your account — SIM swap is often followed quickly by an attempt to drain your bank account. Then contact your telecom operator to block the port.",
+            'This can be charged as cheating by personation (BNS Section 319) — file with your telecom operator and 1930 in parallel, don\'t wait for one before starting the other.'
           ],
           cta: [
             { label: '📞 Call 1930 Now', href: 'tel:1930' },
@@ -1147,7 +1147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function respondToGeneralLoss() {
       botSay([
-        "I'm sorry this happened — let's move fast, every minute matters. Call your bank's helpline right now and say exactly this: \"unauthorised transaction, please freeze and dispute it.\" That triggers RBI's Zero Liability process. Then call 1930 immediately and describe it as financial fraud — reporting within the first hour gives the best chance of freezing the money before it moves further.",
+        "I'm sorry this happened — let's move fast. Call your bank's helpline right now and report it as a fraudulent transaction. Ask them to block your card or account, and note the complaint number. Under RBI's rules you are generally protected from losses that happen after you report an unauthorised transaction, and delay can cost you that protection. Then call 1930 and report at cybercrime.gov.in too: the sooner the report, the better the chance of freezing the money before it moves on.",
         'To get you more specific next steps, what caused it — a phone call, a link, a QR code, or something else? Or pick the closest match below.'
       ], { urgent: true, cta: [{ label: '📞 Call 1930 Now', href: 'tel:1930' }], options: buildMainMenuOptions() });
     }
