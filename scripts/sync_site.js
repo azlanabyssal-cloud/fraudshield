@@ -4,10 +4,11 @@
      data-stat="key"         element text becomes the formatted value from data/stats.json (data-fmt overrides the format)
      data-stat-target="key"  the element's data-target (used by the counters) becomes the raw value
      data-series-key="key"   the element gets data-series='{"labels":[...],"values":[...]}' for the charts
-     <!-- @gen:nav|footer|cases --> ... <!-- @/gen:... -->   region regenerated from partials/ or data/cases.json
+     <!-- @gen:nav|footer|cases|creature_<key> --> ... <!-- @/gen:... -->   region regenerated from partials/ or data/cases.json
    Usage: node scripts/sync_site.js [--check]   (--check exits 1 and writes nothing if any page is out of date) */
 const fs = require('node:fs'), path = require('node:path');
 const { formatStat, indian } = require('../lib/format.js');
+const CreatureArt = require('../lib/creature-art.js');
 
 const ROOT_DEFAULT = path.join(__dirname, '..');
 const PAGES = { 'index.html': 'home', 'data.html': 'data', 'tips.html': 'tips', 'assistant.html': 'assistant', 'about.html': 'about', 'report.html': 'report' };
@@ -198,6 +199,7 @@ function syncRegions(html, data, page, root = ROOT_DEFAULT) {
     else if (name === 'fieldwork_numbers') body = renderFieldworkNumbers(data);
     else if (name === 'fieldwork_gallery') body = renderFieldworkGallery(data, root);
     else if (name === 'fieldwork_learned') body = renderLearned(data);
+    else if (name.startsWith('creature_') && CreatureArt.ART[name.slice(9)]) body = CreatureArt.art(name.slice(9));
     else throw new Error(`unknown generated region "${name}"`);
     return `<!-- @gen:${name} -->\n${body ? body + '\n' : ''}<!-- @/gen:${name} -->`;
   });

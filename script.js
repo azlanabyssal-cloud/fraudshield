@@ -78,6 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('data/urlmodel.json').then(r => (r.ok ? r.json() : Promise.reject(new Error('model-unavailable')))).then(m => Model.install(m)).catch(() => {});
   }
 
+  // One event tells the characters how the page feels: { reaction: 'scam' | 'curious' | 'cheer' | 'numbers' } or { mood, who }. See lib/emotion.js.
+  function emitMood(detail) { try { window.dispatchEvent(new CustomEvent('fs:mood', { detail })); } catch (e) { /* the characters simply do not react */ } }
+
+  // The characters' idle life: gaze, blinking, hopping, speaking. A no-op without the module or under Reduce Motion.
+  function initCreatures() {
+    const Creatures = window.FraudShieldCreatures;
+    if (Creatures) Creatures.mountAll(document, { win: window });
+  }
+
   // Sequenced sections ("How criminals trap you in 4 steps") fill like water as you scroll. A no-op without the module or under Reduce Motion.
   function initFlow() {
     const Flow = window.FraudShieldFlow;
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function animateCounter(el) {
       const target = parseInt(el.dataset.target, 10);
       if (!Motion || !Motion.engine) { render(el, target); return; }
-      Motion.engine.tween(1900, ease, p => render(el, Math.floor(p * target)), () => render(el, target));   // reduced motion: lands at once
+      Motion.engine.tween(1900, ease, p => render(el, Math.floor(p * target)), () => { render(el, target); emitMood({ reaction: 'numbers', hold: 3.5 }); });   // reduced motion: lands at once
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -1131,6 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function respondToLink(raw) {
       const result = checkLink(raw), scam = result.level === 'scam';
+      emitMood({ reaction: scam ? 'scam' : 'curious' });
       const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
         icon + ' ' + result.headline,
@@ -1142,6 +1152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const justALink = (text, link) => !!link && link.length >= text.trim().length * 0.8;
 
     function respondToMessage(v) {
+      emitMood({ reaction: v.level === 'scam' ? 'scam' : 'curious' });
       const scam = v.level === 'scam', why = v.evidence.slice(0, 4).map(e => '• "' + e.quote + '": ' + e.label).join('\n');
       botSay([
         (scam ? '🚫 ' : '⚠️ ') + v.headline,
@@ -1635,6 +1646,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters();
   initMagnetic();
   initFlow();
+  initCreatures();
   initUrlModel();
   initQuiz();
   initTabs();

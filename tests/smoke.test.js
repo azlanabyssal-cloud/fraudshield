@@ -384,3 +384,23 @@ test('under Reduce Motion the hero adds no canvas and the steps stay fully visib
     assert.equal(p.document.querySelector('#heroScene canvas'), null); assert.ok(!p.document.querySelector('.funnel-grid').classList.contains('flow-armed'));
   } finally { p.close(); }
 });
+
+test('on the real home page the characters are mounted: their pupils turn towards the pointer and nothing throws', async () => {
+  const p = await loadPage('index.html', { settle: 400 });
+  try {
+    p.window.performance.now = (n => () => n += 16)(5000);
+    p.window.dispatchEvent(Object.assign(new p.window.Event('pointermove'), { clientX: 900, clientY: 40 }));
+    await new Promise(r => setTimeout(r, 700));
+    const moved = [...p.document.querySelectorAll('.creature .cr-pupil')].filter(el => /translate\(/.test(el.style.transform));
+    assert.ok(moved.length >= 12, 'the pupils of all six characters have been given an offset: ' + moved.length);
+    assert.equal(p.document.querySelectorAll('.creature svg.cr-svg').length, 6); assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('under Reduce Motion the characters stay still: no offsets, no transforms, no ticker', async () => {
+  const p = await loadPage('index.html', { settle: 400, setup: w => { w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} }); } });
+  try {
+    p.window.dispatchEvent(Object.assign(new p.window.Event('pointermove'), { clientX: 900, clientY: 40 })); await new Promise(r => setTimeout(r, 300));
+    assert.ok([...p.document.querySelectorAll('.creature .cr-pupil')].every(el => !el.style.transform)); assert.ok([...p.document.querySelectorAll('.creature svg')].every(el => !el.style.transform));
+  } finally { p.close(); }
+});

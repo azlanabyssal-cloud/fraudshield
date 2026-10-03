@@ -199,3 +199,10 @@ test('motion.css is exactly what the generator writes now, and its tokens are we
   }
   assert.match(file, /@supports \(transition-timing-function: linear\(0, 1\)\)/);
 });
+
+test('each() runs every frame with a clamped dt until stopped, and stopping it releases the loop', () => {
+  const c = clock(), e = M.createEngine(c.env), dts = []; const job = e.each(dt => dts.push(dt));
+  assert.equal(e.running, true); c.frames(60, 0.5); assert.equal(dts.length, 30); assert.ok(dts.every(d => Math.abs(d - 1 / 60) < 1e-9));
+  c.jump(60000); c.frames(60, 1 / 60); assert.equal(dts.at(-1), M.MAX_DT, 'a hidden tab counts as at most MAX_DT');
+  job.stop(); assert.equal(job.active, false); assert.equal(e.running, false); assert.equal(c.pending(), 0); const n = dts.length; c.frames(60, 1); assert.equal(dts.length, n);
+});
