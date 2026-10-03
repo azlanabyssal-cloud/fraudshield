@@ -171,7 +171,15 @@ test('proxy benchmark numbers are never presented as FraudShield results on any 
   const needles = [pct(res.candidate.precision), pct(res.candidate.recall), 'sms spam collection', 'uci-sms'];
   const shipped = fs.readdirSync(ROOT).filter(f => /\.(html|md)$/.test(f)).concat(['script.js', 'sw.js', 'lib/core.js']);
   for (const f of shipped) {
-    const text = fs.readFileSync(path.join(ROOT, f), 'utf8').toLowerCase();
-    for (const n of needles) assert.ok(!text.includes(n.toLowerCase()), `${f} mentions "${n}"; proxy benchmark results must not appear in product copy`);
+    let text = fs.readFileSync(path.join(ROOT, f), 'utf8');
+    if (f === 'README.md') {
+      // the README may report the proxy numbers only inside its "Measured so far" section, labelled as a proxy
+      const m = text.match(/\n## Measured so far[\s\S]*?(?=\n## |$)/);
+      assert.ok(m, 'README needs a "Measured so far" section');
+      assert.match(m[0], /proxy/i); assert.match(m[0], /not FraudShield/i);
+      text = text.replace(m[0], '');
+    }
+    text = text.toLowerCase();
+    for (const n of needles) assert.ok(!text.includes(n.toLowerCase()), `${f} mentions "${n}" outside a labelled proxy section; proxy benchmark results must not appear in product copy`);
   }
 });

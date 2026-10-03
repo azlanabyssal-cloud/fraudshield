@@ -54,8 +54,9 @@ their percentage breakdowns, report.html copy, and most index.html statistics.
   Replaced with "call 1930 and say it is a sensitive case".
 - **C-16: proxy benchmark numbers (UCI SMS Spam)**. The headline figures in `mlops/benchmarks/results/uci_sms_spam.json`
   come from English SMS spam collected in the UK and Singapore around 2011. They measure the evaluation pipeline,
-  not FraudShield. They must not appear in product copy or the README as the product's accuracy. Blocked by
-  tests/benchmark.test.js, which fails if the headline numbers or the dataset name appear on any page.
+  not FraudShield. They must not appear in product copy as the product's accuracy. The README may report them only in its
+  "Measured so far" section, labelled as a proxy. Enforced by tests/benchmark.test.js, which fails if the headline
+  numbers or the dataset name appear on any page or anywhere else in the README.
 
 ## Maintenance rule
 Before adding any number, deadline, legal section or "never/always" to the product, add it here with a

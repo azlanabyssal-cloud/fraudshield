@@ -1,9 +1,11 @@
 # FraudShield
 
-**Digital fraud awareness platform for India.**  
-Community service project by Azlan — second-year BTech student.
+**Recovery-first digital fraud help for Indian families, and the evaluation engineering to measure it honestly.**
 
-Live: [azlanabyssal-cloud.github.io/fraudshield](https://azlanabyssal-cloud.github.io/fraudshield/) | Helpline: **1930** (Free · 24×7)
+[![CI](https://github.com/azlanabyssal-cloud/fraudshield/actions/workflows/ci.yml/badge.svg)](https://github.com/azlanabyssal-cloud/fraudshield/actions/workflows/ci.yml)
+Live: [azlanabyssal-cloud.github.io/fraudshield](https://azlanabyssal-cloud.github.io/fraudshield/) · Helpline: **1930** (free, 24×7)
+
+Community service project by Azlan, second-year BTech student. Not monetised: no accounts, no analytics, no backend of its own.
 
 ---
 
@@ -13,95 +15,96 @@ My uncle got a call last year. Someone said they were from CBI. They said his Aa
 
 He is a retired government employee. Educated. Careful. It still happened to him.
 
-The problem is not intelligence — it is information. My uncle did not know that:
-- No government agency arrests you over video call
-- The number 1930 exists and can freeze the money if you call within the first hour
-- The CFCFRMS system has already saved ₹8,690 crore for other victims (as of early 2026)
+The problem is not intelligence, it is information. That information is on government websites, but it is buried in PDFs and written in legal language. FraudShield puts the first-hour recovery steps, the 1930 helpline and plain-language scam patterns in front of people who use UPI and WhatsApp every day but have never heard of cybercrime.gov.in.
 
-That information is on government websites. But it is buried in PDFs, written in legal language, and assumes the reader already knows where to look.
-
-I built FraudShield because the information exists — it just does not reach the people who need it. Specifically Indian middle-class families: people who are online, who use UPI and WhatsApp every day, but who have never heard of cybercrime.gov.in or the 1930 helpline.
-
-No budget. No team. Just the knowledge and the tools to build something real.
+If someone calls 1930 in time because of this website, that is the whole point.
 
 ---
 
-## What it covers
+## What you can do on the site
 
-**The scams targeting Indian families right now:**
+- **Ask the assistant** (floating widget on every page, or the Assistant page) in English or Hindi: paste a message, describe what happened, or say "money left my account". It walks you through next steps. It runs in the browser; your messages are not sent anywhere.
+- **Check a link.** It flags lookalike bank or government domains, shortened links, abused domain endings and `user@host` tricks. Its best verdict is "no known red flags found". It never says "safe", and a test enforces that.
+- **Read a screenshot offline.** Text is extracted in the browser with a bundled OCR engine (English and Hindi).
+- **Learn the patterns:** digital arrest, UPI and QR tricks, OTP and KYC scams, investment groups, sextortion, loan apps, with the first 60 minutes after a fraud laid out step by step.
+- Installable as an app (PWA), built for flaky connections. Offline behaviour has not yet been verified on real phones.
 
-- **Digital Arrest** — fake CBI/ED/police calls, video call "custody", forced transfers
-- **UPI fraud** — QR code scam (scan to receive = actually pay), fake payment screenshots
-- **OTP scam** — bank impersonation, urgency, "your account will be blocked"
-- **Investment fraud** — WhatsApp groups, fake Zerodha/SEBI portals, 40% monthly "returns"
-- **Sextortion** — compromising video calls, blackmail, threats of sharing
-- **Fake loan apps** — contact/photo access for blackmail, upfront "processing fees"
-
-**What the site actually tells you:**
-
-- PM Modi's exact words on Digital Arrest from Mann Ki Baat — because if your parent hears it from the PM, they believe it
-- The 1930 helpline and what happens when you call — most people don't know CFCFRMS can freeze funds in real time
-- Step-by-step what to do in the first 60 minutes after fraud — every minute matters for fund recovery
-- Verified court cases with real verdicts — because people need to know criminals do get convicted
-- Legal rights under the IT Act and RBI zero liability policy
+Six characters (Kavach, Dost, Chetavani, Sankhya, Thag, Umeed) speak in their sections using the browser's own voices. They have Hindi and English names because the audience does.
 
 ---
 
-## Six mascots
+## What it does not claim
 
-Each one is a character placed in a relevant section. Click them — they speak. Real messages, not filler.
-
-- **Kavach** (कवच — armour) — English, hero section, explains the 1930 helpline
-- **Dost** (दोस्त — friend) — Hindi, hero section, tells your parents not to share OTP
-- **Chetavani** (चेतावनी — warning) — English, PM warning section, explains Digital Arrest
-- **Sankhya** (संख्या — data) — English, statistics section, gives the actual numbers
-- **Thag** (ठग — swindler) — English, fraud funnel, explains how scammers operate
-- **Umeed** (उम्मीद — hope) — English, recovery section, tells victims what to do next
-
-Hindi names because this is for Indian users. The names mean something. They are not decoration.
+FraudShield does **not** claim a detection accuracy. The assistant is a rule-based router, and its quality on real Indian scam messages has not been measured, because the real labelled dataset does not exist yet. The numbers below are about the evaluation pipeline, not the product. See [Measured so far](#measured-so-far).
 
 ---
 
-## Technical build
+## Engineering
 
-Static site — HTML, CSS, vanilla JavaScript. No frameworks, no dependencies.
+| Part | Where | Evidence |
+|---|---|---|
+| On-device core: intent routing, link checker, text normaliser that sees through `K Y C`, `p@nding`, lookalike letters | `lib/core.js` | shared by browser and Node; unit and seeded property tests |
+| Evaluation harness and release gate: Wilson intervals, exact McNemar, PSI, precision adjusted to a 1% scam rate, fail-loud exit codes, registry, leakage check | `mlops/` | known-answer maths, every gate outcome tested, injectable paths |
+| Label store: PostgreSQL schema for blind double-labelling (row-level security), PII and duplicate constraints, Cohen's kappa in SQL | `db/` | run on real PostgreSQL (WASM) in tests; SQL and JS PII rules checked against one corpus |
+| Data collection: offline scrubber and guided add-message tool, validator, labelling SOP | `data_ops/` | property-tested; the scrubber never changes anything except personal tokens |
+| Claims register: every number, date and legal section with its source, and the wording that was removed | `docs/CLAIMS.md` | tests block the removed wording |
+| Decisions: ten ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
 
-- Web Speech API for creature voices — works on Chrome, Safari, Android, iOS
-- Web Audio API for UI sounds — clean sine-wave tones, no harsh mechanical clicks
-- All animations GPU-composited — transform and opacity only, no layout repaints
-- IntersectionObserver for scroll reveal — with fallback for older browsers
-- requestAnimationFrame for reading progress bar
-- Mobile tested at 375px, 390px, 412px (common Indian phone widths)
-- `-webkit-tap-highlight-color:transparent` — no blue flash on tap, clean mobile feel
+122 tests run in CI. Guards were broken on purpose once to prove a test fails (mutation checks), and the weak ones found that way were fixed.
 
-**Fonts:** Playfair Display · DM Sans · JetBrains Mono  
-**Data:** I4C 2024 · RBI Annual Report 2024 · NCRB Crime in India 2023 · NPCI · MHA · DoT 2024
-
-All statistics on this site come from official Indian government publications. Not estimates. Not secondary sources.
+**Deliberately not built:** Kafka, Kubernetes, a model-serving cluster, a vector database. Messages are scored on the device so they never leave it, and there is no traffic or model that would justify any of those. The shipped scoring is a small set of rules and, for experiments, a 40 KB word-weight model; ONNX Runtime was considered and declined (ADR-0010).
 
 ---
 
-## Emergency helplines on the site
+## Measured so far
+
+**Proxy benchmark, not FraudShield:** the public UCI SMS Spam Collection (English SMS spam from about 2011), used only to prove the pipeline on real data. A test blocks these numbers from appearing anywhere on the site.
+
+| | result |
+|---|---|
+| Naive random split vs. grouped split | the naive split overstated precision by 7.4 points (10.7% of its test rows were also in training) |
+| Small word-weight model, held-out test, 95% intervals | precision 89.7% [83.1–93.9], recall 95.0% [89.4–97.7] |
+| Same model against the project's 1% scam-rate gate | **fails**: adjusted precision 43.2% against a 90% target |
+| The shipped keyword router on the same data | caught 0 of 119 spam messages |
+
+**The release gate currently reports `NO_EVIDENCE` and exits 1**, because the real regression set does not exist yet. At a 1% scam rate, proving 90% precision needs about 3,600 genuine messages with no false alarms, which is an open decision for the dataset plan (ADR-0010). Details, protocol and limits: [`mlops/README.md`](mlops/README.md).
+
+---
+
+## Status and next step
+
+1. Collect 200 real, scrubbed messages (stage S0) with `npm run data:add`, deadline **2026-11-07**. If that does not happen, the project ships the rules and the recovery content and drops the ML track, and says so.
+2. Run the gate on S0 for the first real number. Fix the detector only against that set.
+3. Known gaps: the keyword router misses several scam families (prize/lottery, parcel and customs, card-block, earn-daily tasks) and has no "looks genuine" outcome; offline mode and OCR are untested on real devices; parts of `tips.html` and some breakdowns on `data.html` are not yet source-audited (tracked in `docs/CLAIMS.md`).
+   Pages load fonts from Google Fonts, so Google sees each visitor's IP address; self-hosting the fonts would remove that and has not been done yet.
+
+---
+
+## Run it
+
+```bash
+npm ci
+npm test                  # 122 tests
+npm run mlops:gate        # evaluation gate on data_ops/golden_holdout.csv
+npm run data:add          # add one real message, scrubbed offline
+node mlops/benchmarks/run_sms.js   # proxy benchmark (downloads and hash-checks the public dataset)
+```
+
+The site is static HTML, CSS and vanilla JavaScript; open `index.html` or serve the folder. Runtime has no dependencies except a bundled OCR engine. The one dev dependency (an in-process PostgreSQL) is for tests.
+
+---
+
+## Sources and honesty
+
+Figures on the site cite official publications (I4C, RBI, PIB, NPCI, MHA, DoT, NCRB) where one exists, and `docs/CLAIMS.md` records each claim with its source and status. Legal sections taken from secondary sources are marked as such. The Mann Ki Baat quotation is a translation of a Hindi broadcast. Figures that could not be sourced were removed or reworded; anything still unverified is listed there.
 
 | Helpline | Number |
 |---|---|
-| National Cyber Crime | **1930** — Free, 24×7 |
+| National Cyber Crime | **1930** (free, 24×7) |
 | Police | **112** |
 | Women Safety | **181** |
 | Online reporting | cybercrime.gov.in |
 
 ---
 
-## What this project is
-
-This is a community service project. It is not a startup. It is not monetised. There is no data collection, no login, no analytics.
-
-The target user is a 55-year-old Indian parent who uses WhatsApp, pays with UPI, and has never filed a complaint online. The site is built around that person — plain language, no jargon, everything above the fold on mobile, emergency number always visible.
-
-If someone calls 1930 in time because of this website, that is the whole point.
-
----
-
-**Azlan**  
-Second-year BTech student  
-GitHub: [azlanabyssal-cloud](https://github.com/azlanabyssal-cloud)
+**Azlan** · Second-year BTech student · GitHub: [azlanabyssal-cloud](https://github.com/azlanabyssal-cloud)
