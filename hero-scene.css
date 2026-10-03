@@ -11,7 +11,7 @@
 @keyframes hs-in { from { opacity: 0 } to { opacity: 1 } }
 
 /* ember and cold light, slowly breathing */
-.hs__aurora i { position: absolute; border-radius: 50%; will-change: transform; }
+.hs__aurora i { position: absolute; border-radius: 50%; will-change: transform; translate: calc(var(--px, 0) * -2.4vmax) calc(var(--py, 0) * -1.6vmax); }
 .hs__aurora .a1 { width: 64vmax; height: 64vmax; left: 44%; top: -26%; background: radial-gradient(circle, rgba(232,93,4,.30), transparent 62%); animation: hs-a1 28s ease-in-out infinite alternate; }
 .hs__aurora .a2 { width: 58vmax; height: 58vmax; left: -14%; top: 34%; background: radial-gradient(circle, rgba(14,165,233,.17), transparent 60%); animation: hs-a2 34s ease-in-out infinite alternate; }
 .hs__aurora .a3 { width: 40vmax; height: 40vmax; left: 62%; top: 52%; background: radial-gradient(circle, rgba(232,93,4,.16), transparent 64%); animation: hs-a3 23s ease-in-out infinite alternate; }
@@ -28,7 +28,10 @@
 .hs__field, .hs__xray { position: absolute; inset: 0; }
 
 .hs__msg {
-  position: absolute; left: var(--x); top: var(--y); translate: -50% -50%;
+  position: absolute; left: var(--x); top: var(--y);
+  /* centred on its spot, then pushed against the lens by depth: --px and --py come from lib/hero-scene.js (-0.5..0.5). The x-ray copy
+     uses the same rule, so highlights stay exactly over the words. */
+  translate: calc(-50% + var(--px, 0) * var(--d) * -30px) calc(-50% + var(--py, 0) * var(--d) * -18px);
   width: calc(15.2rem * var(--d)); max-width: 44vw;
   padding: .68rem .85rem .78rem; border-radius: 16px 16px 16px 4px;
   background: rgba(17, 40, 72, .72); border: 1px solid rgba(255,255,255,.10);

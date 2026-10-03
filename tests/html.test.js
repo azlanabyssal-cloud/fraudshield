@@ -25,6 +25,29 @@ test('every page that loads the shared core also loads the link analyzer first, 
   if (core >= 0 && (link < 0 || link > core)) bad('lib/core.js is loaded without lib/linkcheck.js before it');
 }));
 
+test('every page loads the motion tokens before the stylesheet that uses them, and the engine before the scripts that need it', () => each((page, d, bad) => {
+  const css = [...d.querySelectorAll('link[rel="stylesheet"]')].map(l => l.getAttribute('href')), js = [...d.querySelectorAll('script[src]')].map(s => s.getAttribute('src'));
+  if (css.indexOf('motion.css') < 0 || css.indexOf('motion.css') > css.indexOf('style.css')) bad('motion.css must be linked before style.css');
+  const engine = js.indexOf('lib/motion.js');
+  if (engine < 0) bad('lib/motion.js is not loaded');
+  for (const needs of ['lib/hero-scene.js', 'script.js']) if (js.indexOf(needs) >= 0 && js.indexOf(needs) < engine) bad(needs + ' is loaded before lib/motion.js');
+}));
+
+test('every --mo- token the pages and stylesheets use is defined in motion.css', () => {
+  const tokens = new Set([...fs.readFileSync(path.join(ROOT, 'motion.css'), 'utf8').matchAll(/(--mo-[a-z-]+):/g)].map(m => m[1])), used = new Set();
+  for (const f of ['style.css', 'hero-scene.css', 'about.css', ...pages]) for (const m of fs.readFileSync(path.join(ROOT, f), 'utf8').matchAll(/var\((--mo-[a-z-]+)/g)) used.add(m[1]);
+  assert.ok(used.size >= 6, 'the layer actually uses the tokens: ' + [...used]);
+  assert.deepEqual([...used].filter(t => !tokens.has(t)), []);
+});
+
+test('the motion layer travels only for people who have not asked for less, and smooth scrolling is switched off for those who have', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8'), layer = css.slice(css.indexOf('MOTION LAYER'));
+  assert.match(layer, /@media \(prefers-reduced-motion: reduce\) \{ html \{ scroll-behavior: auto; \}/);
+  const spring = layer.indexOf('var(--mo-snappy)'), guard = layer.indexOf('@media (prefers-reduced-motion: no-preference)');
+  assert.ok(guard > 0 && spring > guard, 'spring transitions sit inside the no-preference block');
+  assert.match(layer, /scroll-padding-top: 84px/);
+});
+
 test('no duplicate ids on any page', () => each((page, d, bad) => {
   const seen = new Map();
   d.querySelectorAll('[id]').forEach(e => seen.set(e.id, (seen.get(e.id) || 0) + 1));

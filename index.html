@@ -51,8 +51,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="motion.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="hero-scene.css">
+  <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0B1F3A">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -418,7 +420,7 @@
     /* ══════════════════════════════════════
        SCROLL REVEAL SYSTEM
     ══════════════════════════════════════ */
-    .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .5s var(--mo-out,cubic-bezier(.22,1,.36,1)),transform var(--mo-settle-d,.65s) var(--mo-settle,cubic-bezier(.22,1,.36,1))}
     .reveal--left{transform:translateX(-22px)}
     .reveal--right{transform:translateX(22px)}
     .reveal--scale{transform:scale(.94)}
@@ -815,7 +817,7 @@
       You are not alone — help is one free call away.
     </p>
     <div class="hero-buttons">
-      <a href="tips.html" class="btn-primary" data-snd="click">🛡️ Protect Yourself Now</a>
+      <a href="tips.html" class="btn-primary" data-snd="click" data-magnetic>🛡️ Protect Yourself Now</a>
       <a href="report.html" class="btn-outline-white" data-snd="click">📋 Report Your Fraud</a>
     </div>
     <div class="hero-emergency-bar">
@@ -1727,6 +1729,7 @@
 </footer>
 <!-- @/gen:footer -->
 
+<script src="lib/motion.js" defer></script>
 <script src="lib/linkcheck.js" defer></script>
 <script src="lib/qr.js" defer></script>
 <script src="lib/core.js" defer></script>

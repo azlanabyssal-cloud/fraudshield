@@ -13,6 +13,8 @@
     "site:sync": "node scripts/sync_site.js",
     "site:check": "node scripts/sync_site.js --check",
     "site:numbers": "node scripts/scan_numbers.js",
+    "motion:build": "node scripts/build_motion.js",
+    "motion:check": "node scripts/build_motion.js --check",
     "lint": "eslint . --max-warnings 0",
     "field:analyze": "node field/analyze.js"
   },

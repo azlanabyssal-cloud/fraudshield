@@ -70,44 +70,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   // ANIMATED COUNTERS
   // ═══════════════════════════════════════════════════════
+  // Primary calls to action lean towards a nearby pointer (fine pointers only; a no-op on touch and under reduced motion).
+  function initMagnetic() {
+    const Motion = window.FraudShieldMotion;
+    if (!Motion) return;
+    document.querySelectorAll('[data-magnetic]').forEach(el => Motion.magnetic(el));
+  }
+
   function initCounters() {
     const container = document.getElementById('stat-counters');
     if (!container) return;
     if (!('IntersectionObserver' in window)) return;
 
-    function easeOutQuad(t) { return t * (2 - t); }
+    const Motion = window.FraudShieldMotion;
+    // The intro's own rise curve: fast off the line, a long soft landing. A number must never overshoot, so a curve and not a spring.
+    const ease = Motion ? Motion.bezier.apply(null, Motion.CURVES.out) : t => t * (2 - t);
+
+    function render(el, value) {
+      const prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+      el.textContent = prefix + (el.dataset.format === 'lakh' ? formatIndian(value) : value.toLocaleString('en-IN')) + suffix;
+    }
 
     function animateCounter(el) {
-      const target    = parseInt(el.dataset.target, 10);
-      const prefix    = el.dataset.prefix  || '';
-      const suffix    = el.dataset.suffix  || '';
-      const format    = el.dataset.format  || 'plain';
-      const duration  = 2200;
-      const startTime = performance.now();
-
-      function tick(now) {
-        const elapsed  = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased    = easeOutQuad(progress);
-        const value    = Math.floor(eased * target);
-
-        if (format === 'lakh') {
-          el.textContent = prefix + formatIndian(value) + suffix;
-        } else {
-          el.textContent = prefix + value.toLocaleString('en-IN') + suffix;
-        }
-
-        if (progress < 1) {
-          requestAnimationFrame(tick);
-        } else {
-          if (format === 'lakh') {
-            el.textContent = prefix + formatIndian(target) + suffix;
-          } else {
-            el.textContent = prefix + target.toLocaleString('en-IN') + suffix;
-          }
-        }
-      }
-      requestAnimationFrame(tick);
+      const target = parseInt(el.dataset.target, 10);
+      if (!Motion || !Motion.engine) { render(el, target); return; }
+      Motion.engine.tween(1900, ease, p => render(el, Math.floor(p * target)), () => render(el, target));   // reduced motion: lands at once
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -1545,6 +1532,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   initHamburger();
   initCounters();
+  initMagnetic();
   initQuiz();
   initTabs();
   initFilters();

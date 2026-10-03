@@ -1301,3 +1301,33 @@ footer { background: var(--space); color: #94a3b8; }
 /* ── ACCESSIBILITY: skip link, visible only on keyboard focus ── */
 .skip-link { position: absolute; left: .75rem; top: -4rem; z-index: 100000; background: var(--navy, #0B1F3A); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 700; text-decoration: none; transition: top .15s ease; }
 .skip-link:focus { top: .75rem; outline: 3px solid var(--orange, #E85D04); outline-offset: 2px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION LAYER
+   Springs come from motion.css, which is generated from the same physics lib/motion.js runs in the browser.
+   Hover and press ride on transform; colour and shadow stay on short eases. Reduced motion keeps every state change
+   but drops the travel. Anchors stop below the fixed nav instead of under it.
+═══════════════════════════════════════════════════════════════ */
+html { scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cb-messages { scroll-behavior: auto; } }
+.counter-number { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn-primary, .btn-outline-white, .btn-navy, .btn-copy, .tab-btn, .filter-btn, .quiz-opt, .nav-cta {
+    transition: transform var(--mo-snappy-d) var(--mo-snappy), background-color .22s ease, border-color .22s ease, color .22s ease, box-shadow .22s ease;
+  }
+  .btn-primary:active, .btn-outline-white:active, .btn-navy:active, .btn-copy:active, .tab-btn:active, .filter-btn:active, .nav-cta:active, .quiz-opt:active:not(:disabled) {
+    transform: scale(.965); transition-duration: 140ms, .22s, .22s, .22s, .22s;
+  }
+  .stat-card, .info-card, .chart-card, .fact-card, .cm-card, .fraud-card {
+    transition: transform var(--mo-soft-d) var(--mo-soft), box-shadow .3s var(--mo-out);
+  }
+  .cb-fab { transition: transform var(--mo-snappy-d) var(--mo-snappy), box-shadow .22s ease; }
+  .cb-fab:hover { transform: scale(1.08); }
+  .cb-fab:active { transform: scale(.94); transition-duration: 140ms, .22s; }
+  .cb-send, .cb-attach, .cb-mic { transition: transform var(--mo-snappy-d) var(--mo-snappy), background-color .2s ease; }
+  .cb-send:active, .cb-attach:active, .cb-mic:active { transform: scale(.9); transition-duration: 120ms, .2s; }
+  /* the panel grows out of the button that opened it */
+  .cb-panel { transform-origin: calc(100% - 1.6rem) 100%; transform: translateY(10px) scale(.92); transition: opacity .18s ease, transform var(--mo-soft-d) var(--mo-soft); }
+  .cb-panel.cb-panel--open { transform: translateY(0) scale(1); }
+}

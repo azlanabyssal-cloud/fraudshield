@@ -141,3 +141,54 @@ test('a QR scan that throws does not strand the user: the text reader takes over
     assert.match(transcript(p.document), /Here's what I read from the image/);
   } finally { p.close(); }
 });
+
+/* ---------- motion, wired into the real pages ---------- */
+test('the hero lens is steered by the physics engine, and the scene leans with it (parallax variables are written and bounded)', async () => {
+  const p = await loadPage('index.html', { settle: 900 });
+  try {
+    const scene = p.document.getElementById('heroScene');
+    const px = parseFloat(scene.style.getPropertyValue('--px')), py = parseFloat(scene.style.getPropertyValue('--py'));
+    assert.ok(Number.isFinite(px) && Number.isFinite(py), 'parallax variables exist');
+    assert.ok(Math.abs(px) <= 0.5 && Math.abs(py) <= 0.5, `inside the hero: ${px}, ${py}`);
+    assert.ok(Number.isFinite(parseFloat(scene.style.getPropertyValue('--lx'))));
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
+test('a stat counter runs from 0 to the sourced value along the engine and ends exactly on it', async () => {
+  const p = await loadPage('index.html', { settle: 300 });
+  try {
+    const el = p.document.querySelector('#stat-counters .counter-number'), target = Number(el.dataset.target), obs = p.record.observers.find(o => o.last === el) || p.record.observers[0];
+    const sourced = el.textContent, shown = () => Number(el.textContent.replace(/[^\d.]/g, '')) || 0;   // the page ships with the sourced text already in place
+    obs.cb([{ isIntersecting: true, target: el }]);
+    await new Promise(r => setTimeout(r, 350));
+    const mid = shown(); assert.ok(mid > 0, 'it has started: ' + el.textContent);
+    await new Promise(r => setTimeout(r, 2100));
+    assert.ok(target > 0 && shown() >= mid, 'never runs backwards');
+    assert.equal(el.textContent, sourced, 'it ends on exactly the text the page was built with');
+  } finally { p.close(); }
+});
+
+test('a magnetic control leans towards a near pointer, never further than its limit, and returns when the pointer leaves', async () => {
+  const p = await loadPage('index.html', { settle: 300 });
+  try {
+    p.window.matchMedia = q => ({ matches: /hover: hover|pointer: fine/.test(q), media: q, addEventListener() {}, removeEventListener() {} });
+    const el = p.document.querySelector('[data-magnetic]'); assert.ok(el, 'the hero call to action is marked magnetic');
+    el.getBoundingClientRect = () => ({ left: 100, top: 100, width: 200, height: 50, right: 300, bottom: 150 });
+    const m = p.window.FraudShieldMotion.magnetic(el); assert.ok(m, 'fine pointer: active');
+    const move = (x, y) => p.document.dispatchEvent(new p.window.MouseEvent('pointermove', { clientX: x, clientY: y }));
+    const shift = () => el.style.translate.split(' ').map(parseFloat);
+    move(290, 125); await new Promise(r => setTimeout(r, 700)); const [x] = shift(); assert.ok(x > 5 && x <= 9.001, 'pulled right, within the limit: ' + x);
+    move(900, 900); await new Promise(r => setTimeout(r, 700)); assert.deepEqual(shift().map(Math.abs), [0, 0], 'a far pointer lets go');
+    move(290, 125); await new Promise(r => setTimeout(r, 400)); p.document.documentElement.dispatchEvent(new p.window.Event('pointerleave')); await new Promise(r => setTimeout(r, 700)); assert.deepEqual(shift().map(Math.abs), [0, 0], 'leaving the window lets go');
+    m.destroy(); assert.equal(el.style.translate, '');
+  } finally { p.close(); }
+});
+
+test('on a touch device no control is magnetic', async () => {
+  const p = await loadPage('index.html', { settle: 200 });
+  try {
+    p.window.matchMedia = q => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {} });
+    assert.equal(p.window.FraudShieldMotion.magnetic(p.document.querySelector('[data-magnetic]')), null);
+  } finally { p.close(); }
+});
