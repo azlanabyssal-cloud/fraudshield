@@ -150,23 +150,34 @@ function validateRows(rows, opts = {}) {
   return { errors, warnings, stats };
 }
 
-// Extra gate for the finished dataset (npm run validate:final), not for work in progress.
-function finalChecks(stats) {
+// Stage gates. S0 = regression set (inspectable, gates CI). S1 = sealed holdout (the finished dataset).
+const STAGES = {
+  s0: { minRows: 200, minLangPct: 15, minSafePct: 25, minObfuscatedPct: 5, minPerCategory: 0 },
+  s1: { minRows: FINAL_MIN_ROWS, minLangPct: null, minSafePct: 25, minObfuscatedPct: 10, minPerCategory: 20 }
+};
+
+function finalChecks(stats, stage = 's1') {
+  const cfg = STAGES[stage];
+  if (!cfg) return [`unknown stage "${stage}" (use s0 or s1)`];
   const problems = [];
-  if (!stats || stats.rows < FINAL_MIN_ROWS) problems.push(`needs at least ${FINAL_MIN_ROWS} rows, has ${stats ? stats.rows : 0}`);
+  if (!stats || stats.rows < cfg.minRows) problems.push(`stage ${stage} needs at least ${cfg.minRows} rows, has ${stats ? stats.rows : 0}`);
   if (stats && stats.rows) {
     for (const [lang, target] of Object.entries(TARGET_MIX)) {
       const pct = 100 * (stats.language[lang] || 0) / stats.rows;
-      if (Math.abs(pct - target) > MIX_TOLERANCE) problems.push(`language "${lang}" is ${pct.toFixed(1)}% (target ${target}% ±${MIX_TOLERANCE})`);
+      if (cfg.minLangPct !== null) {
+        if (pct < cfg.minLangPct) problems.push(`language "${lang}" is ${pct.toFixed(1)}% (stage ${stage} needs at least ${cfg.minLangPct}%)`);
+      } else if (Math.abs(pct - target) > MIX_TOLERANCE) {
+        problems.push(`language "${lang}" is ${pct.toFixed(1)}% (target ${target}% ±${MIX_TOLERANCE})`);
+      }
     }
-    for (const c of SCAM_CATEGORIES) {
-      if ((stats.category[c] || 0) < 20) problems.push(`category "${c}" has ${stats.category[c] || 0} rows (need ≥ 20 to measure it)`);
+    if (cfg.minPerCategory) for (const c of SCAM_CATEGORIES) {
+      if ((stats.category[c] || 0) < cfg.minPerCategory) problems.push(`category "${c}" has ${stats.category[c] || 0} rows (need >= ${cfg.minPerCategory} to measure it)`);
     }
-    if ((stats.category.safe || 0) / stats.rows < 0.25) problems.push('"safe" is under 25% of rows; precision cannot be measured honestly without enough legitimate messages');
-    if (stats.obfuscated / stats.rows < 0.1) problems.push('under 10% adversarial/obfuscated rows');
+    if ((stats.category.safe || 0) / stats.rows * 100 < cfg.minSafePct) problems.push(`"safe" is under ${cfg.minSafePct}% of rows; precision cannot be measured honestly without enough legitimate messages`);
+    if (100 * stats.obfuscated / stats.rows < cfg.minObfuscatedPct) problems.push(`under ${cfg.minObfuscatedPct}% adversarial/obfuscated rows`);
   }
   return problems;
 }
 
 module.exports = { UPI_SUFFIXES, COLUMNS, LANGUAGES, CATEGORIES, SCAM_CATEGORIES, SOURCES, PLACEHOLDERS, TARGET_MIX,
-  FINAL_MIN_ROWS, parseCsv, toCsvLine, findPii, normalizeForDedup, isRealIsoDate, validateRows, finalChecks };
+  FINAL_MIN_ROWS, STAGES, parseCsv, toCsvLine, findPii, normalizeForDedup, isRealIsoDate, validateRows, finalChecks };

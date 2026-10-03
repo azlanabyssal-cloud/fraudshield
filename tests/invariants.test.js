@@ -82,3 +82,18 @@ test('HTML pages have balanced structural tags', () => {
     }
   }
 });
+
+// Product rule (docs/SPEC.md section 4, ADR-0007): a false "safe" is the most expensive error,
+// so no user-facing text may promise safety.
+test('no page or script promises safety', () => {
+  const banned = /(100% safe|completely safe|totally safe|definitely safe|guaranteed safe|is safe to (click|open|pay|share))/i;
+  for (const f of [...pages, 'script.js', 'lib/core.js']) {
+    const m = read(f).match(banned);
+    assert.equal(m, null, `${f} contains the safety promise "${m && m[0]}"`);
+  }
+});
+
+test('spec and decision log exist and the spec states its kill criteria', () => {
+  assert.match(read('docs/SPEC.md'), /Kill criteria/);
+  assert.match(read('docs/DECISIONS.md'), /ADR-0007/);
+});

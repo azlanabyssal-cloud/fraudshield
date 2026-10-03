@@ -120,3 +120,31 @@ test('CLI: generated template validates; a leaky file exits non-zero', () => {
   assert.match(res.stderr.toString(), /unmasked number/);
   assert.equal(spawnSync('node', [validator, path.join(dir, 'nope.csv')]).status, 2);
 });
+
+// ---- staged gates ----
+function statsFor(n, { hi = 0.3, hinglish = 0.3, safe = 0.3, obf = 0.2, perCat = 25 } = {}) {
+  const lang = { en: Math.round(n * (1 - hi - hinglish)), hi: Math.round(n * hi), hinglish: Math.round(n * hinglish) };
+  const category = { safe: Math.round(n * safe) };
+  for (const c of h.SCAM_CATEGORIES) category[c] = perCat;
+  return { rows: n, language: lang, category, obfuscated: Math.round(n * obf) };
+}
+
+test('stage s0 passes a modest real set that s1 rejects', () => {
+  const s = statsFor(200, { perCat: 5 });
+  assert.deepEqual(h.finalChecks(s, 's0'), []);
+  assert.ok(h.finalChecks(s, 's1').length > 0);
+});
+
+test('stage s0 still enforces size, language floor, safe share and obfuscation share', () => {
+  assert.ok(h.finalChecks(statsFor(150), 's0').some(p => /at least 200 rows/.test(p)));
+  assert.ok(h.finalChecks(statsFor(200, { hi: 0.05, hinglish: 0.05 }), 's0').some(p => /language "hi"/.test(p)));
+  assert.ok(h.finalChecks(statsFor(200, { safe: 0.1 }), 's0').some(p => /"safe" is under/.test(p)));
+  assert.ok(h.finalChecks(statsFor(200, { obf: 0 }), 's0').some(p => /adversarial/.test(p)));
+});
+
+test('stage s1 enforces the language mix and per-category coverage; unknown stage is an error', () => {
+  assert.deepEqual(h.finalChecks(statsFor(1000, { hi: 0.4, hinglish: 0.3 }), 's1'), []);
+  assert.ok(h.finalChecks(statsFor(1000, { hi: 0.1, hinglish: 0.3 }), 's1').some(p => /language "hi"/.test(p)));
+  assert.ok(h.finalChecks(statsFor(1000, { hi: 0.4, hinglish: 0.3, perCat: 3 }), 's1').some(p => /category/.test(p)));
+  assert.ok(h.finalChecks(statsFor(10), 'nope')[0].includes('unknown stage'));
+});

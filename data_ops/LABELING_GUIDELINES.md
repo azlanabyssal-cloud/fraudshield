@@ -17,7 +17,12 @@ contaminated, every accuracy number we publish is fiction. Follow this document 
    (time split). Record the training cutoff date in your private log before you start.
 5. **When unsure, leave it out.** An unverifiable message is worse than a missing one.
 
-## 1. What to collect (target: 1,000 rows)
+## 1. What to collect (stage S0 first: 200 rows, then S1: 1,000)
+
+Work in two stages (see docs/SPEC.md and ADR-0006). **S0** is a 200-row regression set that gates CI and may be
+inspected for failure analysis: reach it first with `npm run data:s0`. **S1** is the sealed 1,000-row holdout
+(`npm run data:final`), which is never inspected. Rows that become the S1 holdout must not be reused in S0.
+The mix and per-category numbers below are the S1 targets.
 
 | Language | Target | Note |
 |---|---|---|

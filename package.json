@@ -5,6 +5,7 @@
     "test": "node --test \"tests/*.test.js\"",
     "data:template": "node data_ops/generate_template.js",
     "data:validate": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report",
-    "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final"
+    "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final",
+    "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0"
   }
 }
