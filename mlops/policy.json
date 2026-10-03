@@ -1,0 +1,7 @@
+{
+  "_source": "docs/SPEC.md section 5. No other thresholds are set until there is data to justify them.",
+  "minPrecision": 0.90,
+  "maxP95LatencyMs": 50,
+  "regressionAlpha": 0.05,
+  "nearDuplicateJaccard": 0.85
+}

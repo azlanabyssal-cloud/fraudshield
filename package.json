@@ -6,6 +6,8 @@
     "data:template": "node data_ops/generate_template.js",
     "data:validate": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report",
     "data:final": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --final",
+    "mlops:gate": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0",
+    "mlops:gate:strict": "node mlops/run.js --data data_ops/golden_holdout.csv --stage=s0 --require-evidence",
     "data:s0": "node data_ops/validate_csv.js data_ops/golden_holdout.csv --report --stage=s0"
   },
   "devDependencies": {

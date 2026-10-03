@@ -13,6 +13,8 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm test
+      - name: Release gate (reports NO_EVIDENCE until the S0 dataset exists)
+        run: node mlops/run.js
       - name: Syntax check browser scripts
         run: |
           node --check script.js

@@ -49,3 +49,17 @@ Consequences: S0 is inspectable, S1 is not. Intervals are wide at 200 and must b
 Context: a false "safe" is the most expensive error.
 Decision: best verdict wording is "no known red flags found"; a test blocks "safe"-style claims.
 Consequences: less satisfying UI copy, lower liability.
+
+## ADR-0008: MLOps is an evaluation and release loop, not a serving stack
+Context: a proposed architecture (edge gateway, Kafka, Redis cluster, GPU inference cluster, vector
+database) was reviewed. Every box needs a server; FraudShield scores messages on the device so they
+never leave it (ADR-0004), and it has no traffic, no model and no dataset that would justify any of them.
+Decision: build the parts of MLOps that apply at this scale and can be tested: a versioned dataset,
+a validated schema, an evaluation harness with 95% intervals and slices, paired comparison against a
+baseline, a leakage check between dev and sealed sets, a three-valued release gate (PASS / INCONCLUSIVE /
+FAIL, plus NO_EVIDENCE when data is missing), a registry that records code hash, data hash and metrics, and a
+drift measure (PSI) on the data mix. Thresholds come only from SPEC section 5.
+Consequences: today the gate reports NO_EVIDENCE, which is the true state. Nothing is "improved" until
+S0 exists; the harness makes the first real number checkable. Revisit serving infrastructure only if
+a server-side feature (for example opt-in reporting) is added with consent.
+
