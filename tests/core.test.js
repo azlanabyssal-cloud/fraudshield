@@ -75,3 +75,18 @@ test('stems do not over-match unrelated words', () => {
   assert.equal(core.detectIntent('morphine tablets after surgery'), null);
   assert.equal(core.detectIntent('the nudity debate'), null);
 });
+
+test('user-hosted Google content is never called safe (forms/sites are the top phishing hosts)', () => {
+  for (const u of ['https://docs.google.com/forms/d/e/abc/viewform', 'https://sites.google.com/view/sbi-kyc-update', 'https://drive.google.com/file/d/x']) {
+    assert.notEqual(core.checkLink(u).verdict, 'safe', u);
+  }
+});
+
+test('"@" in the authority part of a URL is danger (userinfo trick)', () => {
+  assert.equal(core.checkLink('http://sbi.co.in@evil.com/login').verdict, 'danger');
+  assert.equal(core.checkLink('https://www.sbi.co.in').verdict, 'safe');
+});
+
+test('core.js avoids regex lookbehind (throws SyntaxError on Safari < 16.4 and would break the whole page)', () => {
+  assert.doesNotMatch(require('node:fs').readFileSync(require('node:path').join(__dirname, '../lib/core.js'), 'utf8'), /\(\?<[!=]/);
+});
