@@ -140,7 +140,7 @@ the same sentence, because a property test showed a global exception could be bo
 message is judged by the link analyzer and outweighs the wording; and it never says "genuine", only "I found no known pattern".
 Measured once, rules fixed beforehand, not tuned afterwards (proxy: English public corpus, not Indian messages):
 independent slice, 153 smishing and 436 genuine. Flagging at "suspicious" or "scam": recall 19.6% [14.1-26.6], false alarms
-0.5% [0.1-1.7]. At "scam" only: recall 7.2% [4.1-12.4], 0 of 436 false alarms. The old router: 0.0%. On the full set of
+0.5% [0.1-1.7] (first run; after ADR-0020 added Hindi, Hinglish and Telugu wording: 20.9% [15.2-28.0], false alarms unchanged at 0.5%). At "scam" only: recall 7.2% [4.1-12.4], 0 of 436 false alarms. The old router: 0.0%. On the full set of
 4,833 genuine messages, 0.1% [0.0-0.2] were flagged.
 Consequences: a real gain over the router, and still weak: four in five of these messages are missed. The slice is Western
 smishing (parcel, bank, prize lures in English) and the rules were written for Indian scam families, so this number says little about
@@ -228,7 +228,23 @@ left alone:
 - Messages: four common Indian families were missed: electricity or SIM cut-off pressure, "sent to you by mistake, please return it", sextortion, and "scan this QR to receive money". Each rule needs two separate signs, and each has
   look-alikes that must stay quiet (a planned power cut, a friend with your wedding photos, "scan the code to get your pass", a hotel that will return money): a first version of three rules flagged some of them, which is why they were
   tightened before shipping.
-Measured, and what it does not show: the public English benchmark is unchanged (independent slice: flags 19.6%, 0.5% false alarms; "scam" 7.2%, none false), because it contains none of these families. So there is no measured recall for the new
+Measured, and what it does not show: the public English benchmark was unchanged then (independent slice: flags 19.6%, 0.5% false alarms; see ADR-0020 for the later re-measurement; "scam" 7.2%, none false), because it contains none of these families. So there is no measured recall for the new
 rules and none is claimed; they are written from known scam patterns and tested against hand-made positives and look-alikes. The real test is the S0 set of Indian messages.
 Not changed, deliberately: "pay.google.com" and "accounts.google.com" stay "unverified" (the official list is banks, payments and government, not every large company), and a malformed punycode address stays "can't check"
 (browsers refuse it too).
+
+## ADR-0020: Hindi, Hinglish and Telugu wording; the chat remembers its verdict
+Context: a review pointed out that the message checker read English only, although the people it is for write scams and questions in Romanised Hindi and Telugu. Confirmed on the real code:
+"Bhai tumhara account block ho gaya hai, KYC update karo is link pe." scored nothing, and 8 of 9 Hinglish and Tenglish scam messages were missed. It also pointed out that the chat forgot its own
+verdict: "How do I block this number?" after a scam warning went to the generic fallback.
+Decision, language: lib/hinglish.js. Romanised Hindi has no fixed spelling, so every word, in the message and in the lexicon, is reduced to a spelling-insensitive form (wapas/vapas, bhejo/bejo, kaaro/karo,
+fixed-point so it is stable), and entries are phrases with alternatives for genuinely different words ("update (karo|kro|kare)"). They feed the existing rules, so a Hinglish hit is quoted, weighted and named like
+an English one. Hindi negation comes after the verb ("share na karein"), so a negative followed by a verb counts, while "share karo, nahi to block" (or else) does not; a bare stem such as "bhej" is an order only with
+its helper ("bhej do"), because "bhej raha hu" is someone sending their own number. A "tell no one" about the OTP itself is the bank's warning, not a gag order, unless the message also asks for the OTP.
+Decision, memory: lib/followup.js. The chat keeps its last verdict (kind, level, family, the evidence it quoted; an hour, capped). A short question of a known kind (block, report, safe, why, what next, paid, recover,
+evidence, who) is answered about that verdict. A message that is itself scam wording is still scanned as a message first. "Is it safe?" never gets a yes: a flagged message gets a no, anything else gets "I cannot call it safe".
+Measured on a hand-written corpus (tests/fixtures/hinglish.json: 40 scams in Hinglish, Telugu and Devanagari, 32 genuine messages including bank warnings and chat that uses the same words): before, 15 of 40 scams
+flagged and 4 of 32 genuine flagged; after, 40 of 40 and 0 of 32. The 4 old false alarms were in the old code (English "tell anyone" warnings among them) and are fixed. A self-consistency test found a dead lexicon entry
+(a regex quantifier the matcher does not support). On the public English benchmark the checker's flagged share rose from 19.6% to 20.9% with false alarms unchanged: two real Paytm KYC scams the new KYC wording catches.
+Not claimed: the corpus is written by the author, so it shows the rules do what they were written to do and stay quiet on look-alikes; it says nothing about accuracy on real messages, which only the S0 set can.
+Native Telugu script is not read (the text reader has English and Hindi data only).

@@ -1139,7 +1139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = sessionStorage.getItem('fs_cb_state');
       if (raw) return JSON.parse(raw);
     } catch (e) { /* ignore corrupt state */ }
-    return { flow: null, node: null, awaitingLink: false, voiceOut: false, voiceLang: 'en-IN', userName: null, log: [] };
+    return { flow: null, node: null, awaitingLink: false, voiceOut: false, voiceLang: 'en-IN', userName: null, last: null, log: [] };
   }
   function saveChatState(state) {
     try { sessionStorage.setItem('fs_cb_state', JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
@@ -1202,6 +1202,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── The chat engine itself — mounted by both initChatbot() (floating widget)
   //    and initAssistantPage() (assistant.html), each passing its own DOM refs. ──
+  const FollowUp = window.FraudShieldFollowUp || null, Msg = window.FraudShieldMessage || null;
   function buildChatController(dom) {
     const state = loadChatState();
     function persist() { saveChatState(state); }
@@ -1325,8 +1326,11 @@ document.addEventListener('DOMContentLoaded', () => {
       state.awaitingLink = true; persist();
       botSay(['Paste the link, phone number or UPI ID you want me to check, or attach a photo of the QR code.'], { noMenuChip: true });
     }
+    // The chat remembers its last verdict so that "how do I block this number?" or "is it safe?" is answered about it (lib/followup.js).
+    function remember(verdict) { if (FollowUp) { state.last = FollowUp.remember(verdict, Date.now()); persist(); } }
     function respondToLink(raw) {
       const result = checkLink(raw), scam = result.level === 'scam';
+      remember({ kind: result.kind || 'url', level: result.level, headline: result.headline, evidence: (result.reasons || []).map(r => ({ quote: '', label: r })) });
       emitMood({ reaction: scam ? 'scam' : 'curious' });
       const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
@@ -1339,6 +1343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const justALink = (text, link) => !!link && link.length >= text.trim().length * 0.8;
 
     function respondToMessage(v) {
+      remember({ kind: 'message', level: v.level, family: v.family, intent: v.intent, headline: v.headline, evidence: v.evidence });
       emitMood({ reaction: v.level === 'scam' ? 'scam' : 'curious' });
       const scam = v.level === 'scam', why = v.evidence.slice(0, 4).map(e => '• "' + e.quote + '": ' + e.label).join('\n');
       botSay([
@@ -1357,7 +1362,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function respondToNothingFound(v) {
+      remember({ kind: 'message', level: 'nothing', headline: v.headline, evidence: [] });
       botSay(['❔ ' + v.headline, v.next.join(' ')], { options: buildMainMenuOptions(), noMenuChip: true });
+    }
+
+    function answerFollowUp(f) {
+      const buttons = {
+        call1930: { label: '📞 Call 1930', href: 'tel:1930', cta: true }, report: { label: '📝 Report online', href: 'report.html' },
+        menu: { label: '🏠 Main Menu', action: showMainMenu }, loss: { label: '😟 I already clicked, paid or shared', action: respondToGeneralLoss },
+        steps: { label: '🧭 What should I do?', action: () => answerFollowUp(FollowUp.route('what do I do now', state.last, Msg && Msg.FAMILIES, Date.now())) }
+      };
+      const acts = f.options.map(k => buttons[k]).filter(Boolean);
+      botSay(f.lines, { urgent: f.topic === 'paid', noMenuChip: true, options: acts.filter(a => !a.cta), cta: acts.filter(a => a.cta).map(a => ({ label: a.label, href: a.href })) });
     }
 
     function respondToGeneralLoss() {
@@ -1378,6 +1394,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const pasted = DESCRIBING_SELF.test(text) ? null : analyzeMessage(text);
       if (pasted && pasted.level !== 'nothing') { respondToMessage(pasted); return; }
       if (linkMatch) { respondToLink(linkMatch); return; }
+
+      // A short question right after a verdict is about that verdict, not a new message to scan.
+      const follow = FollowUp && FollowUp.route(text, state.last, Msg && Msg.FAMILIES, Date.now());
+      if (follow) { answerFollowUp(follow); return; }
 
       const intent = detectIntent(text);
       if (intent) {

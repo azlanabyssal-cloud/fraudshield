@@ -11,7 +11,7 @@
     "name": "uci-sms-spam",
     "sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d"
   },
-  "date": "2026-10-03",
+  "date": "2026-10-04",
   "protocol": "Fixed before results: positives = smishing, negatives = ham, marketing spam excluded; conflicting-label texts dropped; independent slice removes every exact or near duplicate of the UCI corpus; detectors fixed in advance, never tuned on this data.",
   "code_sha256": {
     "external.js": "c8f338d8995fcb6b98891769d22dcef3c8003a5139c8194f3a56d130f3f3b2f8",
@@ -136,8 +136,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.145,
-          "p95": 0.181833,
+          "p50": 0.143167,
+          "p95": 0.160042,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -200,8 +200,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000541,
-          "p95": 0.07575,
+          "p50": 0.0005,
+          "p95": 0.084125,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -264,8 +264,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000459,
-          "p95": 0.055875,
+          "p50": 0.000458,
+          "p95": 0.072416,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -328,8 +328,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.146208,
-          "p95": 0.248167,
+          "p50": 0.142042,
+          "p95": 0.226208,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -392,8 +392,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.047584,
-          "p95": 0.144333,
+          "p50": 0.162416,
+          "p95": 0.34075,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -406,23 +406,23 @@
       },
       "message_flag": {
         "n": 589,
-        "tp": 30,
+        "tp": 32,
         "fp": 2,
-        "fn": 123,
+        "fn": 121,
         "tn": 434,
         "precision": {
-          "k": 30,
-          "n": 32,
-          "value": 0.9375,
-          "lo": 0.7985253275199642,
-          "hi": 0.9826897968048427
+          "k": 32,
+          "n": 34,
+          "value": 0.9411764705882353,
+          "lo": 0.8090606311053629,
+          "hi": 0.9837176869361576
         },
         "recall": {
-          "k": 30,
+          "k": 32,
           "n": 153,
-          "value": 0.19607843137254902,
-          "lo": 0.14094165512787293,
-          "hi": 0.26610341454751935
+          "value": 0.20915032679738563,
+          "lo": 0.15222635033160012,
+          "hi": 0.2803221572072161
         },
         "fpr": {
           "k": 2,
@@ -436,36 +436,36 @@
         "atPrevalence": [
           {
             "prevalence": 0.01,
-            "point": 0.301563148429935,
-            "conservative": 0.07912239014697915
+            "point": 0.3153279392487457,
+            "conservative": 0.08491946862784919
           },
           {
             "prevalence": 0.05,
-            "point": 0.6922832645284217,
-            "conservative": 0.30924521086911794
+            "point": 0.7058585449762218,
+            "conservative": 0.3259351641332193
           },
           {
             "prevalence": 0.2,
-            "point": 0.9144295302013423,
-            "conservative": 0.6801571832660751
+            "point": 0.9193463363205061,
+            "conservative": 0.696675552528781
           },
           {
             "prevalence": 0.5,
-            "point": 0.9771402958314657,
-            "conservative": 0.8948048644773042
+            "point": 0.9785383644269884,
+            "conservative": 0.9018375952432238
           }
         ],
         "latencyMs": {
-          "p50": 0.044667,
-          "p95": 0.133417,
+          "p50": 0.149333,
+          "p95": 0.285916,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
         "gate": {
           "verdict": "failed",
-          "adjusted": 0.301563148429935,
-          "worstCase": 0.07912239014697915,
-          "reason": "prevalence-adjusted precision 30.2% at 1% scam share is below 90%"
+          "adjusted": 0.3153279392487457,
+          "worstCase": 0.08491946862784919,
+          "reason": "prevalence-adjusted precision 31.5% at 1% scam share is below 90%"
         }
       },
       "uci_model": {
@@ -520,8 +520,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.001583,
-          "p95": 0.0045,
+          "p50": 0.001625,
+          "p95": 0.004333,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -721,8 +721,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.141708,
-          "p95": 0.198084,
+          "p50": 0.140292,
+          "p95": 0.154667,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -785,8 +785,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000292,
-          "p95": 0.001,
+          "p50": 0.000333,
+          "p95": 0.000959,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -849,8 +849,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.000292,
-          "p95": 0.000958,
+          "p50": 0.000291,
+          "p95": 0.000875,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -913,8 +913,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.139875,
-          "p95": 0.203791,
+          "p50": 0.140458,
+          "p95": 0.158292,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -977,8 +977,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.040584,
-          "p95": 0.071958,
+          "p50": 0.139167,
+          "p95": 0.231292,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -991,23 +991,23 @@
       },
       "message_flag": {
         "n": 5258,
-        "tp": 63,
+        "tp": 65,
         "fp": 5,
-        "fn": 362,
+        "fn": 360,
         "tn": 4828,
         "precision": {
-          "k": 63,
-          "n": 68,
-          "value": 0.9264705882352942,
-          "lo": 0.839146060418006,
-          "hi": 0.9681856248451285
+          "k": 65,
+          "n": 70,
+          "value": 0.9285714285714286,
+          "lo": 0.8434438687669077,
+          "hi": 0.9691062384897065
         },
         "recall": {
-          "k": 63,
+          "k": 65,
           "n": 425,
-          "value": 0.14823529411764705,
-          "lo": 0.11760786118751199,
-          "hi": 0.1851650041315242
+          "value": 0.15294117647058825,
+          "lo": 0.12184215753492263,
+          "hi": 0.19025816109088234
         },
         "fpr": {
           "k": 5,
@@ -1021,36 +1021,36 @@
         "atPrevalence": [
           {
             "prevalence": 0.01,
-            "point": 0.5913890151382721,
-            "conservative": 0.3292851100364933
+            "point": 0.5989190116678106,
+            "conservative": 0.33714355246158245
           },
           {
             "prevalence": 0.05,
-            "point": 0.8829214682155347,
-            "conservative": 0.7189502978367296
+            "point": 0.8861136184136297,
+            "conservative": 0.7260416381320159
           },
           {
             "prevalence": 0.2,
-            "point": 0.972841628352062,
-            "conservative": 0.923959722749597
+            "point": 0.9736552557764727,
+            "conservative": 0.926407825126827
           },
           {
             "prevalence": 0.5,
-            "point": 0.9930692358873334,
-            "conservative": 0.9798402138937798
+            "point": 0.9932810573244379,
+            "conservative": 0.9805271703691023
           }
         ],
         "latencyMs": {
-          "p50": 0.04,
-          "p95": 0.069708,
+          "p50": 0.138375,
+          "p95": 0.231333,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
         "gate": {
           "verdict": "failed",
-          "adjusted": 0.5913890151382721,
-          "worstCase": 0.3292851100364933,
-          "reason": "prevalence-adjusted precision 59.1% at 1% scam share is below 90%"
+          "adjusted": 0.5989190116678106,
+          "worstCase": 0.33714355246158245,
+          "reason": "prevalence-adjusted precision 59.9% at 1% scam share is below 90%"
         }
       },
       "uci_model": {
@@ -1105,8 +1105,8 @@
           }
         ],
         "latencyMs": {
-          "p50": 0.00125,
-          "p95": 0.0035,
+          "p50": 0.001208,
+          "p95": 0.003083,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
@@ -1235,7 +1235,7 @@
         ],
         "latencyMs": {
           "p50": 0,
-          "p95": 0.000041,
+          "p95": 0,
           "warmupCalls": 5,
           "note": "Node on this machine after warm-up, not a phone"
         },
