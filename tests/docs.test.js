@@ -50,8 +50,8 @@ test('every diagram in the architecture document is well-formed: no double quote
   }
 });
 
-test('no file in the repository carries a trace of an AI assistant\'s name: the project is the author\'s own work and says so (checked on every push)', () => {
-  const words = new RegExp(['cla' + 'ude', 'anthr' + 'opic'].join('|'), 'i'), skip = new Set(['node_modules', '.git']), hits = [];
+test('no file in the repository carries the name of an AI assistant or product: the project is the author\'s own work and says so (checked on every push)', () => {
+  const words = new RegExp(['cla' + 'ude', 'anthr' + 'opic', 'chat' + 'gpt', 'gem' + 'ini', 'co' + 'pilot', 'open' + 'ai', 'perplex' + 'ity', 'deep' + 'seek'].join('|'), 'i'), skip = new Set(['node_modules', '.git']), hits = [];
   (function walk(dir) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       if (skip.has(e.name)) continue;
