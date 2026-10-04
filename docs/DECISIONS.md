@@ -248,3 +248,16 @@ flagged and 4 of 32 genuine flagged; after, 40 of 40 and 0 of 32. The 4 old fals
 (a regex quantifier the matcher does not support). On the public English benchmark the checker's flagged share rose from 19.6% to 20.9% with false alarms unchanged: two real Paytm KYC scams the new KYC wording catches.
 Not claimed: the corpus is written by the author, so it shows the rules do what they were written to do and stay quiet on look-alikes; it says nothing about accuracy on real messages, which only the S0 set can.
 Native Telugu script is not read (the text reader has English and Hindi data only).
+
+## ADR-0021: A QR code that is present but unreadable stops the assistant
+Context: a review said that scammers' branded UPI codes (a logo in the middle, a tilt) defeat client-side decoders, and that the assistant would then read the text around the code and give an inconclusive or reassuring answer.
+Measured first: jsQR reads logo-covered codes right up to each code's error-correction limit, and rotation, tilt and blur on a synthetic corpus; beyond that limit no decoder can recover the data. So the premise (a weak decoder) is
+mostly wrong, and the conclusion (never fall back to text when a code is unreadable) is right, because an unread code looks exactly like no code.
+Decision: lib/qrfinder.js finds a QR code's structure instead of its content: the three finder patterns (ring inside ring, 1:1:3:1:1 along any line, confirmed down the column and along a diagonal), one size, at the corners of a
+right-angled triangle; or, with one corner hidden, two of them (reported as "part of a code"). It scans a shrunk copy at three scales and both polarities (dark on light and light on dark) with an adaptive threshold, so shadows and glare do
+not defeat it. When the decoder returns nothing and the finder sees a code, the assistant stops with an explanation and a way forward (ask for the UPI ID in writing, retake the photo), does not start the text reader, and remembers an
+"unverified" verdict so that "is it safe?" afterwards is answered "I cannot call it safe". When no code is seen, the text reader runs and says it found no QR code.
+Measured (docs/BENCHMARKS.md): ordinary photographed codes 90 to 93.5% readable and 99 to 100% present-and-seen; 94% of the unreadable ones still seen; 0 false positives in 159 non-QR pictures and 29 real ones.
+Rejected: trying to repair the code (impossible past the error-correction limit); a second decoder (it would fail on the same data); stopping on any picture that has some squares in it (false alarms on every UI screenshot).
+Limits, stated plainly: about 6% of the unreadable ordinary codes and about half of the extreme ones are not recognised as a code at all and fall through to the text reader, which never gives a safe verdict; a code photographed from a
+screen with moire, or a very small code in a large frame, can be missed; the finder's thresholds were tuned on one synthetic batch and checked on three others.

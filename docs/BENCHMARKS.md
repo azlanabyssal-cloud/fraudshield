@@ -49,5 +49,23 @@ the trainer, the feature code (train/serve skew) or the int8 weights no longer m
 `node --test tests/linkcheck.test.js`: 40,000 random hostile strings through the link, QR and message analyzers: no exception, always an allowed verdict, slowest call
 well under 100 ms; five catastrophic-backtracking bombs finish in under 500 ms.
 
+## A QR code that cannot be read is not mistaken for a picture with no QR code
+`npm run bench:qrcorpus` (seeded; `SEED=7 npm run bench:qrcorpus` for another batch) and `npm run bench:qr` (the real assistant in real Chrome)
+
+Codes are made by an independent encoder (the `qrcode` package) and damaged like real pictures: logos, rotation, tilt, blur, noise, shadows, page clutter. Four seeds, 200 codes each.
+
+| | read by the decoder | present and seen (read, or its corner markers found) | of the unreadable ones, still seen |
+|---|---|---|---|
+| ordinary photographed codes (logos within what error correction can repair) | 180 to 187 of 200 (90.0 to 93.5%) | 198 to 200 of 200 (99.0 to 100%) | 59 of 63 (94%) |
+| extreme (logos past the repair limit, 2 px modules, heavy blur, 50% tilt) | 40 to 65 of 200 (20 to 33%) | 127 to 135 of 200 (63.5 to 67.5%) | 70 to 88 of 135 to 160 (about 53%) |
+| 159 pictures that are not QR codes (blank, noise, text, chessboard, barcode, squares, gradients, buttons, random scenes) | | 0 false positives | |
+
+Also 0 false positives on 29 real pictures from this site (photos of people and shops, UI screenshots), measured once; Node cannot decode WebP, so that run is not a repo test. Finder cost: a few milliseconds a picture.
+What the first measurement showed: the decoder (jsQR) is not weak. It reads a code with a logo over it right up to the code's own error-correction limit (7%, 15%, 25% or 30% of the code), and no decoder can recover data beyond that limit. So the
+risk was never that the decoder is bad; it was that a code it cannot read looked exactly like a picture with no code in it, and the assistant then read the text around it ("Scan to pay Rs 5000"), which says nothing about where
+the scan would send the money. The finder recognises the three corner markers (ring in ring, 1:1:3:1:1 along any line) or, if one corner is hidden, two of them, and the assistant stops.
+Real Chrome, the whole path (`npm run bench:qr`): a readable UPI code is read and called a scam; a branded code too damaged to read stops the assistant with "I can see a QR code in this picture, but I cannot read it. Do not scan it."; a text-only
+screenshot goes to the text reader and is told that no QR code was found. Not measured: real photographs of real printed codes, which are harder than synthetic ones.
+
 ## The whole suite
 `npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests. 442 tests at the time of writing.

@@ -189,7 +189,7 @@ test('the text reader is reused across pictures, and its progress is announced o
   const p = await loadPage('assistant.html', { settle: 100, setup: w => { speechSetup(w); w.__made = 0; } });
   try {
     const d = p.document; let progressNode = null, opts = null, release;
-    p.window.FraudShieldQR.scan = async () => null;
+    p.window.FraudShieldQR.scan = async () => null; p.window.FraudShieldQR.inspect = async () => ({ text: null, structure: { qr: false, certainty: null } });
     p.window.FraudShieldImagePrep.prepare = async () => new p.window.Blob([new Uint8Array(4)]);
     p.window.URL.createObjectURL = () => 'blob:t'; p.window.URL.revokeObjectURL = () => {};
     p.window.Tesseract = { createWorker: async (l, o, options) => { p.window.__made++; opts = options; return { terminate: async () => {}, recognize: async () => { progressNode = d.querySelector('.cb-msg--ocr'); options.logger({ status: 'recognizing text', progress: 0.4 }); await new Promise(r => { release = r; }); return { data: { text: 'Share your OTP now to claim your prize at http://x-claim.tk' } }; } }; } };

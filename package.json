@@ -23,7 +23,9 @@
     "field:analyze": "node field/analyze.js",
     "bench:ocr": "node scripts/browser/ocr.js",
     "bench:speech": "node scripts/browser/speech.js",
-    "audit:pages": "node scripts/browser/pages.js"
+    "audit:pages": "node scripts/browser/pages.js",
+    "bench:qr": "node scripts/browser/qr.js",
+    "bench:qrcorpus": "node scripts/qr_eval.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

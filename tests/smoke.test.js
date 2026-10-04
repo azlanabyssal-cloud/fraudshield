@@ -111,7 +111,7 @@ test('an image is checked for a QR code first: a refund QR is called a scam and 
   const p = await loadPage('assistant.html');
   try {
     let ocrCalled = false;
-    p.window.FraudShieldQR.scan = async () => 'upi://pay?pa=refund@ybl&pn=Refund%20Desk&tn=claim%20refund&am=4999';
+    p.window.FraudShieldQR.scan = async () => 'upi://pay?pa=refund@ybl&pn=Refund%20Desk&tn=claim%20refund&am=4999'; p.window.FraudShieldQR.inspect = async (f, o) => { const t = await p.window.FraudShieldQR.scan(f, o); return { text: t, structure: { qr: !!t, certainty: t ? 'full' : null } }; };
     p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => { ocrCalled = true; return { data: { text: '' } }; } }) };
     attach(p.window);
     await until(() => finished(p.document), 9000);
@@ -125,7 +125,7 @@ test('an image is checked for a QR code first: a refund QR is called a scam and 
 test('an image with no QR code falls back to reading its text, and a link in that text is still checked', async () => {
   const p = await loadPage('assistant.html');
   try {
-    p.window.FraudShieldQR.scan = async () => null;
+    p.window.FraudShieldQR.scan = async () => null; p.window.FraudShieldQR.inspect = async (f, o) => { const t = await p.window.FraudShieldQR.scan(f, o); return { text: t, structure: { qr: !!t, certainty: t ? 'full' : null } }; };
     p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: 'Dear customer your KYC is expired. Update now at http://sbi-kyc-update.tk to avoid block' } }) }) };
     attach(p.window);
     await until(() => /Walk me through/.test(transcript(p.document)), 9000);
@@ -137,7 +137,7 @@ test('an image with no QR code falls back to reading its text, and a link in tha
 test('a QR scan that throws does not strand the user: the text reader takes over', async () => {
   const p = await loadPage('assistant.html');
   try {
-    p.window.FraudShieldQR.scan = () => Promise.reject(new Error('decoder failed to load'));
+    p.window.FraudShieldQR.scan = () => Promise.reject(new Error('decoder failed to load')); p.window.FraudShieldQR.inspect = async (f, o) => { const t = await p.window.FraudShieldQR.scan(f, o); return { text: t, structure: { qr: !!t, certainty: t ? 'full' : null } }; };
     p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: 'Pay Rs 500 to claim your prize now at http://paytm-kyc-update.in/verify' } }) }) };
     attach(p.window);
     await until(() => /Here's what I read/.test(transcript(p.document)), 9000);
@@ -246,7 +246,7 @@ test('a person describing what happened is not interrogated as if they had paste
 test('a screenshot of a scam text is read by OCR and then analysed as a message', async () => {
   const p = await loadPage('assistant.html');
   try {
-    p.window.FraudShieldQR.scan = async () => null;
+    p.window.FraudShieldQR.scan = async () => null; p.window.FraudShieldQR.inspect = async (f, o) => { const t = await p.window.FraudShieldQR.scan(f, o); return { text: t, structure: { qr: !!t, certainty: t ? 'full' : null } }; };
     let got = null;
     p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async img => { got = img; return { data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }; } }) };
     attach(p.window);

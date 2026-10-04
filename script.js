@@ -1475,11 +1475,16 @@ document.addEventListener('DOMContentLoaded', () => {
       Prep.prepare(file).then(blob => {
         addImageMessage(URL.createObjectURL(blob));
         updateOcrProgress(progressEl, '🔍 Looking for a QR code…');
-        const qr = window.FraudShieldQR;
-        return (qr ? qr.scan(blob, { decoderUrl: QR_DECODER_URL }) : Promise.resolve(null)).catch(() => null).then(code => {
-          if (!code) return readTextFromImage(blob, progressEl);
-          progressEl.remove();
-          botSay(['I found a QR code in that image. It contains: "' + code.replace(/\s+/g, ' ').slice(0, 200) + '"'], { noMenuChip: true, onDone: () => respondToLink(code) });
+        const qr = window.FraudShieldQR, none = { text: null, structure: { qr: false, certainty: null } };
+        return (qr && qr.inspect ? qr.inspect(blob, { decoderUrl: QR_DECODER_URL }) : Promise.resolve(none)).catch(() => none).then(found => {
+          if (found.text) {
+            progressEl.remove();
+            botSay(['I found a QR code in that image. It contains: "' + found.text.replace(/\s+/g, ' ').slice(0, 200) + '"'], { noMenuChip: true, onDone: () => respondToLink(found.text) });
+          } else if (found.structure && found.structure.qr) {
+            respondToUnreadableQr(progressEl, found.structure);   // a code is there and cannot be read: never fall back to the words around it
+          } else {
+            return readTextFromImage(blob, progressEl);
+          }
         });
       }).catch(err => {
         progressEl.remove();
@@ -1487,6 +1492,20 @@ document.addEventListener('DOMContentLoaded', () => {
           ? 'That picture is enormous (over 150 megapixels), which is not a normal photo. Take a screenshot of the message instead.'
           : 'I could not open that picture. It may be damaged or not an image this browser can read. Try a screenshot, or type or say what the message says.']);
       }).then(() => { imageJobActive = false; });
+    }
+
+    // A QR code is in the picture but could not be read (covered by a logo, torn, glared over, blurred, at a hard angle). The text around it ("Scan to pay Rs 5000")
+    // says nothing about where a scan would send the money, so the picture is NOT passed on to the text reader and there is no verdict from it, only a stop.
+    function respondToUnreadableQr(progressEl, structure) {
+      progressEl.remove();
+      const part = structure && structure.certainty === 'partial';
+      const headline = part ? 'I can see part of what looks like a QR code, but I cannot read it.' : 'I can see a QR code in this picture, but I cannot read it.';
+      remember({ kind: 'qr', level: 'unverified', headline, evidence: [{ quote: '', label: 'The picture has the corner markers of a QR code, but its content could not be decoded.' }] });
+      emitMood({ reaction: 'curious' });
+      botSay(['⚠️ ' + headline + ' It may be covered by a logo or sticker, torn, blurred, shiny, or photographed at a hard angle.',
+        'Do not scan it. I cannot tell where it would send your money, and I will not guess from the words around it.',
+        'If you need to pay, ask for the UPI ID or the payment link in writing and send that to me, or take the photo again: straight on, close up, in good light.'],
+      { urgent: true, options: [{ label: '📷 Try another picture', action: () => { if (dom.fileInput) dom.fileInput.click(); } }] });
     }
 
     function readTextFromImage(blob, progressEl) {
@@ -1502,7 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
             botSay(["I couldn't read clear text from that image — could you type or say what it says instead?"]);
             return;
           }
-          botSay(['Here\'s what I read from the image: "' + text.replace(/\s+/g, ' ').slice(0, 400) + '"'], {
+          botSay(['Here\'s what I read from the image (no QR code found in it): "' + text.replace(/\s+/g, ' ').slice(0, 400) + '"'], {
             noMenuChip: true,
             onDone: () => respondToFreeText(text)
           });
