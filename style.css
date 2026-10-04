@@ -1391,3 +1391,6 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
 .share-bars.is-armed .share-row:nth-child(2) .share-bar { transition-delay: 160ms; } .share-bars.is-armed .share-row:nth-child(3) .share-bar { transition-delay: 320ms; }
 .share-bars.is-in .share-bar { transform: scaleX(1); }
 @media (prefers-reduced-motion: reduce) { .share-bars .share-bar { transition: none !important; transform: none !important; } }
+
+/* visible to assistive technology only */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

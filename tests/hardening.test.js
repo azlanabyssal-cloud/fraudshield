@@ -73,10 +73,10 @@ test('a damaged or monstrous picture gets a plain answer and the reader is never
   for (const [code, re] of [['unreadable', /could not open that picture/], ['too-large', /over 150 megapixels/]]) {
     const p = await boot(async () => reply(shipped));
     try {
-      let reader = 0; p.window.Tesseract = { recognize: async () => { reader++; return { data: { text: '' } }; } };
+      let reader = 0; p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => { reader++; return { data: { text: '' } }; } }) };
       p.window.FraudShieldImagePrep.prepare = async () => { const e = new Error(code); e.code = code; throw e; };
       attach(p.window); await until(() => re.test(transcript(p.document))); assert.equal(reader, 0);
-      p.window.FraudShieldImagePrep.prepare = async () => new p.window.Blob([new Uint8Array(4)]); p.window.FraudShieldQR.scan = async () => null; p.window.Tesseract = { recognize: async () => ({ data: { text: '' } }) };
+      p.window.FraudShieldImagePrep.prepare = async () => new p.window.Blob([new Uint8Array(4)]); p.window.FraudShieldQR.scan = async () => null; p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: '' } }) }) };
       attach(p.window); await until(() => /couldn't read clear text/.test(transcript(p.document)));   // the lock was released: the next picture is accepted
     } finally { p.close(); }
   }
@@ -87,7 +87,7 @@ test('one picture at a time, and a file over 25 MB is declined before anything i
   try {
     let release; const gate = new Promise(r => { release = r; }); let prepares = 0;
     p.window.FraudShieldImagePrep.prepare = async () => { prepares++; await gate; return new p.window.Blob([new Uint8Array(4)]); };
-    p.window.FraudShieldQR.scan = async () => null; p.window.Tesseract = { recognize: async () => ({ data: { text: '' } }) };
+    p.window.FraudShieldQR.scan = async () => null; p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: '' } }) }) };
     attach(p.window); attach(p.window);
     await until(() => /One picture at a time/.test(transcript(p.document))); assert.equal(prepares, 1); release();
     await until(() => /couldn't read clear text/.test(transcript(p.document)));
@@ -99,7 +99,7 @@ test('the reader failing says what to do and logs why; it no longer claims an in
   const p = await boot(async () => reply(shipped));
   try {
     p.window.FraudShieldImagePrep.prepare = async () => new p.window.Blob([new Uint8Array(4)]); p.window.FraudShieldQR.scan = async () => null;
-    p.window.Tesseract = { recognize: async () => { throw new Error('out of memory'); } };
+    p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => { throw new Error('out of memory'); } }) };
     attach(p.window); await until(() => /image reader could not run on this device/.test(transcript(p.document)));
     assert.doesNotMatch(transcript(p.document), /internet connection/); assert.ok(p.errors.some(e => /text reader failed \(out of memory\)/.test(e)));
   } finally { p.close(); }

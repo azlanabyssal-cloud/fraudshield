@@ -171,7 +171,7 @@ need the page, the registration date or the certificate, none of which a browser
 ## ADR-0015: The page may only talk to itself (Content-Security-Policy), fonts self-hosted
 Context: the product says "nothing leaves your device", and a code-review report pointed out that nothing enforced it: one compromised script, font or image host
 could have sent a pasted message anywhere. Decision: one policy, from partials/csp.txt, written into every page by the build (`default-src 'self'`;
-scripts from this site only, with no eval and no inline script; `connect-src 'self'`; frames, objects and forms locked; `wasm-unsafe-eval` only because
+scripts from this site only, with no eval and no inline script; `connect-src 'self' data:` (a data: URL is local, and the text reader's WebAssembly core loads itself from one; found when a benchmark logged violations although OCR still worked through a fallback); frames, objects and forms locked; `wasm-unsafe-eval` only because
 the text reader is WebAssembly). The home page's two inline scripts moved into home.js. The three Google fonts were copied onto the site (OFL, Latin and
 Latin-extended, 208 KB), which removes the last third party that every visitor's address was sent to. Images may still come from images.unsplash.com until
 the last stock photo is replaced; that is the only outside host, and a test fails if another appears.

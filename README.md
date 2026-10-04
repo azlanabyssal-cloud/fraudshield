@@ -50,7 +50,10 @@ FraudShield does **not** claim a detection accuracy. The assistant is rule-based
 | Label store: PostgreSQL schema for blind double-labelling (row-level security), PII and duplicate constraints, Cohen's kappa in SQL | `db/` | run on real PostgreSQL (WASM) in tests; SQL and JS PII rules checked against one corpus |
 | Data collection: offline scrubber and guided add-message tool, validator, labelling SOP | `data_ops/` | property-tested; the scrubber never changes anything except personal tokens |
 | Claims register: every number, date and legal section with its source, and the wording that was removed | `docs/CLAIMS.md` | tests block the removed wording |
-| Decisions: ten ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
+| Security: one Content-Security-Policy on every page (connections to this site only, no inline script, no eval), fonts and OCR served from the site, a model that must validate before it is used and says so when it did not load | `partials/csp.txt`, `lib/urlmodel.js`, ADR-0015, ADR-0016 | `tests/csp.test.js`, `tests/hardening.test.js`; attacked from inside a real browser: `npm run audit:pages` |
+| Assistant runtime: pictures shrunk by a pixel budget before the reader, one hot OCR worker, a speech queue that cannot hang, screen reader and spoken replies never on together | `lib/imageprep.js`, `lib/ocrworker.js`, `lib/speech.js` | `tests/imageprep.test.js`, `tests/assistant_engine.test.js`; measured in `docs/BENCHMARKS.md` |
+| Model lineage: the shipped model tied to its data digests, trainer, feature code and a bit-for-bit reproduction proof | `mlops/lineage.js`, `mlops/lineage.json` | checked on every push; `npm run model:reproduce` |
+| Decisions: nineteen ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
 
 CI runs the linter and the full suite on every push: unit and property tests, a DOM smoke test that loads every page and runs its real scripts, HTML structure checks, and site-integrity tests that fail if a page disagrees with the sourced data file or a statistic is typed by hand. Guards were broken on purpose to prove a test fails (mutation checks), and the weak ones found that way were fixed.
 
@@ -95,6 +98,11 @@ npm ci
 npm run lint              # ESLint, zero warnings allowed
 npm test                  # unit, property, DOM smoke, HTML and site-integrity tests
 npm run site:sync         # regenerate pages from data/stats.json after changing a figure
+npm run check             # lint, generated pages, motion tokens, model lineage and every test: the one command
+npm run audit:pages       # real Chrome: every page under its policy, then attacks on the policy
+npm run bench:ocr         # real Chrome: the text reader, old way against the managed worker
+npm run bench:speech      # real Chrome and an on-device voice: 25 seconds of speech without a stall
+npm run model:reproduce   # retrain from the pinned data; exit 1 unless the model file is identical
 npm run mlops:gate        # evaluation gate on data_ops/golden_holdout.csv
 npm run data:add          # add one real message, scrubbed offline
 node mlops/benchmarks/run_sms.js   # proxy benchmark (downloads and hash-checks the public dataset)

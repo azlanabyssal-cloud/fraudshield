@@ -112,7 +112,7 @@ test('an image is checked for a QR code first: a refund QR is called a scam and 
   try {
     let ocrCalled = false;
     p.window.FraudShieldQR.scan = async () => 'upi://pay?pa=refund@ybl&pn=Refund%20Desk&tn=claim%20refund&am=4999';
-    p.window.Tesseract = { recognize: async () => { ocrCalled = true; return { data: { text: '' } }; } };
+    p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => { ocrCalled = true; return { data: { text: '' } }; } }) };
     attach(p.window);
     await until(() => finished(p.document), 9000);
     const text = transcript(p.document);
@@ -126,7 +126,7 @@ test('an image with no QR code falls back to reading its text, and a link in tha
   const p = await loadPage('assistant.html');
   try {
     p.window.FraudShieldQR.scan = async () => null;
-    p.window.Tesseract = { recognize: async () => ({ data: { text: 'Dear customer your KYC is expired. Update now at http://sbi-kyc-update.tk to avoid block' } }) };
+    p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: 'Dear customer your KYC is expired. Update now at http://sbi-kyc-update.tk to avoid block' } }) }) };
     attach(p.window);
     await until(() => /Walk me through/.test(transcript(p.document)), 9000);
     const text = transcript(p.document);
@@ -138,7 +138,7 @@ test('a QR scan that throws does not strand the user: the text reader takes over
   const p = await loadPage('assistant.html');
   try {
     p.window.FraudShieldQR.scan = () => Promise.reject(new Error('decoder failed to load'));
-    p.window.Tesseract = { recognize: async () => ({ data: { text: 'Pay Rs 500 to claim your prize now at http://paytm-kyc-update.in/verify' } }) };
+    p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async () => ({ data: { text: 'Pay Rs 500 to claim your prize now at http://paytm-kyc-update.in/verify' } }) }) };
     attach(p.window);
     await until(() => /Here's what I read/.test(transcript(p.document)), 9000);
     assert.match(transcript(p.document), /Here's what I read from the image/);
@@ -248,7 +248,7 @@ test('a screenshot of a scam text is read by OCR and then analysed as a message'
   try {
     p.window.FraudShieldQR.scan = async () => null;
     let got = null;
-    p.window.Tesseract = { recognize: async img => { got = img; return { data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }; } };
+    p.window.Tesseract = { createWorker: async () => ({ terminate: async () => {}, recognize: async img => { got = img; return { data: { text: 'SBI ALERT: Your account will be blocked today. Share your OTP immediately to continue.' } }; } }) };
     attach(p.window);
     await until(() => /Walk me through/.test(transcript(p.document)), 9000);
     assert.ok(prepared.has(got), 'the reader was given the prepared picture, not the original camera file');

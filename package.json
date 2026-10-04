@@ -20,7 +20,10 @@
     "motion:check": "node scripts/build_motion.js --check",
     "lint": "eslint . --max-warnings 0",
     "check": "npm run lint && npm run site:check && npm run motion:check && npm run model:lineage:check && npm test",
-    "field:analyze": "node field/analyze.js"
+    "field:analyze": "node field/analyze.js",
+    "bench:ocr": "node scripts/browser/ocr.js",
+    "bench:speech": "node scripts/browser/speech.js",
+    "audit:pages": "node scripts/browser/pages.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

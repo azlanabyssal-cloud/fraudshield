@@ -1166,6 +1166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return ocrEnginePromise;
   }
 
+  // The one text-reading engine, kept hot between pictures and ended when idle, when the chat closes or when the page is hidden (lib/ocrworker.js).
+  const ocr = window.FraudShieldOcr
+    ? window.FraudShieldOcr.createOcr({ load: loadOcrEngine, langs: 'eng+hin', idleMs: 120000, options: { workerPath: OCR_BASE + 'worker.min.js', corePath: OCR_BASE, langPath: OCR_BASE + 'lang' } })
+    : null;
+  window.addEventListener('pagehide', () => { if (ocr) ocr.release(); if (speaker) speaker.stop(); });
+
   // ── Voice output — shared Indian-voice picker + speak() for both mounts ──
   let cbCachedVoices = [];
   function loadCbVoices() {
@@ -1188,22 +1194,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return local.find(v => v.lang === 'en-IN') || local.find(v => v.lang.indexOf('en') === 0) || null;
   }
-  function speakText(text) {
-    if (!window.speechSynthesis) return null;
-    // Deliberately NOT calling cancel() here: bot replies arrive as several
-    // lines paced ~0.5s apart, each triggering a speakText() call. Cancelling
-    // on every call kills the previous line before it finishes — the browser's
-    // speech queue already plays sequential utterances in order on its own,
-    // so just queue this one.
-    const v = pickIndianVoice();
-    if (!v) return null;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = v.lang;
-    u.rate = 0.95; u.pitch = 1;
-    u.voice = v;
-    window.speechSynthesis.speak(u);
-    return u;
-  }
+  // One speaker for the page: the queue lives in JS and the engine gets one short chunk at a time (see lib/speech.js for why).
+  const speaker = window.FraudShieldSpeech && window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function'
+    ? window.FraudShieldSpeech.createSpeaker({ synth: window.speechSynthesis, Utterance: window.SpeechSynthesisUtterance, pickVoice: pickIndianVoice, rate: 0.95 })
+    : null;
+  function speakText(text) { return speaker ? speaker.say(text) : 0; }
 
   // ── The chat engine itself — mounted by both initChatbot() (floating widget)
   //    and initAssistantPage() (assistant.html), each passing its own DOM refs. ──
@@ -1211,7 +1206,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = loadChatState();
     function persist() { saveChatState(state); }
 
-    let lastUtterance = null; // most recent bot-line utterance this turn, used to time the mic re-arm
 
     function scrollToBottom() { dom.messagesEl.scrollTop = dom.messagesEl.scrollHeight; }
 
@@ -1223,7 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollToBottom();
       state.log.push({ text, from });
       persist();
-      if (from === 'bot' && state.voiceOut) lastUtterance = speakText(text);
+      if (from === 'bot' && state.voiceOut) speakText(text);
     }
 
     function addImageMessage(objectUrl) {
@@ -1263,8 +1257,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // the mic can't hear the bot's own voice and reply to itself.
       if (voiceTurnPending) {
         voiceTurnPending = false;
-        if (state.voiceOut && lastUtterance && window.speechSynthesis.speaking) {
-          lastUtterance.addEventListener('end', () => startListening(), { once: true });
+        if (state.voiceOut && speaker && speaker.busy) {
+          speaker.whenIdle(() => startListening());
         } else {
           startListening();
         }
@@ -1439,6 +1433,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateOcrProgress(el, label) {
       if (!el || !el.isConnected) return;
       el.textContent = label;
+      el.setAttribute('aria-hidden', 'true');   // announced once when it appeared; a percentage that changes every moment must not be read out each time
       scrollToBottom();
     }
 
@@ -1476,19 +1471,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function readTextFromImage(blob, progressEl) {
       updateOcrProgress(progressEl, '🔍 Preparing image reader…');
-      return loadOcrEngine()
-        .then(Tesseract => Tesseract.recognize(blob, 'eng+hin', {
-          workerPath: OCR_BASE + 'worker.min.js',
-          corePath: OCR_BASE,
-          langPath: OCR_BASE + 'lang',
-          logger: m => {
-            if (m.status === 'recognizing text') {
-              updateOcrProgress(progressEl, '🔍 Reading image — ' + Math.round((m.progress || 0) * 100) + '%');
-            } else if (m.status) {
-              updateOcrProgress(progressEl, '🔍 ' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…');
-            }
-          }
-        }))
+      return (ocr ? ocr.recognize(blob, m => {
+        if (m.status === 'recognizing text') updateOcrProgress(progressEl, '🔍 Reading image — ' + Math.round((m.progress || 0) * 100) + '%');
+        else if (m.status) updateOcrProgress(progressEl, '🔍 ' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…');
+      }) : Promise.reject(new Error('ocr-module-missing')))
         .then(({ data }) => {
           progressEl.remove();
           const text = ((data && data.text) || '').trim();
@@ -1650,20 +1636,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Voice output toggle ──
+    // A screen reader announces new messages in this log (aria-live), and spoken replies would say them a second time, in a different voice, at
+    // the same moment. So the two are never on together: while spoken replies are on the log stays silent to screen readers, and when they are
+    // switched off it is announced again. A separate status line says which is in force, so nobody is left guessing.
+    const liveNote = document.createElement('p');
+    liveNote.className = 'sr-only'; liveNote.setAttribute('role', 'status');
+    dom.messagesEl.insertAdjacentElement('afterend', liveNote);
+    function syncVoiceOut(announce) {
+      dom.messagesEl.setAttribute('aria-live', state.voiceOut ? 'off' : 'polite');
+      if (dom.voiceToggleBtn) {
+        dom.voiceToggleBtn.setAttribute('aria-pressed', String(!!state.voiceOut));
+        dom.voiceToggleBtn.textContent = state.voiceOut ? '🔊' : '🔇';
+        dom.voiceToggleBtn.classList.toggle('cb-header__btn--active', !!state.voiceOut);
+      }
+      if (announce) liveNote.textContent = state.voiceOut
+        ? 'Spoken replies on. The assistant now speaks new messages, so your screen reader will not read them out a second time.'
+        : 'Spoken replies off. New messages are announced by your screen reader.';
+    }
     if (dom.voiceToggleBtn) {
       if (!window.speechSynthesis) {
         dom.voiceToggleBtn.hidden = true;
+        if (state.voiceOut) { state.voiceOut = false; persist(); }
+        syncVoiceOut(false);
       } else {
-        dom.voiceToggleBtn.textContent = state.voiceOut ? '🔊' : '🔇';
-        dom.voiceToggleBtn.classList.toggle('cb-header__btn--active', state.voiceOut);
+        dom.voiceToggleBtn.setAttribute('aria-label', 'Spoken replies');
+        syncVoiceOut(false);
         dom.voiceToggleBtn.addEventListener('click', () => {
           state.voiceOut = !state.voiceOut; persist();
-          dom.voiceToggleBtn.classList.toggle('cb-header__btn--active', state.voiceOut);
-          dom.voiceToggleBtn.textContent = state.voiceOut ? '🔊' : '🔇';
-          if (!state.voiceOut && window.speechSynthesis) window.speechSynthesis.cancel();
+          if (!state.voiceOut && speaker) speaker.stop();
+          syncVoiceOut(true);
         });
       }
-    }
+    } else syncVoiceOut(false);
 
     // ── Text input wiring ──
     dom.sendBtn.addEventListener('click', () => handleUserInput(dom.inputEl.value));
@@ -1671,7 +1675,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Attach (image or audio) — button + clipboard paste support ──
     if (dom.attachBtn && dom.fileInput) {
-      dom.attachBtn.addEventListener('click', () => dom.fileInput.click());
+      dom.attachBtn.addEventListener('click', () => { if (ocr) ocr.warm(); dom.fileInput.click(); });   // the reader starts while the picture is being chosen
       dom.fileInput.addEventListener('change', () => {
         const file = dom.fileInput.files && dom.fileInput.files[0];
         dom.fileInput.value = '';
@@ -1794,6 +1798,8 @@ document.addEventListener('DOMContentLoaded', () => {
       fab.classList.remove('cb-fab--open');
       fab.setAttribute('aria-expanded', 'false');
       fabIcon.textContent = '🛡️';
+      if (speaker) speaker.stop();   // a closed chat does not keep talking
+      if (ocr) ocr.release();        // and gives its memory back once any read in progress is done
     }
     fab.addEventListener('click', () => { panel.classList.contains('cb-panel--open') ? closePanel() : openPanel(); });
     closeBtn.addEventListener('click', closePanel);

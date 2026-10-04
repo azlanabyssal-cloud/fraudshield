@@ -30,7 +30,7 @@ test('every page carries the one shared policy, as the first thing after the cha
 
 test('the policy has no way round it: no eval, no inline scripts, no wildcards, no plain http, connections only to this site', () => {
   assert.deepEqual(directives['default-src'], ["'self'"]);
-  assert.deepEqual(directives['connect-src'], ["'self'"], 'the page can only talk to itself');
+  assert.deepEqual(directives['connect-src'], ["'self'", 'data:'], 'the page can only talk to itself; data: is local (the reader\'s WebAssembly core loads itself from one) and cannot carry anything off the device');
   assert.deepEqual(directives['script-src'], ["'self'", "'wasm-unsafe-eval'"], 'wasm-unsafe-eval is for the text reader only; there is no eval and no inline script');
   assert.deepEqual(directives['font-src'], ["'self'"]); assert.deepEqual(directives['object-src'], ["'none'"]); assert.deepEqual(directives['frame-src'], ["'none'"]);
   assert.deepEqual(directives['base-uri'], ["'self'"]); assert.deepEqual(directives['form-action'], ["'self'"]); assert.deepEqual(directives['manifest-src'], ["'self'"]);

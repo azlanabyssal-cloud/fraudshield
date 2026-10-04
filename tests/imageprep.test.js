@@ -102,7 +102,7 @@ test('prepare: browsers without createImageBitmap fall back to an image element,
 
 test('the assistant never hands a camera file to the text reader: it goes through the picture preparer first', () => {
   const src = fs.readFileSync(path.join(ROOT, 'script.js'), 'utf8');
-  assert.ok(/Prep\.prepare\(file\)/.test(src) && /Tesseract\.recognize\(blob,/.test(src) && !/Tesseract\.recognize\(objectUrl/.test(src) && !/Tesseract\.recognize\(file/.test(src));
+  assert.ok(/Prep\.prepare\(file\)/.test(src) && /ocr\.recognize\(blob,/.test(src) && !/Tesseract\.recognize\(/.test(src));
   assert.ok(/imageJobActive/.test(src), 'one picture at a time');
   for (const page of ['index', 'tips', 'data', 'assistant', 'report', 'about']) assert.ok(fs.readFileSync(path.join(ROOT, page + '.html'), 'utf8').includes('<script src="lib/imageprep.js" defer>'), page + ' loads the preparer');
 });
