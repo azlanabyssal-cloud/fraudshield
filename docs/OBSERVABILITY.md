@@ -6,18 +6,18 @@ ADR-0018 (no telemetry) and ADR-0022 (this design).
 
 ## What it records
 
-One event per verdict, per picture read, per follow-up question, per model failure and per error. An event can hold only these fields, copied by name; everything else in the object it is given is dropped.
+One event per verdict, per picture read, per follow-up question, per question answered or not answered, per model failure and per error. An event can hold only these fields, copied by name; everything else in the object it is given is dropped.
 
 | Field | Values | Why |
 |---|---|---|
 | `t` | the time, rounded down to the minute | when, without a fingerprint |
-| `kind` | message, link, qr, ocr, followup, voice, error, model | what happened |
+| `kind` | message, link, qr, ocr, followup, faq, unanswered, voice, error, model | what happened |
 | `level` | scam, suspicious, unverified, official, nothing | the verdict |
 | `family` | a scam family the message check names (kyc, otp, arrest, ...) | which kind of scam |
 | `rules` | up to 12 rule or link-code ids that fired | which rules do the work, which never fire |
 | `ms` | milliseconds the check took | the speed target |
 | `nameModel` | applied, not-loaded, not-applicable | whether the domain-name check took part |
-| `topic` | the kind of follow-up question | what people ask next |
+| `topic` | the kind of follow-up question, or the id of the answer a question got (`faq`) | what people ask next, and what they ask that has no answer yet (`unanswered` carries nothing else) |
 | `code` | a fixed error or model-failure code | what went wrong |
 | `hot` | whether the OCR worker was already running | warm-start rate |
 
@@ -27,7 +27,7 @@ sessionStorage and ends with the tab.
 ## What it reports
 
 On the Assistant page, under the chat: **How this tool is doing on this device**: checks this session and the share flagged, results by level, kinds of scam named, the rules that fired most, median and slowest check, the speed target
-against its 50 ms budget (met, breached, or not enough checks yet), whether the domain-name check loaded, how the picture reader is doing (reads, median time, share on a warm worker), follow-up questions answered, and errors. "Copy this summary"
+against its 50 ms budget (met, breached, or not enough checks yet), whether the domain-name check loaded, how the picture reader is doing (reads, median time, share on a warm worker), follow-up questions answered, questions answered and not answered (which answers were asked for, never the words), and errors. "Copy this summary"
 puts the same numbers on the clipboard as JSON ([schema 1](../lib/ops.js)). "Erase everything this tool stored on this device" clears the chat, the memory, the buffer and the voice choice.
 
 Example of what is copied (counts and timings only):

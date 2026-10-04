@@ -1133,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const Ops = window.FraudShieldOps || null;
   const ops = Ops ? (() => {
     let store; try { store = window.sessionStorage; } catch (e) { store = null; }
-    const msg = window.FraudShieldMessage, topics = window.FraudShieldFollowUp ? window.FraudShieldFollowUp.TOPICS.map(t => t[0]) : [];
+    const msg = window.FraudShieldMessage, topics = (window.FraudShieldFollowUp ? window.FraudShieldFollowUp.TOPICS.map(t => t[0]) : []).concat(window.FraudShieldKnowledge ? window.FraudShieldKnowledge.ENTRIES.map(e => e.id.replace(/_/g, '-')) : []);
     return Ops.createOps({ storage: store, known: { family: Object.keys(msg.FAMILIES), rules: msg.RULES.map(r => r.id).concat(['link-scam', 'link-suspicious', 'link-unverified'], Ops.LINK_CODES), topic: topics, code: Ops.ERROR_CODES } });
   })() : null;
   window.FraudShieldOpsInstance = ops;
@@ -1218,7 +1218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── The chat engine itself — mounted by both initChatbot() (floating widget)
   //    and initAssistantPage() (assistant.html), each passing its own DOM refs. ──
-  const FollowUp = window.FraudShieldFollowUp || null, Msg = window.FraudShieldMessage || null;
+  const FollowUp = window.FraudShieldFollowUp || null, Msg = window.FraudShieldMessage || null, Know = window.FraudShieldKnowledge || null, Utter = window.FraudShieldUtterance || null;
   function buildChatController(dom) {
     const state = loadChatState();
     function persist() { saveChatState(state); }
@@ -1419,7 +1419,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const follow = FollowUp && FollowUp.route(text, state.last, Msg && Msg.FAMILIES, Date.now());
       if (follow) { answerFollowUp(follow); return; }
 
+      // A question about the tool, a scam in general or the official routes (lib/knowledge.js). Someone describing what happened to them ("I got a call and ...") still goes to the guided flow.
       const intent = detectIntent(text);
+      const know = Know && Know.route(text);
+      if (know && !(Utter && Utter.isIncomplete(text)) && (Know.isQuestion(text) || !(intent || isGeneralMoneyLoss(text)))) { answerKnowledge(know.entry); return; }
       if (intent) {
         botSay(['That sounds like ' + intent + " — let's go through it step by step."], { noMenuChip: true, onDone: () => goToNode(intent, CHAT_FLOWS[intent].start) });
         return;
@@ -1446,7 +1449,27 @@ document.addEventListener('DOMContentLoaded', () => {
         respondToNothingFound(late);
         return;
       }
-      botSay(["I couldn't quite match that to a scam type — tell me a bit more, or pick the closest below:"], { options: buildMainMenuOptions(), noMenuChip: true });
+      respondToUnanswered(text);
+    }
+
+    // The answer to a question the tool does know: the text, the official links that go with it, a guided flow when the question is about one scam, and two follow-up questions.
+    function answerKnowledge(entry) {
+      track({ kind: 'faq', topic: entry.id.replace(/_/g, '-') });
+      const options = [];
+      (entry.links || []).forEach(l => options.push({ label: l.label, href: l.href, cta: !!l.cta }));
+      if (entry.flow && CHAT_FLOWS[entry.flow]) options.push({ label: 'Walk me through it', action: () => goToNode(entry.flow, CHAT_FLOWS[entry.flow].start) });
+      (entry.rel || []).slice(0, 2).forEach(id => { const r = Know.byId(id); if (r) options.push({ label: r.q, action: () => handleUserInput(r.q) }); });
+      botSay(entry.a, { urgent: entry.id === 'emergency', options });
+    }
+    // Nothing matched. Say so, say what this tool is, and offer questions it can answer; never a guess and never a bare menu.
+    function respondToUnanswered(text) {
+      track({ kind: 'unanswered' });
+      const cut = Utter && Utter.isIncomplete(text);
+      const options = (Know ? Know.suggest(text, 3) : []).map(e => ({ label: e.q, action: () => handleUserInput(e.q) }));
+      options.push({ label: 'Describe what happened', action: showMainMenu });
+      botSay([cut
+        ? 'That sounds cut off, so I did not try to answer it. Say or type the whole question, or pick one of these:'
+        : "I don't have an answer for that. I am a rules-based assistant, so I only know how to check a message, link or QR code, the common scams, and where to report fraud in India. These are things I can answer:"], { options, noMenuChip: true });
     }
 
     function greet() {
@@ -1456,6 +1479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleUserInput(rawText) {
       const text = rawText.trim();
       if (!text) return;
+      voiceCarry = ''; voiceHolds = 0; voiceHold = false;
       addMessage(text, 'user');
       dom.inputEl.value = '';
       respondToFreeText(text);
@@ -1571,6 +1595,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // bot is mid-speech, so the mic can't hear the bot's own voice and
     // trigger itself (no feedback loop).
     let voiceTurnPending = false;
+    // A recognised result that stops mid-sentence ("What is the main purpose of") is held and the microphone reopened, so the rest is added instead of answering half a question.
+    let voiceCarry = '', voiceHolds = 0, voiceHold = false;
+    const MAX_VOICE_HOLDS = 2;
 
     const voiceLang = () => (state.voiceLang === 'hi-IN' ? 'hi-IN' : 'en-IN');
     const readConsent = () => { try { return localStorage.getItem(VOICE_CONSENT_KEY) === 'cloud'; } catch (e) { return false; } };
@@ -1603,14 +1630,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // most voice UIs give you and this one was missing.
         dom.inputEl.value = finalTranscript || interimTranscript;
         if (finalTranscript) {
+          const joined = (voiceCarry + ' ' + finalTranscript).trim();
+          if (Utter && Utter.isIncomplete(joined) && voiceHolds < MAX_VOICE_HOLDS) {
+            voiceCarry = joined; voiceHolds++; voiceHold = true;
+            dom.inputEl.value = joined;
+            return;
+          }
+          voiceCarry = ''; voiceHolds = 0; voiceHold = false;
           voiceTurnPending = true;
-          handleUserInput(finalTranscript);
+          handleUserInput(joined);
         }
       };
       recognition.onstart = () => { dom.inputEl.placeholder = listeningLabel(); };
       recognition.onend = () => {
         dom.micBtn.classList.remove('cb-mic--live'); dom.micBtn.setAttribute('aria-pressed', 'false');
         dom.inputEl.placeholder = micPlaceholder;
+        if (voiceHold) { voiceHold = false; setTimeout(() => startListening(), 120); }   // the sentence was cut off: keep listening for the rest
       };
       recognition.onerror = e => {
         dom.micBtn.classList.remove('cb-mic--live'); dom.micBtn.setAttribute('aria-pressed', 'false');
@@ -1625,6 +1660,8 @@ document.addEventListener('DOMContentLoaded', () => {
           skipDevice = true;
           botSay(["That language isn't available for on-device voice in this browser. Tap 🎤 again to use your browser's speech service instead (I'll ask first), or type."]);
         } else if (e.error === 'no-speech') {
+          // Nothing more was said after a held, cut-off sentence: answer what there is rather than lose it.
+          if (voiceCarry) { const held = voiceCarry; voiceCarry = ''; voiceHolds = 0; voiceHold = false; voiceTurnPending = false; handleUserInput(held); return; }
           botSay(["I didn't catch that — try again, or type your message."]);
         } else if (e.error === 'audio-capture') {
           botSay(["I can't reach a microphone on this device — check nothing else (another app or tab) is already using it, or type your message."]);
@@ -1679,7 +1716,8 @@ document.addEventListener('DOMContentLoaded', () => {
           botSay(["Voice input isn't supported in this browser — it needs Chrome, Edge, or Safari. You can still type, or paste a screenshot."]);
           return;
         }
-        if (dom.micBtn.classList.contains('cb-mic--live') && recognition) { recognition.stop(); return; }
+        if (dom.micBtn.classList.contains('cb-mic--live') && recognition) { voiceHold = false; voiceCarry = ''; voiceHolds = 0; recognition.stop(); return; }
+        voiceCarry = ''; voiceHolds = 0; voiceHold = false;
         const mode = await voiceMode();
         if (mode === 'ask') { askVoiceConsent(); return; }
         startListening(mode);

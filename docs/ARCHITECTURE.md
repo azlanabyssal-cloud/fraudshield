@@ -1,7 +1,7 @@
 # Architecture
 
 FraudShield is a static web app. Every check runs in the visitor's browser; there is no server of its own to send anything to. This page shows how a request moves through it, where the trust
-boundaries are and how each is enforced, how the site and the model are built and verified, and why the main choices were made. Decisions are recorded one by one in [DECISIONS.md](DECISIONS.md) (22 ADRs);
+boundaries are and how each is enforced, how the site and the model are built and verified, and why the main choices were made. Decisions are recorded one by one in [DECISIONS.md](DECISIONS.md) (23 ADRs);
 measurements are in [BENCHMARKS.md](BENCHMARKS.md); what is stored where is in [PRIVACY.md](PRIVACY.md); what the tool reports about itself is in [OBSERVABILITY.md](OBSERVABILITY.md).
 
 ## 1. System context
@@ -45,12 +45,14 @@ flowchart TD
   MC --> V[Verdict: scam, suspicious, or nothing found. Never the word safe]
   LC --> V
   V --> CH[Chat engine: wording, next steps, memory of the verdict for follow-up questions]
+  T[A typed or spoken question] --> KN[lib/utterance: cut off? then lib/knowledge: a sourced answer, or an honest no]
+  KN --> CH
   CH --> UI[Page, optionally spoken]
   V --> OPS[Local diagnostics event: level, rules, milliseconds. No text.]
 ```
 
 Properties that hold on every path, each with a test: a verdict is never "safe" (a clean check says "I found no known pattern", which is not proof); a rule names the exact words it matched; a link that forwards is judged by where it ends up;
-a QR code that cannot be read stops the flow instead of falling back to its surrounding text; a follow-up question is answered about the last verdict, and "is it safe?" is never a yes.
+a QR code that cannot be read stops the flow instead of falling back to its surrounding text; a follow-up question is answered about the last verdict, and "is it safe?" is never a yes; a question the tool has no answer for is said to be unanswerable, a pasted statement is never answered as if it were a question, and a half-spoken sentence is completed or called cut off, not guessed at.
 
 ## 3. Trust boundaries and how each is enforced
 
@@ -109,6 +111,7 @@ only raise "unverified" to "suspicious" (ADR-0014: AUC 0.768 on a proxy; a boost
 | the rules and what they quote | `lib/msgcheck.js`, `lib/hinglish.js`, `lib/linkcheck.js` |
 | how pictures are handled | `lib/imageprep.js`, `lib/qr.js`, `lib/qrfinder.js`, `lib/ocrworker.js` |
 | why the chat answers follow-ups | `lib/followup.js` |
+| what the chat knows about itself, scams and the official routes, and how it declines | `lib/knowledge.js`, `lib/utterance.js`, [ADR-0023](DECISIONS.md) |
 | the security policy | `partials/csp.txt`, [ADR-0015](DECISIONS.md) |
 | the model's provenance | `mlops/lineage.json`, `npm run model:reproduce` |
 | the measurements | [BENCHMARKS.md](BENCHMARKS.md) and the `bench:` and `audit:` scripts in package.json |

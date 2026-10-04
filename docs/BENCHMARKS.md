@@ -84,5 +84,26 @@ The first-verdict rows exist because of a finding: before the page compiled its 
 (a benchmark that warms up first hides this; the diagnostics panel showed it). A message sent in the first moments after load, before the idle slices have run (about a second), still pays the old cost. The cost of the page's own on-device diagnostics: none measurable, an event is a few
 property copies.
 
+## The assistant answers what it knows, and says what it does not
+Starting point: a 29-question probe of the previous version found 19 with no answer; counted on the question sets below, the old assistant reached its "I couldn't quite match that" dead end on 424 of 520 in-scope questions (81.5%: it had no intent, small-talk, money-loss or name match).
+
+Three sets of hand-written questions, labelled with the answer that should come back (`tests/fixtures/chat_questions.json`, 574 questions, 54 of them out of scope and expected to get no answer). The held-out and fresh sets were each run once before anything was changed to fit them, and that first run is the generalisation figure; the dev set was used while the answers were being written. A set that has been tuned on is a regression guard, not a measurement.
+
+| Set | Questions (out of scope) | First run, before any change | After tuning |
+|---|---|---|---|
+| dev, used while the answers were written | 197 (0) | 169 correct, 15 wrong, 13 unanswered | 196 correct, 0 wrong, 1 unanswered |
+| held-out, written separately | 192 (24) | 153 correct (132 of 168 in scope), 18 wrong, 18 unanswered, 3 false answers | 185 correct, 1 wrong, 6 unanswered, 0 false answers |
+| fresh, written last, different style (spoken fillers, typos, Hinglish) | 185 (30) | 161 correct (133 of 155 in scope = 85.8%), 7 wrong, 15 unanswered, 2 false answers | 183 correct, 0 wrong, 2 unanswered, 0 false answers |
+
+Reading it: the held-out set's first run (78.6% of in-scope questions) is what the first matcher could do; the fresh set's first run (85.8%) is the figure for the finished design on questions it had not seen. Out-of-scope questions ("what is the capital of france", "what is the price of bitcoin") must get no answer: 0 false answers on all three sets after tuning. After the last change, which stops a pasted statement being answered as a question, the unanswered counts above rose slightly (statements of five words or more with no question in them are left to the message checker); that is the intended trade.
+
+Speed: routing a question takes a median of 0.05 ms and 0.08 ms at the 95th percentile over 17,220 calls (Node, one core); the slowest was 0.35 ms.
+
+Tests: 24 new (516 in all), including 3,000 seeded hostile inputs (control characters, lone surrogates, `constructor`, 5,000-character words) with no exception, a check that every question button is answered by the answer it names, and a check on the page that "What is the main purpose of" typed or spoken is either answered whole or called cut off, and that a pasted bank alert mentioning 1930 is checked as a message.
+
+Real Chrome (`npm run audit:pages`): all six pages load with the policy on and the model ready, and the policy refuses every attack; in the real assistant, the screenshot's question, "is my data safe here", an unknown question, a cut-off question and a pasted bill each gave the intended reply.
+
+Not shown: accuracy on questions strangers will ask (every set is written by the author); Android voice behaviour (the hold-and-reopen logic is tested against a stubbed recogniser, not a phone); Telugu in its own script.
+
 ## The whole suite
 `npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests.

@@ -1,0 +1,2305 @@
+{
+ "_readme": "Hand-written questions for lib/knowledge.js, labelled with the entry that should answer (null = nothing should answer, the assistant must say it does not know). \"dev\" was used while the answers and patterns were written. \"heldout\" was written separately and run once BEFORE any pattern was changed to fit it; the first-pass result is recorded in docs/BENCHMARKS.md. Both are written by the author of the matcher, so they are optimistic: they measure coverage and false-answer behaviour on realistic phrasings, not accuracy on strangers. Real questions will be added from the S0 collection. \"fresh\" was written after the patterns were tuned on dev and heldout, in a different style (spoken fillers, typos, Hinglish, more out-of-scope questions), and run exactly once; its first-pass result is the generalisation figure.",
+ "dev": [
+  {
+   "q": "What is the main purpose of FraudShield?",
+   "id": "purpose"
+  },
+  {
+   "q": "what is the purpose of this website",
+   "id": "purpose"
+  },
+  {
+   "q": "why was this made",
+   "id": "purpose"
+  },
+  {
+   "q": "what is this for",
+   "id": "purpose"
+  },
+  {
+   "q": "what is the aim of this app",
+   "id": "purpose"
+  },
+  {
+   "q": "what is the goal of this tool",
+   "id": "purpose"
+  },
+  {
+   "q": "मकसद क्या है इसका",
+   "id": "purpose"
+  },
+  {
+   "q": "is ka uddeshya kya hai",
+   "id": "purpose"
+  },
+  {
+   "q": "what does this website do",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what does this app do",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "tell me about this tool",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what does fraudshield do",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "yeh website kya karta hai",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what can I ask you",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what can you help me with",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what can i do here",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "how can you help me",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "kya poochu main",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "how do i use this",
+   "id": "how_to_use"
+  },
+  {
+   "q": "how to use this app",
+   "id": "how_to_use"
+  },
+  {
+   "q": "how does one start using this",
+   "id": "how_to_use"
+  },
+  {
+   "q": "istemal kaise karu",
+   "id": "how_to_use"
+  },
+  {
+   "q": "where do i start",
+   "id": "how_to_use"
+  },
+  {
+   "q": "who made this",
+   "id": "who_made"
+  },
+  {
+   "q": "who built this website",
+   "id": "who_made"
+  },
+  {
+   "q": "who created fraudshield",
+   "id": "who_made"
+  },
+  {
+   "q": "kisne banaya yeh",
+   "id": "who_made"
+  },
+  {
+   "q": "इसे किसने बनाया",
+   "id": "who_made"
+  },
+  {
+   "q": "who is the developer of this app",
+   "id": "who_made"
+  },
+  {
+   "q": "is this a government website",
+   "id": "government"
+  },
+  {
+   "q": "is this app official",
+   "id": "government"
+  },
+  {
+   "q": "is this run by the police",
+   "id": "government"
+  },
+  {
+   "q": "kya yeh sarkari hai",
+   "id": "government"
+  },
+  {
+   "q": "is fraudshield affiliated with rbi",
+   "id": "government"
+  },
+  {
+   "q": "is this free",
+   "id": "cost"
+  },
+  {
+   "q": "do i have to pay to use this",
+   "id": "cost"
+  },
+  {
+   "q": "is this app paid",
+   "id": "cost"
+  },
+  {
+   "q": "kya yeh free hai",
+   "id": "cost"
+  },
+  {
+   "q": "does it cost anything",
+   "id": "cost"
+  },
+  {
+   "q": "muft hai kya",
+   "id": "cost"
+  },
+  {
+   "q": "is my data safe here",
+   "id": "privacy"
+  },
+  {
+   "q": "is this app safe to use",
+   "id": "privacy"
+  },
+  {
+   "q": "is it safe to upload my screenshot",
+   "id": "privacy"
+  },
+  {
+   "q": "who can see my messages",
+   "id": "privacy"
+  },
+  {
+   "q": "where does my data go",
+   "id": "privacy"
+  },
+  {
+   "q": "kya mera data surakshit hai",
+   "id": "privacy"
+  },
+  {
+   "q": "do you store my messages",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you save my chats",
+   "id": "store_messages"
+  },
+  {
+   "q": "are my conversations recorded",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you keep my data",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you sell my information",
+   "id": "store_messages"
+  },
+  {
+   "q": "mera data save karte ho kya",
+   "id": "store_messages"
+  },
+  {
+   "q": "how do i delete my data",
+   "id": "erase_data"
+  },
+  {
+   "q": "how can i erase my chat history",
+   "id": "erase_data"
+  },
+  {
+   "q": "clear my history",
+   "id": "erase_data"
+  },
+  {
+   "q": "mera data kaise hataun",
+   "id": "erase_data"
+  },
+  {
+   "q": "does it work offline",
+   "id": "offline"
+  },
+  {
+   "q": "can i use this without internet",
+   "id": "offline"
+  },
+  {
+   "q": "do i need internet for this",
+   "id": "offline"
+  },
+  {
+   "q": "does this work on slow network",
+   "id": "offline"
+  },
+  {
+   "q": "ofline chalega kya",
+   "id": "offline"
+  },
+  {
+   "q": "what languages do you support",
+   "id": "languages"
+  },
+  {
+   "q": "do you understand hindi",
+   "id": "languages"
+  },
+  {
+   "q": "can i talk to you in telugu",
+   "id": "languages"
+  },
+  {
+   "q": "which languages are available",
+   "id": "languages"
+  },
+  {
+   "q": "kya aap hindi samajhte ho",
+   "id": "languages"
+  },
+  {
+   "q": "how accurate are you",
+   "id": "accuracy"
+  },
+  {
+   "q": "can i trust your results",
+   "id": "accuracy"
+  },
+  {
+   "q": "how reliable is this tool",
+   "id": "accuracy"
+  },
+  {
+   "q": "how good is fraudshield at detecting scams",
+   "id": "accuracy"
+  },
+  {
+   "q": "what is your accuracy",
+   "id": "accuracy"
+  },
+  {
+   "q": "kya aap par bharosa kar sakte hain",
+   "id": "accuracy"
+  },
+  {
+   "q": "why do you never say a message is safe",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "why wont you tell me if a message is genuine",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "why cant you confirm a message is legit",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "what does nothing found mean",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "how does this work",
+   "id": "how_it_works"
+  },
+  {
+   "q": "how do you detect scams",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what technology does this use",
+   "id": "how_it_works"
+  },
+  {
+   "q": "how does fraudshield decide",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what algorithm are you using",
+   "id": "how_it_works"
+  },
+  {
+   "q": "yeh kaise kaam karta hai",
+   "id": "how_it_works"
+  },
+  {
+   "q": "are you a bot",
+   "id": "is_ai"
+  },
+  {
+   "q": "are you ai",
+   "id": "is_ai"
+  },
+  {
+   "q": "am i talking to a real person",
+   "id": "is_ai"
+  },
+  {
+   "q": "is this chatgpt",
+   "id": "is_ai"
+  },
+  {
+   "q": "are you a human",
+   "id": "is_ai"
+  },
+  {
+   "q": "kya aap robot ho",
+   "id": "is_ai"
+  },
+  {
+   "q": "is voice input private",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "does the mic send my voice to a server",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "is my audio recorded",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "is the microphone safe",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "who hears my voice",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "i found a mistake where do i report it",
+   "id": "feedback"
+  },
+  {
+   "q": "how do i give feedback",
+   "id": "feedback"
+  },
+  {
+   "q": "you gave a wrong answer who do i tell",
+   "id": "feedback"
+  },
+  {
+   "q": "how can i suggest an improvement",
+   "id": "feedback"
+  },
+  {
+   "q": "is the code public",
+   "id": "open_source"
+  },
+  {
+   "q": "is this open source",
+   "id": "open_source"
+  },
+  {
+   "q": "can i see the source code",
+   "id": "open_source"
+  },
+  {
+   "q": "is the code on github",
+   "id": "open_source"
+  },
+  {
+   "q": "can you give legal advice",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "should i sue them",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "i need a lawyer",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "can you give financial advice",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "what is phishing",
+   "id": "phishing"
+  },
+  {
+   "q": "explain phishing",
+   "id": "phishing"
+  },
+  {
+   "q": "phishing kya hota hai",
+   "id": "phishing"
+  },
+  {
+   "q": "define phishing",
+   "id": "phishing"
+  },
+  {
+   "q": "what is smishing",
+   "id": "smishing"
+  },
+  {
+   "q": "explain smishing",
+   "id": "smishing"
+  },
+  {
+   "q": "what is vishing",
+   "id": "vishing"
+  },
+  {
+   "q": "explain vishing",
+   "id": "vishing"
+  },
+  {
+   "q": "what is a digital arrest scam",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "is digital arrest real",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "can police arrest me on video call",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "digital arrest kya hai",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "what is upi fraud",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "how does upi fraud work",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "is phonepe safe from fraud",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "what is a collect request scam",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "i sent money by mistake and they ask me to return it",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "can a qr code be a scam",
+   "id": "qr_scam"
+  },
+  {
+   "q": "is it safe to scan any qr code",
+   "id": "qr_scam"
+  },
+  {
+   "q": "do qr codes cause fraud",
+   "id": "qr_scam"
+  },
+  {
+   "q": "can a fake qr steal my money",
+   "id": "qr_scam"
+  },
+  {
+   "q": "what if the qr code cannot be read",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "what happens when you cant read a qr code",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "the qr is blurry and wont scan",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "why should i never share my otp",
+   "id": "otp_scam"
+  },
+  {
+   "q": "is it safe to give otp to bank",
+   "id": "otp_scam"
+  },
+  {
+   "q": "what is an otp scam",
+   "id": "otp_scam"
+  },
+  {
+   "q": "otp kyun nahi batana chahiye",
+   "id": "otp_scam"
+  },
+  {
+   "q": "why do scammers ask for otp",
+   "id": "otp_scam"
+  },
+  {
+   "q": "what is a kyc scam",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "is kyc update link real",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "kyc fraud kya hai",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "my account will be blocked if i dont update kyc is that real",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "what is a sim swap",
+   "id": "sim_swap"
+  },
+  {
+   "q": "what is sim swap fraud",
+   "id": "sim_swap"
+  },
+  {
+   "q": "my sim stopped working suddenly is it sim swap",
+   "id": "sim_swap"
+  },
+  {
+   "q": "what is a deepfake scam",
+   "id": "deepfake"
+  },
+  {
+   "q": "what is voice cloning fraud",
+   "id": "deepfake"
+  },
+  {
+   "q": "can scammers fake a video of my relative",
+   "id": "deepfake"
+  },
+  {
+   "q": "are customer care numbers on google genuine",
+   "id": "fake_support"
+  },
+  {
+   "q": "is the helpline number i found online real",
+   "id": "fake_support"
+  },
+  {
+   "q": "can i trust the toll free number from search",
+   "id": "fake_support"
+  },
+  {
+   "q": "how do fake loan apps work",
+   "id": "loan_app"
+  },
+  {
+   "q": "are instant loan apps safe",
+   "id": "loan_app"
+  },
+  {
+   "q": "loan app is harassing me",
+   "id": "loan_app"
+  },
+  {
+   "q": "what is a loan app scam",
+   "id": "loan_app"
+  },
+  {
+   "q": "how do investment scams work",
+   "id": "investment_scam"
+  },
+  {
+   "q": "is guaranteed return real",
+   "id": "investment_scam"
+  },
+  {
+   "q": "are telegram stock tip groups safe",
+   "id": "investment_scam"
+  },
+  {
+   "q": "what is a crypto scam",
+   "id": "investment_scam"
+  },
+  {
+   "q": "what is a work from home scam",
+   "id": "job_scam"
+  },
+  {
+   "q": "is a part time job offer asking for deposit real",
+   "id": "job_scam"
+  },
+  {
+   "q": "what is a task scam",
+   "id": "job_scam"
+  },
+  {
+   "q": "naukri ke naam par fraud kya hota hai",
+   "id": "job_scam"
+  },
+  {
+   "q": "what is sextortion",
+   "id": "sextortion"
+  },
+  {
+   "q": "someone is blackmailing me with my photos",
+   "id": "sextortion"
+  },
+  {
+   "q": "they threaten to leak my video what do i do",
+   "id": "sextortion"
+  },
+  {
+   "q": "can i really win a lottery",
+   "id": "lottery"
+  },
+  {
+   "q": "is the lucky draw message real",
+   "id": "lottery"
+  },
+  {
+   "q": "kbc lottery winner message real hai kya",
+   "id": "lottery"
+  },
+  {
+   "q": "should i install anydesk",
+   "id": "remote_access"
+  },
+  {
+   "q": "a caller asked me to install an app",
+   "id": "remote_access"
+  },
+  {
+   "q": "is it safe to install an apk someone sent",
+   "id": "remote_access"
+  },
+  {
+   "q": "what is a fake parcel scam",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "is the courier message about customs fee real",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "fedex parcel scam how does it work",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "what is 1930",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "1930 kya hai",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "what is the 1930 helpline",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "what is cybercrime.gov.in",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "is cybercrime gov in a real website",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "what is the national cyber crime portal",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "how do i report a cyber fraud",
+   "id": "how_to_report"
+  },
+  {
+   "q": "where do i complain about online fraud",
+   "id": "how_to_report"
+  },
+  {
+   "q": "how to file a complaint for upi fraud",
+   "id": "how_to_report"
+  },
+  {
+   "q": "who do i report a scam to",
+   "id": "how_to_report"
+  },
+  {
+   "q": "cyber fraud ki shikayat kaise karein",
+   "id": "how_to_report"
+  },
+  {
+   "q": "what evidence should i keep",
+   "id": "evidence"
+  },
+  {
+   "q": "should i delete the messages",
+   "id": "evidence"
+  },
+  {
+   "q": "what proof do i need for a complaint",
+   "id": "evidence"
+  },
+  {
+   "q": "screenshot rakhna chahiye kya",
+   "id": "evidence"
+  },
+  {
+   "q": "will i get my money back",
+   "id": "money_back"
+  },
+  {
+   "q": "can i recover the money",
+   "id": "money_back"
+  },
+  {
+   "q": "how can i get my money back after fraud",
+   "id": "money_back"
+  },
+  {
+   "q": "paise wapas milenge kya",
+   "id": "money_back"
+  },
+  {
+   "q": "is refund possible after a scam",
+   "id": "money_back"
+  },
+  {
+   "q": "which bank number should i call",
+   "id": "bank_number"
+  },
+  {
+   "q": "how do i block my card",
+   "id": "bank_number"
+  },
+  {
+   "q": "what number do i call to freeze my account",
+   "id": "bank_number"
+  },
+  {
+   "q": "someone is in danger",
+   "id": "emergency"
+  },
+  {
+   "q": "i feel like ending my life",
+   "id": "emergency"
+  },
+  {
+   "q": "there is an emergency",
+   "id": "emergency"
+  }
+ ],
+ "heldout": [
+  {
+   "q": "tell me the reason this website exists",
+   "id": "purpose"
+  },
+  {
+   "q": "why should i use this tool",
+   "id": "purpose"
+  },
+  {
+   "q": "what are you meant to do",
+   "id": "purpose"
+  },
+  {
+   "q": "whats the point of fraudshield",
+   "id": "purpose"
+  },
+  {
+   "q": "this thing is for what",
+   "id": "purpose"
+  },
+  {
+   "q": "give me an overview of this app",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what features does this site offer",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "so what does it actually do",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "can you introduce yourself",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what kind of questions can i ask",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what should i ask you",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what all can you do",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "kya kya kar sakte ho aap",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "how do i start",
+   "id": "how_to_use"
+  },
+  {
+   "q": "how do i begin using this",
+   "id": "how_to_use"
+  },
+  {
+   "q": "guide me on using this tool",
+   "id": "how_to_use"
+  },
+  {
+   "q": "instructions to use this app",
+   "id": "how_to_use"
+  },
+  {
+   "q": "who is the creator of this tool",
+   "id": "who_made"
+  },
+  {
+   "q": "who owns this website",
+   "id": "who_made"
+  },
+  {
+   "q": "who is behind fraudshield",
+   "id": "who_made"
+  },
+  {
+   "q": "which student made this",
+   "id": "who_made"
+  },
+  {
+   "q": "is there a team behind this",
+   "id": "who_made"
+  },
+  {
+   "q": "is this an official government app",
+   "id": "government"
+  },
+  {
+   "q": "is this approved by the government",
+   "id": "government"
+  },
+  {
+   "q": "does the police run this",
+   "id": "government"
+  },
+  {
+   "q": "is this from cert-in",
+   "id": "government"
+  },
+  {
+   "q": "will i be charged for using this",
+   "id": "cost"
+  },
+  {
+   "q": "do i need to subscribe",
+   "id": "cost"
+  },
+  {
+   "q": "is there any fee for this app",
+   "id": "cost"
+  },
+  {
+   "q": "is it really free",
+   "id": "cost"
+  },
+  {
+   "q": "premium version available",
+   "id": "cost"
+  },
+  {
+   "q": "is my personal information secure here",
+   "id": "privacy"
+  },
+  {
+   "q": "can anyone see what i paste",
+   "id": "privacy"
+  },
+  {
+   "q": "is it safe to share my otp message here",
+   "id": "privacy"
+  },
+  {
+   "q": "what happens to my screenshots",
+   "id": "privacy"
+  },
+  {
+   "q": "do you share my details with anyone",
+   "id": "privacy"
+  },
+  {
+   "q": "is this website secure",
+   "id": "privacy"
+  },
+  {
+   "q": "are you recording what i type",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you track me",
+   "id": "store_messages"
+  },
+  {
+   "q": "will you remember my messages",
+   "id": "store_messages"
+  },
+  {
+   "q": "is my chat saved anywhere",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you collect my data",
+   "id": "store_messages"
+  },
+  {
+   "q": "are you spying on me",
+   "id": "store_messages"
+  },
+  {
+   "q": "can i wipe everything you stored",
+   "id": "erase_data"
+  },
+  {
+   "q": "how to remove my history from here",
+   "id": "erase_data"
+  },
+  {
+   "q": "forget everything about me",
+   "id": "erase_data"
+  },
+  {
+   "q": "can i use it with no network",
+   "id": "offline"
+  },
+  {
+   "q": "does it need wifi",
+   "id": "offline"
+  },
+  {
+   "q": "will this work when my internet is weak",
+   "id": "offline"
+  },
+  {
+   "q": "can i install this on my phone",
+   "id": "offline"
+  },
+  {
+   "q": "do you speak telugu",
+   "id": "languages"
+  },
+  {
+   "q": "is hindi supported",
+   "id": "languages"
+  },
+  {
+   "q": "are other indian languages available",
+   "id": "languages"
+  },
+  {
+   "q": "can i type in marathi",
+   "id": "languages"
+  },
+  {
+   "q": "how often are you wrong",
+   "id": "accuracy"
+  },
+  {
+   "q": "can i rely on what you say",
+   "id": "accuracy"
+  },
+  {
+   "q": "how sure are you about the results",
+   "id": "accuracy"
+  },
+  {
+   "q": "what is your success rate",
+   "id": "accuracy"
+  },
+  {
+   "q": "are your answers correct",
+   "id": "accuracy"
+  },
+  {
+   "q": "do you ever make mistakes",
+   "id": "accuracy"
+  },
+  {
+   "q": "why do you not call messages safe",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "you never say its genuine why",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "can you guarantee a message is safe",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "how do you know its a scam",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what is behind this tool",
+   "id": "how_it_works"
+  },
+  {
+   "q": "how are you built",
+   "id": "how_it_works"
+  },
+  {
+   "q": "explain how this detects fraud",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what rules do you use",
+   "id": "how_it_works"
+  },
+  {
+   "q": "am i speaking to a machine",
+   "id": "is_ai"
+  },
+  {
+   "q": "are you a real human",
+   "id": "is_ai"
+  },
+  {
+   "q": "is a person replying to me",
+   "id": "is_ai"
+  },
+  {
+   "q": "are you powered by gemini",
+   "id": "is_ai"
+  },
+  {
+   "q": "is this ai or human",
+   "id": "is_ai"
+  },
+  {
+   "q": "does the microphone record me",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "is talking to you private",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "where does my voice go",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "is google listening when i speak",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "i want to report a bug",
+   "id": "feedback"
+  },
+  {
+   "q": "there is an error in your answer",
+   "id": "feedback"
+  },
+  {
+   "q": "how do i send suggestions",
+   "id": "feedback"
+  },
+  {
+   "q": "something is broken where do i complain about the app",
+   "id": "feedback"
+  },
+  {
+   "q": "is the source code available",
+   "id": "open_source"
+  },
+  {
+   "q": "where is your github",
+   "id": "open_source"
+  },
+  {
+   "q": "can i inspect the code",
+   "id": "open_source"
+  },
+  {
+   "q": "is this project open source",
+   "id": "open_source"
+  },
+  {
+   "q": "can you advise me legally",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "i want to talk to a lawyer",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "are you a financial advisor",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "tell me about phishing",
+   "id": "phishing"
+  },
+  {
+   "q": "what does phishing mean",
+   "id": "phishing"
+  },
+  {
+   "q": "phishing means what",
+   "id": "phishing"
+  },
+  {
+   "q": "whats smishing",
+   "id": "smishing"
+  },
+  {
+   "q": "smishing meaning",
+   "id": "smishing"
+  },
+  {
+   "q": "whats vishing",
+   "id": "vishing"
+  },
+  {
+   "q": "vishing meaning",
+   "id": "vishing"
+  },
+  {
+   "q": "they said i am under digital arrest",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "cbi officer on video call says i will be arrested",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "what is virtual arrest",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "is gpay fraud common",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "how do upi scams trick people",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "can someone steal money through upi",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "paytm refund scam how",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "is scanning qr code risky",
+   "id": "qr_scam"
+  },
+  {
+   "q": "can scanning a barcode drain my account",
+   "id": "qr_scam"
+  },
+  {
+   "q": "someone stuck a fake qr on the shop is that fraud",
+   "id": "qr_scam"
+  },
+  {
+   "q": "you could not read my qr code why",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "what if my qr is damaged",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "qr not scanning what to do",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "should i tell my otp to the caller",
+   "id": "otp_scam"
+  },
+  {
+   "q": "why is sharing otp dangerous",
+   "id": "otp_scam"
+  },
+  {
+   "q": "bank agent asked for my otp is that ok",
+   "id": "otp_scam"
+  },
+  {
+   "q": "is this kyc expired message genuine",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "kyc scam kaise hota hai",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "will my account be suspended for kyc",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "what is sim cloning",
+   "id": "sim_swap"
+  },
+  {
+   "q": "sim card duplicated by fraudsters",
+   "id": "sim_swap"
+  },
+  {
+   "q": "can someone swap my sim",
+   "id": "sim_swap"
+  },
+  {
+   "q": "what are ai voice scams",
+   "id": "deepfake"
+  },
+  {
+   "q": "can a cloned voice trick me",
+   "id": "deepfake"
+  },
+  {
+   "q": "is a fake video call possible",
+   "id": "deepfake"
+  },
+  {
+   "q": "can i trust a customer care number from google",
+   "id": "fake_support"
+  },
+  {
+   "q": "are helpline numbers in search results real",
+   "id": "fake_support"
+  },
+  {
+   "q": "is the support number on facebook real",
+   "id": "fake_support"
+  },
+  {
+   "q": "are instant loan apps real",
+   "id": "loan_app"
+  },
+  {
+   "q": "what is a fake loan app",
+   "id": "loan_app"
+  },
+  {
+   "q": "loan app threatening to message my contacts",
+   "id": "loan_app"
+  },
+  {
+   "q": "is a stock tips telegram group a scam",
+   "id": "investment_scam"
+  },
+  {
+   "q": "are guaranteed returns possible",
+   "id": "investment_scam"
+  },
+  {
+   "q": "is whatsapp trading group safe",
+   "id": "investment_scam"
+  },
+  {
+   "q": "how does a crypto investment scam work",
+   "id": "investment_scam"
+  },
+  {
+   "q": "is work from home with deposit genuine",
+   "id": "job_scam"
+  },
+  {
+   "q": "what is online task fraud",
+   "id": "job_scam"
+  },
+  {
+   "q": "fake job offer asking for registration fee",
+   "id": "job_scam"
+  },
+  {
+   "q": "someone is blackmailing me",
+   "id": "sextortion"
+  },
+  {
+   "q": "what is blackmail with morphed photos",
+   "id": "sextortion"
+  },
+  {
+   "q": "they are threatening to post my private video",
+   "id": "sextortion"
+  },
+  {
+   "q": "i won a lottery is it true",
+   "id": "lottery"
+  },
+  {
+   "q": "is the prize message real",
+   "id": "lottery"
+  },
+  {
+   "q": "lucky draw winner fee real or fake",
+   "id": "lottery"
+  },
+  {
+   "q": "is teamviewer safe to install for a bank call",
+   "id": "remote_access"
+  },
+  {
+   "q": "should i download quicksupport",
+   "id": "remote_access"
+  },
+  {
+   "q": "is it ok to screen share with support agent",
+   "id": "remote_access"
+  },
+  {
+   "q": "is the customs fee message for my parcel real",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "courier scam what is it",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "fake delivery message asking for fee",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "tell me about 1930",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "what number is 1930",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "is 1930 free",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "tell me about the cyber crime portal",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "what is ncrp",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "is cybercrime gov in official",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "where do i file a cybercrime complaint",
+   "id": "how_to_report"
+  },
+  {
+   "q": "how to report online fraud",
+   "id": "how_to_report"
+  },
+  {
+   "q": "how do i register a complaint with police",
+   "id": "how_to_report"
+  },
+  {
+   "q": "who to complain to about upi cheating",
+   "id": "how_to_report"
+  },
+  {
+   "q": "should i save the screenshots",
+   "id": "evidence"
+  },
+  {
+   "q": "what documents do i need for the complaint",
+   "id": "evidence"
+  },
+  {
+   "q": "do i keep the chat or delete it",
+   "id": "evidence"
+  },
+  {
+   "q": "can i get a refund after being scammed",
+   "id": "money_back"
+  },
+  {
+   "q": "is it possible to retrieve my stolen money",
+   "id": "money_back"
+  },
+  {
+   "q": "will the bank reimburse me",
+   "id": "money_back"
+  },
+  {
+   "q": "my paise wapas aayenge kya",
+   "id": "money_back"
+  },
+  {
+   "q": "what number should i call to block my card",
+   "id": "bank_number"
+  },
+  {
+   "q": "how do i freeze my bank account",
+   "id": "bank_number"
+  },
+  {
+   "q": "whom should i call at my bank",
+   "id": "bank_number"
+  },
+  {
+   "q": "i want to kill myself",
+   "id": "emergency"
+  },
+  {
+   "q": "i am in danger",
+   "id": "emergency"
+  },
+  {
+   "q": "my family is being threatened",
+   "id": "emergency"
+  },
+  {
+   "q": "what is the weather today",
+   "id": null
+  },
+  {
+   "q": "tell me a joke",
+   "id": null
+  },
+  {
+   "q": "who is the prime minister of india",
+   "id": null
+  },
+  {
+   "q": "what is the capital of france",
+   "id": null
+  },
+  {
+   "q": "how do i cook rice",
+   "id": null
+  },
+  {
+   "q": "play some music",
+   "id": null
+  },
+  {
+   "q": "what is the price of bitcoin",
+   "id": null
+  },
+  {
+   "q": "how to learn python",
+   "id": null
+  },
+  {
+   "q": "what time is it",
+   "id": null
+  },
+  {
+   "q": "who won the cricket match yesterday",
+   "id": null
+  },
+  {
+   "q": "translate hello to french",
+   "id": null
+  },
+  {
+   "q": "what is machine learning",
+   "id": null
+  },
+  {
+   "q": "recommend a good movie",
+   "id": null
+  },
+  {
+   "q": "how far is the moon",
+   "id": null
+  },
+  {
+   "q": "what is my name",
+   "id": null
+  },
+  {
+   "q": "best phone under 20000",
+   "id": null
+  },
+  {
+   "q": "how do i lose weight",
+   "id": null
+  },
+  {
+   "q": "what is the meaning of life",
+   "id": null
+  },
+  {
+   "q": "write me a poem",
+   "id": null
+  },
+  {
+   "q": "can you book a train ticket",
+   "id": null
+  },
+  {
+   "q": "kal mausam kaisa rahega",
+   "id": null
+  },
+  {
+   "q": "kya time hua hai",
+   "id": null
+  },
+  {
+   "q": "what is the stock market doing today",
+   "id": null
+  },
+  {
+   "q": "how tall is mount everest",
+   "id": null
+  }
+ ],
+ "fresh": [
+  {
+   "q": "umm so what exactly is the purpose of all this",
+   "id": "purpose"
+  },
+  {
+   "q": "hey what is this website even for",
+   "id": "purpose"
+  },
+  {
+   "q": "what is the main use of fraudshield",
+   "id": "purpose"
+  },
+  {
+   "q": "why does fraudshield exist",
+   "id": "purpose"
+  },
+  {
+   "q": "kya hai iska purpose",
+   "id": "purpose"
+  },
+  {
+   "q": "is app ka kya fayda hai",
+   "id": "purpose"
+  },
+  {
+   "q": "so what does fraudshield do exactly",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "can u tell me what this app does",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what is this app about",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "yeh app kya karta hai exactly",
+   "id": "what_does_site_do"
+  },
+  {
+   "q": "what can i say to you",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what questions do you answer",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "tell me what i can ask",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "what do you know",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "kya kya pooch sakte hain",
+   "id": "what_can_i_ask"
+  },
+  {
+   "q": "how do i work this",
+   "id": "how_to_use"
+  },
+  {
+   "q": "how do i use fraudshield properly",
+   "id": "how_to_use"
+  },
+  {
+   "q": "what are the steps to use this app",
+   "id": "how_to_use"
+  },
+  {
+   "q": "kaise use karna hai isko",
+   "id": "how_to_use"
+  },
+  {
+   "q": "who developed fraudshield",
+   "id": "who_made"
+  },
+  {
+   "q": "who is the person who made this app",
+   "id": "who_made"
+  },
+  {
+   "q": "kaun hai iske peeche",
+   "id": "who_made"
+  },
+  {
+   "q": "who coded this",
+   "id": "who_made"
+  },
+  {
+   "q": "is this made by the government of india",
+   "id": "government"
+  },
+  {
+   "q": "are you from the police department",
+   "id": "government"
+  },
+  {
+   "q": "is fraudshield a govt app",
+   "id": "government"
+  },
+  {
+   "q": "is fraudshield free to use",
+   "id": "cost"
+  },
+  {
+   "q": "does this app charge money",
+   "id": "cost"
+  },
+  {
+   "q": "i dont have to pay right",
+   "id": "cost"
+  },
+  {
+   "q": "is it paid or free",
+   "id": "cost"
+  },
+  {
+   "q": "is my information safe with you",
+   "id": "privacy"
+  },
+  {
+   "q": "will anyone see what i type here",
+   "id": "privacy"
+  },
+  {
+   "q": "can others see my chats",
+   "id": "privacy"
+  },
+  {
+   "q": "is it secure to use this site",
+   "id": "privacy"
+  },
+  {
+   "q": "do you keep my personal details safe",
+   "id": "privacy"
+  },
+  {
+   "q": "kya meri privacy safe hai",
+   "id": "privacy"
+  },
+  {
+   "q": "do you save what i write",
+   "id": "store_messages"
+  },
+  {
+   "q": "is my text stored on a server",
+   "id": "store_messages"
+  },
+  {
+   "q": "are you saving my chats",
+   "id": "store_messages"
+  },
+  {
+   "q": "do you keep a copy of my screenshots",
+   "id": "store_messages"
+  },
+  {
+   "q": "are my messages being recorded",
+   "id": "store_messages"
+  },
+  {
+   "q": "how do i clear everything",
+   "id": "erase_data"
+  },
+  {
+   "q": "can i delete my chat from here",
+   "id": "erase_data"
+  },
+  {
+   "q": "how to remove my saved data",
+   "id": "erase_data"
+  },
+  {
+   "q": "can this app run without internet",
+   "id": "offline"
+  },
+  {
+   "q": "does fraudshield work without wifi",
+   "id": "offline"
+  },
+  {
+   "q": "will it work in airplane mode",
+   "id": "offline"
+  },
+  {
+   "q": "need internet to use this",
+   "id": "offline"
+  },
+  {
+   "q": "can i use hindi here",
+   "id": "languages"
+  },
+  {
+   "q": "do you support telugu language",
+   "id": "languages"
+  },
+  {
+   "q": "which languages does this app know",
+   "id": "languages"
+  },
+  {
+   "q": "does it understand hinglish",
+   "id": "languages"
+  },
+  {
+   "q": "how accurate is fraudshield",
+   "id": "accuracy"
+  },
+  {
+   "q": "can i believe your answers",
+   "id": "accuracy"
+  },
+  {
+   "q": "how much can i trust this tool",
+   "id": "accuracy"
+  },
+  {
+   "q": "what is the accuracy of this app",
+   "id": "accuracy"
+  },
+  {
+   "q": "how reliable are you",
+   "id": "accuracy"
+  },
+  {
+   "q": "why can you not tell me a message is safe",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "why do you never confirm that a message is real",
+   "id": "why_not_safe"
+  },
+  {
+   "q": "how does fraudshield detect fraud",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what does this app use to detect scams",
+   "id": "how_it_works"
+  },
+  {
+   "q": "how do you check messages",
+   "id": "how_it_works"
+  },
+  {
+   "q": "what is the logic behind this tool",
+   "id": "how_it_works"
+  },
+  {
+   "q": "are you artificial intelligence",
+   "id": "is_ai"
+  },
+  {
+   "q": "is this a chatbot",
+   "id": "is_ai"
+  },
+  {
+   "q": "is there a human on the other side",
+   "id": "is_ai"
+  },
+  {
+   "q": "are you chatgpt or something",
+   "id": "is_ai"
+  },
+  {
+   "q": "is the mic private",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "does my voice get uploaded",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "do you record my voice",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "is speaking to this app safe",
+   "id": "voice_privacy"
+  },
+  {
+   "q": "how do i tell you about a problem",
+   "id": "feedback"
+  },
+  {
+   "q": "i have a suggestion for this app",
+   "id": "feedback"
+  },
+  {
+   "q": "where can i report an error in this tool",
+   "id": "feedback"
+  },
+  {
+   "q": "is fraudshield open source",
+   "id": "open_source"
+  },
+  {
+   "q": "where can i find the code",
+   "id": "open_source"
+  },
+  {
+   "q": "can i read your source code",
+   "id": "open_source"
+  },
+  {
+   "q": "are you a lawyer",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "can you help me legally",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "should i take legal action",
+   "id": "not_legal_advice"
+  },
+  {
+   "q": "what is a phishing attack",
+   "id": "phishing"
+  },
+  {
+   "q": "phishing explained",
+   "id": "phishing"
+  },
+  {
+   "q": "what exactly is phishing",
+   "id": "phishing"
+  },
+  {
+   "q": "what is smishing attack",
+   "id": "smishing"
+  },
+  {
+   "q": "smishing kya hai",
+   "id": "smishing"
+  },
+  {
+   "q": "what is vishing call",
+   "id": "vishing"
+  },
+  {
+   "q": "vishing kya hota hai",
+   "id": "vishing"
+  },
+  {
+   "q": "what is digital arrest",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "a fake cbi officer called me on video what is this",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "is digital arrest a real thing in india",
+   "id": "digital_arrest"
+  },
+  {
+   "q": "what is upi scam",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "how do people get cheated on phonepe",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "is gpay collect request safe",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "how do fraudsters misuse upi",
+   "id": "upi_fraud"
+  },
+  {
+   "q": "are qr code payments safe",
+   "id": "qr_scam"
+  },
+  {
+   "q": "can someone cheat me with a qr",
+   "id": "qr_scam"
+  },
+  {
+   "q": "is it safe to scan a qr from a stranger",
+   "id": "qr_scam"
+  },
+  {
+   "q": "my qr code is not readable what do i do",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "you said you cant read my qr why",
+   "id": "unreadable_qr"
+  },
+  {
+   "q": "why shouldnt i share otp",
+   "id": "otp_scam"
+  },
+  {
+   "q": "otp scam kya hota hai",
+   "id": "otp_scam"
+  },
+  {
+   "q": "is it okay to tell otp to customer care",
+   "id": "otp_scam"
+  },
+  {
+   "q": "what is kyc fraud",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "a message says update kyc or account will close is it real",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "kyc update scam how does it work",
+   "id": "kyc_fraud"
+  },
+  {
+   "q": "what is sim swap scam",
+   "id": "sim_swap"
+  },
+  {
+   "q": "how does sim swapping work",
+   "id": "sim_swap"
+  },
+  {
+   "q": "what is deepfake fraud",
+   "id": "deepfake"
+  },
+  {
+   "q": "can ai clone my fathers voice to scam me",
+   "id": "deepfake"
+  },
+  {
+   "q": "what are deepfakes",
+   "id": "deepfake"
+  },
+  {
+   "q": "is the customer care number from google trustworthy",
+   "id": "fake_support"
+  },
+  {
+   "q": "fake helpline numbers on the internet",
+   "id": "fake_support"
+  },
+  {
+   "q": "what are fake loan apps",
+   "id": "loan_app"
+  },
+  {
+   "q": "instant loan app is calling my contacts",
+   "id": "loan_app"
+  },
+  {
+   "q": "how do loan app scams work",
+   "id": "loan_app"
+  },
+  {
+   "q": "what is an investment scam",
+   "id": "investment_scam"
+  },
+  {
+   "q": "is trading through a telegram group safe",
+   "id": "investment_scam"
+  },
+  {
+   "q": "how do crypto scams work",
+   "id": "investment_scam"
+  },
+  {
+   "q": "what is a fake job scam",
+   "id": "job_scam"
+  },
+  {
+   "q": "online part time job asks me to pay first is it real",
+   "id": "job_scam"
+  },
+  {
+   "q": "task scam how does it work",
+   "id": "job_scam"
+  },
+  {
+   "q": "what is sextortion scam",
+   "id": "sextortion"
+  },
+  {
+   "q": "someone has my nude photos and wants money",
+   "id": "sextortion"
+  },
+  {
+   "q": "blackmail on video call what is it",
+   "id": "sextortion"
+  },
+  {
+   "q": "what is a lottery scam",
+   "id": "lottery"
+  },
+  {
+   "q": "got a message saying i won a prize is it real",
+   "id": "lottery"
+  },
+  {
+   "q": "lucky draw scam how does it work",
+   "id": "lottery"
+  },
+  {
+   "q": "what is anydesk scam",
+   "id": "remote_access"
+  },
+  {
+   "q": "is it safe to install teamviewer when bank asks",
+   "id": "remote_access"
+  },
+  {
+   "q": "should i install the app the caller sent",
+   "id": "remote_access"
+  },
+  {
+   "q": "what is a courier scam",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "a message says my parcel is held by customs is it real",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "fedex scam call what is it",
+   "id": "parcel_scam"
+  },
+  {
+   "q": "what is the number 1930",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "is 1930 a real helpline",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "tell me what 1930 is",
+   "id": "one_nine_three_zero"
+  },
+  {
+   "q": "what is the cybercrime portal",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "is cybercrime.gov.in genuine",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "what is cybercrime gov in",
+   "id": "cybercrime_portal"
+  },
+  {
+   "q": "how do i report this fraud",
+   "id": "how_to_report"
+  },
+  {
+   "q": "where to complain about a cyber crime",
+   "id": "how_to_report"
+  },
+  {
+   "q": "how can i file a cyber complaint",
+   "id": "how_to_report"
+  },
+  {
+   "q": "who should i contact after being scammed",
+   "id": "how_to_report"
+  },
+  {
+   "q": "what should i save for the police",
+   "id": "evidence"
+  },
+  {
+   "q": "should i keep the scam messages",
+   "id": "evidence"
+  },
+  {
+   "q": "which proofs do i need for reporting",
+   "id": "evidence"
+  },
+  {
+   "q": "how do i get my money back",
+   "id": "money_back"
+  },
+  {
+   "q": "can i get my paise back",
+   "id": "money_back"
+  },
+  {
+   "q": "is it possible to recover money lost in fraud",
+   "id": "money_back"
+  },
+  {
+   "q": "will i receive a refund from the bank",
+   "id": "money_back"
+  },
+  {
+   "q": "what is my banks helpline",
+   "id": "bank_number"
+  },
+  {
+   "q": "how do i stop my card",
+   "id": "bank_number"
+  },
+  {
+   "q": "which number should i call to block my upi",
+   "id": "bank_number"
+  },
+  {
+   "q": "i am in danger please help",
+   "id": "emergency"
+  },
+  {
+   "q": "someone is threatening to hurt me",
+   "id": "emergency"
+  },
+  {
+   "q": "what is the best way to learn guitar",
+   "id": null
+  },
+  {
+   "q": "who is the president of the usa",
+   "id": null
+  },
+  {
+   "q": "what is photosynthesis",
+   "id": null
+  },
+  {
+   "q": "what is the temperature in delhi",
+   "id": null
+  },
+  {
+   "q": "how do i make tea",
+   "id": null
+  },
+  {
+   "q": "suggest a good book",
+   "id": null
+  },
+  {
+   "q": "what is the square root of 144",
+   "id": null
+  },
+  {
+   "q": "can you play a song",
+   "id": null
+  },
+  {
+   "q": "how do i reset my instagram password",
+   "id": null
+  },
+  {
+   "q": "what is artificial intelligence",
+   "id": null
+  },
+  {
+   "q": "who is virat kohli",
+   "id": null
+  },
+  {
+   "q": "is it going to rain",
+   "id": null
+  },
+  {
+   "q": "how many days are in a leap year",
+   "id": null
+  },
+  {
+   "q": "what is the speed of light",
+   "id": null
+  },
+  {
+   "q": "tell me about the history of india",
+   "id": null
+  },
+  {
+   "q": "how do i apply for a passport",
+   "id": null
+  },
+  {
+   "q": "what is blockchain",
+   "id": null
+  },
+  {
+   "q": "best laptop for coding",
+   "id": null
+  },
+  {
+   "q": "what is the price of gold",
+   "id": null
+  },
+  {
+   "q": "how do i get a driving licence",
+   "id": null
+  },
+  {
+   "q": "what is covid",
+   "id": null
+  },
+  {
+   "q": "where is kurnool",
+   "id": null
+  },
+  {
+   "q": "hi my name is ravi",
+   "id": null
+  },
+  {
+   "q": "how to learn english fast",
+   "id": null
+  },
+  {
+   "q": "what is the full form of upi",
+   "id": null
+  },
+  {
+   "q": "kya aap mujhe gaana suna sakte ho",
+   "id": null
+  },
+  {
+   "q": "aaj ka match kaun jeeta",
+   "id": null
+  },
+  {
+   "q": "my phone is slow how to fix",
+   "id": null
+  },
+  {
+   "q": "how does a car engine work",
+   "id": null
+  },
+  {
+   "q": "is the earth flat",
+   "id": null
+  }
+ ]
+}

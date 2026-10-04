@@ -25,7 +25,7 @@ test('every `npm run` command the documents mention is a real script', () => {
 });
 
 test('the number of ADRs, tests and the results quoted at the top of the README match the repository', () => {
-  const adrs = (read('docs/DECISIONS.md').match(/^## ADR-\d{4}:/gm) || []).length, words = { 22: 'twenty-two' };
+  const adrs = (read('docs/DECISIONS.md').match(/^## ADR-\d{4}:/gm) || []).length, words = { 22: 'twenty-two', 23: 'twenty-three' };
   assert.ok(read('README.md').includes(words[adrs] || '??'), `README says a number of ADRs other than ${adrs}`); assert.ok(read('docs/ARCHITECTURE.md').includes(`(${adrs} ADRs)`), 'ARCHITECTURE.md ADR count');
   const ids = [...read('docs/DECISIONS.md').matchAll(/^## ADR-(\d{4}):/gm)].map(m => +m[1]); ids.forEach((id, i) => assert.equal(id, i + 1, 'ADRs are numbered in order without gaps'));
   const lin = JSON.parse(read('mlops/lineage.json')); assert.ok(read('README.md').includes(lin.model.sha256.slice(0, 12)), 'the model hash quoted in the README is the shipped one'); assert.ok(read('docs/BENCHMARKS.md').includes(lin.model.sha256.slice(0, 12)));
