@@ -99,7 +99,7 @@ Reading it: the held-out set's first run (78.6% of in-scope questions) is what t
 
 Speed: routing a question takes a median of 0.05 ms and 0.08 ms at the 95th percentile over 17,220 calls (Node, one core); the slowest was 0.35 ms.
 
-Tests: 24 new (516 in all), including 3,000 seeded hostile inputs (control characters, lone surrogates, `constructor`, 5,000-character words) with no exception, a check that every question button is answered by the answer it names, and a check on the page that "What is the main purpose of" typed or spoken is either answered whole or called cut off, and that a pasted bank alert mentioning 1930 is checked as a message.
+Tests: 25 new (517 in all), including 3,000 seeded hostile inputs (control characters, lone surrogates, `constructor`, 5,000-character words) with no exception, a check that every question button is answered by the answer it names, and a check on the page that "What is the main purpose of" typed or spoken is either answered whole or called cut off, and that a pasted bank alert mentioning 1930 is checked as a message.
 
 Real Chrome (`npm run audit:pages`): all six pages load with the policy on and the model ready, and the policy refuses every attack; in the real assistant, the screenshot's question, "is my data safe here", an unknown question, a cut-off question and a pasted bill each gave the intended reply.
 

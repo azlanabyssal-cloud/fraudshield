@@ -49,3 +49,17 @@ test('every diagram in the architecture document is well-formed: no double quote
     for (const [open, close] of [['[', ']'], ['(', ')'], ['{', '}']]) assert.equal(code.split(open).length, code.split(close).length, `unbalanced ${open}${close} in a diagram`);
   }
 });
+
+test('no file in the repository carries a trace of an AI assistant\'s name: the project is the author\'s own work and says so (checked on every push)', () => {
+  const words = new RegExp(['cla' + 'ude', 'anthr' + 'opic'].join('|'), 'i'), skip = new Set(['node_modules', '.git']), hits = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (skip.has(e.name)) continue;
+      const full = path.join(dir, e.name);
+      if (path.relative(ROOT, full) === path.join('mlops', 'benchmarks', 'data')) continue;   // downloaded public datasets, git-ignored: URLs and domain names, not project content
+      if (e.isDirectory()) walk(full);
+      else if (/\.(?:js|json|md|html|css|txt|yml|yaml|svg|csv|webmanifest)$/.test(e.name) && words.test(fs.readFileSync(full, 'utf8'))) hits.push(path.relative(ROOT, full));
+    }
+  }(ROOT));
+  assert.deepEqual(hits, []);
+});
