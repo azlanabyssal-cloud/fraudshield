@@ -67,5 +67,22 @@ the scan would send the money. The finder recognises the three corner markers (r
 Real Chrome, the whole path (`npm run bench:qr`): a readable UPI code is read and called a scam; a branded code too damaged to read stops the assistant with "I can see a QR code in this picture, but I cannot read it. Do not scan it."; a text-only
 screenshot goes to the text reader and is told that no QR code was found. Not measured: real photographs of real printed codes, which are harder than synthetic ones.
 
+## How long a verdict takes
+`npm run bench:latency` (85 messages: English, Hinglish, Telugu, Devanagari, genuine and scam, one of 3,900 characters; 23 links and payment codes; 40 repetitions each, every call timed alone, after a warm-up; Chrome 154, 10 cores)
+
+| | p50 | p95 | p99 | slowest |
+|---|---|---|---|---|
+| message check, full speed | under 0.1 ms | 0.20 ms | 2.6 ms | 3.8 ms |
+| link and payment check, full speed | under 0.1 ms | 0.20 ms | 0.20 ms | 0.30 ms |
+| message check, CPU slowed 6x | 0.80 ms | 1.5 ms | 15.2 ms | 17.0 ms |
+| link and payment check, CPU slowed 6x | under 0.1 ms | 1.2 ms | 1.5 ms | 1.9 ms |
+| **first** message check after a page load, full speed / slowed 6x | 1.7 ms / 3.5 ms (slowest of three fresh loads) | | | |
+| **first** link check after a page load, full speed / slowed 6x | 0.90 ms / 1.6 ms | | | |
+
+The budget is p95 under 50 ms (SPEC section 5), met in every row. The browser timer cannot resolve less than about 0.1 ms, hence "under 0.1 ms". "Slowed 6x" is Chrome's CPU throttling, a stand-in for a mid-range phone, not a phone.
+The first-verdict rows exist because of a finding: before the page compiled its Hindi, Hinglish and Telugu lexicon while idle, the first check after a load took 25 to 30 ms at full speed and 52 to 54 ms slowed, over the budget on exactly the check a worried person waits for
+(a benchmark that warms up first hides this; the diagnostics panel showed it). A message sent in the first moments after load, before the idle slices have run (about a second), still pays the old cost. The cost of the page's own on-device diagnostics: none measurable, an event is a few
+property copies.
+
 ## The whole suite
-`npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests. 442 tests at the time of writing.
+`npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests. 487 tests at the time of writing.

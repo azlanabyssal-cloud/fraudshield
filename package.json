@@ -25,7 +25,8 @@
     "bench:speech": "node scripts/browser/speech.js",
     "audit:pages": "node scripts/browser/pages.js",
     "bench:qr": "node scripts/browser/qr.js",
-    "bench:qrcorpus": "node scripts/qr_eval.js"
+    "bench:qrcorpus": "node scripts/qr_eval.js",
+    "bench:latency": "node scripts/browser/latency.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

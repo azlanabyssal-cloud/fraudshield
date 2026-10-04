@@ -1,11 +1,29 @@
 # FraudShield
 
-**Recovery-first digital fraud help for Indian families, and the evaluation engineering to measure it honestly.**
+**An offline-first scam checker and first-hour guide for India. Paste a message, link or screenshot and it names the scam it resembles, quotes the exact words that gave it away, and says what to do next. Nothing you paste leaves your device, and every claim below is measured, labelled as a proxy, or refused.**
 
 [![CI](https://github.com/azlanabyssal-cloud/fraudshield/actions/workflows/ci.yml/badge.svg)](https://github.com/azlanabyssal-cloud/fraudshield/actions/workflows/ci.yml)
-Live: [azlanabyssal-cloud.github.io/fraudshield](https://azlanabyssal-cloud.github.io/fraudshield/) · Helpline: **1930** (free, 24×7)
+Live: [azlanabyssal-cloud.github.io/fraudshield](https://azlanabyssal-cloud.github.io/fraudshield/) · Helpline: **1930** (free, 24×7) · [Architecture](docs/ARCHITECTURE.md) · [Measurements](docs/BENCHMARKS.md) · [Privacy](docs/PRIVACY.md) · [Decisions](docs/DECISIONS.md)
 
-Community service project by Azlan, second-year BTech student. Not monetised: no accounts, no analytics, no backend of its own.
+Built by Azlan (B.Tech CSE, AI and ML, G. Pulla Reddy Engineering College, Kurnool) as his Community Service Project, after eight weeks going house to house and shop to shop in Balaji Nagar, Munagalapadu. Not monetised: no accounts, no analytics, no backend of its own.
+
+## Results at a glance
+
+Each row says what was measured, how to measure it again, and what it does not show. Desktop numbers are Chrome 154 on a 10-core Mac; "slowed 6x" is an emulation of a slower phone, not a phone.
+
+| What | Result | Re-run | What it does not show |
+|---|---|---|---|
+| **Privacy is enforced, not promised** | the browser refuses every connection except to this site: 9 kinds of attack from inside a real page (fetch, XHR, image, script, frame, beacon, inline script, eval, `new Function`), 0 got through | `npm run audit:pages` | the host sees the IP of anyone who loads a page; a few stock photos still load from Unsplash (listed in [PRIVACY](docs/PRIVACY.md)) |
+| **Verdict speed** | p95 0.2 ms at full speed, 1.5 ms with the CPU slowed 6x, against a 50 ms budget; the first verdict after load 1.7 ms and 3.5 ms | `npm run bench:latency` | a real phone; a message sent in the first moments after load, before idle warm-up, costs about 25 ms (52 ms slowed) |
+| **Hindi, Hinglish, Telugu wording** | on a hand-written corpus: 40 of 40 scams flagged, 0 of 32 genuine messages (including banks' own Hinglish warnings) | `node --test tests/hinglish.test.js` | accuracy on real messages: the corpus is written by the author |
+| **A QR code that cannot be read stops the assistant** | ordinary photographed codes: 90 to 94% readable, 99 to 100% recognised as a code; 0 false positives in 159 non-QR pictures and 29 real ones; real-Chrome end to end | `npm run bench:qrcorpus`, `npm run bench:qr` | real printed codes; about half of extreme-damage codes are not recognised and fall through to the text reader (which never gives a "safe") |
+| **Screenshot reading** | 307 ms for three screenshots on one hot OCR worker against 537 ms with a worker per picture (43% less); a 12 MP photo is reduced to 2.8 MP in 46 ms and read correctly | `npm run bench:ocr` | phone-class devices |
+| **Spoken replies do not hang** | 25.1 s of continuous speech on an on-device voice: 9 of 9 chunks ended, 0 errors | `npm run bench:speech` | Android Chrome |
+| **The shipped model can be rebuilt exactly** | retrained from pinned public data in 16 s, byte-identical (SHA-256 `bf96eb26eca8…`); lineage checked on every push | `npm run model:reproduce` | model quality: the name model is a weak hint (AUC 0.768 on a proxy) |
+| **Robustness** | 40,000 hostile strings through the analyzers: no exception, slowest call under 100 ms; backtracking bombs under 500 ms | `node --test tests/linkcheck.test.js` | |
+| **Accuracy on real Indian scam messages** | **not measured, and no claim is made.** The release gate reports `NO_EVIDENCE` until a labelled set of real messages exists | `npm run mlops:gate` | this is the open problem; see "What it does not claim" |
+
+`npm run check` runs lint (zero warnings), the generated-page checks, the model lineage check and every test (487 at the time of writing) in one command.
 
 ---
 
@@ -21,7 +39,7 @@ If someone calls 1930 in time because of this website, that is the whole point.
 
 ## What you can do on the site
 
-- **Ask the assistant** (floating widget on every page, or the Assistant page) in English or Hindi: paste a message, describe what happened, or say "money left my account". It walks you through next steps. It runs in the browser; your messages are not sent anywhere.
+- **Ask the assistant** (floating widget on every page, or the Assistant page) in English, Hindi, or Hindi and Telugu typed in Latin letters ("Hinglish"): paste a message, describe what happened, or say "money left my account". It walks you through next steps. It runs in the browser; your messages are not sent anywhere.
 - **Speak instead of typing (English or Hindi).** On-device where the browser supports it, so nothing leaves; otherwise only after an explicit choice that names who receives the audio (Google, Apple or Microsoft, never FraudShield). The listening label repeats that every time.
 - **Paste a message or share a screenshot of one.** It names the scam it resembles, quotes the exact words that gave it away, and says what to do next. It never says a message is genuine, only that it found no known pattern. "Do not share your OTP" is never flagged; "share your OTP" is.
 - **Check a link or a QR code.** Verdicts are *scam*, *suspicious*, *unverified* and *official*, and "scam" is given only on specific evidence: a hidden destination (`user@host`), an official name hijacked inside another domain, a lookalike or homoglyph bank name with pressure words, a raw IP, an app-file download, a "scan to receive" UPI pretext. An address nobody can vouch for is *unverified*, never "fine". It never says "safe", and tests enforce that. QR codes are decoded in the browser (jsQR, vendored) and a UPI QR always states that scanning only ever sends money out.
@@ -53,7 +71,8 @@ FraudShield does **not** claim a detection accuracy. The assistant is rule-based
 | Security: one Content-Security-Policy on every page (connections to this site only, no inline script, no eval), fonts and OCR served from the site, a model that must validate before it is used and says so when it did not load | `partials/csp.txt`, `lib/urlmodel.js`, ADR-0015, ADR-0016 | `tests/csp.test.js`, `tests/hardening.test.js`; attacked from inside a real browser: `npm run audit:pages` |
 | Assistant runtime: pictures shrunk by a pixel budget before the reader, one hot OCR worker, a speech queue that cannot hang, screen reader and spoken replies never on together | `lib/imageprep.js`, `lib/ocrworker.js`, `lib/speech.js` | `tests/imageprep.test.js`, `tests/assistant_engine.test.js`; measured in `docs/BENCHMARKS.md` |
 | Model lineage: the shipped model tied to its data digests, trainer, feature code and a bit-for-bit reproduction proof | `mlops/lineage.js`, `mlops/lineage.json` | checked on every push; `npm run model:reproduce` |
-| Decisions: nineteen ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
+| Observability on the device: events with no message text, a diagnostics panel with a speed target, copy and erase | `lib/ops.js`, [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | `tests/ops.test.js` (5,000 hostile events leak nothing) |
+| Decisions: twenty-two ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
 
 CI runs the linter and the full suite on every push: unit and property tests, a DOM smoke test that loads every page and runs its real scripts, HTML structure checks, and site-integrity tests that fail if a page disagrees with the sourced data file or a statistic is typed by hand. Guards were broken on purpose to prove a test fails (mutation checks), and the weak ones found that way were fixed.
 

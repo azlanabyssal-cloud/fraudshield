@@ -1,0 +1,41 @@
+'use strict';
+// The documents are part of the product: every link must go somewhere, every command must exist, every number that is quoted must still be true.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs'), path = require('node:path');
+
+const ROOT = path.join(__dirname, '..');
+const DOCS = ['README.md', 'docs/ARCHITECTURE.md', 'docs/BENCHMARKS.md', 'docs/PRIVACY.md', 'docs/OBSERVABILITY.md', 'docs/DECISIONS.md', 'mlops/README.md'];
+const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
+const pkg = JSON.parse(read('package.json'));
+
+test('every relative link in the documents points at a file that exists (anchors and web links aside)', () => {
+  const broken = [];
+  for (const doc of DOCS) {
+    const base = path.dirname(path.join(ROOT, doc));
+    for (const m of read(doc).matchAll(/\]\(([^)\s]+)\)/g)) { const href = m[1]; if (/^(https?:|mailto:|#)/.test(href)) continue; const file = path.resolve(base, href.split('#')[0]); if (!fs.existsSync(file)) broken.push(`${doc}: ${href}`); }
+  }
+  assert.deepEqual(broken, []);
+});
+
+test('every `npm run` command the documents mention is a real script', () => {
+  const missing = [];
+  for (const doc of DOCS) for (const m of read(doc).matchAll(/npm run ([a-z][a-z0-9:-]*)/g)) if (!pkg.scripts[m[1]]) missing.push(`${doc}: npm run ${m[1]}`);
+  assert.deepEqual(missing, []);
+});
+
+test('the number of ADRs, tests and the results quoted at the top of the README match the repository', () => {
+  const adrs = (read('docs/DECISIONS.md').match(/^## ADR-\d{4}:/gm) || []).length, words = { 22: 'twenty-two' };
+  assert.ok(read('README.md').includes(words[adrs] || '??'), `README says a number of ADRs other than ${adrs}`); assert.ok(read('docs/ARCHITECTURE.md').includes(`(${adrs} ADRs)`), 'ARCHITECTURE.md ADR count');
+  const ids = [...read('docs/DECISIONS.md').matchAll(/^## ADR-(\d{4}):/gm)].map(m => +m[1]); ids.forEach((id, i) => assert.equal(id, i + 1, 'ADRs are numbered in order without gaps'));
+  const lin = JSON.parse(read('mlops/lineage.json')); assert.ok(read('README.md').includes(lin.model.sha256.slice(0, 12)), 'the model hash quoted in the README is the shipped one'); assert.ok(read('docs/BENCHMARKS.md').includes(lin.model.sha256.slice(0, 12)));
+  for (const f of ['scripts/browser/pages.js', 'scripts/browser/ocr.js', 'scripts/browser/speech.js', 'scripts/browser/qr.js', 'scripts/browser/latency.js', 'scripts/qr_eval.js']) assert.ok(fs.existsSync(path.join(ROOT, f)), f);
+});
+
+test('the privacy document lists every key the page stores, and the erase button removes exactly those', () => {
+  const doc = read('docs/PRIVACY.md'), src = read('script.js');
+  for (const key of ['fs_cb_state', 'fs_ops_v1', 'fs_voice_consent_v1', 'fs_cb_seen']) { assert.ok(doc.includes(key), `${key} is documented`); assert.ok(src.includes(key), `${key} is used`); }
+  const erased = [...(src.match(/const LOCAL_KEYS = \[([^\]]*)\], PERSISTENT_KEYS = \[([^\]]*)\]/) || []).slice(1).join(',').matchAll(/'([a-z_0-9]+)'/g)].map(m => m[1]).concat(src.includes('PERSISTENT_KEYS = [VOICE_CONSENT_KEY') ? ['fs_voice_consent_v1'] : []);
+  assert.deepEqual(erased.sort(), ['fs_cb_seen', 'fs_cb_state', 'fs_ops_v1', 'fs_voice_consent_v1']);
+  for (const m of src.matchAll(/(?:sessionStorage|localStorage)\.(?:getItem|setItem)\('([a-z_0-9]+)'/g)) assert.ok(doc.includes(m[1]), `${m[1]} is stored but not in PRIVACY.md`);
+});

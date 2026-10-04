@@ -261,3 +261,14 @@ Measured (docs/BENCHMARKS.md): ordinary photographed codes 90 to 93.5% readable 
 Rejected: trying to repair the code (impossible past the error-correction limit); a second decoder (it would fail on the same data); stopping on any picture that has some squares in it (false alarms on every UI screenshot).
 Limits, stated plainly: about 6% of the unreadable ordinary codes and about half of the extreme ones are not recognised as a code at all and fall through to the text reader, which never gives a safe verdict; a code photographed from a
 screen with moire, or a very small code in a large frame, can be missed; the finder's thresholds were tuned on one synthetic batch and checked on three others.
+
+## ADR-0022: Observability that stays on the device, and a cold-start finding
+Context: a review said the project has no observability: nothing answers "how many verdicts today, which rule fired most, how fast". It asked for telemetry; ADR-0018 refused that (it would break the promise the policy enforces).
+Decision: lib/ops.js keeps a ring buffer of events whose fields are copied by name and whose values are enumerated and capped (no message text, link, number or file name can enter; where the tool knows its vocabulary, anything outside it becomes
+"other"). The Assistant page shows a summary (counts by result, family and rule, median and slowest check, the speed target against 50 ms, model and reader health, errors), can copy it as JSON on request, and has a button that erases the chat,
+the memory, the buffer and the remembered voice choice. Nothing is transmitted. tests/ops.test.js feeds 5,000 hostile events to prove nothing leaks, checks the vocabulary lists against the analyzers' source, the summary arithmetic, the SLO states, storage failure,
+and that a recording failure can never break a verdict.
+Found by using it: in a real browser the panel reported the first check after a page load at about 25 ms, and 52 ms with the CPU slowed 6x, over the 50 ms budget, on exactly the verdict a worried person waits for (the benchmark had warmed up first and hid it).
+Cause: compiling the Hindi, Hinglish and Telugu lexicon and the engine's first pass over the checkers. Fix: the page does that work in slices while idle, shortly after load. Measured (real Chrome, slowest of three fresh loads): first message check 1.7 ms
+(3.5 ms slowed), first link check 0.9 ms (1.6 ms slowed). Limit: a message sent before the idle slices have run still pays the old cost.
+Consequences: the project can show evidence of how it behaves, locally, without a server; it cannot see a fleet, and says so (docs/OBSERVABILITY.md).

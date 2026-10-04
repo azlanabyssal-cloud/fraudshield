@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MODEL_RETRY_MS = window.FraudShieldModelRetryMs || [1500, 4000, 9000];   // a global so a test need not wait 14 seconds
   function setModelStatus(status, error) {
     modelState.status = status; modelState.error = error || null;
+    if (status === 'failed') track({ kind: 'model', code: error && /^urlmodel:/.test(error.message || '') ? 'model-invalid' : 'model-failed' });
     document.documentElement.setAttribute('data-name-model', status);
     try { window.dispatchEvent(new CustomEvent('fs:model', { detail: { status, attempts: modelState.attempts } })); } catch (e) { /* no CustomEvent */ }
   }
@@ -1121,10 +1122,25 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const {
-    isGeneralMoneyLoss, checkLink, findLinkIn, detectIntent,
+    isGeneralMoneyLoss, checkLink: checkLinkRaw, findLinkIn, detectIntent,
     extractIntroducedName, matchSmallTalk, speechProvider
   } = window.FraudShieldCore;
-  const { analyzeMessage } = window.FraudShieldMessage;
+  const { analyzeMessage: analyzeMessageRaw } = window.FraudShieldMessage;
+
+  // ── Observability, on this device only (lib/ops.js) ──
+  // Every verdict leaves an event with fixed, enumerated facts (level, family, which rules fired, how long it took) and never the text. The summary is shown on the
+  // assistant page and copied only if the person chooses; nothing here is transmitted (the page's security policy would refuse it).
+  const Ops = window.FraudShieldOps || null;
+  const ops = Ops ? (() => {
+    let store; try { store = window.sessionStorage; } catch (e) { store = null; }
+    const msg = window.FraudShieldMessage, topics = window.FraudShieldFollowUp ? window.FraudShieldFollowUp.TOPICS.map(t => t[0]) : [];
+    return Ops.createOps({ storage: store, known: { family: Object.keys(msg.FAMILIES), rules: msg.RULES.map(r => r.id).concat(['link-scam', 'link-suspicious', 'link-unverified'], Ops.LINK_CODES), topic: topics, code: Ops.ERROR_CODES } });
+  })() : null;
+  window.FraudShieldOpsInstance = ops;
+  function track(event) { if (!ops) return; try { ops.record(event); window.dispatchEvent(new CustomEvent('fs:ops')); } catch (e) { /* observability must never break a verdict */ } }
+  let lastMessageMs = null, lastLinkMs = null;
+  const analyzeMessage = text => { const t0 = performance.now(), v = analyzeMessageRaw(text); lastMessageMs = performance.now() - t0; return v; };
+  const checkLink = raw => { const t0 = performance.now(), r = checkLinkRaw(raw); lastLinkMs = performance.now() - t0; return r; };
 
   // Voice input. A browser's speech recognition normally sends the audio to its maker (Google for Chrome, Microsoft for Edge, Apple
   // for Safari), which would break "nothing you share leaves your device". So the microphone works in one of two honest ways:
@@ -1331,6 +1347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function respondToLink(raw) {
       const result = checkLink(raw), scam = result.level === 'scam';
       remember({ kind: result.kind || 'url', level: result.level, headline: result.headline, evidence: (result.reasons || []).map(r => ({ quote: '', label: r })) });
+      track({ kind: 'link', level: result.level, rules: result.codes, ms: lastLinkMs, nameModel: result.nameModel });
       emitMood({ reaction: scam ? 'scam' : 'curious' });
       const icon = { official: '✅', scam: '🚫', suspicious: '⚠️', unverified: '❔' }[result.level] || '⚠️';
       botSay([
@@ -1344,6 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function respondToMessage(v) {
       remember({ kind: 'message', level: v.level, family: v.family, intent: v.intent, headline: v.headline, evidence: v.evidence });
+      track({ kind: 'message', level: v.level, family: v.family, rules: v.codes, ms: lastMessageMs });
       emitMood({ reaction: v.level === 'scam' ? 'scam' : 'curious' });
       const scam = v.level === 'scam', why = v.evidence.slice(0, 4).map(e => '• "' + e.quote + '": ' + e.label).join('\n');
       botSay([
@@ -1363,10 +1381,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function respondToNothingFound(v) {
       remember({ kind: 'message', level: 'nothing', headline: v.headline, evidence: [] });
+      track({ kind: 'message', level: 'nothing', ms: lastMessageMs });
       botSay(['❔ ' + v.headline, v.next.join(' ')], { options: buildMainMenuOptions(), noMenuChip: true });
     }
 
     function answerFollowUp(f) {
+      track({ kind: 'followup', topic: f.topic });
       const buttons = {
         call1930: { label: '📞 Call 1930', href: 'tel:1930', cta: true }, report: { label: '📝 Report online', href: 'report.html' },
         menu: { label: '🏠 Main Menu', action: showMainMenu }, loss: { label: '😟 I already clicked, paid or shared', action: respondToGeneralLoss },
@@ -1488,6 +1508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }).catch(err => {
         progressEl.remove();
+        track({ kind: 'error', code: err && err.code === 'too-large' ? 'prepare-too-large' : 'prepare-unreadable' });
         botSay([err && err.code === 'too-large'
           ? 'That picture is enormous (over 150 megapixels), which is not a normal photo. Take a screenshot of the message instead.'
           : 'I could not open that picture. It may be damaged or not an image this browser can read. Try a screenshot, or type or say what the message says.']);
@@ -1500,6 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
       progressEl.remove();
       const part = structure && structure.certainty === 'partial';
       const headline = part ? 'I can see part of what looks like a QR code, but I cannot read it.' : 'I can see a QR code in this picture, but I cannot read it.';
+      track({ kind: 'qr', level: 'unverified' });
       remember({ kind: 'qr', level: 'unverified', headline, evidence: [{ quote: '', label: 'The picture has the corner markers of a QR code, but its content could not be decoded.' }] });
       emitMood({ reaction: 'curious' });
       botSay(['⚠️ ' + headline + ' It may be covered by a logo or sticker, torn, blurred, shiny, or photographed at a hard angle.',
@@ -1510,12 +1532,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function readTextFromImage(blob, progressEl) {
       updateOcrProgress(progressEl, '🔍 Preparing image reader…');
+      const wasHot = !!(ocr && ocr.hot), t0 = performance.now();
       return (ocr ? ocr.recognize(blob, m => {
         if (m.status === 'recognizing text') updateOcrProgress(progressEl, '🔍 Reading image — ' + Math.round((m.progress || 0) * 100) + '%');
         else if (m.status) updateOcrProgress(progressEl, '🔍 ' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…');
       }) : Promise.reject(new Error('ocr-module-missing')))
         .then(({ data }) => {
           progressEl.remove();
+          track({ kind: 'ocr', ms: performance.now() - t0, hot: wasHot });
           const text = ((data && data.text) || '').trim();
           if (!text || text.length < 4) {
             botSay(["I couldn't read clear text from that image — could you type or say what it says instead?"]);
@@ -1528,6 +1552,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
           progressEl.remove();
+          track({ kind: 'error', code: ocr ? 'ocr-failed' : 'ocr-module-missing' });
           console.error('FraudShield: the text reader failed (' + (err && err.message ? err.message : err) + ').');
           botSay(["The image reader could not run on this device (the page may not have finished loading it, or the browser ran out of memory). Reload the page and try a smaller screenshot, or type or say what the message said."]);
         });
@@ -1894,6 +1919,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ═══════════════════════════════════════════════════════
+  // On-device diagnostics and erasure — assistant.html only. What the tool has done in this tab, read off the local event buffer; nothing is sent anywhere.
+  // ═══════════════════════════════════════════════════════
+  const LOCAL_KEYS = ['fs_cb_state', 'fs_ops_v1'], PERSISTENT_KEYS = [VOICE_CONSENT_KEY, 'fs_cb_seen'];
+  // Removes everything this tool has stored on this device: the chat and its memory, the diagnostics buffer, the remembered voice choice.
+  function eraseLocalData() {
+    let removed = 0;
+    for (const [store, keys] of [[() => window.sessionStorage, LOCAL_KEYS], [() => window.localStorage, PERSISTENT_KEYS]]) {
+      try { const st = store(); for (const k of keys) if (st.getItem(k) !== null) { st.removeItem(k); removed++; } } catch (e) { /* storage blocked: nothing was stored */ }
+    }
+    if (ops) ops.clear();
+    return removed;
+  }
+  function initDiagnostics() {
+    const root = document.getElementById('assistantRoot');
+    if (!root || !ops) return;
+    const box = document.createElement('section');
+    box.className = 'diag'; box.setAttribute('aria-labelledby', 'diagTitle');
+    const details = document.createElement('details'), summary = document.createElement('summary'), body = document.createElement('div'), status = document.createElement('p');
+    summary.id = 'diagTitle'; summary.textContent = 'How this tool is doing on this device';
+    body.className = 'diag__body'; status.className = 'diag__status'; status.setAttribute('role', 'status');
+    details.append(summary, body); box.append(details); root.insertAdjacentElement('afterend', box);
+
+    const row = (k, v) => { const r = document.createElement('div'), a = document.createElement('dt'), b = document.createElement('dd'); r.className = 'diag__row'; a.textContent = k; b.textContent = v; r.append(a, b); return r; };
+    const list = o => (Object.keys(o).length ? Object.entries(o).sort((x, y) => y[1] - x[1]).map(([k, v]) => k + ' ' + v).join(', ') : 'none yet');
+    const ms = x => (x === null || x === undefined ? 'no data' : x < 0.1 ? 'under 0.1 ms' : (x < 10 ? x.toFixed(1) : Math.round(x)) + ' ms');
+    function render() {
+      const s = ops.summary({ model: modelState.status }), dl = document.createElement('dl'); dl.className = 'diag__list';
+      const sloText = s.slo.status === 'met' ? 'met (p95 ' + ms(s.latencyMs.p95) + ', budget 50 ms)' : s.slo.status === 'breached' ? 'BREACHED: p95 ' + ms(s.latencyMs.p95) + ' against a 50 ms budget' : 'not enough checks yet (needs ' + Ops.SLO_MIN_SAMPLES + ', has ' + s.slo.samples + ')';
+      dl.append(row('Checks this session', s.verdicts + (s.verdicts ? ' (' + Math.round(100 * s.flaggedShare) + '% flagged as scam or suspicious)' : '')), row('By result', list(s.byLevel)), row('Kind of scam named', list(s.byFamily)),
+        row('Rules that fired most', s.topRules.length ? s.topRules.slice(0, 5).map(r => r.rule + ' ' + r.count).join(', ') : 'none yet'), row('Check speed', 'median ' + ms(s.latencyMs.p50) + ', slowest ' + ms(s.latencyMs.max)), row('Speed target', sloText),
+        row('Domain-name check', s.model === 'ready' ? 'loaded' : s.model === 'failed' ? 'FAILED to load: link checks use the written rules only' : 'loading'), row('Picture reader', s.ocr.runs ? s.ocr.runs + ' reads, median ' + ms(s.ocr.p50Ms) + ', ' + Math.round(100 * s.ocr.hotShare) + '% on a warm worker' : 'not used yet'),
+        row('Follow-up questions answered', list(s.followUps)), row('Errors', list(s.errors)));
+      body.replaceChildren(dl, buttons, status);
+    }
+    const buttons = document.createElement('div'); buttons.className = 'diag__buttons';
+    const copy = document.createElement('button'), erase = document.createElement('button'), note = document.createElement('p');
+    copy.type = erase.type = 'button'; copy.className = erase.className = 'diag__btn'; copy.textContent = 'Copy this summary'; erase.textContent = 'Erase everything this tool stored on this device';
+    note.className = 'diag__note'; note.textContent = 'This is a count of results and timings. It holds no message, link, number or file name, and it is never sent anywhere. The copy button puts it on your clipboard so you can share it if you choose.';
+    copy.addEventListener('click', () => { const text = JSON.stringify(ops.summary({ model: modelState.status }), null, 2); (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject(new Error('no clipboard'))).then(() => { status.textContent = 'Copied.'; }, () => { status.textContent = 'Could not copy automatically. Here it is:\n' + text; }); });
+    erase.addEventListener('click', () => { const n = eraseLocalData(); status.textContent = n ? 'Erased. The chat will reload empty.' : 'Nothing was stored.'; render(); setTimeout(() => { if (n) window.location.reload(); }, 900); });
+    buttons.append(copy, erase, note);
+    details.addEventListener('toggle', () => { if (details.open) render(); });
+    window.addEventListener('fs:ops', () => { if (details.open) render(); });
+    window.addEventListener('fs:model', () => { if (details.open) render(); });
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // Warm-up. The first verdict after a page loads paid for compiling the Hindi, Hinglish and Telugu lexicon and for the JavaScript engine's first pass over the
+  // checkers: about 25 ms at full speed and about 52 ms with the CPU slowed 6x, over the 50 ms budget, on exactly the verdict a worried person is waiting for. The
+  // diagnostics panel showed it. So the work is done in small slices while the browser is idle, a moment after the page is up, and the first real check is as fast as the rest.
+  // ═══════════════════════════════════════════════════════
+  function warmUp() {
+    const Hin = window.FraudShieldHinglish;
+    const steps = [...(Hin ? Object.keys(Hin.LEX).map(id => () => Hin.phrases(id)) : []),
+      () => analyzeMessageRaw('Bhai tumhara account block ho gaya hai, KYC update karo is link pe. Your OTP is 482913. Pay Rs 500 now to claim.'), () => checkLinkRaw('https://sbi-kyc-update.tk/login?next=https://example.com/'), () => checkLinkRaw('upi://pay?pa=shop@okaxis&pn=Shop&am=100')];
+    const idle = window.requestIdleCallback ? cb => window.requestIdleCallback(cb, { timeout: 2000 }) : cb => setTimeout(() => cb({ timeRemaining: () => 10 }), 30);
+    (function slice() { idle(deadline => { try { while (steps.length && deadline.timeRemaining() > 2) steps.shift()(); } catch (e) { steps.length = 0; /* a failed warm-up is only a slower first verdict */ } if (steps.length) slice(); }); })();
+  }
+
+  // ═══════════════════════════════════════════════════════
   // INIT ALL
   // ═══════════════════════════════════════════════════════
   initHamburger();
@@ -1914,5 +1999,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReportPrefill();
   initChatbot();
   initAssistantPage();
+  initDiagnostics();
+  setTimeout(warmUp, 700);
 
 }); // end DOMContentLoaded

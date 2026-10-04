@@ -1394,3 +1394,19 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
 
 /* visible to assistive technology only */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* assistant page: diagnostics on this device */
+.diag { max-width: 920px; margin: 1.2rem auto 2.4rem; padding: 0 1rem; font-family: 'DM Sans', sans-serif; }
+.diag details { border: 1px solid #D9D2C3; border-radius: 6px; background: #fff; }
+.diag summary { cursor: pointer; padding: .9rem 1.1rem; font-weight: 700; color: var(--navy); }
+.diag__body { padding: 0 1.1rem 1.1rem; }
+.diag__list { margin: 0; display: grid; gap: 0; }
+.diag__row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: .8rem; padding: .55rem 0; border-top: 1px solid #EEE8DB; font-size: .9rem; }
+.diag__row dt { color: #5b6678; font-family: 'JetBrains Mono', monospace; font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; padding-top: .15rem; }
+.diag__row dd { margin: 0; color: var(--navy); overflow-wrap: anywhere; }
+.diag__buttons { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; align-items: center; }
+.diag__btn { font: inherit; font-size: .85rem; font-weight: 600; padding: .55rem .9rem; border: 1px solid var(--navy); border-radius: 4px; background: #fff; color: var(--navy); cursor: pointer; }
+.diag__btn:hover, .diag__btn:focus-visible { background: var(--navy); color: #fff; }
+.diag__note { flex-basis: 100%; margin: .4rem 0 0; font-size: .8rem; color: #5b6678; line-height: 1.5; }
+.diag__status { margin: .6rem 0 0; font-size: .85rem; white-space: pre-wrap; color: var(--navy); }
+@media (max-width: 560px) { .diag__row { grid-template-columns: 1fr; gap: .1rem; } }
