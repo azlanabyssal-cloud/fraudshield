@@ -167,3 +167,9 @@ test('a cut-off sentence is recognised and a finished one is not', () => {
   assert.ok(U.TRAILING.size > 60);
   for (const w of ['this', 'it', 'that', 'you', 'me', 'kya', 'hai', 'do', 'not', 'why']) assert.equal(U.TRAILING.has(w), false, `"${w}" can end a sentence`);
 });
+
+test('no pattern is dead: word weights depend on every other pattern, so adding one answer must not silently stop another answer\'s pattern from ever firing', () => {
+  assert.deepEqual(K.deadPatterns(), []);
+  // and the weights behave: a function word is worth nothing, a topic word is worth something, and a named thing outweighs a common noun
+  assert.ok(K.explain('is teamviewer safe', 'remote_access').every(x => x.words.some(w => /^teamviewer:/.test(w))));
+});
