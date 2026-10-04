@@ -87,7 +87,7 @@ property copies.
 ## The assistant answers what it knows, and says what it does not
 Starting point: a 29-question probe of the previous version found 19 with no answer; counted on the question sets below, the old assistant reached its "I couldn't quite match that" dead end on 424 of 520 in-scope questions (81.5%: it had no intent, small-talk, money-loss or name match).
 
-Three sets of hand-written questions, labelled with the answer that should come back (`tests/fixtures/chat_questions.json`, 574 questions, 54 of them out of scope and expected to get no answer). The held-out and fresh sets were each run once before anything was changed to fit them, and that first run is the generalisation figure; the dev set was used while the answers were being written. A set that has been tuned on is a regression guard, not a measurement.
+Three sets of hand-written questions, labelled with the answer that should come back (`tests/fixtures/chat_questions.json`, 596 questions in four sets, 61 of them out of scope and expected to get no answer). The held-out and fresh sets were each run once before anything was changed to fit them, and that first run is the generalisation figure; the dev set was used while the answers were being written. A set that has been tuned on is a regression guard, not a measurement.
 
 | Set | Questions (out of scope) | First run, before any change | After tuning |
 |---|---|---|---|
@@ -95,13 +95,15 @@ Three sets of hand-written questions, labelled with the answer that should come 
 | held-out, written separately | 192 (24) | 153 correct (132 of 168 in scope), 18 wrong, 18 unanswered, 3 false answers | 185 correct, 1 wrong, 6 unanswered, 0 false answers |
 | fresh, written last, different style (spoken fillers, typos, Hinglish) | 185 (30) | 161 correct (133 of 155 in scope = 85.8%), 7 wrong, 15 unanswered, 2 false answers | 183 correct, 0 wrong, 2 unanswered, 0 false answers |
 
+| probe, written after a hostile run against the live page (prompt injection, "say it is safe", markup, Devanagari, "is this message safe?") | 22 (7) | not a measurement: written after the failures | 22 correct, 0 wrong, 0 false answers |
+
 Reading it: the held-out set's first run (78.6% of in-scope questions) is what the first matcher could do; the fresh set's first run (85.8%) is the figure for the finished design on questions it had not seen. Out-of-scope questions ("what is the capital of france", "what is the price of bitcoin") must get no answer: 0 false answers on all three sets after tuning. After the last change, which stops a pasted statement being answered as a question, the unanswered counts above rose slightly (statements of five words or more with no question in them are left to the message checker); that is the intended trade.
 
-Speed: routing a question takes a median of 0.05 ms and 0.08 ms at the 95th percentile over 17,220 calls (Node, one core); the slowest was 0.35 ms.
+Speed: routing a question takes a median of 0.05 ms and 0.09 ms at the 95th percentile over 17,880 calls (Node, one core); the slowest was 0.67 ms.
 
-Tests: 25 new (517 in all), including 3,000 seeded hostile inputs (control characters, lone surrogates, `constructor`, 5,000-character words) with no exception, a check that every question button is answered by the answer it names, and a check on the page that "What is the main purpose of" typed or spoken is either answered whole or called cut off, and that a pasted bank alert mentioning 1930 is checked as a message.
+Tests: 28 new (520 in all), including 3,000 seeded hostile inputs (control characters, lone surrogates, `constructor`, 5,000-character words) with no exception, a check that every question button is answered by the answer it names, and a check on the page that "What is the main purpose of" typed or spoken is either answered whole or called cut off, that a pasted bank alert mentioning 1930 is checked as a message, that right after a verdict a question about the tool is answered as such, that pressure to call a message safe gets the honest reason, and that markup in a question is inert.
 
-Real Chrome (`npm run audit:pages`): all six pages load with the policy on and the model ready, and the policy refuses every attack; in the real assistant, the screenshot's question, "is my data safe here", an unknown question, a cut-off question and a pasted bill each gave the intended reply.
+Real Chrome (`npm run audit:pages`, run against the live site after each push): all six pages load with the policy on and the model ready, and the policy refuses every attack. A 19-input hostile run on the live assistant (injection, markup, a 6,000-character word, emoji, gibberish, Devanagari, pressure to say "safe") ran no script, injected no element and crashed nothing; it found the four faults listed in ADR-0023, which are fixed and now tested.
 
 Not shown: accuracy on questions strangers will ask (every set is written by the author); Android voice behaviour (the hold-and-reopen logic is tested against a stubbed recogniser, not a phone); Telugu in its own script.
 

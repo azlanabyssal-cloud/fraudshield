@@ -70,22 +70,22 @@ function score(set) {
   return res;
 }
 test('coverage on the three labelled question sets: a floor that cannot slip, and not one false answer to a question the tool should not answer', () => {
-  // dev: used while writing; heldout: first run 153/192 before any change; fresh: first run 161/185 before any change. The floors below are after tuning, so they guard regressions; they are not generalisation figures.
-  const floors = { dev: { ok: 196, wrong: 0 }, heldout: { ok: 185, wrong: 1 }, fresh: { ok: 183, wrong: 0 } };
-  for (const name of ['dev', 'heldout', 'fresh']) {
+  // probe: what a hostile run against the live page turned up (written after the failures); dev: used while writing; heldout: first run 153/192 before any change; fresh: first run 161/185 before any change. The floors below are after tuning, so they guard regressions; they are not generalisation figures.
+  const floors = { dev: { ok: 196, wrong: 0 }, heldout: { ok: 185, wrong: 1 }, fresh: { ok: 183, wrong: 0 }, probe: { ok: 22, wrong: 0 } };
+  for (const name of ['dev', 'heldout', 'fresh', 'probe']) {
     const r = score(Q[name]);
     assert.ok(r.ok >= floors[name].ok, `${name}: ${r.ok}/${r.n} correct (floor ${floors[name].ok}); wrong: ${r.wrong.join(' | ')}; unanswered: ${r.miss.join(' | ')}`);
     assert.ok(r.wrong.length <= floors[name].wrong, `${name}: wrong answers ${r.wrong.join(' | ')}`);
     assert.deepEqual(r.falseAnswers, [], `${name}: answered what it should not`);
-    if (name !== 'dev') assert.ok(r.negatives >= 20, `${name}: has out-of-scope questions`);
+    if (name === 'heldout' || name === 'fresh') assert.ok(r.negatives >= 20, `${name}: has out-of-scope questions`);
   }
-  const all = [...Q.dev, ...Q.heldout, ...Q.fresh]; assert.equal(new Set(all.map(x => x.q.toLowerCase())).size, all.length, 'no question appears in two sets');
+  const all = [...Q.dev, ...Q.heldout, ...Q.fresh, ...Q.probe]; assert.equal(new Set(all.map(x => x.q.toLowerCase())).size, all.length, 'no question appears in two sets');
 });
 
 test('the labelled sets cover every entry, and no set is only easy questions: Hindi, Hinglish and Devanagari are in there', () => {
-  const covered = new Set([...Q.dev, ...Q.heldout, ...Q.fresh].map(x => x.id).filter(Boolean));
+  const covered = new Set([...Q.dev, ...Q.heldout, ...Q.fresh, ...Q.probe].map(x => x.id).filter(Boolean));
   for (const e of K.ENTRIES) assert.ok(covered.has(e.id), `${e.id} has labelled questions`);
-  const text = [...Q.dev, ...Q.heldout, ...Q.fresh].map(x => x.q).join(' ');
+  const text = [...Q.dev, ...Q.heldout, ...Q.fresh, ...Q.probe].map(x => x.q).join(' ');
   assert.match(text, /\bkya\b/); assert.match(text, /[ऀ-ॿ]/); assert.match(text, /\bkaise\b/);
 });
 

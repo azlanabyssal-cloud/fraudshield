@@ -1415,14 +1415,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pasted && pasted.level !== 'nothing') { respondToMessage(pasted); return; }
       if (linkMatch) { respondToLink(linkMatch); return; }
 
-      // A short question right after a verdict is about that verdict, not a new message to scan.
-      const follow = FollowUp && FollowUp.route(text, state.last, Msg && Msg.FAMILIES, Date.now());
-      if (follow) { answerFollowUp(follow); return; }
-
-      // A question about the tool, a scam in general or the official routes (lib/knowledge.js). Someone describing what happened to them ("I got a call and ...") still goes to the guided flow.
+      // A question about the tool, a scam in general or the official routes (lib/knowledge.js). Half a sentence is not answered, and someone describing what happened to them ("I got a call and ...") still goes to the guided flow.
       const intent = detectIntent(text);
-      const know = Know && Know.route(text);
-      if (know && !(Utter && Utter.isIncomplete(text)) && (Know.isQuestion(text) || !(intent || isGeneralMoneyLoss(text)))) { answerKnowledge(know.entry); return; }
+      const know = Know && !(Utter && Utter.isIncomplete(text)) && Know.route(text);
+      const knowAnswers = know && (Know.isQuestion(text) || !(intent || isGeneralMoneyLoss(text)));
+
+      // A short question right after a verdict is about that verdict, not a new message to scan. A question the knowledge layer can answer ("who made this?", "is my data safe here?", "what is 1930?") is about the tool or the topic, so it wins, except
+      // "I already paid / clicked / shared": that is about the person's own loss and always gets the steps.
+      const follow = FollowUp && FollowUp.route(text, state.last, Msg && Msg.FAMILIES, Date.now());
+      if (follow && !(knowAnswers && follow.topic !== 'paid')) { answerFollowUp(follow); return; }
+      if (knowAnswers) { answerKnowledge(know.entry); return; }
       if (intent) {
         botSay(['That sounds like ' + intent + " — let's go through it step by step."], { noMenuChip: true, onDone: () => goToNode(intent, CHAT_FLOWS[intent].start) });
         return;
@@ -1457,6 +1459,7 @@ document.addEventListener('DOMContentLoaded', () => {
       track({ kind: 'faq', topic: entry.id.replace(/_/g, '-') });
       const options = [];
       (entry.links || []).forEach(l => options.push({ label: l.label, href: l.href, cta: !!l.cta }));
+      if (entry.act === 'check') options.push({ label: '🔎 Check a link, number or UPI ID', action: askForLink });
       if (entry.flow && CHAT_FLOWS[entry.flow]) options.push({ label: 'Walk me through it', action: () => goToNode(entry.flow, CHAT_FLOWS[entry.flow].start) });
       (entry.rel || []).slice(0, 2).forEach(id => { const r = Know.byId(id); if (r) options.push({ label: r.q, action: () => handleUserInput(r.q) }); });
       botSay(entry.a, { urgent: entry.id === 'emergency', options });
