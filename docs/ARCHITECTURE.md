@@ -42,7 +42,7 @@ flowchart TD
   OCR --> N
   N --> MC[lib/msgcheck rules + lib/hinglish lexicon: quoted evidence, score]
   N --> LC[lib/linkcheck: host, lookalikes, forwards, UPI payload, then the name model hint]
-  MC --> V[Verdict: scam, suspicious, nothing found. Never "safe"]
+  MC --> V[Verdict: scam, suspicious, or nothing found. Never the word safe]
   LC --> V
   V --> CH[Chat engine: wording, next steps, memory of the verdict for follow-up questions]
   CH --> UI[Page, optionally spoken]

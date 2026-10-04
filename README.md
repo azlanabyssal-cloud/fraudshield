@@ -23,7 +23,7 @@ Each row says what was measured, how to measure it again, and what it does not s
 | **Robustness** | 40,000 hostile strings through the analyzers: no exception, slowest call under 100 ms; backtracking bombs under 500 ms | `node --test tests/linkcheck.test.js` | |
 | **Accuracy on real Indian scam messages** | **not measured, and no claim is made.** The release gate reports `NO_EVIDENCE` until a labelled set of real messages exists | `npm run mlops:gate` | this is the open problem; see "What it does not claim" |
 
-`npm run check` runs lint (zero warnings), the generated-page checks, the model lineage check and every test (487 at the time of writing) in one command.
+`npm run check` runs lint (zero warnings), the generated-page checks, the model lineage check and every test in one command.
 
 ---
 

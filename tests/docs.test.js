@@ -39,3 +39,13 @@ test('the privacy document lists every key the page stores, and the erase button
   assert.deepEqual(erased.sort(), ['fs_cb_seen', 'fs_cb_state', 'fs_ops_v1', 'fs_voice_consent_v1']);
   for (const m of src.matchAll(/(?:sessionStorage|localStorage)\.(?:getItem|setItem)\('([a-z_0-9]+)'/g)) assert.ok(doc.includes(m[1]), `${m[1]} is stored but not in PRIVACY.md`);
 });
+
+test('every diagram in the architecture document is well-formed: no double quotes inside a label, balanced brackets, a known diagram type (the real parser is run by `npm run audit:docs`)', () => {
+  const blocks = [...read('docs/ARCHITECTURE.md').matchAll(/```mermaid\n([\s\S]*?)```/g)].map(m => m[1]);
+  assert.ok(blocks.length >= 3, 'the document has its diagrams');
+  for (const code of blocks) {
+    assert.match(code.trim(), /^(flowchart|graph|sequenceDiagram|stateDiagram|classDiagram)\b/);
+    for (const line of code.split('\n')) { const bracketed = line.match(/\[[^\]]*\]/g) || []; for (const label of bracketed) assert.ok(!/["]/.test(label.slice(1, -1)), `a double quote inside a label breaks the parser: ${label}`); }
+    for (const [open, close] of [['[', ']'], ['(', ')'], ['{', '}']]) assert.equal(code.split(open).length, code.split(close).length, `unbalanced ${open}${close} in a diagram`);
+  }
+});

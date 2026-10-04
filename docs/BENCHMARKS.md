@@ -85,4 +85,4 @@ The first-verdict rows exist because of a finding: before the page compiled its 
 property copies.
 
 ## The whole suite
-`npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests. 487 tests at the time of writing.
+`npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests.
