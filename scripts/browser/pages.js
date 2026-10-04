@@ -13,7 +13,10 @@ const { launch, serve } = require('./cdp.js');
     if (m.method === 'Runtime.exceptionThrown') bag.push('exception: ' + ((m.params.exceptionDetails.exception || {}).description || m.params.exceptionDetails.text).slice(0, 150));
   });
   for (const p of ['index', 'about', 'data', 'tips', 'assistant', 'report']) {
-    bag.length = 0; await b.goto(`${base}/${p}.html?x=${Date.now()}`); await b.sleep(p === 'index' ? 8000 : 1500);
+    bag.length = 0; await b.goto(`${base}/${p}.html?x=${Date.now()}`);
+    // wait until the page says it is ready (its model has loaded or failed, its fonts are in) instead of sleeping a fixed time: a slow network is not a failure of the page
+    await b.eval(`new Promise(done => { const t0 = Date.now(), tick = () => { const m = document.documentElement.dataset.nameModel; if ((m === 'ready' || m === 'failed') && document.fonts.status === 'loaded') done(true); else if (Date.now() - t0 > 20000) done(false); else setTimeout(tick, 100); }; tick(); })`);
+    if (p === 'index') await b.sleep(6000);   // the home page plays its intro first
     const i = JSON.parse(await b.eval(`JSON.stringify({ csp: !!document.querySelector('meta[http-equiv=Content-Security-Policy]'), fonts: [...new Set([...document.fonts].filter(f => f.status === 'loaded').map(f => f.family))], model: document.documentElement.dataset.nameModel })`));
     const ok = i.csp && i.model === 'ready' && !bag.length && i.fonts.length >= 3; if (!ok) failed++;
     console.log((ok ? 'ok   ' : 'FAIL ') + p.padEnd(10), `policy ${i.csp ? 'on' : 'MISSING'}, model ${i.model}, fonts ${i.fonts.join('/')}`, bag.length ? '\n     ' + bag.join('\n     ') : '');
