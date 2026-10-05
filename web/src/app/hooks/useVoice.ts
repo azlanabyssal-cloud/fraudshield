@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { speechProvider } from '../../adapters/analyzers';
+import { speechProvider } from '../../engine/analyze';
 import { isIncomplete } from '../../engine/utterance';
 
 // The parts of the browser's speech recogniser this code uses (it is not in the standard type library, and Chrome and Safari name it differently).

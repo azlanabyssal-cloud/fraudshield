@@ -1,4 +1,5 @@
-import type { LinkVerdict, MessageVerdict } from '../../adapters/types';
+import type { CheckedLink } from '../../engine/core';
+import type { MessageVerdict } from '../../engine/msgcheck';
 import { LINK_ADVICE } from '../../engine/assistant';
 import type { Level } from '../../engine/ops';
 
@@ -60,7 +61,7 @@ export function MessageVerdictCard({ verdict: v }: { verdict: MessageVerdict }) 
   );
 }
 
-export function LinkVerdictCard({ verdict: v }: { verdict: LinkVerdict }) {
+export function LinkVerdictCard({ verdict: v }: { verdict: CheckedLink }) {
   return (
     <Frame level={v.level} headline={v.headline}>
       <section className="verdict__section">

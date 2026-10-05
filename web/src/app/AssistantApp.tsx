@@ -6,8 +6,11 @@ import { Chips } from './components/Chips';
 import { Composer } from './components/Composer';
 import { Diagnostics } from './components/Diagnostics';
 import { LinkVerdictCard, MessageVerdictCard } from './components/VerdictCard';
+import { createAppOps } from './appOps';
 import { useChat } from './hooks/useChat';
 import type { UseChatOptions } from './hooks/useChat';
+import { useNameModel } from './hooks/useNameModel';
+import type { NameModelOptions } from './hooks/useNameModel';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { useVoice, VOICE_CONSENT_KEY } from './hooks/useVoice';
 import type { VoiceLang } from './hooks/useVoice';
@@ -23,9 +26,12 @@ function Bubble({ m }: { m: ChatMessage }) {
   return <li className={'msg msg--bot' + (m.urgent ? ' msg--urgent' : '')}><span className="sr-only">Assistant: </span><p>{describe(b)}</p></li>;
 }
 
-export function AssistantApp(props: UseChatOptions = {}) {
+export function AssistantApp(props: UseChatOptions & { nameModel?: Pick<NameModelOptions, 'url' | 'retryMs'> } = {}) {
   const reduced = useReducedMotion();
-  const chat = useChat({ ...props, instant: props.instant ?? reduced });
+  const [ops] = useState(() => props.ops ?? createAppOps());
+  // a test that fixes the model's status turns the loader off; otherwise the page loads, validates and announces the model itself
+  const model = useNameModel({ ...props.nameModel, enabled: props.modelStatus === undefined, onFail: code => { ops.record({ kind: 'model', code }); } });
+  const chat = useChat({ ...props, ops, modelStatus: props.modelStatus ?? model.status, instant: props.instant ?? reduced });
   const [draft, setDraft] = useState('');
   const [lang, setLang] = useState<VoiceLang>('en-IN');
   const spoken = useRef(false);   // the last message came from the microphone: when the reply is done, listen again
@@ -71,7 +77,7 @@ export function AssistantApp(props: UseChatOptions = {}) {
         {chips && !chat.typing && <Chips chips={chips} onPress={chat.press} />}
         <div ref={bottom} />
         <Composer draft={draft} onDraft={setDraft} onSend={t => { spoken.current = false; chat.send(t); }} voice={voice} lang={lang} onLang={setLang} />
-        <Diagnostics summary={() => chat.ops.summary()} version={chat.version} onErase={() => { voice.stop(); chat.erase([VOICE_CONSENT_KEY]); try { window.localStorage.removeItem(VOICE_CONSENT_KEY); } catch { /* ignore */ } }} />
+        <Diagnostics summary={() => chat.ops.summary()} version={chat.version} model={{ status: props.modelStatus ?? model.status, retry: model.retry }} onErase={() => { voice.stop(); chat.erase([VOICE_CONSENT_KEY]); try { window.localStorage.removeItem(VOICE_CONSENT_KEY); } catch { /* ignore */ } }} />
       </main>
       <footer className="site-footer">
         <p>FraudShield is a free, independent project. It is not a government service. If money has left your account, the first hour matters most.</p>

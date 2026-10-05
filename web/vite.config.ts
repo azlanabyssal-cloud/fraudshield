@@ -34,7 +34,7 @@ function staticFiles(entries: Record<string, string>): Plugin {
 export default defineConfig({
   // Relative URLs: the site is served from a sub-path on GitHub Pages (/fraudshield/), where absolute ones would 404.
   base: './',
-  plugins: [react(), csp(), staticFiles({ icons: 'icons', 'manifest.json': 'manifest.json' })],
+  plugins: [react(), csp(), staticFiles({ icons: 'icons', 'manifest.json': 'manifest.json', 'data/urlmodel.json': 'data/urlmodel.json' })],
   build: { outDir: 'dist', emptyOutDir: true, target: 'es2022', rollupOptions: { input: { assistant: resolve(import.meta.dirname, 'assistant.html') } } },
   server: { fs: { allow: [resolve(import.meta.dirname, '..')] } },
   test: { include: ['src/**/*.test.{ts,tsx}'], environment: 'node', css: false, setupFiles: ['src/test/setup.ts'] }

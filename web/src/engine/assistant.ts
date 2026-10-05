@@ -2,8 +2,9 @@
    The routing is the one the site has always used (a pasted message is checked as a message; a question after a verdict is about that verdict, unless the knowledge layer can answer it;
    half a sentence is never answered; nothing is guessed), moved out of the page so that it can be tested without a browser and drawn by any view. Given the person's words and what
    the chat remembers, it returns the blocks to show, the buttons to offer, the new memory, and the counts to record (never words). It does no I/O and reads no clock except the one it is given. */
-import type { LinkVerdict, MessageVerdict } from '../adapters/types';
-import * as A from '../adapters/analyzers';
+import * as A from './analyze';
+import type { CheckedLink } from './core';
+import type { MessageVerdict } from './msgcheck';
 import { FLOWS, TOP_CHIPS, flowNode } from './flows';
 import * as FollowUp from './followup';
 import type { LastVerdict, TopicId } from './followup';
@@ -22,7 +23,7 @@ export interface Chip { label: string; href?: string; cta?: boolean; action?: Ac
 export type Block =
   | { type: 'text'; text: string; urgent?: boolean }
   | { type: 'message-verdict'; verdict: MessageVerdict }
-  | { type: 'link-verdict'; verdict: LinkVerdict };
+  | { type: 'link-verdict'; verdict: CheckedLink };
 /** What the chat remembers between turns. */
 export interface Session { last: LastVerdict | null; awaitingLink: boolean; userName: string | null }
 /** A count or timing to record: the shape lib/ops accepts, which keeps only enumerated fields. */
@@ -69,7 +70,7 @@ function showMainMenu(session: Session): Reply {
 
 const remember = (session: Session, verdict: FollowUp.VerdictInput, now: number): Session => ({ ...session, last: FollowUp.remember(verdict, now) });
 
-function noticeFor(result: LinkVerdict, status: ModelStatus): string {
+function noticeFor(result: CheckedLink, status: ModelStatus): string {
   if (result.nameModel !== 'not-loaded') return '';
   if (status === 'failed') return ' Note: the domain-name check could not load on this device, so this result uses the written rules only. Reload the page to try again.';
   if (status === 'absent') return ' Note: the domain-name check is not part of this build yet, so this result uses the written rules only.';

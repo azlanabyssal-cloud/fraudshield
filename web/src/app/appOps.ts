@@ -1,4 +1,4 @@
-import { FAMILIES, RULE_IDS } from '../adapters/analyzers';
+import { FAMILIES, RULE_IDS } from '../engine/analyze';
 import { TOPICS } from '../engine/followup';
 import { ENTRIES } from '../engine/knowledge';
 import * as O from '../engine/ops';

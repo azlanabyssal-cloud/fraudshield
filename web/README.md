@@ -12,8 +12,7 @@ npm run web:budget     # build, then the policy, same-origin and size-budget gat
 ## Layout
 | Path | What it is |
 |---|---|
-| `src/engine/` | The logic, as strict TypeScript: `format`, `hinglish`, `utterance`, `knowledge`, `followup`, `ops`, the guided `flows`, and `assistant.ts`, one pure function from what the person said to what the assistant shows |
-| `src/adapters/` | Typed doors onto the JavaScript modules that are not ported yet (`msgcheck`, `core`); each door goes when its module is ported |
+| `src/engine/` | All the logic the assistant needs, as strict TypeScript: the verdict engine (`linkcheck`, `urlmodel`, `core`, `msgcheck`), the language layer (`hinglish`, `utterance`, `knowledge`), `followup`, `ops`, the guided `flows`, and `assistant.ts`, one pure function from what the person said to what the assistant shows |
 | `src/app/` | The React app: a reducer for the conversation, hooks for chat and voice, and the components |
 | `src/styles/` | Design tokens (light and dark) and the layout, in cascade layers |
 
@@ -21,9 +20,9 @@ npm run web:budget     # build, then the policy, same-origin and size-budget gat
 | Module | Status |
 |---|---|
 | format, hinglish, utterance, knowledge, followup, ops | TypeScript, proven identical to the shipped JavaScript (`parity.test.ts`) |
+| linkcheck, urlmodel (the domain-name model, loaded, validated and retried by `useNameModel`), core (intents, small talk, link wrapper), msgcheck (the message checker) | TypeScript, proven identical (`parity.verdict.test.ts`: every string in the existing suites, the Hinglish corpus, and thousands of generated hostile links, UPI codes and messages) |
 | guided flows (data), assistant routing | TypeScript, tested |
-| msgcheck, core (link checks, intents, small talk) | JavaScript, reached through typed adapters |
-| linkcheck, urlmodel (domain-name model), qr, qrfinder, imageprep, ocrworker, speech (spoken replies), motion, flow, river | not ported |
+| qr, qrfinder, imageprep, ocrworker, speech (spoken replies), motion, flow, river | not ported |
 | the other five pages, the service worker, deploy | not ported |
 
 ## Why these tools

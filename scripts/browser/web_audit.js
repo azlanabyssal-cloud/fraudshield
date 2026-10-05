@@ -60,7 +60,10 @@ async function audit({ scheme, width, height, mobile, throttle }) {
   try {
     await page.send('Page.navigate', { url: server.base + '/fraudshield/assistant.html' });
     await page.eval("new Promise(r => { const t = setInterval(() => { if (document.getElementById('message')) { clearInterval(t); r(); } }, 20); })");
-    await sleep(500);
+    // the domain-name check must load from the sub-path and say so
+    const model = await page.eval("new Promise(r => { const t = setInterval(() => { const s = document.documentElement.getAttribute('data-name-model'); if (s === 'ready' || s === 'failed') { clearInterval(t); r(s); } }, 20); setTimeout(() => r(document.documentElement.getAttribute('data-name-model')), 5000); })");
+    if (model !== 'ready') fail(`${label}: the domain-name model did not load (status: ${model})`);
+    await sleep(300);
     out.paint = await page.eval("new Promise(r => { new PerformanceObserver(l => r(l.getEntries().map(e => [e.name || e.entryType, Math.round(e.startTime)]))).observe({ type: 'largest-contentful-paint', buffered: true }); setTimeout(() => r([]), 1500); }).then(lcp => ({ lcp: lcp.length ? lcp[lcp.length - 1][1] : null, fcp: Math.round((performance.getEntriesByName('first-contentful-paint')[0] || { startTime: 0 }).startTime) }))");
     if (!throttle || throttle === 1) {
       out.axeOpening = await runAxe(page, label + ' (opening)');
