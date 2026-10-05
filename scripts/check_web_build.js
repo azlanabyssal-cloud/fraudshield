@@ -4,12 +4,14 @@
    and the JavaScript a visitor must download stays inside a budget. Run by `npm run web:budget` after a build. */
 const fs = require('node:fs'), path = require('node:path'), zlib = require('node:zlib');
 
-const DIST = path.join(__dirname, '..', 'web', 'dist');
+const DIST = process.env.WEB_DIST || path.join(__dirname, '..', 'web', 'dist');
 // Gzipped bytes of the JavaScript the assistant page loads before it can be used. The page it replaces ships about 125 KB (everything, eagerly), so this is the ceiling
 // while the image tools are still to be moved; it falls when they are loaded only when a picture is added (docs/ARCHITECTURE.md, "React and TypeScript").
 const BUDGET = { jsGzip: 150 * 1024, cssGzip: 12 * 1024 };
 
 const gz = file => zlib.gzipSync(fs.readFileSync(file), { level: 9 }).length;
+// The size of a file the page names, or 0 when it is another origin, an absolute path or missing: those are reported on their own, and must not stop the rest of the checks from running.
+const sizeOf = url => (/^(https?:)?\/\//i.test(url) || url.startsWith('/') || !fs.existsSync(path.join(DIST, url)) ? 0 : gz(path.join(DIST, url)));
 const problems = [];
 const check = (ok, message) => { if (!ok) problems.push(message); };
 
@@ -22,9 +24,13 @@ for (const page of pages) {
   const html = fs.readFileSync(path.join(DIST, page), 'utf8');
   const meta = /<meta http-equiv="Content-Security-Policy" content="([^"]*)"/.exec(html);
   check(meta && meta[1] === policy, `${page}: the Content-Security-Policy is missing or differs from partials/csp.txt`);
-  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
-  for (const [, attrs, body] of scripts) check(/\ssrc=/.test(attrs) && !body.trim(), `${page}: an inline script (the policy forbids them)`);
-  check(!/\son[a-z]+\s*=/i.test(html.replace(/<noscript>[\s\S]*?<\/noscript>/g, '')), `${page}: an inline event handler`);
+  // Every opening <script> tag must point at a file and hold nothing. Closing tags are never matched (they have many legal spellings, and a gate that looks for one can be walked round):
+  // whatever text follows the opening tag, up to the next tag, must be empty, and anything doubtful fails.
+  for (const m of html.matchAll(/<script\b([^>]*)>/gi)) {
+    const after = html.slice(m.index + m[0].length), next = after.indexOf('<'), body = next < 0 ? after : after.slice(0, next);
+    check(/\ssrc\s*=/i.test(m[1]) && !body.trim(), `${page}: an inline script (the policy forbids them)`);
+  }
+  check(!/\son[a-z]+\s*=/i.test(html), `${page}: an inline event handler`);
   check(!/javascript:/i.test(html), `${page}: a javascript: URL`);
   for (const m of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) {
     const url = m[1];
@@ -32,9 +38,9 @@ for (const page of pages) {
     else if (/^\/(?!\/)/.test(url)) check(false, `${page}: ${url} is an absolute path; the site is served from a sub-path on GitHub Pages, where it would 404`);
     else if (/\.(js|css|woff2?|png|json)$/i.test(url)) check(fs.existsSync(path.join(DIST, url)), `${page}: ${url} was not built`);
   }
-  for (const m of html.matchAll(/<script[^>]*\ssrc="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1]));
-  for (const m of html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)) cssBytes += gz(path.join(DIST, m[1]));
-  for (const m of html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1]));
+  for (const m of html.matchAll(/<script[^>]*\ssrc="([^"]+)"/g)) jsBytes += sizeOf(m[1]);
+  for (const m of html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)) cssBytes += sizeOf(m[1]);
+  for (const m of html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)) jsBytes += sizeOf(m[1]);
 }
 // styles may import fonts: they must be built into dist, never fetched from elsewhere
 for (const f of fs.existsSync(path.join(DIST, 'assets')) ? fs.readdirSync(path.join(DIST, 'assets')).filter(f => f.endsWith('.css')) : []) {
