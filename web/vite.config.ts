@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, resolve } from 'node:path';
+import { extname, join, relative, resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
@@ -11,13 +11,16 @@ function csp(): Plugin {
 }
 
 /** The icons and the manifest already in the repository, served in development and copied into the build, so the app does not keep a second copy of them. */
+/** Every file under a folder, however deep (the OCR language data sits two levels down). */
+const walk = (dir: string): string[] => readdirSync(dir).flatMap(name => { const p = join(dir, name); return statSync(p).isDirectory() ? walk(p) : [p]; });
+
 function staticFiles(entries: Record<string, string>): Plugin {
   const root = resolve(import.meta.dirname, '..');
   const files = (): [string, string][] => Object.entries(entries).flatMap(([to, from]): [string, string][] => {
     const src = resolve(root, from);
-    return statSync(src).isDirectory() ? readdirSync(src).map((f): [string, string] => [join(to, f), join(src, f)]) : [[to, src]];
+    return statSync(src).isDirectory() ? walk(src).map((f): [string, string] => [join(to, relative(src, f)), f]) : [[to, src]];
   });
-  const TYPES: Record<string, string> = { '.png': 'image/png', '.json': 'application/json', '.svg': 'image/svg+xml' };
+  const TYPES: Record<string, string> = { '.png': 'image/png', '.json': 'application/json', '.svg': 'image/svg+xml', '.js': 'text/javascript', '.wasm': 'application/wasm', '.gz': 'application/gzip' };
   return {
     name: 'fraudshield-static',
     generateBundle() { for (const [fileName, src] of files()) this.emitFile({ type: 'asset', fileName, source: readFileSync(src) }); },
@@ -34,7 +37,7 @@ function staticFiles(entries: Record<string, string>): Plugin {
 export default defineConfig({
   // Relative URLs: the site is served from a sub-path on GitHub Pages (/fraudshield/), where absolute ones would 404.
   base: './',
-  plugins: [react(), csp(), staticFiles({ icons: 'icons', 'manifest.json': 'manifest.json', 'data/urlmodel.json': 'data/urlmodel.json' })],
+  plugins: [react(), csp(), staticFiles({ icons: 'icons', 'manifest.json': 'manifest.json', 'data/urlmodel.json': 'data/urlmodel.json', 'vendor/jsqr': 'vendor/jsqr', 'vendor/tesseract': 'vendor/tesseract' })],
   build: { outDir: 'dist', emptyOutDir: true, target: 'es2022', rollupOptions: { input: { assistant: resolve(import.meta.dirname, 'assistant.html') } } },
   server: { fs: { allow: [resolve(import.meta.dirname, '..')] } },
   test: { include: ['src/**/*.test.{ts,tsx}'], environment: 'node', css: false, setupFiles: ['src/test/setup.ts'] }

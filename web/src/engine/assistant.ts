@@ -18,7 +18,9 @@ export type Action =
   | { type: 'loss' }
   | { type: 'checkLink' }
   | { type: 'ask'; text: string }
-  | { type: 'followup'; topic: TopicId };
+  | { type: 'followup'; topic: TopicId }
+  /** Open the picture picker: the page does this, so a reply to it is empty. */
+  | { type: 'pickImage' };
 export interface Chip { label: string; href?: string; cta?: boolean; action?: Action }
 export type Block =
   | { type: 'text'; text: string; urgent?: boolean }
@@ -136,6 +138,53 @@ function unanswered(text: string, session: Session): Reply {
   session, { options, menu: false }, [{ kind: 'unanswered' }]);
 }
 
+/** What came of looking at a picture. The page works it out (prepare, look for a QR code, read the text); this decides what is said about it. */
+export type PictureOutcome =
+  | { kind: 'qr-text'; text: string }
+  | { kind: 'qr-unreadable'; certainty: 'full' | 'partial' | null }
+  | { kind: 'text'; text: string }
+  | { kind: 'no-text' }
+  | { kind: 'reader-failed'; loaded: boolean }
+  | { kind: 'file-too-big' }
+  | { kind: 'picture-too-large' }
+  | { kind: 'picture-unreadable' }
+  | { kind: 'busy' }
+  | { kind: 'tools-missing' };
+
+const squash = (text: string, max: number): string => text.replace(/\s+/g, ' ').slice(0, max);
+const aside = (lines: readonly string[], then: Reply): Reply => ({ ...then, blocks: [...texts(lines), ...then.blocks] });
+
+/** What is said about a picture: a QR code is judged by what it holds; a code that cannot be read stops the flow (the words around it say nothing about where a scan would pay); anything else is read for text and judged like a pasted message. */
+export function pictureReply(outcome: PictureOutcome, session: Session, ctx: Context): Reply {
+  switch (outcome.kind) {
+    case 'qr-text':
+      return aside(['I found a QR code in that image. It contains: "' + squash(outcome.text, 200) + '"'], linkReply(outcome.text, session, ctx));
+    case 'qr-unreadable': {
+      const part = outcome.certainty === 'partial';
+      const headline = part ? 'I can see part of what looks like a QR code, but I cannot read it.' : 'I can see a QR code in this picture, but I cannot read it.';
+      const next = remember(session, { kind: 'qr', level: 'unverified', headline, evidence: [{ quote: '', label: 'The picture has the corner markers of a QR code, but its content could not be decoded.' }] }, ctx.now);
+      return say(['⚠️ ' + headline + ' It may be covered by a logo or sticker, torn, blurred, shiny, or photographed at a hard angle.',
+        'Do not scan it. I cannot tell where it would send your money, and I will not guess from the words around it.',
+        'If you need to pay, ask for the UPI ID or the payment link in writing and send that to me, or take the photo again: straight on, close up, in good light.'],
+      next, { urgent: true, options: [chip('📷 Try another picture', { action: { type: 'pickImage' } })] }, [{ kind: 'qr', level: 'unverified' }]);
+    }
+    case 'text': {
+      const text = outcome.text.trim();
+      if (text.length < 4) return pictureReply({ kind: 'no-text' }, session, ctx);
+      return aside(['Here\'s what I read from the image (no QR code found in it): "' + squash(text, 400) + '"'], reply(text, session, ctx));
+    }
+    case 'no-text': return say(["I couldn't read clear text from that image — could you type or say what it says instead?"], session);
+    case 'reader-failed':
+      return say(['The image reader could not run on this device (the page may not have finished loading it, or the browser ran out of memory). Reload the page and try a smaller screenshot, or type or say what the message said.'],
+        session, {}, [{ kind: 'error', code: outcome.loaded ? 'ocr-failed' : 'ocr-module-missing' }]);
+    case 'file-too-big': return say(["That file is over 25 MB. Take a screenshot of the message instead of sending the original photo, and I'll read it."], session);
+    case 'picture-too-large': return say(['That picture is enormous (over 150 megapixels), which is not a normal photo. Take a screenshot of the message instead.'], session, {}, [{ kind: 'error', code: 'prepare-too-large' }]);
+    case 'picture-unreadable': return say(['I could not open that picture. It may be damaged or not an image this browser can read. Try a screenshot, or type or say what the message says.'], session, {}, [{ kind: 'error', code: 'prepare-unreadable' }]);
+    case 'busy': return say(['One picture at a time, please. Let me finish reading the last one first.'], session);
+    case 'tools-missing': return say(['The image reader did not load on this page. Reload the page, or type or say what the message says.'], session);
+  }
+}
+
 /** The opening of a conversation. */
 export function greeting(session: Session = NEW_SESSION): Reply {
   const hello = say(["Hi — I'm the FraudShield Assistant. Type what happened, paste a link, or share a screenshot or QR code, and I'll guide you step by step."], session, { menu: false });
@@ -195,6 +244,7 @@ export function act(action: Action, session: Session, ctx: Context): Reply {
     case 'loss': return generalLoss(session);
     case 'checkLink': return say(['Paste the link, phone number or UPI ID you want me to check, or attach a photo of the QR code.'], { ...session, awaitingLink: true }, { menu: false });
     case 'ask': return reply(action.text, session, ctx);
+    case 'pickImage': return { blocks: [], chips: [], session, events: [] };
     case 'followup': {
       const f = FollowUp.route('what do I do now', session.last, A.FAMILIES, ctx.now);
       return f ? followUpReply(f, session) : showMainMenu(session);

@@ -4,6 +4,8 @@ import { NEW_SESSION } from '../engine/assistant';
 /** One bubble in the conversation, or a row of buttons under the last bubble. */
 export type ChatMessage =
   | { id: number; from: 'user'; text: string }
+  /** A picture the person sent: shown in the chat, never saved (its address dies with the page). */
+  | { id: number; from: 'image'; url: string }
   | { id: number; from: 'bot'; block: Block; urgent?: boolean }
   | { id: number; from: 'chips'; chips: Chip[] };
 
@@ -19,6 +21,7 @@ const MAX_MESSAGES = 120;
 
 export type ChatEvent =
   | { type: 'user'; text: string }
+  | { type: 'image'; url: string }
   | { type: 'bot'; reply: Reply; instant: boolean }
   | { type: 'reveal' }
   | { type: 'chipsUsed' }
@@ -37,6 +40,8 @@ export function chatReducer(state: ChatState, event: ChatEvent): ChatState {
   switch (event.type) {
     case 'user':
       return { ...state, messages: trim([...state.messages.filter(m => m.from !== 'chips'), { id: state.nextId, from: 'user', text: event.text }]), nextId: state.nextId + 1 };
+    case 'image':
+      return { ...state, messages: trim([...state.messages.filter(m => m.from !== 'chips'), { id: state.nextId, from: 'image', url: event.url }]), nextId: state.nextId + 1 };
     case 'bot': {
       const made = turnToMessages(event.reply, state.nextId), nextId = state.nextId + made.length;
       return event.instant
@@ -71,7 +76,7 @@ interface Saved { v: 1; messages: ChatMessage[]; session: Session; nextId: numbe
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
 
 export function serialise(s: ChatState): string {
-  const saved: Saved = { v: 1, messages: s.messages, session: s.session, nextId: s.nextId };
+  const saved: Saved = { v: 1, messages: s.messages.filter(m => m.from !== 'image'), session: s.session, nextId: s.nextId };
   return JSON.stringify(saved);
 }
 /** Reads a saved conversation back. Anything that is not exactly the expected shape is ignored, so a damaged or old value can never break the page. */

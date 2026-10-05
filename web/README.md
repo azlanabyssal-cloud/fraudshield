@@ -22,7 +22,8 @@ npm run web:budget     # build, then the policy, same-origin and size-budget gat
 | format, hinglish, utterance, knowledge, followup, ops | TypeScript, proven identical to the shipped JavaScript (`parity.test.ts`) |
 | linkcheck, urlmodel (the domain-name model, loaded, validated and retried by `useNameModel`), core (intents, small talk, link wrapper), msgcheck (the message checker) | TypeScript, proven identical (`parity.verdict.test.ts`: every string in the existing suites, the Hinglish corpus, and thousands of generated hostile links, UPI codes and messages) |
 | guided flows (data), assistant routing | TypeScript, tested |
-| qr, qrfinder, imageprep, ocrworker, speech (spoken replies), motion, flow, river | not ported |
+| qrfinder, qr (QR finding and reading), imageprep (the pixel budget), ocrworker (one hot text-reader worker), speech (spoken replies that cannot hang) | TypeScript, proven identical (`parity.image.test.ts`: damaged QR codes from an independent encoder, a recording fake browser for picture preparation, random scripts of events for the reader and the speaker). In the app the picture code is loaded only when a picture is first added |
+| motion, flow, river (animation engines for the other pages) | not ported |
 | the other five pages, the service worker, deploy | not ported |
 
 ## Why these tools

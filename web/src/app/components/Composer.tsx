@@ -5,9 +5,9 @@ import type { VoiceLang, useVoice } from '../hooks/useVoice';
 export const MAX_LENGTH = 4000;
 type Voice = ReturnType<typeof useVoice>;
 
-interface Props { draft: string; onDraft: (text: string) => void; onSend: (text: string) => void; voice: Voice; lang: VoiceLang; onLang: (lang: VoiceLang) => void }
+interface Props { onAttachClick: () => void; onPasteImage: (file: File) => void; draft: string; onDraft: (text: string) => void; onSend: (text: string) => void; voice: Voice; lang: VoiceLang; onLang: (lang: VoiceLang) => void }
 
-export function Composer({ draft, onDraft, onSend, voice, lang, onLang }: Props) {
+export function Composer({ onAttachClick, onPasteImage, draft, onDraft, onSend, voice, lang, onLang }: Props) {
   const box = useRef<HTMLTextAreaElement>(null);
   // grow with the text, up to a limit, without a layout jump
   useLayoutEffect(() => { const el = box.current; if (!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 168) + 'px'; }, [draft]);
@@ -39,7 +39,9 @@ export function Composer({ draft, onDraft, onSend, voice, lang, onLang }: Props)
           id="message" ref={box} rows={1} value={draft} maxLength={MAX_LENGTH} enterKeyHint="send" autoComplete="off" autoCorrect="off" spellCheck={false}
           placeholder={voice.listening ? 'Listening… (' + where + ')' : 'Type what happened, paste a message or a link…'}
           onChange={e => onDraft(e.target.value)} onKeyDown={onKey}
+          onPaste={e => { const f = [...e.clipboardData.files].find(x => x.type.startsWith('image/')); if (f) { e.preventDefault(); onPasteImage(f); } }}
         />
+        <button type="button" className="icon-btn" onClick={onAttachClick} aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
         {voice.supported && (
           <>
             <button type="button" className="icon-btn" onClick={() => onLang(hindi ? 'en-IN' : 'hi-IN')} aria-label={'Voice language: ' + (hindi ? 'Hindi' : 'English') + '. Tap to switch to ' + (hindi ? 'English' : 'Hindi')}>{hindi ? 'हिं' : 'EN'}</button>

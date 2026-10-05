@@ -45,6 +45,13 @@
   .typing span { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--text-3); animation: bounce 1s ease-in-out infinite; }
   .typing span:nth-child(2) { animation-delay: 0.15s; } .typing span:nth-child(3) { animation-delay: 0.3s; }
 
+  .msg--image { padding: var(--space-2); }
+  .msg--image img { max-width: min(100%, 22rem); max-height: 22rem; border-radius: var(--radius-1); object-fit: contain; background: #fff; }
+  .progress { display: flex; align-items: center; gap: var(--space-2); align-self: flex-start; padding: var(--space-2) var(--space-4); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-pill); color: var(--text-2); font-size: var(--step--1); }
+  .progress__dots { display: inline-flex; gap: 0.25rem; }
+  .progress__dots span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--accent); animation: bounce 1s ease-in-out infinite; }
+  .progress__dots span:nth-child(2) { animation-delay: 0.15s; } .progress__dots span:nth-child(3) { animation-delay: 0.3s; }
+
   /* ---- the result ---- */
   .verdict { --edge: var(--neutral-edge); --bg-tone: var(--neutral-bg); --ink: var(--neutral-ink); background: var(--bg-tone); color: var(--ink); border: 1px solid var(--edge); border-left-width: 6px; border-radius: var(--radius-3); padding: var(--space-4) var(--space-5); display: grid; gap: var(--space-4); box-shadow: var(--shadow-1); }
   .verdict--danger { --edge: var(--danger-edge); --bg-tone: var(--danger-bg); --ink: var(--danger-ink); }
@@ -73,6 +80,7 @@
   .chip--cta:hover, .btn--primary:hover { background: var(--accent); filter: brightness(1.08); }
   .btn { padding: var(--space-2) var(--space-4); }
   .btn--danger { border-color: var(--danger-edge); color: var(--danger-ink); }
+  .btn--toggle { align-self: flex-start; }
   .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
   .link-button { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
 

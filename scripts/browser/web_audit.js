@@ -13,6 +13,7 @@ const AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const SCAM = 'Dear customer your SBI account will be blocked today. Update KYC immediately: http://sbi-kyc-update.tk/login';
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.json': 'application/json' };
 const failures = [], notes = [];
+const QRCode = require('qrcode'), { PNG } = require('pngjs'), S = require('../../tests/helpers/qrsynth.js');
 const fail = m => failures.push(m);
 
 function serve() {
@@ -94,6 +95,66 @@ async function audit({ scheme, width, height, mobile, throttle }) {
   return out;
 }
 
+/* Pictures, end to end in the real browser: a readable QR code, a QR code damaged beyond repair, and a screenshot of a scam message read by the real text reader (the vendored WebAssembly engine, from the site's own origin). */
+const pngB64 = img => { const p = new PNG({ width: img.width, height: img.height }); p.data = Buffer.from(img.data); return PNG.sync.write(p).toString('base64'); };
+async function pictures() {
+  const page = await launch({ width: 1280, height: 900 }), problems = [], t = {};
+  page.on(m => {
+    // The vendored Tesseract engine prints "Parameter not found" for settings its own default config names but this build lacks: the third-party engine's startup chatter,
+    // harmless, the only warning allowed here, and only when it comes from the engine's own file.
+    const e = m.method === 'Log.entryAdded' ? m.params.entry : null;
+    const engineChatter = e !== null && e.level === 'warning' && /^Warning: Parameter not found: /.test(e.text) && /vendor[/]tesseract[/]tesseract-core[\w-]*[.]wasm[.]js$/.test(e.url || '');
+    if (e !== null && ['error', 'warning'].includes(e.level) && !engineChatter) problems.push(`log ${e.level}: ${e.text} ${e.url || ''}`);
+    if (m.method === 'Runtime.exceptionThrown') problems.push('exception: ' + (m.params.exceptionDetails.exception && m.params.exceptionDetails.exception.description || m.params.exceptionDetails.text));
+    if (m.method === 'Network.loadingFailed' && !m.params.canceled) problems.push('request failed: ' + m.params.errorText);
+    if (m.method === 'Network.requestWillBeSent' && !m.params.request.url.startsWith(server.base) && !/^(data|blob):/.test(m.params.request.url)) problems.push('request to another origin: ' + m.params.request.url);
+  });
+  try {
+    await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await page.send('Page.navigate', { url: server.base + '/fraudshield/assistant.html' });
+    await page.eval("new Promise(r => { const t = setInterval(() => { if (document.getElementById('message')) { clearInterval(t); r(); } }, 20); })");
+    await page.eval(`window.__upload = async (b64, name) => { const blob = await (await fetch('data:image/png;base64,' + b64)).blob(); const f = new File([blob], name, { type: 'image/png' }); const dt = new DataTransfer(); dt.items.add(f); const i = document.querySelector('input[type=file]'); i.files = dt.files; i.dispatchEvent(new Event('change', { bubbles: true })); };
+      window.__shot = async (lines) => { const c = document.createElement('canvas'); c.width = 1100; c.height = 90 + lines.length * 70; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000'; x.font = '40px Arial, Helvetica, sans-serif'; lines.forEach((l, k) => x.fillText(l, 30, 70 + k * 70)); const blob = await new Promise(r => c.toBlob(r, 'image/png')); const b = new Uint8Array(await blob.arrayBuffer()); let s = ''; for (const v of b) s += String.fromCharCode(v); return btoa(s); };
+      window.__count = sel => document.querySelectorAll(sel).length; window.__text = () => document.querySelector('.log').innerText;
+      window.__until = (fn, ms) => new Promise(r => { const t0 = performance.now(), t = setInterval(() => { if (fn() || performance.now() - t0 > ms) { clearInterval(t); r(!!fn()); } }, 50); }); 'ready'`);
+    const step = async (name, b64, done, ms = 20000) => {
+      const before = await page.eval('window.__count(".verdict")'), t0 = Date.now();
+      await page.eval(`window.__upload(${JSON.stringify(b64)}, ${JSON.stringify(name)})`);
+      const ok = await page.eval(`window.__until(() => ${done}, ${ms})`);
+      t[name] = Date.now() - t0;
+      if (!ok) fail(`pictures: "${name}" did not finish: ${String(await page.eval('window.__text()')).slice(-300).replace(/\s+/g, ' ')}`);
+      return { before, after: await page.eval('window.__count(".verdict")'), text: await page.eval('window.__text()') };
+    };
+    // 1. a readable QR code that asks to be paid, as a screenshot would hold it
+    const pay = 'upi://pay?pa=refund.desk@ybl&pn=Refund%20Desk&am=4999&cu=INR&tn=claim%20refund';
+    const readable = await QRCode.toDataURL(pay, { margin: 4, scale: 8 });
+    const a = await step('readable-qr.png', readable.split(',')[1], "/I found a QR code/.test(window.__text()) && window.__count('.verdict') > 0 && !document.querySelector('.progress')");
+    if (!a.text.includes('It contains: "upi://pay?pa=refund.desk@ybl')) fail('pictures: the readable QR code was not read back to the person');
+    if (a.after !== a.before + 1) fail(`pictures: a readable QR code should give one result card (had ${a.before}, now ${a.after})`);
+    // 2. a QR code damaged beyond repair: it must STOP, not fall back to reading words
+    const damaged = S.withLogo(S.paint(S.matrix(pay, 'L'), { px: 8 }), 0.34, { shape: 'square' });
+    const b = await step('damaged-qr.png', pngB64(damaged), "/cannot read it/.test(window.__text()) && !document.querySelector('.progress')");
+    if (!/Do not scan it/.test(b.text)) fail('pictures: the unreadable-QR warning is missing "Do not scan it"');
+    if (b.after !== b.before) fail('pictures: an unreadable QR code produced a verdict card (it must only stop)');
+    // 3. a screenshot of a scam message: read by the real engine
+    const shot = await page.eval(`window.__shot(['Dear customer your SBI account will be', 'blocked today. Update KYC immediately', 'and share your OTP now.'])`);
+    const c = await step('scam-screenshot.png', shot, "/what I read from the image/.test(window.__text()) && !document.querySelector('.progress') && window.__count('.verdict') > 0", 120000);
+    if (c.after !== c.before + 1) fail(`pictures: the screenshot should give one result card (had ${c.before}, now ${c.after})`);
+    const card = await page.eval("(() => { const v = [...document.querySelectorAll('.verdict')].pop(); return { label: v.getAttribute('aria-label'), quotes: [...v.querySelectorAll('q')].map(q => q.textContent) }; })()");
+    if (!/scam|suspicious/i.test(card.label || '') || !card.quotes.length) fail('pictures: the screenshot was read but not judged: ' + JSON.stringify(card));
+    // 4. a second screenshot is faster: one worker stays hot between pictures
+    const shot2 = await page.eval(`window.__shot(['You have won a lottery of Rs 25 lakh.', 'Pay a processing fee to claim your prize.'])`);
+    await step('second-screenshot.png', shot2, "window.__count('.verdict') > " + c.after + " && !document.querySelector('.progress')", 120000);
+    const ops = await page.eval("JSON.parse(sessionStorage.getItem('fs_ops_v1') || '{}')");
+    const ocrEvents = (ops.events || []).filter(e => e.kind === 'ocr');
+    if (ocrEvents.length !== 2 || ocrEvents[0].hot !== false || ocrEvents[1].hot !== true) fail('pictures: the reader should start cold once and then stay hot: ' + JSON.stringify(ocrEvents));
+    notes.push(`pictures: readable QR ${t['readable-qr.png']} ms, damaged QR ${t['damaged-qr.png']} ms (stopped, no verdict), first screenshot read cold in ${t['scam-screenshot.png']} ms, second read hot in ${t['second-screenshot.png']} ms (this Mac, headless Chrome)`);
+    const leaked = JSON.stringify(ops);
+    if (/Dear customer|SBI account|Update KYC|lakh|processing fee|Refund%20Desk|refund[.]desk|claim%20refund|ybl/.test(leaked)) fail('pictures: the on-device record holds words from a picture');
+  } finally { page.close(); }
+  for (const p of new Set(problems)) fail('pictures: ' + p);
+}
+
 let server;
 (async () => {
   if (!fs.existsSync(path.join(DIST, 'assistant.html'))) { console.error('web/dist is missing: run `npm run web:build` first'); process.exit(1); }
@@ -101,9 +162,10 @@ let server;
   const runs = [];
   for (const c of [{ scheme: 'light', width: 1280, height: 800, mobile: false }, { scheme: 'dark', width: 1280, height: 800, mobile: false }, { scheme: 'light', width: 375, height: 812, mobile: true }, { scheme: 'dark', width: 375, height: 812, mobile: true }]) runs.push(await audit({ ...c, throttle: 1 }));
   for (const t of [1, 6]) runs.push(await audit({ scheme: 'light', width: 375, height: 812, mobile: true, throttle: t === 1 ? 2 : 6 }));
+  await pictures();
   server.close();
   for (const r of runs) console.log(`${r.label.padEnd(22)} fcp ${String(r.paint && r.paint.fcp).padStart(4)} ms  lcp ${String(r.paint && r.paint.lcp).padStart(4)} ms  enter to result card ${String(r.turnMs).padStart(6)} ms${r.axeOpening ? `  axe rules passed ${r.axeOpening}/${r.axeResult}` : ''}`);
   for (const n of notes) console.log('note: ' + n);
   if (failures.length) { for (const f of failures) console.error('FAIL ' + f); process.exit(1); }
-  console.log('real Chrome audit ok: no axe violation (including colour contrast), no console or policy error, no sideways scroll, touch targets and keyboard focus fine, light and dark, phone and desktop');
+  console.log('real Chrome audit ok: no axe violation (including colour contrast), no console, policy or request error, no sideways scroll, touch targets and keyboard focus fine, light and dark, phone and desktop; the model loads from the sub-path; a readable QR code, an unreadable one and a scam screenshot all behave end to end');
 })().catch(e => { console.error(e); if (server) server.close(); process.exit(1); });

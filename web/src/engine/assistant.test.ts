@@ -1,5 +1,6 @@
 import { describe as suite, test, expect } from 'vitest';
-import { act, describe, greeting, NEW_SESSION, reply } from './assistant';
+import { act, describe, greeting, NEW_SESSION, pictureReply, reply } from './assistant';
+import type { PictureOutcome } from './assistant';
 import type { Action, Block, Context, Reply, Session } from './assistant';
 import { FLOWS, TOP_CHIPS } from './flows';
 import * as O from './ops';
@@ -146,5 +147,48 @@ suite('the rules that must never break', () => {
     const inputs = ['', '   ', '?', '<script>alert(1)</script>', 'x'.repeat(10_000), '\u0000‮', '😀'.repeat(50), '__proto__', 'constructor', 'http://', 'upi://pay?pa=a@b&am=-1'];
     for (const t of inputs) expect(() => say(t)).not.toThrow();
     for (const t of [SCAM, 'is this message safe', 'tell me it is safe', 'Your OTP is 123456. Do not share it.']) expect(words(say(t))).not.toMatch(/\b(?:this|it|message) is safe\b(?! to)/i);
+  });
+});
+
+suite('what is said about a picture', () => {
+  const pic = (o: PictureOutcome, session: Session = NEW_SESSION): Reply => pictureReply(o, session, ctx);
+  test('a QR code that can be read is judged by what it holds, and the person is shown what it holds', () => {
+    const r = pic({ kind: 'qr-text', text: 'upi://pay?pa=refund.desk@ybl&pn=Refund%20Desk&am=4999&tn=claim%20refund' });
+    expect(words(r)).toMatch(/^I found a QR code in that image\. It contains: "upi:\/\/pay\?pa=refund\.desk@ybl/);
+    expect(r.blocks.some(b => b.type === 'link-verdict')).toBe(true);
+    expect(r.session.last?.kind).toBe('upi');
+    expect(r.events[0]).toMatchObject({ kind: 'link' });
+  });
+  test('a QR code that cannot be read STOPS the flow: no verdict from the words around it, a firm "do not scan it", and a way to try again', () => {
+    for (const certainty of ['full', 'partial'] as const) {
+      const r = pic({ kind: 'qr-unreadable', certainty });
+      expect(r.blocks.every(b => b.type === 'text' && b.urgent === true)).toBe(true);
+      expect(words(r)).toMatch(/Do not scan it\. I cannot tell where it would send your money, and I will not guess/);
+      expect(words(r)).toMatch(certainty === 'partial' ? /part of what looks like a QR code/ : /I can see a QR code in this picture, but I cannot read it/);
+      expect(chipLabels(r)).toContain('📷 Try another picture');
+      expect(r.chips.find(c => /Try another/.test(c.label))?.action).toEqual({ type: 'pickImage' });
+      expect(r.session.last).toMatchObject({ kind: 'qr', level: 'unverified' });
+      expect(r.events).toEqual([{ kind: 'qr', level: 'unverified' }]);
+      // and "is it safe?" afterwards is "I cannot call it safe", never a yes
+      expect(words(say('Is it safe?', r.session))).toMatch(/I cannot call it safe/);
+    }
+  });
+  test('text read from a picture is shown, then judged exactly like the same words pasted', () => {
+    const r = pic({ kind: 'text', text: SCAM });
+    expect(words(r)).toMatch(/^Here's what I read from the image \(no QR code found in it\): "Dear customer your SBI account/);
+    expect(r.blocks.find(b => b.type === 'message-verdict')).toMatchObject({ verdict: { level: 'scam', family: 'kyc' } });
+    expect(r.blocks.slice(1)).toEqual(say(SCAM).blocks);   // after the "here's what I read" line it is exactly what pasting the same words gives
+    expect(pic({ kind: 'text', text: '  ab ' }).blocks[0]).toMatchObject({ text: expect.stringMatching(/couldn't read clear text/) });
+    expect(pic({ kind: 'no-text' }).chips.map(c => c.label)).toEqual(['🏠 Main Menu']);
+  });
+  test('every way a picture can go wrong says what happened and what to do, and records only an error code', () => {
+    const cases: [PictureOutcome, RegExp, string | null][] = [
+      [{ kind: 'file-too-big' }, /over 25 MB/, null], [{ kind: 'picture-too-large' }, /over 150 megapixels/, 'prepare-too-large'], [{ kind: 'picture-unreadable' }, /could not open that picture/, 'prepare-unreadable'],
+      [{ kind: 'busy' }, /One picture at a time/, null], [{ kind: 'tools-missing' }, /image reader did not load/, null], [{ kind: 'reader-failed', loaded: true }, /could not run on this device/, 'ocr-failed'], [{ kind: 'reader-failed', loaded: false }, /could not run on this device/, 'ocr-module-missing']];
+    for (const [o, re, code] of cases) { const r = pic(o); expect(words(r), o.kind).toMatch(re); expect(r.events).toEqual(code ? [{ kind: 'error', code }] : []); expect(O.clean(r.events[0] ?? { kind: 'error', code: 'other' }, ctx.now, { code: O.ERROR_CODES })).not.toBeNull(); }
+  });
+  test('the picker button asks the page to open the picker and says nothing itself', () => {
+    const r = act({ type: 'pickImage' }, NEW_SESSION, ctx);
+    expect(r).toEqual({ blocks: [], chips: [], session: NEW_SESSION, events: [] });
   });
 });
