@@ -1,6 +1,6 @@
 // The TypeScript engine must behave exactly like the JavaScript that ships today. Every comparison runs the old and the new module on the same input and
 // requires identical output: all 596 labelled questions, thousands of seeded random inputs, hostile objects, every follow-up topic, and every lexicon entry.
-import { test, expect } from 'vitest';
+import { test, expect, vi } from 'vitest';
 import { createRequire } from 'node:module';
 import * as K from './knowledge';
 import * as U from './utterance';
@@ -9,6 +9,9 @@ import * as O from './ops';
 import * as Fmt from './format';
 import * as H from './hinglish';
 import Q from '../../../tests/fixtures/chat_questions.json';
+
+// These run thousands of inputs through two implementations; a shared CI machine is several times slower than a laptop, so they get a generous limit instead of the default 5 s.
+vi.setConfig({ testTimeout: 60_000 });
 
 const legacy = createRequire(import.meta.url);
 const oK: any = legacy('../../../lib/knowledge.js'), oU: any = legacy('../../../lib/utterance.js'), oF: any = legacy('../../../lib/followup.js'),
