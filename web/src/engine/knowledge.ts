@@ -279,8 +279,10 @@ const FOLD_MIN = 5;
 const TEXTING: Record<string, string> = Object.assign(Object.create(null) as Record<string, string>, { u: 'you', ur: 'your', r: 'are', y: 'why', wat: 'what', wht: 'what', hw: 'how', abt: 'about', pls: 'please', plz: 'please', whats: 'what', thats: 'that' });
 const same = (q: string, qRaw: string, w: string, wRaw: string): boolean => qRaw === wRaw || (qRaw.length >= FOLD_MIN && wRaw.length >= FOLD_MIN && q === w);
 const raw = (w: string): string => w.replace(/-/g, '');
+// The message box takes at most this many characters, so nothing longer is a question; stopping here keeps the work bounded however much is pasted in.
+const MAX_CHARS = 4000;
 function tokens(text: unknown): string[] {
-  const t = String(text == null ? '' : text).toLowerCase().normalize('NFKC').replace(/['’]/g, '');
+  const t = String(text == null ? '' : text).slice(0, MAX_CHARS).toLowerCase().normalize('NFKC').replace(/['’]/g, '');
   return (t.match(/[a-z0-9]+(?:[.-][a-z0-9]+)*|[ऀ-ॣ०-ॿ]+|[ఀ-౿]+/g) || []).map(raw).map(w => TEXTING[w] || w);
 }
 // "a_b|c*" -> [{words:[a,b]}, {words:[c], prefix:true}], folded once.
