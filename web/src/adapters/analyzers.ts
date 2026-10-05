@@ -15,3 +15,4 @@ export const isGeneralMoneyLoss = (text: string): boolean => core.isGeneralMoney
 export const findLinkIn = (text: string): string | null => core.findLinkIn(text);
 export const matchSmallTalk = (text: string): SmallTalkRule | null => core.matchSmallTalk(text);
 export const extractIntroducedName = (text: string): string | null => core.extractIntroducedName(text);
+export const speechProvider = (userAgent: string): string => core.speechProvider(userAgent);

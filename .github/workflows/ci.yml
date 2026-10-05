@@ -23,6 +23,12 @@ jobs:
       - name: Model lineage (the shipped model, its data digests, trainer and feature code match the record)
         run: npm run model:lineage:check
       - run: npm test
+      - name: Web app (TypeScript, strict mode with indexed access checked)
+        run: npm run web:typecheck
+      - name: Web app tests (differential parity with the shipped code, interface behaviour, accessibility audit, voice)
+        run: npm run web:test
+      - name: Web app build, then the policy, same-origin and size-budget gate
+        run: npm run web:budget
       - name: Syntax check browser scripts
         run: |
           node --check script.js

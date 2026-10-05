@@ -37,4 +37,5 @@ export interface CoreApi {
   findLinkIn(text: string): string | null;
   matchSmallTalk(text: string): SmallTalkRule | null;
   extractIntroducedName(text: string): string | null;
+  speechProvider(userAgent: string): string;
 }

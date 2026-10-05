@@ -19,7 +19,7 @@
     "motion:build": "node scripts/build_motion.js",
     "motion:check": "node scripts/build_motion.js --check",
     "lint": "eslint . --max-warnings 0",
-    "check": "npm run lint && npm run site:check && npm run motion:check && npm run model:lineage:check && npm test",
+    "check": "npm run lint && npm run site:check && npm run motion:check && npm run model:lineage:check && npm run web:typecheck && npm test && npm run web:test && npm run web:budget",
     "field:analyze": "node field/analyze.js",
     "bench:ocr": "node scripts/browser/ocr.js",
     "bench:speech": "node scripts/browser/speech.js",
@@ -27,7 +27,13 @@
     "bench:qr": "node scripts/browser/qr.js",
     "bench:qrcorpus": "node scripts/qr_eval.js",
     "bench:latency": "node scripts/browser/latency.js",
-    "audit:docs": "node scripts/browser/docs.js"
+    "audit:docs": "node scripts/browser/docs.js",
+    "web:dev": "vite web",
+    "web:build": "vite build web",
+    "web:preview": "vite preview web",
+    "web:typecheck": "tsc -p web --noEmit",
+    "web:test": "vitest run --root web",
+    "web:budget": "npm run web:build && node scripts/check_web_build.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

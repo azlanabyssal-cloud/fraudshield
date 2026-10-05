@@ -1,0 +1,50 @@
+/* One place for the look. Components use these names, never raw colours, so light and dark themes (and a later rebrand) change here only.
+   Contrast was chosen to pass WCAG AA for text on its surface in both themes. */
+:root {
+  color-scheme: light dark;
+
+  --font-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Telugu', sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-1: clamp(1.15rem, 1.08rem + 0.35vw, 1.3rem);
+  --step-3: clamp(1.6rem, 1.3rem + 1.4vw, 2.2rem);
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2.25rem;
+  --radius-1: 0.5rem; --radius-2: 0.9rem; --radius-3: 1.4rem; --radius-pill: 999px;
+  --tap: 2.75rem;                     /* the smallest comfortable touch target */
+  --measure: 46rem;
+
+  --navy: #0b1f3a; --orange: #e85d04; --olive: #556b2f; --maroon: #7b1d1d;
+
+  --bg: #fdf9f3; --surface: #ffffff; --surface-2: #f4efe6; --border: #d9d2c4;
+  --text: #0b1f3a; --text-2: #3f4a5c; --text-3: #5c6677;
+  --accent: #b84400; --accent-ink: #ffffff; --accent-soft: #fff0e3;     /* #b84400 on white is 5.6:1 */
+  --header-bg: #0b1f3a; --header-text: #ffffff;
+  --user-bg: #0b1f3a; --user-text: #ffffff;
+  --focus: #1d4ed8;
+
+  --danger-bg: #fff3f1; --danger-edge: #9b1c1c; --danger-ink: #7a1414;
+  --warn-bg: #fff8e6; --warn-edge: #b45309; --warn-ink: #7c3a00;
+  --neutral-bg: #f1f4f8; --neutral-edge: #51607a; --neutral-ink: #2b3648;
+  --ok-bg: #f0f6e8; --ok-edge: #3f5d1a; --ok-ink: #2c4310;
+
+  --shadow-1: 0 1px 2px rgb(11 31 58 / 0.08), 0 1px 3px rgb(11 31 58 / 0.06);
+  --shadow-2: 0 6px 24px rgb(11 31 58 / 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1220; --surface: #141d2f; --surface-2: #1b2740; --border: #2c3a57;
+    --text: #eef2f8; --text-2: #c3cdde; --text-3: #9fabc0;
+    --accent: #ff9a52; --accent-ink: #1a0f05; --accent-soft: #2a1c10;
+    --header-bg: #070d18; --user-bg: #2c5282; --focus: #8ab4ff;
+    --danger-bg: #2a1215; --danger-edge: #ff8a80; --danger-ink: #ffd5d1;
+    --warn-bg: #2a2010; --warn-edge: #ffb454; --warn-ink: #ffe3b8;
+    --neutral-bg: #19233a; --neutral-edge: #8fa3c7; --neutral-ink: #dbe4f5;
+    --ok-bg: #16230f; --ok-edge: #9bd05b; --ok-ink: #dff2c4;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4); --shadow-2: 0 6px 24px rgb(0 0 0 / 0.5);
+  }
+}

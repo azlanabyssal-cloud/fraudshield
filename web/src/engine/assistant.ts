@@ -32,6 +32,8 @@ export type ModelStatus = 'ready' | 'loading' | 'failed' | 'absent';
 export interface Context { now: number; modelStatus: ModelStatus }
 
 export const NEW_SESSION: Session = { last: null, awaitingLink: false, userName: null };
+/** Said after every link verdict: a link check can never make it safe to type a secret. */
+export const LINK_ADVICE = 'Never enter your OTP, UPI PIN, or password after clicking a link or scanning a code, even if it looks official.';
 const CALL_1930 = { label: '📞 Paid or shared details? Call 1930', href: 'tel:1930' } as const;
 
 // A pasted scam talks TO the reader ("your KYC expires"); a person describing what happened talks about themselves ("I got a call").
@@ -203,7 +205,7 @@ export function act(action: Action, session: Session, ctx: Context): Reply {
 export function describe(block: Block): string {
   switch (block.type) {
     case 'text': return block.text;
-    case 'link-verdict': return block.verdict.headline + ' ' + block.verdict.reasons.join(' ');
+    case 'link-verdict': return block.verdict.headline + ' ' + block.verdict.reasons.join(' ') + ' ' + LINK_ADVICE;
     case 'message-verdict': {
       const v = block.verdict;
       return [v.headline, ...(v.evidence.length ? ['What gave it away:', ...v.evidence.slice(0, 4).map(e => '"' + e.quote + '": ' + e.label)] : []), v.next.join(' ')].join(' ');
