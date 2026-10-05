@@ -107,5 +107,14 @@ Real Chrome (`npm run audit:pages`, run against the live site after each push): 
 
 Not shown: accuracy on questions strangers will ask (every set is written by the author); Android voice behaviour (the hold-and-reopen logic is tested against a stubbed recogniser, not a phone); Telugu in its own script.
 
+## The React app in a real browser
+`npm run audit:web` drives the built React app in real headless Chrome (`scripts/browser/web_audit.js`), served under the `/fraudshield/` sub-path as on GitHub Pages. It runs axe-core, including colour contrast, on the page as opened and again with a result card on screen, in light and dark schemes at desktop (1280 px) and phone (375 px) width, and fails on any violation, any console or policy error or failed request, any sideways scroll, any button or link under 44 px, or a first Tab that does not reach a visible skip link.
+
+Result on the first full run after the fixes below: 44 axe rules passed in each of the four configurations, 0 violations; no console, policy or request errors. A real turn (type a scam message, press Enter, time until the result card is in the page): 17 to 18 ms at full speed, 35 ms with the CPU slowed 2x, 103 ms slowed 6x. First paint 60 to 72 ms, 200 ms slowed 6x. Measured on the author's Mac against a local server, so there is no network time in these; the slowdown is an emulation of a slower phone, not a phone; the turn time is to the card being inserted into the page, not to the next painted frame.
+
+What the audit found in the first draft, all fixed: the conversation list carried `role="log"`, which is not allowed on a list (now a log region around the list); the result headline skipped a heading level; the emergency numbers in the footer were inline links 15 to 30 px wide (now full-size buttons); the page asked for a favicon it did not have; and Vite's default absolute asset paths (`/assets/...`) would have returned 404 on the GitHub Pages sub-path (now relative, and the build gate rejects an absolute path). Separately, `tokens.contrast.test.ts` checks every text and surface pairing of the design tokens, in both themes, as numbers against WCAG 2.2 AA (47 checks), and the contrast function itself against published reference values.
+
+Not shown: a real phone, a screen reader (axe finds what a machine can; it is not a substitute for listening to the page), and contrast over the translucent composer bar, which axe reports as needing a manual look and the token test covers only for the solid colours underneath.
+
 ## The whole suite
 `npm run check` = lint (zero warnings) + generated pages match the data + motion tokens match the solver + lineage + all tests.

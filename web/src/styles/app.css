@@ -30,6 +30,7 @@
   .assistant { width: min(100% - 2rem, var(--measure)); margin-inline: auto; padding-block: var(--space-5) var(--space-4); flex: 1; display: flex; flex-direction: column; gap: var(--space-4); }
   .assistant__title { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.15; text-wrap: balance; }
   .assistant__lead { color: var(--text-2); max-width: 60ch; text-wrap: pretty; }
+  .chips--center { justify-content: center; margin-top: var(--space-3); }
   .site-footer { padding: var(--space-5) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom)); color: var(--text-2); font-size: var(--step--1); text-align: center; max-width: var(--measure); margin-inline: auto; }
 
   /* ---- conversation ---- */

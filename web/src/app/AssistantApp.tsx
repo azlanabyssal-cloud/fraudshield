@@ -73,7 +73,14 @@ export function AssistantApp(props: UseChatOptions = {}) {
         <Composer draft={draft} onDraft={setDraft} onSend={t => { spoken.current = false; chat.send(t); }} voice={voice} lang={lang} onLang={setLang} />
         <Diagnostics summary={() => chat.ops.summary()} version={chat.version} onErase={() => { voice.stop(); chat.erase([VOICE_CONSENT_KEY]); try { window.localStorage.removeItem(VOICE_CONSENT_KEY); } catch { /* ignore */ } }} />
       </main>
-      <footer className="site-footer"><p>FraudShield is a free, independent project. It is not a government service. In an emergency call <a href="tel:112">112</a>; for cyber fraud call <a href="tel:1930">1930</a> (free, all day) or file at cybercrime.gov.in.</p></footer>
+      <footer className="site-footer">
+        <p>FraudShield is a free, independent project. It is not a government service. If money has left your account, the first hour matters most.</p>
+        <div className="chips chips--center">
+          <a className="chip chip--cta" href="tel:1930">📞 Call 1930 (free, all day)</a>
+          <a className="chip" href="report.html">📝 How to report it</a>
+          <a className="chip" href="tel:112">🚨 Emergency: call 112</a>
+        </div>
+      </footer>
     </>
   );
 }

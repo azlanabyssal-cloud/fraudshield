@@ -29,11 +29,12 @@ for (const page of pages) {
   for (const m of html.matchAll(/\b(?:src|href)="([^"]+)"/g)) {
     const url = m[1];
     if (/^(https?:)?\/\//i.test(url)) check(false, `${page}: references another origin: ${url}`);
-    else if (/\.(js|css|woff2?)$/i.test(url)) check(fs.existsSync(path.join(DIST, url.replace(/^\//, ''))), `${page}: ${url} was not built`);
+    else if (/^\/(?!\/)/.test(url)) check(false, `${page}: ${url} is an absolute path; the site is served from a sub-path on GitHub Pages, where it would 404`);
+    else if (/\.(js|css|woff2?|png|json)$/i.test(url)) check(fs.existsSync(path.join(DIST, url)), `${page}: ${url} was not built`);
   }
-  for (const m of html.matchAll(/<script[^>]*\ssrc="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1].replace(/^\//, '')));
-  for (const m of html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)) cssBytes += gz(path.join(DIST, m[1].replace(/^\//, '')));
-  for (const m of html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1].replace(/^\//, '')));
+  for (const m of html.matchAll(/<script[^>]*\ssrc="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1]));
+  for (const m of html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)) cssBytes += gz(path.join(DIST, m[1]));
+  for (const m of html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)) jsBytes += gz(path.join(DIST, m[1]));
 }
 // styles may import fonts: they must be built into dist, never fetched from elsewhere
 for (const f of fs.existsSync(path.join(DIST, 'assets')) ? fs.readdirSync(path.join(DIST, 'assets')).filter(f => f.endsWith('.css')) : []) {
