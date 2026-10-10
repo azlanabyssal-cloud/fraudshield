@@ -788,6 +788,34 @@
   {
    "q": "there is an emergency",
    "id": "emergency"
+  },
+  {
+   "q": "Can you check a phone number?",
+   "id": "check_number"
+  },
+  {
+   "q": "can you tell me if this number is fake or real",
+   "id": "check_number"
+  },
+  {
+   "q": "is this phone number a scammer",
+   "id": "check_number"
+  },
+  {
+   "q": "who is calling me from this number",
+   "id": "check_number"
+  },
+  {
+   "q": "What is a scam call?",
+   "id": "vishing"
+  },
+  {
+   "q": "someone called pretending to be from my bank",
+   "id": "vishing"
+  },
+  {
+   "q": "how do fake calls work",
+   "id": "vishing"
   }
  ],
  "heldout": [
@@ -1558,6 +1586,26 @@
   {
    "q": "how tall is mount everest",
    "id": null
+  },
+  {
+   "q": "Will you verify a mobile number for me?",
+   "id": "check_number"
+  },
+  {
+   "q": "this number called me, is it genuine?",
+   "id": "check_number"
+  },
+  {
+   "q": "can you identify an unknown caller",
+   "id": "check_number"
+  },
+  {
+   "q": "I keep getting spam calls",
+   "id": "vishing"
+  },
+  {
+   "q": "a man phoned and said he was from the police and asked for my OTP",
+   "id": "vishing"
   }
  ],
  "fresh": [
@@ -2300,6 +2348,22 @@
   {
    "q": "is the earth flat",
    "id": null
+  },
+  {
+   "q": "if I give you the number can you say whether it is fake",
+   "id": "check_number"
+  },
+  {
+   "q": "number check karo please, fake hai ya real",
+   "id": "check_number"
+  },
+  {
+   "q": "scam call kya hota hai",
+   "id": "vishing"
+  },
+  {
+   "q": "what should I do after a fake call",
+   "id": "vishing"
   }
  ],
  "probe": [
@@ -2390,6 +2454,30 @@
   {
    "q": "is this website open on sundays",
    "id": null
+  },
+  {
+   "q": "I got fake call",
+   "id": "vishing"
+  },
+  {
+   "q": "got a scam call today",
+   "id": "vishing"
+  },
+  {
+   "q": "is this call fake or real",
+   "id": "check_number"
+  },
+  {
+   "q": "if i proide the number can you check ? fake or real ?",
+   "id": "check_number"
+  },
+  {
+   "q": "fake call from my brother asking money",
+   "id": "deepfake"
+  },
+  {
+   "q": "someone called asking for my OTP",
+   "id": "vishing"
   }
  ]
 }

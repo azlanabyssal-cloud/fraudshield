@@ -53,6 +53,7 @@
   </script>
 
   <link rel="preload" href="fonts/dm-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="lib/intro-gate.js"></script>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="motion.css">
   <link rel="stylesheet" href="style.css">
@@ -211,6 +212,11 @@
     .story{max-width:860px;margin:0 auto}
     .story__frame{position:relative;aspect-ratio:16/9;border-radius:var(--radius-xl);overflow:hidden;background:#0b1f3a;box-shadow:var(--shadow-xl)}
     .story__frame video{display:block;width:100%;height:100%;object-fit:cover}
+    .story__play{position:absolute;z-index:2;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border:0;border-radius:50%;background:var(--orange);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 36px rgba(232,93,4,.55),0 0 0 8px rgba(255,255,255,.14);transition:transform .18s ease,box-shadow .18s ease}
+    .story__play:hover{transform:scale(1.07);box-shadow:0 14px 44px rgba(232,93,4,.7),0 0 0 10px rgba(255,255,255,.2)}
+    .story__play svg{width:34px;height:34px;fill:#fff;margin-left:5px}
+    .story.is-playing .story__play{display:none}
+    @media(max-width:640px){.story__play{width:68px;height:68px;margin:-34px 0 0 -34px}.story__play svg{width:28px;height:28px}}
     .story__cap{display:flex;flex-wrap:wrap;gap:.35rem .9rem;align-items:baseline;justify-content:space-between;padding:.9rem .2rem 0;font-family:'DM Sans',sans-serif;font-size:.84rem;color:var(--text-secondary);line-height:1.6}
     .story__cap strong{color:var(--navy);font-size:.98rem}
     .story__note{margin:.35rem .2rem 0;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text-secondary);line-height:1.6}
@@ -550,12 +556,13 @@
     @media(max-width:560px){.sit-buttons{flex-direction:column}.sit-btn{width:100%}.sit-panel{padding:1.2rem 1rem}}
 
     /* ══════════════════════════════════════════════════════
-       CINEMATIC INTRO — white canvas → FraudShield revelation
-       One motion language: ease-out rises only. No bounce.
-       Precision and restraint — attractive, not flashy.
+       CINEMATIC INTRO — a deep-navy field, lit from the centre, and the name rising out of it
+       One motion language: ease-out rises only. No bounce. The first frame is already the final colour: no white flash,
+       and every line of text is readable against it (tagline and hint were 2:1 before; they are 7:1 and 4.6:1 now).
+       Colours: navy #0B1F3A and its two shades, cream #FDF9F3, orange #FF8A3D (6.7:1 on navy), gold #E6B95A for the signature.
     ══════════════════════════════════════════════════════ */
 
-    @keyframes intro-bg{0%{background:#fff}100%{background:#0B1F3A}}
+    @keyframes intro-glow{from{opacity:0;transform:translate(-50%,-50%) scale(.82)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
     @keyframes intro-fallback-exit{to{opacity:0;pointer-events:none}}
     @keyframes intro-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
     @keyframes intro-wipe{to{clip-path:inset(0 0% 0 0)}}
@@ -563,45 +570,47 @@
 
     .intro-overlay{
       position:fixed;inset:0;z-index:99999;
-      background:#fff;
+      background:radial-gradient(120% 90% at 50% 40%,#12315a 0%,#0B1F3A 46%,#07152a 100%);
       display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.9rem;
       transition:opacity .72s cubic-bezier(.4,0,.2,1);
       pointer-events:auto;
       overflow:hidden;
       padding:0 1.2rem;
       box-sizing:border-box;
-      animation:intro-bg .72s .04s ease-in-out forwards,
-                intro-fallback-exit .8s 4.0s ease forwards;
+      animation:intro-fallback-exit .8s 4.0s ease forwards;
     }
     .intro-overlay.exit{opacity:0;pointer-events:none}
+    .intro-off .intro-overlay{display:none}
+    .intro-overlay::before{content:'';position:absolute;left:50%;top:40%;width:min(70vw,520px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,138,61,.16) 0%,rgba(255,138,61,0) 68%);opacity:0;animation:intro-glow 1.4s .15s ease-out forwards;pointer-events:none}
 
     /* Lines — draw only after bg is dark (bg darkens by 0.76s, lines start at 0.62s/0.75s) */
     .intro-line-top,.intro-line-bot{height:1px;width:0;animation:intro-line .75s cubic-bezier(.4,0,.2,1) forwards}
-    .intro-line-top{background:#E85D04;animation-delay:.62s}
-    .intro-line-bot{background:rgba(232,93,4,.32);animation-delay:.75s}
+    .intro-line-top{background:#FF8A3D;animation-delay:.2s}
+    .intro-line-bot{background:rgba(255,138,61,.4);animation-delay:.32s}
 
     /* Shield — clean rise, no rotation, no scale bounce */
     .intro-shield{
-      width:clamp(2.6rem,6vw,3.8rem);height:auto;opacity:0;transform:translateY(10px);
-      animation:intro-rise .6s .82s ease-out forwards;
+      width:clamp(3rem,7vw,4.4rem);height:auto;opacity:0;transform:translateY(10px);
+      filter:drop-shadow(0 0 26px rgba(255,138,61,.28));
+      animation:intro-rise .6s .4s ease-out forwards;
     }
 
     /* Title — measured left-to-right wipe, unhurried pace */
     .intro-title{
       font-family:'Playfair Display',serif;
       font-size:clamp(2.8rem,9vw,5.5rem);font-weight:900;
-      color:#fff;letter-spacing:-.01em;line-height:1;text-align:center;
+      color:#FDF9F3;letter-spacing:-.01em;line-height:1;text-align:center;
       clip-path:inset(0 100% 0 0);
-      animation:intro-wipe .95s .92s cubic-bezier(.7,0,.2,1) forwards;
+      animation:intro-wipe .95s .55s cubic-bezier(.7,0,.2,1) forwards;
     }
-    .intro-title span{color:#E85D04}
+    .intro-title span{color:#FF8A3D}
 
     /* Tagline — simple fade, nothing theatrical */
     .intro-tag{
       font-family:'DM Sans',sans-serif;font-size:clamp(.58rem,1.3vw,.78rem);font-weight:600;
-      letter-spacing:.55em;text-transform:uppercase;color:rgba(255,255,255,.28);
+      letter-spacing:.55em;text-transform:uppercase;color:#C9D3E3;
       white-space:nowrap;opacity:0;transform:translateY(10px);
-      animation:intro-rise .65s 1.55s ease-out forwards;
+      animation:intro-rise .65s 1.2s ease-out forwards;
     }
     @media(max-width:480px){
       .intro-tag{letter-spacing:.2em;white-space:normal;text-align:center;font-size:.62rem}
@@ -622,33 +631,33 @@
     .intro-author{
       font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
       font-size:clamp(1.2rem,2.5vw,1.75rem);
-      color:rgba(215,168,72,.94);
+      color:#E6B95A;
       letter-spacing:.1em;
-      text-shadow:0 0 38px rgba(215,160,55,.3),0 2px 16px rgba(0,0,0,.4);
+      text-shadow:0 0 38px rgba(230,185,90,.28),0 2px 16px rgba(0,0,0,.4);
       opacity:0;transform:translateY(14px) scale(.96);
       position:relative;display:inline-block;
-      animation:intro-author-appear .92s 1.92s cubic-bezier(.22,1,.36,1) forwards;
+      animation:intro-author-appear .92s 1.55s cubic-bezier(.22,1,.36,1) forwards;
     }
     .intro-by{
       font-family:'DM Sans',sans-serif;font-style:normal;font-weight:400;
       font-size:.52em;letter-spacing:.28em;text-transform:uppercase;
-      color:rgba(255,255,255,.22);vertical-align:.18em;
+      color:#A9B6CB;vertical-align:.18em;
       margin-right:.35em;text-shadow:none;
     }
     .intro-author::after{
       content:'';position:absolute;left:0;bottom:-7px;
       height:1.5px;width:0;
-      background:linear-gradient(90deg,rgba(232,93,4,.8) 0%,rgba(232,93,4,.55) 60%,rgba(232,93,4,.06) 100%);
-      animation:intro-author-line .72s 2.68s cubic-bezier(.4,0,.2,1) forwards;
+      background:linear-gradient(90deg,rgba(255,138,61,.85) 0%,rgba(255,138,61,.55) 60%,rgba(255,138,61,.06) 100%);
+      animation:intro-author-line .72s 2.2s cubic-bezier(.4,0,.2,1) forwards;
     }
 
     /* Skip hint — barely a whisper, just a signal */
     .intro-skip{
       position:absolute;bottom:1.8rem;
-      font-family:'DM Sans',sans-serif;font-size:.6rem;
-      color:rgba(255,255,255,.12);letter-spacing:.18em;text-transform:uppercase;
+      font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;
+      color:#9FB0C8;letter-spacing:.18em;text-transform:uppercase;
       opacity:0;transform:translateY(10px);
-      animation:intro-rise .5s 2.15s ease forwards;
+      animation:intro-rise .5s 1.4s ease forwards;
     }
 
     /* ── AP-STYLE PREMIUM REFINEMENTS ──────────────────────
@@ -1008,20 +1017,22 @@
     </div>
     <figure class="story" aria-labelledby="story-title">
       <div class="story__frame">
+        <button type="button" class="story__play" aria-label="Play the 35-second story, with captions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
         <video controls playsinline preload="none" width="960" height="540" poster="images/video-story-poster.webp" aria-describedby="story-note">
           <source src="media/hang-up-check.mp4" type="video/mp4">
           <track kind="captions" src="media/hang-up-check.vtt" srclang="en" label="English" default>
           Your browser cannot play this video. The same story is written out below it.
         </video>
       </div>
-      <figcaption class="story__cap"><strong id="story-title">Hang up. Check. Call 1930.</strong><span>35 seconds &middot; no sound &middot; captions on</span></figcaption>
-      <p class="story__note" id="story-note">An illustration: the scenes were generated and are not real footage or real people. The script follows the fake-officer pattern in the official I4C and MHA warnings.</p>
+      <figcaption class="story__cap"><strong id="story-title">Hang up. Check. Call 1930.</strong><span>35 seconds &middot; with sound &middot; captions on</span></figcaption>
+      <p class="story__note" id="story-note">An illustration: the scenes and the voice were generated and are not real footage or real people. The script follows the fake-officer pattern in the official I4C and MHA warnings. The one spoken line is also written out below the video.</p>
       <details>
         <summary>Read the story instead</summary>
         <p>A call comes in. The voice is urgent and official.</p>
         <p>Then a video call from a man in uniform. He says a case is registered in her name.</p>
         <p>He tells her to stay on the call and not to tell anyone.</p>
-        <p>Her daughter shows her the facts: no real officer arrests anyone on a video call. Hang up. Check. Call 1930.</p>
+        <p>Her daughter sits beside her and says: &ldquo;Don&rsquo;t worry. It&rsquo;s gonna be okay. Look, we can get help here.&rdquo;</p>
+        <p>No real officer arrests anyone on a video call. Hang up. Check. Call 1930.</p>
       </details>
     </figure>
   </div>
@@ -1684,6 +1695,7 @@
       <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="footer-link">cybercrime.gov.in ↗</a>
       <a href="https://rbi.org.in" target="_blank" rel="noopener" class="footer-link">rbi.org.in ↗</a>
       <a href="https://cert-in.org.in" target="_blank" rel="noopener" class="footer-link">cert-in.org.in ↗</a>
+      <a href="https://sancharsaathi.gov.in" target="_blank" rel="noopener" class="footer-link">sancharsaathi.gov.in ↗</a>
       <a href="report.html" class="footer-link">File a Report</a>
     </div>
     <div class="footer-col">

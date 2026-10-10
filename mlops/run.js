@@ -5,6 +5,8 @@
      --policy <json>       FS_POLICY     thresholds (default mlops/policy.json)
      --registry <json>     FS_REGISTRY   model registry (default mlops/registry.json)
      --stage=s0|s1  --detector=<name> | --detector-file <js>  --baseline=<name>  --register  --json  --strict
+     --report              the pull-request mode: with no evidence yet, say so and exit 0 (nothing was measured, so nothing is blocked). A FAIL still exits 1.
+                           A release runs without it, and is blocked until evidence exists.
    Exit 1 on: FAIL, missing / insufficient / corrupt data, invalid policy or registry, any thrown error.
    Exit 0 on PASS, and on INCONCLUSIVE unless --strict. Nothing is caught just to print a message and exit 0. */
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
@@ -41,12 +43,27 @@ if (detectorFile) {
 }
 if (!detect || !detectors[baseName]) die(`unknown detector; choose from ${Object.keys(detectors).join(', ')}`);
 
+/** On GitHub Actions, the same answer as a table on the run's page, so the state of the evidence is visible without opening a log. */
+function writeSummary(result) {
+  const file = process.env.GITHUB_STEP_SUMMARY; if (!file) return;
+  const mode = flag('report') ? 'report (pull request)' : 'gate (release)';
+  const lines = [`### Release evidence: ${result.status}`, '', `| | |`, `|---|---|`, `| mode | ${mode} |`, `| stage | ${stage} |`, `| detector | ${name} |`];
+  if (result.adjusted && result.adjusted.point !== null) lines.push(`| adjusted precision at ${policy.prevalence * 100}% scam share | ${(100 * result.adjusted.point).toFixed(1)}% |`);
+  lines.push('', ...result.reasons.map(r => '- ' + r), '');
+  try { fs.appendFileSync(file, lines.join('\n') + '\n'); } catch (e) { console.error('could not write the step summary: ' + e.message); }
+}
+
 function finish(result, extra = {}) {
   if (flag('json')) console.log(JSON.stringify({ ...result, ...extra }, null, 2));
   else {
     console.log(`GATE ${result.status} (stage ${stage}, detector ${name})`);
     result.reasons.forEach(r => console.log('  - ' + r));
     if (result.adjusted && result.adjusted.point !== null) console.log(`  adjusted precision at ${policy.prevalence * 100}% scam share: ${(100 * result.adjusted.point).toFixed(1)}% (worst case ${(100 * result.adjusted.conservative).toFixed(1)}%), target ${policy.minPrecision * 100}%`);
+  }
+  writeSummary(result);
+  if (result.status === 'NO_EVIDENCE' && flag('report')) {
+    console.log('REPORT MODE: nothing was measured, so nothing is blocked here. A release is gated without --report and cannot be tagged until evidence exists.');
+    process.exit(0);
   }
   if (result.status === 'FAIL' || result.status === 'NO_EVIDENCE') process.exit(1);
   if (result.status === 'INCONCLUSIVE') { console.error('WARNING: not proven at this sample size'); if (flag('strict')) process.exit(1); }

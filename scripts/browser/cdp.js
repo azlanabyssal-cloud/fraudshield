@@ -27,6 +27,8 @@ function serve() {
 async function launch({ port = 9300 + Math.floor(Math.random() * 600), width = 1280, height = 800, reducedMotion = false } = {}) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'fs-chrome-'));
   const proc = spawn(chromePath(), ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--mute-audio', '--disable-gpu', 'about:blank'], { stdio: 'ignore' });
+  // a script that ends (or throws) without closing the page must not leave its browser running: a long run of scenarios once left two hundred behind
+  process.once('exit', () => { try { proc.kill(); } catch (e) { /* gone */ } });
   let target = null;
   for (let i = 0; i < 80 && !target; i++) { try { target = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(x => x.type === 'page'); } catch (e) { /* not up yet */ } if (!target) await sleep(250); }
   if (!target) { proc.kill(); throw new Error('Chrome did not start'); }

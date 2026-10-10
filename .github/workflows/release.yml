@@ -1,0 +1,56 @@
+name: Release
+# A tag like v1.2.3 builds the release, and only after the whole gate has passed AND the field evidence exists (the release gate is run without --report, so with no
+# evidence it fails and nothing is published). The release carries the site as it is served, a checksum file, a software bill of materials, and a signed build
+# provenance attestation, so anyone can verify that the files came from this repository at this commit.
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: The whole project gate
+        run: npm run check
+      - name: Every control, clicked in a real Chrome
+        run: npm run ux:clicks
+      - name: Field evidence (blocking: no evidence, no release)
+        run: node mlops/run.js --strict
+
+  build:
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Assemble the site exactly as it is served
+        run: node scripts/assemble_site.js --out _site
+      - name: Package, checksum and list the dependencies
+        run: |
+          tar -czf "fraudshield-site-${{ github.ref_name }}.tar.gz" -C _site .
+          npm sbom --sbom-format cyclonedx --omit dev > "fraudshield-sbom-${{ github.ref_name }}.cdx.json"
+          sha256sum fraudshield-*.tar.gz fraudshield-*.cdx.json > SHA256SUMS
+      - name: Attest where the files came from
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            fraudshield-site-*.tar.gz
+            fraudshield-sbom-*.cdx.json
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" fraudshield-site-*.tar.gz fraudshield-sbom-*.cdx.json SHA256SUMS --generate-notes --verify-tag

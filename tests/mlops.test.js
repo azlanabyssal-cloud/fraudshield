@@ -252,6 +252,25 @@ test('CLI: missing data exits 1 (never 0)', () => {
   assert.equal(r.status, 1); assert.match(r.stdout, /NO_EVIDENCE/);
 });
 
+test('CLI --report: with no evidence yet it says so and exits 0, a model that measurably fails still exits 1, and without the flag a release is blocked', () => {
+  const missing = path.join(os.tmpdir(), 'fs-no-such-file.csv');
+  const r = cli(['--data', missing, '--report']);
+  assert.equal(r.status, 0); assert.match(r.stdout, /NO_EVIDENCE/); assert.match(r.stdout, /REPORT MODE: nothing was measured/);
+  assert.equal(cli(['--data', missing]).status, 1, 'the release gate is unchanged');
+  const { data, reg, pol, dir } = sandbox();
+  fs.writeFileSync(data, PASS_CSV);
+  const flagsNothing = path.join(dir, 'none.js'); fs.writeFileSync(flagsNothing, 'module.exports = () => false;');
+  const bad = cli(['--data', data, '--registry', reg, '--policy', pol, '--detector-file', flagsNothing, '--report']);
+  assert.equal(bad.status, 1); assert.match(bad.stdout, /GATE FAIL/);
+});
+
+test('CLI: on GitHub Actions the answer is also written as a table to the run summary', () => {
+  const { dir } = sandbox(), summary = path.join(dir, 'summary.md');
+  cli(['--data', path.join(os.tmpdir(), 'fs-no-such-file.csv'), '--report'], { GITHUB_STEP_SUMMARY: summary });
+  const t = fs.readFileSync(summary, 'utf8');
+  assert.match(t, /### Release evidence: NO_EVIDENCE/); assert.match(t, /report \(pull request\)/);
+});
+
 test('CLI: corrupt data, a missing policy and a corrupt registry all exit non-zero', () => {
   const { data, reg, pol } = sandbox();
   fs.writeFileSync(data, fixture().replace('RS1,', 'RS0,'));   // duplicate id

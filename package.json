@@ -29,7 +29,10 @@
     "bench:latency": "node scripts/browser/latency.js",
     "audit:docs": "node scripts/browser/docs.js",
     "brand:build": "node scripts/build_brand.js",
-    "brand:check": "node scripts/build_brand.js --check"
+    "brand:check": "node scripts/build_brand.js --check",
+    "site:assemble": "node scripts/assemble_site.js",
+    "smoke:live": "node scripts/smoke_live.js https://azlanabyssal-cloud.github.io/fraudshield/",
+    "ux:clicks": "node scripts/browser/clicks.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

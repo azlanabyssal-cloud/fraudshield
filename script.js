@@ -71,6 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ═══════════════════════════════════════════════════════
+  // THE STORY VIDEO: a visible play button (a tap on a phone only shows the browser's controls, and a click on the picture is not honoured everywhere)
+  // ═══════════════════════════════════════════════════════
+  function initStory() {
+    document.querySelectorAll('.story').forEach(story => {
+      const video = story.querySelector('video'), btn = story.querySelector('.story__play');
+      if (!video || !btn) return;
+      const sync = () => story.classList.toggle('is-playing', !video.paused && !video.ended);
+      btn.addEventListener('click', () => { const p = video.play(); if (p && p.catch) p.catch(() => { /* the browser's own controls remain */ }); video.focus({ preventScroll: true }); });
+      ['play', 'playing', 'pause', 'ended'].forEach(ev => video.addEventListener(ev, sync));
+      sync();
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════
   // LONG LISTS, SHORTER ON A PHONE
   // ═══════════════════════════════════════════════════════
   // A container marked data-more-keep="N" (show its first N children) or data-more-hide="selector" (hide what matches) shows less on a phone and offers a button
@@ -462,14 +476,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       feedback.hidden = false;
 
-      setTimeout(() => {
+      // The explanation stays until the person has read it: a button moves on, focus goes to it, and nothing is on a timer
+      // (a fixed three seconds cut off a forty-word explanation, and nobody using a screen reader or a magnifier could finish it).
+      const last = current + 1 >= questions.length;
+      const next = document.createElement('button');
+      next.type = 'button'; next.className = 'btn-primary quiz-next';
+      next.textContent = last ? 'See my result →' : 'Next question →';
+      next.addEventListener('click', () => {
         current++;
-        if (current < questions.length) {
-          renderQuestion();
-        } else {
-          showResult();
-        }
-      }, 3000);
+        if (current < questions.length) renderQuestion(); else showResult();
+      });
+      feedback.insertAdjacentElement('afterend', next);
+      next.focus({ preventScroll: false });
     }
 
     function showResult() {
@@ -1458,7 +1476,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // "I already paid / clicked / shared": that is about the person's own loss and always gets the steps.
       const follow = FollowUp && FollowUp.route(text, state.last, Msg && Msg.FAMILIES, Date.now());
       if (follow && !(knowAnswers && follow.topic !== 'paid')) { answerFollowUp(follow); return; }
-      if (knowAnswers) { answerKnowledge(know.entry); return; }
+      if (knowAnswers) {
+        // "hello, I am Ravi, can you help me?" is an introduction and a question: say hello to the person, then answer
+        const named = extractIntroducedName(text);
+        if (named && !state.userName) { state.userName = named; persist(); botSay(['Nice to meet you, ' + named + '.'], { noMenuChip: true }); }
+        answerKnowledge(know.entry); return;
+      }
       if (intent) {
         botSay(['That sounds like ' + intent + " — let's go through it step by step."], { noMenuChip: true, onDone: () => goToNode(intent, CHAT_FLOWS[intent].start) });
         return;
@@ -2060,6 +2083,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   initHamburger();
   initMore();
+  initStory();
   initCounters();
   initMagnetic();
   initArrivals();
