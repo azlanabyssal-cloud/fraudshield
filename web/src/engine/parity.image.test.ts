@@ -39,6 +39,17 @@ describe('QR structure and reading', () => {
     expect(partial + full + none).toBe(makers.length * PAY.length + Object.keys(decoys).length);
     for (const bad of [null, undefined, {}, { data: [], width: 0, height: 0 }, { data: new Uint8ClampedArray(3), width: 5, height: 5 }]) same(Finder.findQrStructure(bad as any), oFinder.findQrStructure(bad), 'bad input');
   });
+  test('real-browser renderings of plain text (light and dark ground) are not a code in either implementation, and both agree on every number', async () => {
+    const { readdirSync, readFileSync } = await import('node:fs'), { join } = await import('node:path');
+    const { PNG } = legacy('pngjs') as { PNG: { sync: { read: (b: Buffer) => { data: Uint8Array; width: number; height: number } } } };
+    const dir = join(__dirname, '../../../tests/fixtures/text_not_qr'), files = readdirSync(dir).filter(f => f.endsWith('.png'));
+    expect(files.length).toBeGreaterThanOrEqual(12);
+    for (const f of files) {
+      const png = PNG.sync.read(readFileSync(join(dir, f))), img = { data: new Uint8ClampedArray(png.data), width: png.width, height: png.height };
+      const a = Finder.findQrStructure(img);
+      same(a, oFinder.findQrStructure(img), f); expect(a.qr, f).toBe(false);
+    }
+  });
   test('the kernels agree on random grey planes and random runs: luminance, shrink, resize, binarize, ratio, scanFinders', () => {
     const r = mulberry32(3);
     for (let n = 0; n < 40; n++) {

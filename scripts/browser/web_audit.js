@@ -114,7 +114,7 @@ async function pictures() {
     await page.send('Page.navigate', { url: server.base + '/fraudshield/assistant.html' });
     await page.eval("new Promise(r => { const t = setInterval(() => { if (document.getElementById('message')) { clearInterval(t); r(); } }, 20); })");
     await page.eval(`window.__upload = async (b64, name) => { const blob = await (await fetch('data:image/png;base64,' + b64)).blob(); const f = new File([blob], name, { type: 'image/png' }); const dt = new DataTransfer(); dt.items.add(f); const i = document.querySelector('input[type=file]'); i.files = dt.files; i.dispatchEvent(new Event('change', { bubbles: true })); };
-      window.__shot = async (lines) => { const c = document.createElement('canvas'); c.width = 1100; c.height = 90 + lines.length * 70; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000'; x.font = '40px Arial, Helvetica, sans-serif'; lines.forEach((l, k) => x.fillText(l, 30, 70 + k * 70)); const blob = await new Promise(r => c.toBlob(r, 'image/png')); const b = new Uint8Array(await blob.arrayBuffer()); let s = ''; for (const v of b) s += String.fromCharCode(v); return btoa(s); };
+      window.__shot = async (lines, font = 'Arial, Helvetica, sans-serif', dark = false) => { const c = document.createElement('canvas'); c.width = 1100; c.height = 90 + lines.length * 70; const x = c.getContext('2d'); x.fillStyle = dark ? '#111' : '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = dark ? '#eee' : '#000'; x.font = '40px ' + font; lines.forEach((l, k) => x.fillText(l, 30, 70 + k * 70)); const blob = await new Promise(r => c.toBlob(r, 'image/png')); const b = new Uint8Array(await blob.arrayBuffer()); let s = ''; for (const v of b) s += String.fromCharCode(v); return btoa(s); };
       window.__count = sel => document.querySelectorAll(sel).length; window.__text = () => document.querySelector('.log').innerText;
       window.__until = (fn, ms) => new Promise(r => { const t0 = performance.now(), t = setInterval(() => { if (fn() || performance.now() - t0 > ms) { clearInterval(t); r(!!fn()); } }, 50); }); 'ready'`);
     const step = async (name, b64, done, ms = 20000) => {
@@ -145,9 +145,18 @@ async function pictures() {
     // 4. a second screenshot is faster: one worker stays hot between pictures
     const shot2 = await page.eval(`window.__shot(['You have won a lottery of Rs 25 lakh.', 'Pay a processing fee to claim your prize.'])`);
     await step('second-screenshot.png', shot2, "window.__count('.verdict') > " + c.after + " && !document.querySelector('.progress')", 120000);
+    // 5. the same words in other fonts and on a dark ground (phones screenshot in dark mode): each must be read and judged, never refused as a damaged QR code. Linux CI fonts
+    // once turned a plain lottery message into "do not scan it" because the finder took letters for a code.
+    let after = (await page.eval('window.__count(".verdict")'));
+    for (const [font, dark] of [['Georgia, serif', false], ['Verdana, sans-serif', true], ['"Courier New", monospace', false], ['serif', true], ['sans-serif', false], ['monospace', true], ['Arial, sans-serif', true]]) {
+      const img = await page.eval(`window.__shot(['You have won a lottery of Rs 25 lakh.', 'Pay a processing fee to claim your prize.'], ${JSON.stringify(font)}, ${dark})`);
+      const r = await step(`text-${font.replace(/\W+/g, '')}-${dark ? 'dark' : 'light'}.png`, img, `window.__count('.verdict') > ${after} && !document.querySelector('.progress')`, 60000);
+      if (/Do not scan it/.test(r.text.slice(-400)) && r.after === after) fail(`pictures: plain text in ${font} on a ${dark ? 'dark' : 'light'} ground was refused as a damaged QR code`);
+      after = r.after;
+    }
     const ops = await page.eval("JSON.parse(sessionStorage.getItem('fs_ops_v1') || '{}')");
     const ocrEvents = (ops.events || []).filter(e => e.kind === 'ocr');
-    if (ocrEvents.length !== 2 || ocrEvents[0].hot !== false || ocrEvents[1].hot !== true) fail('pictures: the reader should start cold once and then stay hot: ' + JSON.stringify(ocrEvents));
+    if (ocrEvents.length < 2 || ocrEvents[0].hot !== false || ocrEvents.slice(1).some(e => e.hot !== true)) fail('pictures: the reader should start cold once and then stay hot: ' + JSON.stringify(ocrEvents));
     notes.push(`pictures: readable QR ${t['readable-qr.png']} ms, damaged QR ${t['damaged-qr.png']} ms (stopped, no verdict), first screenshot read cold in ${t['scam-screenshot.png']} ms, second read hot in ${t['second-screenshot.png']} ms (this Mac, headless Chrome)`);
     const leaked = JSON.stringify(ops);
     if (/Dear customer|SBI account|Update KYC|lakh|processing fee|Refund%20Desk|refund[.]desk|claim%20refund|ybl/.test(leaked)) fail('pictures: the on-device record holds words from a picture');
