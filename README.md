@@ -148,6 +148,15 @@ Figures on the site cite official publications (I4C, RBI, PIB, NPCI, MHA, DoT, N
 | Women Safety | **181** |
 | Online reporting | cybercrime.gov.in |
 
+## Licence
+
+The code is under the [MIT licence](LICENSE): use it, change it, share it, keep the copyright notice. It comes with no warranty, and it is a study aid, not legal or financial advice.
+
+The licence covers the code only. These keep their own terms:
+
+- the fonts in `fonts/` (SIL Open Font License 1.1) and the libraries in `vendor/` (each folder carries its licence file);
+- every picture and the film: `images/`, `media/` and `icons/install/`. They are not offered for reuse. Some are stock or generated images, the film is dramatised with generated scenes, and the photographs in `images/field/` show real people met during the project.
+
 ---
 
-**Azlan** · Second-year BTech student · GitHub: [azlanabyssal-cloud](https://github.com/azlanabyssal-cloud)
+**Azlan** · Third-year B.Tech student, G. Pulla Reddy Engineering College, Kurnool · GitHub: [azlanabyssal-cloud](https://github.com/azlanabyssal-cloud)
