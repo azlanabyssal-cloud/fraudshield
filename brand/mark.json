@@ -1,0 +1,8 @@
+{
+  "_readme": "The FraudShield mark, in one place. A shield (the product protects) holding a lens (it inspects before you act). It deliberately has no tick: a tick says safe, and this product never says safe (ADR-0007, ADR-0025). The SVG files, every PNG, the social card and the React Logo component are all generated from this file by scripts/build_brand.js; edit here, then run `npm run brand:build`.",
+  "viewBox": 64,
+  "shield": "M32 3.5 L54.5 11.5 V29.5 C54.5 44.5 45 54.5 32 60.5 C19 54.5 9.5 44.5 9.5 29.5 V11.5 Z",
+  "lens": { "cx": 30.5, "cy": 28.5, "r": 10.5, "width": 5.4 },
+  "handle": { "d": "M38.4 36.4 L46 44", "width": 5.8 },
+  "colors": { "navy": "#0B1F3A", "cream": "#FDF9F3", "orange": "#E85D04", "orangeOnDark": "#FF8A3D" }
+}
