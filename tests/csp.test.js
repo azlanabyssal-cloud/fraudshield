@@ -58,7 +58,15 @@ test('every resource a page loads on its own is permitted by the directive that 
     d.querySelectorAll('img[src]').forEach(e => check('img-src', e.getAttribute('src'), 'img'));
     d.querySelectorAll('link[href]').forEach(e => { const rel = (e.getAttribute('rel') || '').toLowerCase(), h = e.getAttribute('href'); if (/^(canonical|alternate|author|license|next|prev)$/.test(rel)) return;   // metadata, never fetched
     check(rel === 'stylesheet' ? 'style-src' : rel === 'manifest' ? 'manifest-src' : rel === 'preload' && e.getAttribute('as') === 'font' ? 'font-src' : /icon/.test(rel) ? 'img-src' : 'default-src', h, 'link ' + rel); });
-    d.querySelectorAll('iframe,embed,object,video,audio,source').forEach(e => problems.push(`${f}: unexpected <${e.tagName.toLowerCase()}>`));
+    // a video is loaded by media-src, its poster by img-src; it must be click-to-play (no autoplay, nothing fetched before the person asks) and carry captions
+    d.querySelectorAll('video').forEach(v => {
+      check('img-src', v.getAttribute('poster'), 'video poster');
+      v.querySelectorAll('source[src],track[src]').forEach(e => check('media-src', e.getAttribute('src'), e.tagName.toLowerCase()));
+      if (v.hasAttribute('autoplay') || v.getAttribute('preload') !== 'none') problems.push(`${f}: a video must not autoplay or preload`);
+      if (!v.querySelector('track[kind="captions"]')) problems.push(`${f}: a video needs a captions track`);
+    });
+    d.querySelectorAll('iframe,embed,object,audio').forEach(e => problems.push(`${f}: unexpected <${e.tagName.toLowerCase()}>`));
+    d.querySelectorAll('source').forEach(e => { if (!e.closest('video')) problems.push(`${f}: unexpected <source> outside a video`); });
   }
   for (const f of ['style.css', 'about.css', 'hero-scene.css', 'motion.css', 'fonts/fonts.css', 'index.html']) for (const m of read(f).matchAll(/url\(\s*['"]?(?!data:)([^'")\s]+)/g)) { if (/^https?:/.test(m[1]) && !allowed(f.endsWith('fonts.css') ? 'font-src' : 'img-src', m[1])) problems.push(`${f}: url(${m[1]}) is not allowed`); }
   assert.deepEqual(problems, []);
