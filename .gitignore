@@ -3,7 +3,7 @@
 data_ops/golden_holdout.csv
 data_ops/*.private.*
 
-node_modules/
+node_modules
 mlops/benchmarks/data/
 
 # Real survey responses: response-level data, never committed
