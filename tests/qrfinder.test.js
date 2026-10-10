@@ -3,6 +3,7 @@
 // independent encoder and damaged like real photos (logos, rotation, tilt, blur, noise, shadow, clutter), and against pictures that are not QR codes.
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs'), path = require('node:path');
 const S = require('./helpers/qrsynth.js');
 const F = require('../lib/qrfinder.js');
 const QR = require('../lib/qr.js');
@@ -79,4 +80,31 @@ test('over a seeded batch of photographed codes the finder sees more codes than 
   }
   assert.ok(readable / N >= 0.88, `decoded ${readable}/${N}`); assert.ok(seen / N >= 0.92, `structure seen ${seen}/${N}`); assert.ok(seen >= readable, 'the finder never sees fewer codes than the decoder reads');
   assert.ok(unreadable === 0 || unreadableSeen / unreadable >= 0.7, `of ${unreadable} unreadable codes, ${unreadableSeen} were still seen`);
+});
+
+test('screenshots of plain text are not mistaken for a QR code: fourteen real-browser renderings (light and dark ground, five fonts, two sizes) that the earlier finder called a code', () => {
+  // Rendered by Chrome's own text engine, which no synthetic image reproduces. The earlier finder (a 1:1:3:1:1 run on a row, a column and a diagonal) called 520 of 3,800 such
+  // renderings a code, and the assistant then refused to read the words ("do not scan it"). A finder must be a ring pattern in all directions, a timing line or a dense data area
+  // must join it to the others, and the area they span must be dense as a code's is.
+  const { PNG } = require('pngjs'), dir = path.join(__dirname, 'fixtures', 'text_not_qr'), files = fs.readdirSync(dir).filter(f => f.endsWith('.png'));
+  assert.ok(files.length >= 12, `${files.length} fixtures`);
+  for (const f of files) {
+    const png = PNG.sync.read(fs.readFileSync(path.join(dir, f))), img = { data: new Uint8ClampedArray(png.data), width: png.width, height: png.height };
+    assert.equal(F.findQrStructure(img).qr, false, f);
+    const r = QR.inspectRGBA(img, jsQR); assert.equal(r.text, null, f); assert.equal(r.structure.qr, false, f);
+  }
+});
+
+test('the three measures behind it: a real finder is a ring, a code has a timing line between its finders, and its data area is about half dark', () => {
+  const img = code(PAY[0], 'M', 6), base = F.shrink(F.luminance(img), img.width, img.height, 1000), bin = F.binarize(base.g, base.w, base.h, false);
+  const c = F.scanFinders(bin, base.w, base.h, false);
+  assert.equal(c.length, 3, 'three rings, and nothing else, in a clean code');
+  const [tl, tr, bl] = [...c].sort((a, b) => a.x + a.y - (b.x + b.y)).slice().sort((a, b) => (a.y - b.y) || (a.x - b.x));
+  assert.equal(F.linked(bin, base.w, base.h, tl, tr), true, 'a timing line runs along the top');
+  assert.equal(F.linked(bin, base.w, base.h, tl, bl), true, 'and down the left');
+  assert.equal(F.linked(bin, base.w, base.h, tr, bl), false, 'but not across the diagonal');
+  const d = F.density(bin, base.w, base.h, c); assert.ok(d >= 0.4 && d <= 0.7, `data area ${d}`);
+  // a blank page, a lone ring and a chessboard make none of the three
+  const blank = S.decoys().white, b2 = F.shrink(F.luminance(blank), blank.width, blank.height, 1000);
+  assert.equal(F.scanFinders(F.binarize(b2.g, b2.w, b2.h, false), b2.w, b2.h, false).length, 0);
 });
