@@ -63,3 +63,27 @@ test('without script every item is in the page: the extras are only hidden by a 
   for (const f of ['index.html', 'about.html']) assert.doesNotMatch(read(f), /more-extra|is-collapsed/, f);
   assert.match(read('style.css'), /\.is-collapsed \.more-extra\s*\{\s*display:\s*none/);
 });
+
+test('a class the page puts on <html> before first paint is used for nothing else: a name that another rule already styles once made the whole document absolutely positioned', () => {
+  const gate = read('lib/intro-gate.js');
+  const added = [...gate.matchAll(/classList\.add\('([\w-]+)'\)/g)].map(m => m[1]);
+  assert.ok(added.length > 0);
+  const css = ['style.css', 'motion.css', 'hero-scene.css', 'about.css'].map(read).concat(read('index.html').match(/<style>[\s\S]*?<\/style>/g) || []).join('\n');
+  for (const cls of new Set(added)) {
+    const rules = css.split('\n').filter(l => new RegExp('\\.' + cls + '(?![\\w-])').test(l));
+    assert.ok(rules.every(l => new RegExp('\\.' + cls + '\\s+\\.[\\w-]+\\s*\\{\\s*display:\\s*none').test(l)), `${cls} is styled by a rule other than the one that hides the entrance: ${rules.join(' | ')}`);
+  }
+});
+
+test('the story keeps its original sound: the file has an audio track, the captions carry the one spoken line, and the page does not claim it is silent', () => {
+  const fs2 = require('node:fs'), mp4 = fs2.readFileSync(path.join(ROOT, 'media', 'hang-up-check.mp4'));
+  assert.ok(mp4.includes(Buffer.from('mp4a')), 'an AAC audio track (mp4a) is in the file');
+  const vtt = read('media/hang-up-check.vtt');
+  assert.match(vtt, /Don't worry\. It's gonna be okay\./);
+  assert.doesNotMatch(read('index.html'), /no sound|silent/i);
+  assert.match(read('index.html'), /with sound/);
+  // cues are in order and do not overlap
+  const times = [...vtt.matchAll(/(\d\d):(\d\d\.\d{3}) --> (\d\d):(\d\d\.\d{3})/g)].map(m => [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]]);
+  assert.ok(times.length >= 5);
+  times.forEach(([a, b], i) => { assert.ok(b > a); if (i) assert.ok(a >= times[i - 1][1], 'cue ' + i + ' starts after the previous one ends'); });
+});

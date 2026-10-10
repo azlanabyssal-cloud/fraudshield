@@ -1,7 +1,7 @@
 # Architecture
 
 FraudShield is a static web app. Every check runs in the visitor's browser; there is no server of its own to send anything to. This page shows how a request moves through it, where the trust
-boundaries are and how each is enforced, how the site and the model are built and verified, and why the main choices were made. Decisions are recorded one by one in [DECISIONS.md](DECISIONS.md) (24 ADRs);
+boundaries are and how each is enforced, how the site and the model are built and verified, and why the main choices were made. Decisions are recorded one by one in [DECISIONS.md](DECISIONS.md) (26 ADRs);
 measurements are in [BENCHMARKS.md](BENCHMARKS.md); what is stored where is in [PRIVACY.md](PRIVACY.md); what the tool reports about itself is in [OBSERVABILITY.md](OBSERVABILITY.md).
 
 ## 1. System context

@@ -29,11 +29,13 @@ test('every entry is complete: unique id, known topic, a question button, patter
   }
 });
 
+// the government's own addresses an answer may send a person to (each is also on a page of this site that says so)
+const OFFICIAL = ['https://sancharsaathi.gov.in/', 'https://cybercrime.gov.in/'];
 test('links go somewhere real: a phone number of the national helplines, a page of this site that exists, or this project on GitHub', () => {
   for (const e of K.ENTRIES) for (const l of e.links || []) {
     assert.ok(l.label && l.label.length < 60, `${e.id}: ${l.label}`);
     if (/^tel:/.test(l.href)) assert.ok(['tel:1930', 'tel:112'].includes(l.href), `${e.id}: ${l.href}`);
-    else if (/^https:/.test(l.href)) assert.ok(l.href.startsWith(K.REPO), `${e.id}: ${l.href}`);
+    else if (/^https:/.test(l.href)) assert.ok(l.href.startsWith(K.REPO) || OFFICIAL.some(h => l.href.startsWith(h)), `${e.id}: ${l.href}`);
     else assert.ok(fs.existsSync(path.join(ROOT, l.href)), `${e.id}: ${l.href} exists`);
   }
 });
@@ -154,7 +156,7 @@ test('routing is a pure function: the same text gives the same entry, and hostil
   }
   assert.ok(seen.size > 10, 'the fuzz reached many different entries as well as nothing');
   for (const word of junk.slice(0, 7)) { K.route(word); K.route('what is ' + word); K.route(word + ' is free'); }
-  const t0 = Date.now(); K.route('what is '.repeat(100000)); assert.ok(Date.now() - t0 < 500, 'a very long text is rejected quickly');
+  const huge = 'what is '.repeat(100000); assert.ok(K.tokens(huge).length <= 4000 / 2, 'however much is pasted in, at most the first 4,000 characters are looked at'); assert.equal(K.route(huge), null);
 });
 
 test('a cut-off sentence is recognised and a finished one is not', () => {

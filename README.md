@@ -74,8 +74,11 @@ FraudShield does **not** claim a detection accuracy. The assistant is rule-based
 | Security: one Content-Security-Policy on every page (connections to this site only, no inline script, no eval), fonts and OCR served from the site, a model that must validate before it is used and says so when it did not load | `partials/csp.txt`, `lib/urlmodel.js`, ADR-0015, ADR-0016 | `tests/csp.test.js`, `tests/hardening.test.js`; attacked from inside a real browser: `npm run audit:pages` |
 | Assistant runtime: pictures shrunk by a pixel budget before the reader, one hot OCR worker, a speech queue that cannot hang, screen reader and spoken replies never on together | `lib/imageprep.js`, `lib/ocrworker.js`, `lib/speech.js` | `tests/imageprep.test.js`, `tests/assistant_engine.test.js`; measured in `docs/BENCHMARKS.md` |
 | Model lineage: the shipped model tied to its data digests, trainer, feature code and a bit-for-bit reproduction proof | `mlops/lineage.js`, `mlops/lineage.json` | checked on every push; `npm run model:reproduce` |
+| Operations: the pipeline, release, deploy, rollback, the daily live check | [docs/OPERATIONS.md](docs/OPERATIONS.md) | |
+| Threat model: what could go wrong and what stops it | [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) | |
+| Model card: what the model and the rules are, for, and not for | [docs/MODEL_CARD.md](docs/MODEL_CARD.md) | |
 | Observability on the device: events with no message text, a diagnostics panel with a speed target, copy and erase | `lib/ops.js`, [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | `tests/ops.test.js` (5,000 hostile events leak nothing) |
-| Decisions: twenty-four ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
+| Decisions: twenty-six ADRs, including what was rejected and why | `docs/DECISIONS.md` | |
 
 CI runs the linter and the full suite on every push: unit and property tests, a DOM smoke test that loads every page and runs its real scripts, HTML structure checks, and site-integrity tests that fail if a page disagrees with the sourced data file or a statistic is typed by hand. Guards were broken on purpose to prove a test fails (mutation checks), and the weak ones found that way were fixed.
 

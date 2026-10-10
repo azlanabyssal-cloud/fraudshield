@@ -1,0 +1,533 @@
+{
+ "Digital Arrest": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "That's called a \"digital arrest\" scam, and I can tell you with total certainty: no such power exists anywhere in Indian law. No police officer, court, or CBI official can ever arrest you over a video call.",
+     "Is this happening right now, on a call?"
+    ],
+    "options": [
+     {
+      "label": "Yes, still on the call",
+      "goto": "onCallNow"
+     },
+     {
+      "label": "It already happened, call has ended",
+      "goto": "ended"
+     },
+     {
+      "label": "No — just want the facts",
+      "goto": "facts"
+     }
+    ]
+   },
+   "onCallNow": {
+    "say": [
+     "Do this right now: hang up. Don't explain, don't apologise — just end the call. There is nothing to lose by hanging up, because this is 100% fake.",
+     "Tell me once you've disconnected."
+    ],
+    "options": [
+     {
+      "label": "I've hung up",
+      "goto": "ended"
+     }
+    ]
+   },
+   "ended": {
+    "say": [
+     "Good. Important question — was any money transferred to anyone during this call?"
+    ],
+    "options": [
+     {
+      "label": "Yes, money was sent",
+      "goto": "moneySent"
+     },
+     {
+      "label": "No money was sent",
+      "goto": "noMoney"
+     }
+    ]
+   },
+   "moneySent": {
+    "urgent": true,
+    "say": [
+     "Every minute matters. Call 1930 right now and describe it as a digital-arrest fraud so they act fast. Then call your bank and ask them to freeze the transaction.",
+     "For reference: rings running this scam can be charged under BNS Section 111 (organised crime, which includes cyber-crimes) and Section 308 (extortion). The police and courts decide the charges."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Digital%20Arrest"
+     }
+    ]
+   },
+   "noMoney": {
+    "say": [
+     "That's the best possible outcome. Please still report it — every reported number helps I4C block the racket faster. Save the caller's number and any screenshots first."
+    ],
+    "cta": [
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Digital%20Arrest"
+     },
+     {
+      "label": "🌐 cybercrime.gov.in",
+      "href": "https://cybercrime.gov.in"
+     }
+    ]
+   },
+   "facts": {
+    "say": [
+     "Three facts worth remembering: on Mann Ki Baat (27 October 2024) PM Modi said there is no such thing as \"digital arrest\" in the law. No investigative agency questions or arrests people over a phone or video call. And if it ever happens to you or family — hang up, then call 1930.",
+     "Since July 2024, BNS Section 111 defines organised crime to include cyber-crimes, so a fraud ring can be charged as a syndicate, not just as isolated cases of cheating."
+    ],
+    "options": [
+     {
+      "label": "What if it happens to my parents?",
+      "goto": "elderly"
+     }
+    ]
+   },
+   "elderly": {
+    "say": [
+     "Save 1930 in their phone under a name they'll recognise in a panic, like \"CYBER HELP\". And tell them the one rule that matters most: no real officer ever asks for money to \"verify\" or \"clear\" your name. If anyone asks for that, it's fake, no matter how convincing they sound."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "OTP Scam": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Your OTP works exactly like your ATM PIN — nobody legitimate ever asks for it. Not your bank, not RBI, not anyone. Have you already shared an OTP with someone?"
+    ],
+    "options": [
+     {
+      "label": "Yes, I shared it",
+      "goto": "shared"
+     },
+     {
+      "label": "No, they just asked",
+      "goto": "justAsked"
+     }
+    ]
+   },
+   "shared": {
+    "urgent": true,
+    "say": [
+     "Act fast. Call your bank's official helpline — the number on your card, not one anyone gave you — and say: \"block my card and freeze my account, unauthorised transaction.\" Then call 1930."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=OTP%20Scam"
+     }
+    ]
+   },
+   "justAsked": {
+    "say": [
+     "Good instinct not sharing it. Hang up — real banks resolve everything without ever needing your OTP read aloud. If they call again, block the number and report it."
+    ],
+    "cta": [
+     {
+      "label": "📋 Report This Number →",
+      "href": "report.html?type=OTP%20Scam"
+     }
+    ]
+   }
+  }
+ },
+ "UPI Fraud": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Rule that stops most UPI scams: scanning a QR code or entering your UPI PIN only ever sends money, never receives it. If someone asked you to scan or enter a PIN \"to receive payment\", that's the scam. What happened?"
+    ],
+    "options": [
+     {
+      "label": "I scanned/entered PIN and lost money",
+      "goto": "lost"
+     },
+     {
+      "label": "Someone is asking me to scan right now",
+      "goto": "asking"
+     },
+     {
+      "label": "Just checking, nothing happened",
+      "goto": "none"
+     }
+    ]
+   },
+   "lost": {
+    "urgent": true,
+    "say": [
+     "Call your bank immediately and report it as a fraudulent transaction, then call 1930 so a freeze can be requested on the receiving account. UPI payments are hard to reverse, so speed is the one thing you control.",
+     "This can be charged as cheating under BNS Section 318 — worth quoting if your bank or the police are slow to act."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=UPI%20Fraud"
+     }
+    ]
+   },
+   "asking": {
+    "say": [
+     "Do not scan anything or enter your PIN. Tell them: \"send me your UPI ID instead, I'll transfer manually.\" If they refuse or get aggressive, that confirms it's a scam."
+    ],
+    "options": [
+     {
+      "label": "They're getting aggressive, what now?",
+      "goto": "block"
+     }
+    ]
+   },
+   "block": {
+    "say": [
+     "Block them and stop responding. If this was for an online sale, report the listing too — this exact trick is one of India's most common frauds."
+    ],
+    "cta": [
+     {
+      "label": "📋 Report It →",
+      "href": "report.html?type=UPI%20Fraud"
+     }
+    ]
+   },
+   "none": {
+    "say": [
+     "Good — keep this rule in mind: to receive money you only ever share your UPI ID, never scan or type a PIN."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "Phishing": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Paste the link or SMS text here anytime and I'll check it for phishing red flags — or tell me what happened if you already clicked it. You can also paste a screenshot of the message and I'll read it for you."
+    ],
+    "options": [
+     {
+      "label": "I already clicked it / entered details",
+      "goto": "clicked"
+     },
+     {
+      "label": "I haven't clicked anything",
+      "goto": "notYet"
+     }
+    ]
+   },
+   "clicked": {
+    "urgent": true,
+    "say": [
+     "If you entered your bank login, card number, or OTP, call your bank right now and ask them to block or freeze your account, then change that password everywhere else you used it. This is time-sensitive.",
+     "Phishing for financial details can be charged as cheating under BNS Section 318."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Phishing"
+     }
+    ]
+   },
+   "notYet": {
+    "say": [
+     "Good. Paste a link or screenshot here anytime and I'll check it — or remember the one rule: real banks and government sites never send links by SMS. Type the address yourself instead of clicking."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "Fake Loan App": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Biggest red flag with loan apps: any app that wants access to your contacts, gallery, or SMS before approving a loan is built for blackmail, not lending. Has this already happened?"
+    ],
+    "options": [
+     {
+      "label": "Yes, they're threatening me now",
+      "goto": "threatening"
+     },
+     {
+      "label": "I paid a fee but got no loan",
+      "goto": "noLoan"
+     },
+     {
+      "label": "Just researching an app",
+      "goto": "research"
+     }
+    ]
+   },
+   "threatening": {
+    "urgent": true,
+    "say": [
+     "This is illegal blackmail, not debt collection — lenders and their agents are not allowed to harass or threaten you. Call 1930 immediately and mention \"loan app harassment.\"",
+     "Threats like this can amount to extortion (BNS Section 308). If photos were morphed or shared, say so when you report it."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Fake%20Loan%20App"
+     }
+    ]
+   },
+   "noLoan": {
+    "say": [
+     "Being asked to pay before the loan is released, especially to a personal account or UPI ID, is a classic scam pattern. Report it so the app can be taken down before it catches someone else."
+    ],
+    "cta": [
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Fake%20Loan%20App"
+     }
+    ]
+   },
+   "research": {
+    "say": [
+     "Before installing any loan app, check whether it's listed by an RBI-registered NBFC on the RBI website. If it's only available as a random APK link and not on the Play Store, that alone is a red flag."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "Sextortion": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "I'm glad you're telling me this. You are not in trouble, and this happens to people from every background. The most important rule: do not pay, and do not panic — payment only leads to more demands, never to deletion.",
+     "Is this happening to you right now?"
+    ],
+    "options": [
+     {
+      "label": "Yes, they're threatening me now",
+      "goto": "now"
+     },
+     {
+      "label": "It happened before, I need to know what to do",
+      "goto": "before"
+     }
+    ]
+   },
+   "now": {
+    "urgent": true,
+    "say": [
+     "Don't reply, don't pay, and don't delete the chat — it's evidence. Call 1930 immediately and say this is a sensitive case.",
+     "Threatening to share images to get money can amount to extortion (BNS Section 308). Tell the officer if any image was morphed or already shared."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 (Confidential)",
+      "href": "tel:1930"
+     },
+     {
+      "label": "👩 Women's Helpline 181",
+      "href": "tel:181"
+     }
+    ]
+   },
+   "before": {
+    "say": [
+     "Same steps apply even after time has passed: save all messages as evidence, then call 1930 or report at cybercrime.gov.in."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 (Confidential)",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Sextortion"
+     }
+    ]
+   }
+  }
+ },
+ "Investment Scam": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Rule to remember: real investments carry risk, so anyone promising guaranteed returns is a red flag. A friend's dashboard showing big profits is not proof: the app itself can fabricate it. What's your situation?"
+    ],
+    "options": [
+     {
+      "label": "I already invested and can't withdraw",
+      "goto": "stuck"
+     },
+     {
+      "label": "Someone is pitching me right now",
+      "goto": "pitched"
+     }
+    ]
+   },
+   "stuck": {
+    "urgent": true,
+    "say": [
+     "Stop sending any more money — \"unlock fees\" or \"tax payments\" to release your funds are just another layer of the same scam. Save every chat and transaction screenshot, then report it.",
+     "Fake trading platforms account for the largest single share of India's digital fraud losses, per I4C figures reported for 2025. This can be charged as cheating (BNS Section 318), and organised rings under Section 111."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Investment%20Scam"
+     }
+    ]
+   },
+   "pitched": {
+    "say": [
+     "Ask one question: is this SEBI-registered? If they can't give a clear, checkable registration number, walk away. Fake trading apps mimicking real brokers are extremely common right now."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "Job Fraud": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "Genuine employers do not charge you a registration, training-kit or refundable security fee to give you a job. That request alone is a strong sign of a scam. What happened?"
+    ],
+    "options": [
+     {
+      "label": "I already paid a fee",
+      "goto": "paid"
+     },
+     {
+      "label": "They are asking me to pay now",
+      "goto": "asking"
+     }
+    ]
+   },
+   "paid": {
+    "say": [
+     "Stop any further payments immediately — paying more never gets your money back or a real job. Report it so the listing can be taken down before it catches someone else.",
+     "This can be charged as cheating under BNS Section 318 — mention that when filing, along with the exact account or UPI ID the fee went to."
+    ],
+    "cta": [
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=Job%20Fraud"
+     }
+    ]
+   },
+   "asking": {
+    "say": [
+     "Don't pay. Ask instead for the company's official HR email on their real company domain, and verify independently by calling the company's listed number, not one the recruiter gives you."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ },
+ "SIM Swap": {
+  "start": "entry",
+  "nodes": {
+   "entry": {
+    "say": [
+     "If your phone suddenly shows \"No Service\" with no explanation, that's the single biggest warning sign of a SIM swap in progress. Is that happening right now?"
+    ],
+    "options": [
+     {
+      "label": "Yes, my SIM just stopped working",
+      "goto": "active"
+     },
+     {
+      "label": "No, just want to know the signs",
+      "goto": "signs"
+     }
+    ]
+   },
+   "active": {
+    "urgent": true,
+    "say": [
+     "Go to a phone with internet access right now and call your bank's helpline to freeze your account — SIM swap is often followed quickly by an attempt to drain your bank account. Then contact your telecom operator to block the port.",
+     "This can be charged as cheating by personation (BNS Section 319) — file with your telecom operator and 1930 in parallel, don't wait for one before starting the other."
+    ],
+    "cta": [
+     {
+      "label": "📞 Call 1930 Now",
+      "href": "tel:1930"
+     },
+     {
+      "label": "📋 File a Report →",
+      "href": "report.html?type=SIM%20Swap"
+     }
+    ]
+   },
+   "signs": {
+    "say": [
+     "Watch for: sudden \"No Service\", a call asking you to \"confirm\" a SIM upgrade you didn't request, or an OTP for a SIM swap you didn't initiate. If any of those happen, act within minutes, not hours."
+    ],
+    "cta": [
+     {
+      "label": "📖 Full Protection Guide",
+      "href": "tips.html"
+     }
+    ]
+   }
+  }
+ }
+}
