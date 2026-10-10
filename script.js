@@ -1854,7 +1854,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="cbMessages" class="cb-messages" aria-live="polite"></div>
         <div class="cb-inputrow">
-          <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
+          <input id="cbInput" class="cb-input" type="text" placeholder="Type or paste here…" autocomplete="off" aria-label="Message to FraudShield Assistant">
           <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
           <input id="cbFile" type="file" accept="image/*" hidden>
           <button id="cbLang" class="cb-attach cb-lang" type="button">EN</button>
@@ -1933,7 +1933,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div id="cbMessages" class="cb-messages cb-messages--big" aria-live="polite"></div>
       <div class="cb-inputrow">
-        <input id="cbInput" class="cb-input" type="text" placeholder="Type, or paste a screenshot…" autocomplete="off" aria-label="Message to FraudShield Assistant">
+        <input id="cbInput" class="cb-input" type="text" placeholder="Type or paste here…" autocomplete="off" aria-label="Message to FraudShield Assistant">
         <button id="cbAttach" class="cb-attach" type="button" aria-label="Attach a screenshot or QR code" title="Attach a screenshot or QR code">📎</button>
         <input id="cbFile" type="file" accept="image/*" hidden>
         <button id="cbLang" class="cb-attach cb-lang" type="button">EN</button>
@@ -1980,7 +1980,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const details = document.createElement('details'), summary = document.createElement('summary'), body = document.createElement('div'), status = document.createElement('p');
     summary.id = 'diagTitle'; summary.textContent = 'How this tool is doing on this device';
     body.className = 'diag__body'; status.className = 'diag__status'; status.setAttribute('role', 'status');
-    details.append(summary, body); box.append(details); root.insertAdjacentElement('afterend', box);
+    details.append(summary, body); box.append(details);
+    // after the page's wrapper, never inside it: the wrapper is a flex container, and a second child there squeezes the chat into a sliver on a phone
+    (root.closest('.assistant-page-wrap') || root).insertAdjacentElement('afterend', box);
 
     const row = (k, v) => { const r = document.createElement('div'), a = document.createElement('dt'), b = document.createElement('dd'); r.className = 'diag__row'; a.textContent = k; b.textContent = v; r.append(a, b); return r; };
     const list = o => (Object.keys(o).length ? Object.entries(o).sort((x, y) => y[1] - x[1]).map(([k, v]) => k + ' ' + v).join(', ') : 'none yet');

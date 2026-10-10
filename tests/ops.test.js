@@ -118,6 +118,10 @@ test('the diagnostics panel on the assistant page shows the numbers, meets its o
   const p = await loadPage('assistant.html', { settle: 100, setup: w => { let tick = 0; w.performance.now = () => (tick += 0.5); w.__copied = null; Object.defineProperty(w.navigator, 'clipboard', { value: { writeText: t => { w.__copied = t; return Promise.resolve(); } }, configurable: true }); } });
   try {
     const d = p.document, panel = d.querySelector('.diag'); assert.ok(panel && panel.querySelector('details') && !panel.querySelector('details').open, 'a collapsed panel exists');
+    // it sits after the page's wrapper, not inside it: the wrapper is a flex container, and a sibling of the chat frame there squeezed the chat into a sliver on phones
+    assert.equal(panel.closest('.assistant-page-wrap'), null, 'the panel is not inside the flex wrapper of the chat');
+    assert.ok(panel.previousElementSibling && panel.previousElementSibling.classList.contains('assistant-page-wrap'), 'it follows the wrapper');
+    assert.match(fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8'), /\.assistant-page-wrap\{[^}]*flex-direction:column/, 'and the wrapper stacks whatever is put in it');
     for (let i = 0; i < 6; i++) await ask(p, i % 2 ? 'Your Zomato order will arrive in 20 minutes. The delivery partner will call you at the gate.' : 'Dear customer your SBI account will be blocked today. Update KYC immediately: http://sbi-kyc-update.tk/login');
     const details = panel.querySelector('details'); details.open = true; details.dispatchEvent(new p.window.Event('toggle'));
     const text = panel.textContent; assert.match(text, /Checks this session\s*6/); assert.match(text, /scam 3|scam\s*3/); assert.match(text, /Speed target\s*met/); assert.match(text, /Domain-name check/); assert.match(text, /never sent anywhere/);
