@@ -1415,3 +1415,22 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
 .diag__note { flex-basis: 100%; margin: .4rem 0 0; font-size: .8rem; color: #5b6678; line-height: 1.5; }
 .diag__status { margin: .6rem 0 0; font-size: .85rem; white-space: pre-wrap; color: var(--navy); }
 @media (max-width: 560px) { .diag__row { grid-template-columns: 1fr; gap: .1rem; } }
+
+/* ───── a phone: shorter lists, swipeable rows, a smaller floating button ───── */
+.more-btn { display: block; margin: 1.4rem auto 0; min-height: 48px; padding: .7rem 1.6rem; border-radius: 999px; border: 2px solid var(--navy); background: #fff; color: var(--navy); font: 700 .95rem 'DM Sans', sans-serif; cursor: pointer; }
+.more-btn:hover { background: var(--navy); color: #fff; }
+.more-btn[hidden] { display: none; }
+.is-collapsed .more-extra { display: none !important; }
+@media (max-width: 640px) {
+  /* the home page's figures: one card and the edge of the next, swiped sideways, not three screens of stacked cards */
+  .stats-grid:not(.data-glance) { display: flex; gap: .9rem; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -1rem; padding: .5rem 1rem 1rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .stats-grid:not(.data-glance)::-webkit-scrollbar { display: none; }
+  .stats-grid:not(.data-glance) > .stat-card { flex: 0 0 78%; scroll-snap-align: center; padding: 1.3rem 1.1rem; }
+  /* the tips filter: one row to swipe, not three rows of pills */
+  .filter-bar { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding: 1.5rem 1rem 0; scroll-snap-type: x proximity; scrollbar-width: none; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-btn { flex: none; scroll-snap-align: start; }
+  /* the floating assistant button covered the words at the edge of every card */
+  .cb-fab { width: 48px; height: 48px; right: .75rem; bottom: calc(4.9rem + env(safe-area-inset-bottom)); }
+  .cb-fab #cbFabIcon img { width: 24px; height: 24px; }
+}

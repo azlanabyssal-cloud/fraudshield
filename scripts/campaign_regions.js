@@ -75,7 +75,7 @@ function renderSdg(c) {
   const tiles = c.sdgs.map((s, i) => s.why
     ? `  <li class="csp-sdg csp-sdg--on" style="--i:${i}"><b>${s.n}</b><span class="csp-sdg__name">${esc(s.name)}</span><span class="csp-sdg__why">${esc(s.why)}</span></li>`
     : `  <li class="csp-sdg" style="--i:${i}"><b>${s.n}</b><span class="csp-sdg__name">${esc(s.name)}</span></li>`).join('\n');
-  return `<p class="csp-sdg__count"><b data-count="${f.mapped}">${f.mapped}</b> of ${f.goals} UN Sustainable Development Goals, as mapped in the college's evidence form</p>\n<ul class="csp-sdgs" aria-label="UN Sustainable Development Goals; ${f.mapped} are mapped to this project">\n${tiles}\n</ul>`;
+  return `<p class="csp-sdg__count"><b data-count="${f.mapped}">${f.mapped}</b> of ${f.goals} UN Sustainable Development Goals, as mapped in the college's evidence form</p>\n<ul class="csp-sdgs" data-more-hide=".csp-sdg:not(.csp-sdg--on)" data-more-label="goals not mapped to this project" aria-label="UN Sustainable Development Goals; ${f.mapped} are mapped to this project">\n${tiles}\n</ul>`;
 }
 
 
