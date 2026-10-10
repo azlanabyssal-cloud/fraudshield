@@ -216,7 +216,15 @@ export function reply(rawText: string, session: Session, ctx: Context): Reply {
   // "I already paid / clicked / shared" is about the person's own loss and always gets the steps.
   const follow = FollowUp.route(text, session.last, A.FAMILIES, ctx.now);
   if (follow && !(knowAnswers && follow.topic !== 'paid')) return followUpReply(follow, session);
-  if (know && knowAnswers) return knowledgeReply(know.entry, session);
+  if (know && knowAnswers) {
+    // "hello, I am Ravi, can you help me?" is an introduction and a question: say hello to the person, then answer
+    const named = session.userName ? null : A.extractIntroducedName(text);
+    if (named) {
+      const r = knowledgeReply(know.entry, { ...session, userName: named });
+      return { ...r, blocks: [...texts(['Nice to meet you, ' + named + '.']), ...r.blocks] };
+    }
+    return knowledgeReply(know.entry, session);
+  }
 
   if (intent && FLOWS[intent]) return gotoNode(intent, FLOWS[intent].start, session, ['That sounds like ' + intent + " — let's go through it step by step."]);
   if (moneyLoss) return generalLoss(session);

@@ -11,7 +11,7 @@ const { launch, sleep } = require('./cdp.js');
 const DIST = path.join(__dirname, '..', '..', 'web', 'dist');
 const AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const SCAM = 'Dear customer your SBI account will be blocked today. Update KYC immediately: http://sbi-kyc-update.tk/login';
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.json': 'application/json' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.wasm': 'application/wasm', '.gz': 'application/gzip' };
 const failures = [], notes = [];
 const QRCode = require('qrcode'), { PNG } = require('pngjs'), S = require('../../tests/helpers/qrsynth.js');
 const fail = m => failures.push(m);

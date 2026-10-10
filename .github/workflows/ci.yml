@@ -31,6 +31,8 @@ jobs:
         run: npm run web:budget
       - name: Web app in a real Chrome (axe with colour contrast, light and dark, phone and desktop; console and policy errors; touch targets; keyboard)
         run: npm run audit:web
+      - name: Every control on every page, clicked in a real Chrome on a phone and a laptop (what would be published, not the working tree)
+        run: npm run ux:clicks
       - name: Syntax check browser scripts
         run: |
           node --check script.js
@@ -39,16 +41,14 @@ jobs:
           node --check lib/river.js
           node --check lib/flow.js
 
-  # The release gate exits 1 whenever there is no evidence, which is true until the S0 dataset exists.
-  # It runs as its own job so that state is visible without hiding test results. To make it blocking,
-  # delete the next line and require this job in branch protection.
-  release-gate:
+  # The evidence report. A pull request is not blocked by the absence of field data (nothing was measured, so nothing can be said); it is shown, as a table on the
+  # run's page, and a model that measurably fails still fails. A release is gated without --report (see release.yml) and cannot be tagged until the evidence exists.
+  evidence:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
       - run: npm ci
-      - run: node mlops/run.js
+      - run: node mlops/run.js --report

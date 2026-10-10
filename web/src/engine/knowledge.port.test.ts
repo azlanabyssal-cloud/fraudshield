@@ -34,11 +34,13 @@ test('every entry is complete: unique id, known topic, a question button, patter
   }
 });
 
+// the government's own addresses an answer may send a person to (each is also on a page of this site that says so)
+const OFFICIAL = ['https://sancharsaathi.gov.in/', 'https://cybercrime.gov.in/'];
 test('links go somewhere real: a phone number of the national helplines, a page of this site that exists, or this project on GitHub', () => {
   for (const e of K.ENTRIES) for (const l of e.links || []) {
     assert.ok(l.label && l.label.length < 60, `${e.id}: ${l.label}`);
     if (/^tel:/.test(l.href)) assert.ok(['tel:1930', 'tel:112'].includes(l.href), `${e.id}: ${l.href}`);
-    else if (/^https:/.test(l.href)) assert.ok(l.href.startsWith(K.REPO), `${e.id}: ${l.href}`);
+    else if (/^https:/.test(l.href)) assert.ok(l.href.startsWith(K.REPO) || OFFICIAL.some(h => l.href.startsWith(h)), `${e.id}: ${l.href}`);
     else assert.ok(fs.existsSync(path.join(ROOT, l.href)), `${e.id}: ${l.href} exists`);
   }
 });

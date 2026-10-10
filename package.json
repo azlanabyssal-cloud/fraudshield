@@ -36,7 +36,10 @@
     "web:typecheck": "tsc -p web --noEmit",
     "web:test": "vitest run --root web",
     "web:budget": "npm run web:build && node scripts/check_web_build.js",
-    "audit:web": "node scripts/browser/web_audit.js"
+    "audit:web": "node scripts/browser/web_audit.js",
+    "site:assemble": "node scripts/assemble_site.js",
+    "smoke:live": "node scripts/smoke_live.js https://azlanabyssal-cloud.github.io/fraudshield/",
+    "ux:clicks": "node scripts/browser/clicks.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

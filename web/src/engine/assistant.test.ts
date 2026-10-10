@@ -192,3 +192,38 @@ suite('what is said about a picture', () => {
     expect(r).toEqual({ blocks: [], chips: [], session: NEW_SESSION, events: [] });
   });
 });
+
+suite('a real conversation that went wrong, kept as a regression', () => {
+  // The words are the person's own, typos included. Each reply was wrong: a scam call was answered as a deepfake, and a phone number was promised a check it cannot have.
+  test('"I got fake call" is a scam call, not a deepfake: hang up, do not call back, and 1930 if an OTP or money went', () => {
+    const r = say('I got fake call');
+    expect(words(r)).toMatch(/scam call \(vishing\)/);
+    expect(words(r)).toMatch(/Hang up\. Do not call that number back/);
+    expect(words(r)).toMatch(/1930/);
+    expect(words(r)).not.toMatch(/clone a voice|fake a video/);
+    expect(r.events).toEqual([{ kind: 'faq', topic: 'vishing' }]);
+  });
+  test('a phone number cannot be checked from its digits, and the answer says so, then says what can be checked and where to report', () => {
+    for (const q of ['if i proide the number can you check ? fake or real ?', 'is this number fake or real', 'who is calling me', 'can you identify an unknown caller']) {
+      const r = say(q);
+      expect(words(r), q).toMatch(/A phone number on its own tells me nothing/);
+      expect(words(r), q).toMatch(/Chakshu on sancharsaathi\.gov\.in/);
+      expect(words(r), q).toMatch(/call 1930/);
+      expect(words(r), q).not.toMatch(/Send it to me and I will check it/);
+      expect(r.chips.some(c => c.href === 'https://sancharsaathi.gov.in/'), q).toBe(true);
+    }
+  });
+  test('an introduction that is also a question greets the person by name and then answers', () => {
+    const r = say('hello I am Azlan can you help me');
+    expect(r.blocks[0] && describe(r.blocks[0])).toBe('Nice to meet you, Azlan.');
+    expect(r.session.userName).toBe('Azlan');
+    expect(words(r)).toMatch(/paste a suspicious message/i);
+    const again = say('can you help me', r.session);
+    expect(describe(again.blocks[0]!)).not.toMatch(/Nice to meet you/);   // said once
+  });
+  test('a family member\'s cloned voice is still the deepfake answer, and a pasted bank alert is still a message to check', () => {
+    expect(words(say('fake call from my brother asking money'))).toMatch(/clone a voice/);
+    const bank = say('Rs 2,000.00 debited from A/c XX1234 on 03-Oct-26 to VPA shop@oksbi. If not you, call 1930 or your bank.');
+    expect(bank.events.some(e => e.kind === 'faq')).toBe(false);   // checked as a message, never answered as a question
+  });
+});
