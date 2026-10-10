@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#F8F6F1",
+  "background_color": "#0B1F3A",
   "theme_color": "#0B1F3A",
   "lang": "en-IN",
   "icons": [
@@ -29,10 +29,86 @@
       "purpose": "maskable"
     },
     {
+      "src": "icons/icon-monochrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "monochrome"
+    },
+    {
       "src": "icons/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "id": "./index.html",
+  "categories": [
+    "education",
+    "utilities",
+    "security"
+  ],
+  "shortcuts": [
+    {
+      "name": "Check a message or link",
+      "short_name": "Check",
+      "description": "Paste a message, link or screenshot and see what gave it away",
+      "url": "assistant.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "First hour after a fraud",
+      "short_name": "Report",
+      "description": "What to do in the first 60 minutes, and where to report",
+      "url": "report.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Protect yourself",
+      "short_name": "Tips",
+      "description": "How the common scams work and how to stay safe",
+      "url": "tips.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/install/assistant.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Ask the assistant: paste a message, a link or a screenshot"
+    },
+    {
+      "src": "icons/install/result.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "It quotes the exact words that gave a scam away"
+    },
+    {
+      "src": "icons/install/home.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "The first thing to do if you think you have been scammed"
     }
   ]
 }

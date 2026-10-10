@@ -58,3 +58,17 @@ test('the service worker precaches every icon a page needs offline', () => {
   const sw = read('sw.js');
   for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'favicon.svg', 'logo-mark.svg', 'logo-mark-light.svg']) assert.ok(sw.includes('./icons/' + f), f);
 });
+
+test('the installed app: a themed icon with a transparent background, launcher shortcuts that open real pages, and install screenshots of the size they declare', () => {
+  const m = JSON.parse(read('manifest.json'));
+  const mono = fs.readFileSync(path.join(ROOT, 'icons', 'icon-monochrome-512.png'));
+  assert.equal(mono[25], 6, 'the themed icon is RGBA (only its alpha is read, so it needs one)');
+  assert.ok(m.icons.some(i => i.purpose === 'monochrome' && i.src === 'icons/icon-monochrome-512.png'));
+  assert.equal(m.id, './index.html', 'a stable identity, so an update is an update and not a second app');
+  assert.equal(m.background_color.toLowerCase(), '#0b1f3a', 'the splash is the icon\'s own navy');
+  assert.ok(m.shortcuts.length >= 2 && m.shortcuts.length <= 4);
+  for (const s of m.shortcuts) { assert.ok(s.name.length <= 40 && s.short_name.length <= 12, s.name); assert.ok(fs.existsSync(path.join(ROOT, s.url)), s.url + ' exists'); assert.doesNotMatch(s.url, /^[a-z]+:/i, 'a shortcut stays inside the app'); }
+  assert.ok(m.screenshots.length >= 2);
+  const jpegSize = f => { const b = fs.readFileSync(path.join(ROOT, f)); assert.equal(b[0], 0xff); assert.equal(b[1], 0xd8, f + ' is a JPEG'); for (let i = 2; i < b.length - 9;) { if (b[i] !== 0xff) { i++; continue; } const k = b[i + 1]; if (k >= 0xc0 && k <= 0xcf && k !== 0xc4 && k !== 0xc8 && k !== 0xcc) return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) }; i += 2 + b.readUInt16BE(i + 2); } throw new Error('no size in ' + f); };
+  for (const s of m.screenshots) { const d = jpegSize(s.src); assert.equal(`${d.w}x${d.h}`, s.sizes, s.src); assert.equal(s.type, 'image/jpeg'); assert.equal(s.form_factor, 'narrow'); assert.ok(s.label.length > 10); }
+});

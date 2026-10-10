@@ -1171,7 +1171,7 @@ footer { background: var(--space); color: #94a3b8; }
 .page-hero__bg--data   { background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80&fit=crop'); }
 .page-hero__bg--tips   { background-image: url('images/hero-tips.webp'); }
 .page-hero__bg--report { background-image: url('images/hero-report.webp'); }
-.page-hero__bg--assistant { background-image: url('https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&q=80&fit=crop'); }
+.page-hero__bg--assistant { background-image: radial-gradient(120% 140% at 70% 0%, #1b4676 0%, #0B1F3A 55%, #07152a 100%); }   /* no photo: this is the private page, and it loads nothing from a third party */
 .page-hero__bg--tips::after { background: rgba(11,31,58,0.82); }
 
 /* ── PHOTO QUOTE BACKGROUND IMAGE ── */
@@ -1434,4 +1434,15 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
   /* the floating assistant button covered the words at the edge of every card */
   .cb-fab { width: 48px; height: 48px; right: .75rem; bottom: calc(4.9rem + env(safe-area-inset-bottom)); }
   .cb-fab #cbFabIcon img { width: 24px; height: 24px; }
+}
+
+/* the assistant's hero: the page exists for the chat, so the chat must be on the first screen */
+.page-hero--compact { min-height: 0; height: auto; padding: 6.2rem 1.5rem 0; }   /* the top clears the fixed navigation bar */
+.page-hero--compact .page-hero__content { padding-block: 1.2rem 1.6rem; }
+@media (max-width: 640px) {
+  .page-hero--compact { padding: 5rem 1.1rem 0; }
+  .page-hero--compact .page-hero__content { padding-block: .6rem 1rem; }
+  .page-hero--compact h1 { font-size: 1.65rem; margin-bottom: .4rem; }
+  .page-hero--compact .page-hero__badge { display: none; }
+  .page-hero--compact p { font-size: .92rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 }
