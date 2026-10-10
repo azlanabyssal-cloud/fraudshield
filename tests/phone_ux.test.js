@@ -87,3 +87,13 @@ test('the story keeps its original sound: the file has an audio track, the capti
   assert.ok(times.length >= 5);
   times.forEach(([a, b], i) => { assert.ok(b > a); if (i) assert.ok(a >= times[i - 1][1], 'cue ' + i + ' starts after the previous one ends'); });
 });
+
+test('the assistant page is the private page: nothing on it comes from a third party, and what its heading says about that is true', () => {
+  const h = read('assistant.html'), css = read('style.css');
+  const rule = css.split('\n').find(l => /\.page-hero__bg--assistant\s*\{/.test(l));
+  assert.ok(rule, 'the hero has a rule'); assert.doesNotMatch(rule, /url\(/, 'and it fetches no picture');
+  const body = h.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/, '');
+  assert.doesNotMatch(body, /images\.unsplash\.com|fonts\.googleapis|fonts\.gstatic/);
+  assert.doesNotMatch(h, /fonts from Google|photos from Unsplash/i);
+  assert.match(h, /page-hero page-hero--compact/, 'the heading leaves room for the chat on a phone');
+});
