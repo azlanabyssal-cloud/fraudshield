@@ -43,7 +43,7 @@ describe('pictures', () => {
     expect(recognize).not.toHaveBeenCalled();
     expect(screen.queryByRole('article')).toBeNull();
     expect(m.ops.summary().byKind).toMatchObject({ qr: 1 });
-    await m.user.click(screen.getByRole('button', { name: '📷 Try another picture' }));
+    await m.user.click(screen.getByRole('button', { name: 'Try another picture' }));
     expect(m.pickSpy).toHaveBeenCalledTimes(1);
   });
 

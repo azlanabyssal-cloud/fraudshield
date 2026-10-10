@@ -22,7 +22,7 @@
   --bg: #fdf9f3; --surface: #ffffff; --surface-2: #f4efe6; --border: #d9d2c4;
   --text: #0b1f3a; --text-2: #3f4a5c; --text-3: #5c6677;
   --accent: #b84400; --accent-ink: #ffffff; --accent-soft: #fff0e3;     /* #b84400 on white is 5.6:1 */
-  --header-bg: #0b1f3a; --header-text: #ffffff;
+  --header-bg: #0b1f3a; --header-text: #ffffff; --brand-mark: #ff9a52;
   --user-bg: #0b1f3a; --user-text: #ffffff;
   --focus: #1d4ed8;
 

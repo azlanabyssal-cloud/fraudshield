@@ -5,6 +5,7 @@ import { openChips } from './chatState';
 import { Chips } from './components/Chips';
 import { Composer } from './components/Composer';
 import { Diagnostics } from './components/Diagnostics';
+import { Icon } from './components/Icon';
 import { LinkVerdictCard, MessageVerdictCard } from './components/VerdictCard';
 import { createAppOps } from './appOps';
 import { useChat } from './hooks/useChat';
@@ -66,22 +67,36 @@ export function AssistantApp(props: UseChatOptions & { nameModel?: Pick<NameMode
   const count = chat.state.messages.length, seen = useRef(count);
   useEffect(() => {
     // follow only what arrives after the page opened: the greeting itself must not push the title out of view
-    if (count > seen.current && pinned.current) bottom.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'end' });
+    if (count > seen.current && pinned.current) {
+      // a result is read from its top (the status and the headline), not from the options under it
+      const shown = chat.state.messages.filter(m => m.from !== 'chips'), last = shown[shown.length - 1];
+      const card = last && last.from === 'bot' && /verdict$/.test(last.block.type) ? document.querySelectorAll('.msg--card') : null;
+      const target = card && card.length > 0 ? card[card.length - 1] : null;
+      if (target) target.scrollIntoView?.({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      else bottom.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'end' });
+    }
     seen.current = count;
-  }, [count, reduced]);
+  }, [count, reduced, chat.state.messages]);
 
   const chips = openChips(chat.state);
   return (
     <>
       <a className="skip-link" href="#message">Skip to the message box</a>
       <header className="site-header">
-        <a className="brand" href="index.html"><span className="brand__mark" aria-hidden="true">🛡️</span> FraudShield</a>
-        <nav aria-label="Main"><ul>{NAV.map(([label, href]) => <li key={href}><a href={href}>{label}</a></li>)}</ul></nav>
+        <a className="brand" href="index.html"><Icon name="shield" size={22} /><span>FraudShield</span></a>
+        <nav className="nav-inline" aria-label="Main"><ul>{NAV.map(([label, href]) => <li key={href}><a href={href}>{label}</a></li>)}</ul></nav>
+        <a className="header-call" href="tel:1930"><Icon name="phone" size={18} /><span>Call 1930</span></a>
+        <details className="menu">
+          <summary aria-label="Menu"><Icon name="menu" /></summary>
+          <nav aria-label="Main (menu)"><ul>{NAV.map(([label, href]) => <li key={href}><a href={href}>{label}</a></li>)}</ul></nav>
+        </details>
       </header>
       <main id="main" className="assistant">
-        <h1 className="assistant__title">Check a message, a link or what happened</h1>
-        <p className="assistant__lead">Say or paste it. I will tell you which scam it resembles, quote the exact words that gave it away, and say what to do next.</p>
-        {speaker.supported && <button type="button" className="btn btn--toggle" aria-pressed={speaking} onClick={speaker.toggle}>{speaking ? '🔊 Spoken replies: on' : '🔇 Spoken replies: off'}</button>}
+        <div className="intro">
+          <h1 className="assistant__title">Check a message, a link or what happened</h1>
+          <p className="assistant__lead">Say or paste it. I will tell you which scam it resembles, quote the exact words that gave it away, and say what to do next.</p>
+          {speaker.supported && <button type="button" className="btn btn--toggle" aria-pressed={speaking} onClick={speaker.toggle}><Icon name={speaking ? 'volume' : 'volumeOff'} size={18} />{speaking ? 'Spoken replies: on' : 'Spoken replies: off'}</button>}
+        </div>
         {speaker.supported && <p className="sr-only" role="status">{speaking ? 'Spoken replies on. The assistant now speaks new messages, so your screen reader will not read them out a second time.' : ''}</p>}
         <div className="log" role="log" aria-live={speaking ? 'off' : 'polite'} aria-relevant="additions" aria-label="Conversation with the FraudShield assistant">
           <ol className="log__list">
@@ -99,11 +114,11 @@ export function AssistantApp(props: UseChatOptions & { nameModel?: Pick<NameMode
       </main>
       <footer className="site-footer">
         <p>FraudShield is a free, independent project. It is not a government service. If money has left your account, the first hour matters most.</p>
-        <div className="chips chips--center">
-          <a className="chip chip--cta" href="tel:1930">📞 Call 1930 (free, all day)</a>
-          <a className="chip" href="report.html">📝 How to report it</a>
-          <a className="chip" href="tel:112">🚨 Emergency: call 112</a>
-        </div>
+        <ul className="help-links">
+          <li><a className="help-link help-link--cta" href="tel:1930"><Icon name="phone" /><span>Call 1930 (free, all day)</span></a></li>
+          <li><a className="help-link" href="report.html"><Icon name="file" /><span>How to report it</span></a></li>
+          <li><a className="help-link" href="tel:112"><Icon name="siren" /><span>Emergency: call 112</span></a></li>
+        </ul>
       </footer>
     </>
   );

@@ -2,15 +2,17 @@ import type { CheckedLink } from '../../engine/core';
 import type { MessageVerdict } from '../../engine/msgcheck';
 import { LINK_ADVICE } from '../../engine/assistant';
 import type { Level } from '../../engine/ops';
+import { Icon } from './Icon';
+import type { IconName } from './Icon';
 
 type Tone = 'danger' | 'warn' | 'neutral' | 'ok';
 /** How each result is named and drawn. The words and the icon carry the meaning, never colour alone, and nothing is ever called "safe". */
-const LEVELS: Record<Level, { label: string; icon: string; tone: Tone }> = {
-  scam: { label: 'Looks like a scam', icon: '🚫', tone: 'danger' },
-  suspicious: { label: 'Suspicious', icon: '⚠️', tone: 'warn' },
-  unverified: { label: "Couldn't verify", icon: '❔', tone: 'neutral' },
-  official: { label: 'Matches an official address', icon: '✅', tone: 'ok' },
-  nothing: { label: 'No known pattern found', icon: '❔', tone: 'neutral' }
+const LEVELS: Record<Level, { label: string; icon: IconName; tone: Tone }> = {
+  scam: { label: 'Looks like a scam', icon: 'octagon', tone: 'danger' },
+  suspicious: { label: 'Suspicious', icon: 'triangle', tone: 'warn' },
+  unverified: { label: "Couldn't verify", icon: 'help', tone: 'neutral' },
+  official: { label: 'Matches an official address', icon: 'check', tone: 'ok' },
+  nothing: { label: 'No known pattern found', icon: 'help', tone: 'neutral' }
 };
 
 const NOT_PROOF = 'This is evidence, not proof. A result from me never means a message is safe.';
@@ -20,11 +22,8 @@ function Frame({ level, headline, children }: { level: Level; headline: string; 
   return (
     <article className={'verdict verdict--' + m.tone} aria-label={m.label + '. ' + headline}>
       <header className="verdict__head">
-        <span className="verdict__icon" aria-hidden="true">{m.icon}</span>
-        <div>
-          <p className="verdict__label">{m.label}</p>
-          <h2 className="verdict__headline">{headline}</h2>
-        </div>
+        <p className="verdict__label"><Icon name={m.icon} size={20} />{m.label}</p>
+        <h2 className="verdict__headline">{headline}</h2>
       </header>
       {children}
       <p className="verdict__note">{NOT_PROOF}</p>

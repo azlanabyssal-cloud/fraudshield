@@ -41,7 +41,7 @@ describe('the page', () => {
     expect(within(card).getByText(/What gave it away/)).toBeInTheDocument();
     expect(within(card).getByText(/never means a message is safe/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Paid or shared details\? Call 1930/ })).toHaveAttribute('href', 'tel:1930');
-    expect(screen.getAllByRole('link', { name: /Call 1930/ })).toHaveLength(2);   // the card's button, and the helpline that is always at the foot of the page
+    expect(screen.getAllByRole('link', { name: /Call 1930/ })).toHaveLength(3);   // the card's button, the helpline at the foot of the page, and the one in the header that is on screen whatever the person scrolls to
     expect(s.box).toHaveValue(''); expect(s.box).toHaveFocus();
     expect(screen.getByText(SCAM)).toBeInTheDocument();
     expect(await accessibility(s.view.container)).toEqual([]);
