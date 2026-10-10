@@ -71,6 +71,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ═══════════════════════════════════════════════════════
+  // LONG LISTS, SHORTER ON A PHONE
+  // ═══════════════════════════════════════════════════════
+  // A container marked data-more-keep="N" (show its first N children) or data-more-hide="selector" (hide what matches) shows less on a phone and offers a button
+  // for the rest. Without script, and on any larger screen, everything is shown: the list is only ever shortened, never removed.
+  function initMore() {
+    const phone = window.matchMedia ? window.matchMedia('(max-width: 640px)') : { matches: false };
+    document.querySelectorAll('[data-more-keep],[data-more-hide]').forEach((box, n) => {
+      const keep = box.dataset.moreKeep !== undefined;
+      const extras = keep ? [...box.children].slice(Math.max(1, parseInt(box.dataset.moreKeep, 10) || 1)) : [...box.querySelectorAll(box.dataset.moreHide)];
+      if (!extras.length) return;
+      const label = box.dataset.moreLabel || 'items';
+      const more = keep ? `Show all ${box.children.length} ${label}` : `Show the ${extras.length} ${label}`;
+      if (!box.id) box.id = 'more-' + n;
+      extras.forEach(el => el.classList.add('more-extra'));
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'more-btn'; btn.setAttribute('aria-controls', box.id);
+      let open = false;
+      const apply = () => {
+        box.classList.toggle('is-collapsed', phone.matches && !open);
+        btn.hidden = !phone.matches;
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Show fewer' : more;
+      };
+      btn.addEventListener('click', () => { open = !open; apply(); if (!open) box.scrollIntoView({ block: 'start' }); });
+      box.insertAdjacentElement('afterend', btn);
+      if (phone.addEventListener) phone.addEventListener('change', apply); else if (phone.addListener) phone.addListener(apply);
+      apply();
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════
   // ANIMATED COUNTERS
   // ═══════════════════════════════════════════════════════
   // The domain-name model is a soft warning added to link checks. Its weights load after the page is usable, so nothing waits on the
@@ -2028,6 +2059,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // INIT ALL
   // ═══════════════════════════════════════════════════════
   initHamburger();
+  initMore();
   initCounters();
   initMagnetic();
   initArrivals();
