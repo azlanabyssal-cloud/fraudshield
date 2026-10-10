@@ -1,6 +1,6 @@
 # The TypeScript and React app
 
-The site is being moved from plain JavaScript to strict TypeScript and React, behind parity gates (ADR-0024). The live site is still the JavaScript in the repository root; this folder is built and tested but not yet deployed.
+The site is being moved from plain JavaScript to strict TypeScript and React, behind parity gates (ADR-0025). The live site is still the JavaScript in the repository root; this folder is built and tested but not yet deployed.
 
 ```bash
 npm run web:dev        # the app with hot reload
@@ -27,4 +27,4 @@ npm run web:budget     # build, then the policy, same-origin and size-budget gat
 | the other five pages, the service worker, deploy | not ported |
 
 ## Why these tools
-React 19 and Vite 8 for the app; Vitest and Testing Library for tests, with axe-core run against the rendered page; TypeScript 6.0 until typescript-eslint supports 7 (see ADR-0024).
+React 19 and Vite 8 for the app; Vitest and Testing Library for tests, with axe-core run against the rendered page; TypeScript 6.0 until typescript-eslint supports 7 (see ADR-0025).

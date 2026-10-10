@@ -23,7 +23,8 @@
   /* ---- shell ---- */
   .site-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: var(--space-2); min-height: calc(3.5rem + env(safe-area-inset-top)); padding: env(safe-area-inset-top) max(var(--space-4), env(safe-area-inset-right)) 0 max(var(--space-4), env(safe-area-inset-left)); background: var(--header-bg); color: var(--header-text); }
   .brand { margin-right: auto; color: inherit; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em; text-decoration: none; display: inline-flex; gap: var(--space-2); align-items: center; min-height: var(--tap); }
-  .brand .icon { color: var(--brand-mark); }
+  .brand__accent { color: var(--brand-mark); }
+  .logo-mark { flex: none; }
   .nav-inline { display: none; }
   .site-header ul { display: flex; gap: var(--space-1) var(--space-4); }
   .site-header a { color: inherit; }

@@ -29,6 +29,12 @@ test('every local image exists, and its declared width and height are its real o
   for (const i of imgs.filter(i => local(i.src))) {
     const file = path.join(ROOT, i.src);
     if (!fs.existsSync(file)) { problems.push(`${i.page}: ${i.src} does not exist`); continue; }
+    if (/\.svg$/i.test(file)) {   // a vector has no size of its own: it must be declared at the shape of its viewBox, so it is not squashed and the page does not jump
+      const vb = (fs.readFileSync(file, 'utf8').match(/viewBox="[\d.\s-]*?([\d.]+)\s+([\d.]+)"/) || []);
+      if (!vb[1]) problems.push(`${i.page}: ${i.src} has no viewBox`);
+      else if (!i.w || !i.h || Math.abs(+i.w / +i.h - +vb[1] / +vb[2]) > 0.01) problems.push(`${i.page}: ${i.src} is declared ${i.w}x${i.h} but its viewBox is ${vb[1]}x${vb[2]}`);
+      continue;
+    }
     const real = dimensions(file);
     if (!real) { problems.push(`${i.page}: ${i.src} is not a WebP or PNG the test can read`); continue; }
     if (!i.w || !i.h) problems.push(`${i.page}: ${i.src} has no width and height (the page would jump as it loads)`);

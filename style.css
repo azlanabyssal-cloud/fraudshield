@@ -89,6 +89,7 @@ p  { font-family: 'DM Sans', sans-serif; font-size: 1rem; line-height: 1.75; col
 }
 
 .nav-logo__accent { color: var(--orange); }
+.nav-logo__mark { width: 30px; height: 30px; flex: none; }
 
 .nav-links {
   display: flex;
@@ -1058,7 +1059,9 @@ footer { background: var(--space); color: #94a3b8; }
 .footer-logo {
   font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900;
   color: white; margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 0.5rem;
 }
+.footer-logo img { width: 30px; height: 30px; flex: none; }
 
 .footer-tagline {
   font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
@@ -1221,7 +1224,9 @@ footer { background: var(--space); color: #94a3b8; }
 @media (max-width:640px){.cb-panel{right:.5rem;left:.5rem;bottom:1rem;width:auto;height:min(78vh,600px)}}
 
 .cb-header{background:var(--navy);color:#fff;padding:.9rem 1rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0}
-.cb-header__icon{font-size:1.3rem;flex-shrink:0}
+.cb-header__icon{font-size:1.3rem;flex-shrink:0;display:inline-flex}
+.cb-header__icon img,#cbFabIcon img{width:30px;height:30px;display:block}
+#cbFabIcon{display:inline-flex}
 .cb-header__text{flex:1;min-width:0}
 .cb-header__title{font-family:'DM Sans',sans-serif;font-weight:800;font-size:.92rem;line-height:1.2;color:#fff}   /* a <p>: without this the global p colour made it a 2.4:1 grey on navy */
 .cb-header__sub{font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:.02em}

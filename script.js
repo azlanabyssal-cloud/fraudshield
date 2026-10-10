@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════════════════
   // UTILITY — Indian number formatting
   // ═══════════════════════════════════════════════════════
+  // the brand mark, drawn from the same file as the favicon and the site header (brand/mark.json)
+  const FS_MARK = '<img src="icons/logo-mark-light.svg" width="30" height="30" alt="">';
+
   function formatIndian(n) {
     if (n >= 10000000) return (n / 10000000).toFixed(2) + ' Cr';
     if (n >= 100000)   return (n / 100000).toFixed(2) + ' Lakh';
@@ -1835,11 +1838,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrap = document.createElement('div');
     wrap.innerHTML = `
       <button id="cbFab" class="cb-fab" aria-label="Open FraudShield Assistant" aria-expanded="false">
-        <span id="cbFabIcon">🛡️</span><span class="cb-fab__dot" id="cbDot" hidden></span>
+        <span id="cbFabIcon">${FS_MARK}</span><span class="cb-fab__dot" id="cbDot" hidden></span>
       </button>
       <div id="cbPanel" class="cb-panel" role="dialog" aria-modal="false" aria-label="FraudShield Assistant chat">
         <div class="cb-header">
-          <span class="cb-header__icon">🛡️</span>
+          <span class="cb-header__icon">${FS_MARK}</span>
           <div class="cb-header__text">
             <p class="cb-header__title">FraudShield Assistant</p>
             <p class="cb-header__sub">Text · screenshots · QR codes — free and private</p>
@@ -1902,7 +1905,7 @@ document.addEventListener('DOMContentLoaded', () => {
       panel.classList.remove('cb-panel--open');
       fab.classList.remove('cb-fab--open');
       fab.setAttribute('aria-expanded', 'false');
-      fabIcon.textContent = '🛡️';
+      fabIcon.innerHTML = FS_MARK;
       if (speaker) speaker.stop();   // a closed chat does not keep talking
       if (ocr) ocr.release();        // and gives its memory back once any read in progress is done
     }
@@ -1920,7 +1923,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     root.innerHTML = `
       <div class="cb-header cb-header--big">
-        <span class="cb-header__icon">🛡️</span>
+        <span class="cb-header__icon">${FS_MARK}</span>
         <div class="cb-header__text">
           <p class="cb-header__title">FraudShield Assistant</p>
           <p class="cb-header__sub">Text · screenshots · QR codes — read on your device, never sent to our servers</p>

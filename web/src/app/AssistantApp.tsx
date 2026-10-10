@@ -6,6 +6,7 @@ import { Chips } from './components/Chips';
 import { Composer } from './components/Composer';
 import { Diagnostics } from './components/Diagnostics';
 import { Icon } from './components/Icon';
+import { Logo } from './components/Logo';
 import { LinkVerdictCard, MessageVerdictCard } from './components/VerdictCard';
 import { createAppOps } from './appOps';
 import { useChat } from './hooks/useChat';
@@ -83,7 +84,7 @@ export function AssistantApp(props: UseChatOptions & { nameModel?: Pick<NameMode
     <>
       <a className="skip-link" href="#message">Skip to the message box</a>
       <header className="site-header">
-        <a className="brand" href="index.html"><Icon name="shield" size={22} /><span>FraudShield</span></a>
+        <a className="brand" href="index.html" aria-label="FraudShield home"><Logo size={30} ground="dark" /><span>Fraud<span className="brand__accent">Shield</span></span></a>
         <nav className="nav-inline" aria-label="Main"><ul>{NAV.map(([label, href]) => <li key={href}><a href={href}>{label}</a></li>)}</ul></nav>
         <a className="header-call" href="tel:1930"><Icon name="phone" size={18} /><span>Call 1930</span></a>
         <details className="menu">

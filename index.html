@@ -20,7 +20,7 @@
   <meta property="og:site_name"   content="FraudShield">
   <meta property="og:title"       content="FraudShield — India's Frontline Against Digital Fraud">
   <meta property="og:description" data-tpl="Indians reported losing {{loss_2025_cr|inr_crore}} to digital fraud in 2025. Know the facts, know the law, know how to recover. Free. No login. Call 1930." content="Indians reported losing ₹22,495 Crore to digital fraud in 2025. Know the facts, know the law, know how to recover. Free. No login. Call 1930.">
-  <meta property="og:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/icon-512.png">
+  <meta property="og:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/og-image.png">
   <meta property="og:locale"      content="en_IN">
 
   <!-- Twitter Card -->
@@ -28,7 +28,7 @@
   <meta name="twitter:site"        content="@FraudShieldIN">
   <meta name="twitter:title"       content="FraudShield — India's Frontline Against Digital Fraud">
   <meta name="twitter:description" data-tpl="{{loss_2025_cr|inr_cr}} reported lost in 2025, about one case every {{seconds_per_case_2025}} seconds. Know the law. Call 1930 free." content="₹22,495 Cr reported lost in 2025, about one case every 11 seconds. Know the law. Call 1930 free.">
-  <meta name="twitter:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/icon-512.png">
+  <meta name="twitter:image"       content="https://azlanabyssal-cloud.github.io/fraudshield/icons/og-image.png">
 
   <!-- Schema.org structured data -->
   <script type="application/ld+json">
@@ -42,7 +42,7 @@
     "publisher": {
       "@type": "Organization",
       "name": "FraudShield",
-      "logo": { "@type": "ImageObject", "url": "https://azlanabyssal-cloud.github.io/fraudshield/icons/icon-512.png" }
+      "logo": { "@type": "ImageObject", "url": "https://azlanabyssal-cloud.github.io/fraudshield/icons/og-image.png" }
     },
     "potentialAction": {
       "@type": "SearchAction",
@@ -60,6 +60,7 @@
   <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0B1F3A">
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
@@ -579,7 +580,7 @@
 
     /* Shield — clean rise, no rotation, no scale bounce */
     .intro-shield{
-      font-size:clamp(1.8rem,4.5vw,3rem);opacity:0;transform:translateY(10px);
+      width:clamp(2.6rem,6vw,3.8rem);height:auto;opacity:0;transform:translateY(10px);
       animation:intro-rise .6s .82s ease-out forwards;
     }
 
@@ -714,7 +715,7 @@
 
 <!-- CINEMATIC INTRO OVERLAY — FraudShield film-title entrance -->
 <div class="intro-overlay" id="introOverlay" aria-hidden="true" role="presentation">
-  <span class="intro-shield" aria-hidden="true">🛡️</span>
+  <img class="intro-shield" src="icons/logo-mark-light.svg" width="48" height="48" alt="">
   <div class="intro-line-top" aria-hidden="true"></div>
   <p class="intro-title">Fraud<span>Shield</span></p>
   <div class="intro-line-bot" aria-hidden="true"></div>
@@ -744,14 +745,14 @@
 <nav id="navbar" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo" aria-label="FraudShield Home">
-      <span aria-hidden="true">🛡️</span>
+      <img class="nav-logo__mark" src="icons/logo-mark.svg" width="30" height="30" alt="">
       <span>Fraud<span class="nav-logo__accent">Shield</span></span>
     </a>
     <ul class="nav-links" role="list">
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="data.html">The Data</a></li>
       <li><a href="tips.html">Protect Yourself</a></li>
-      <li><a href="assistant.html">🤖 Assistant</a></li>
+      <li><a href="assistant.html">Assistant</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="report.html" class="nav-cta">Report Fraud</a></li>
     </ul>
@@ -767,7 +768,7 @@
   <a href="index.html" class="active">Home</a>
   <a href="data.html">The Data</a>
   <a href="tips.html">Protect Yourself</a>
-  <a href="assistant.html">🤖 Assistant</a>
+  <a href="assistant.html">Assistant</a>
   <a href="about.html">About</a>
   <a href="report.html" class="mobile-nav__cta">Report Fraud</a>
 </div>
@@ -821,7 +822,7 @@
       You are not alone — help is one free call away.
     </p>
     <div class="hero-buttons">
-      <a href="tips.html" class="btn-primary" data-snd="click" data-magnetic>🛡️ Protect Yourself Now</a>
+      <a href="tips.html" class="btn-primary" data-snd="click" data-magnetic>Protect Yourself Now</a>
       <a href="report.html" class="btn-outline-white" data-snd="click">📋 Report Your Fraud</a>
     </div>
     <div class="hero-emergency-bar">
@@ -832,7 +833,7 @@
   </div>
 
   <div class="creature c-shield" role="img" aria-label="Kavach — your digital armour mascot" data-snd="boing">
-    <div class="creature-tip">Kavach! 🛡️ मैं आपकी रक्षा करता हूँ — I protect you</div>
+    <div class="creature-tip">Kavach! मैं आपकी रक्षा करता हूँ — I protect you</div>
     <!-- @gen:creature_shield -->
 <svg class="cr-svg" viewBox="0 0 120 140" aria-hidden="true" focusable="false" data-rig="shield"><defs><linearGradient id="kv-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa24d"/><stop offset=".5" stop-color="#E85D04"/><stop offset="1" stop-color="#bd4400"/></linearGradient><radialGradient id="kv-glow" cx=".35" cy=".25" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><ellipse class="cr-shadow" cx="60" cy="134" rx="30" ry="5" fill="#0B1F3A" opacity=".26"/><g class="cr-arm-l"><ellipse cx="13" cy="84" rx="8" ry="6" fill="#c24a00" transform="rotate(-20 13 84)"/></g><g class="cr-arm-r"><ellipse cx="107" cy="84" rx="8" ry="6" fill="#c24a00" transform="rotate(20 107 84)"/></g><g class="cr-body"><path d="M60 12C40 12 22 20 18 34C16 44 17 60 19 74C23 100 40 118 60 126C80 118 97 100 101 74C103 60 104 44 102 34C98 20 80 12 60 12Z" fill="url(#kv-body)"/><path d="M60 12C40 12 22 20 18 34C16 44 17 60 19 74C23 100 40 118 60 126C80 118 97 100 101 74C103 60 104 44 102 34C98 20 80 12 60 12Z" fill="url(#kv-glow)"/><path d="M60 22C46 22 32 28 29 38C27 48 28 60 30 72C33 92 46 106 60 113C74 106 87 92 90 72C92 60 93 48 91 38C88 28 74 22 60 22Z" fill="none" stroke="#fff" stroke-opacity=".34" stroke-width="2"/><g class="cr-eye" data-cx="47" data-cy="56" data-rx="9.5" data-ry="11" data-pr="5.4"><ellipse cx="47" cy="56" rx="9.5" ry="11" fill="#fff"/><g class="cr-pupil"><circle cx="47" cy="56" r="5.4" fill="#0B1F3A"/><circle cx="49.2" cy="53.7" r="1.9" fill="#fff"/><circle cx="45.3" cy="58.2" r="0.9" fill="#fff" opacity=".75"/></g><ellipse class="cr-lid" cx="47" cy="56" rx="10.3" ry="11.8" fill="#f06e17"/></g><g class="cr-eye" data-cx="73" data-cy="56" data-rx="9.5" data-ry="11" data-pr="5.4"><ellipse cx="73" cy="56" rx="9.5" ry="11" fill="#fff"/><g class="cr-pupil"><circle cx="73" cy="56" r="5.4" fill="#0B1F3A"/><circle cx="75.2" cy="53.7" r="1.9" fill="#fff"/><circle cx="71.3" cy="58.2" r="0.9" fill="#fff" opacity=".75"/></g><ellipse class="cr-lid" cx="73" cy="56" rx="10.3" ry="11.8" fill="#f06e17"/></g><ellipse class="cr-cheek" cx="35" cy="74" rx="6.5" ry="3.8" fill="#ff5a1a" opacity=".55"/><ellipse class="cr-cheek" cx="85" cy="74" rx="6.5" ry="3.8" fill="#ff5a1a" opacity=".55"/><g class="cr-mouth"><path class="cr-mouth-open" d="M51 75 Q60 89.7 69 75 Q60 73.8 51 75Z" fill="#7a1f00"/><path class="cr-smile" d="M51 75 Q60 82 69 75" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><ellipse class="cr-tongue" cx="60" cy="83.4" rx="3.8" ry="2.4" fill="#ff7a8a"/></g><g opacity=".9"><circle cx="60" cy="100" r="4.6" fill="#fff"/><path d="M57.6 102.5h4.8l1.6 9h-8z" fill="#fff"/></g></g></svg>
 <!-- @/gen:creature_shield -->
@@ -1044,7 +1045,7 @@
 <section class="stats-section" id="stat-counters">
   <!-- CREATURE 3: Sankhya (संख्या = number/data in Hindi) — tracks every crore lost -->
   <div class="creature c-bot" role="img" aria-label="Sankhya — data tracker mascot" data-snd="beep">
-    <div class="creature-tip">Sankhya 🤖 संख्या — I count every crore lost</div>
+    <div class="creature-tip">Sankhya संख्या — I count every crore lost</div>
     <!-- @gen:creature_bot -->
 <svg class="cr-svg" viewBox="0 0 120 140" aria-hidden="true" focusable="false" data-rig="bot"><defs><linearGradient id="sk-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5a9a"/><stop offset=".5" stop-color="#173a69"/><stop offset="1" stop-color="#0B1F3A"/></linearGradient><radialGradient id="sk-screen" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#0e2a4a"/><stop offset="1" stop-color="#050f1d"/></radialGradient></defs><ellipse class="cr-shadow" cx="60" cy="134" rx="28" ry="5" fill="#0B1F3A" opacity=".26"/><g class="cr-arm-l"><rect x="10" y="74" width="14" height="30" rx="7" fill="#173a69" transform="rotate(8 17 76)"/></g><g class="cr-arm-r"><rect x="96" y="74" width="14" height="30" rx="7" fill="#173a69" transform="rotate(-8 103 76)"/></g><g class="cr-body"><rect x="40" y="116" width="14" height="12" rx="5" fill="#0B1F3A"/><rect x="66" y="116" width="14" height="12" rx="5" fill="#0B1F3A"/><line x1="60" y1="30" x2="60" y2="16" stroke="#7f98b8" stroke-width="3" stroke-linecap="round"/><circle class="cr-ant" cx="60" cy="13" r="5" fill="#38e1ff"/><rect x="24" y="30" width="72" height="90" rx="22" fill="url(#sk-body)"/><rect x="24" y="30" width="72" height="90" rx="22" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/><circle cx="22" cy="62" r="5" fill="#7f98b8"/><circle cx="98" cy="62" r="5" fill="#7f98b8"/><rect x="33" y="40" width="54" height="46" rx="14" fill="url(#sk-screen)" stroke="#38e1ff" stroke-opacity=".35" stroke-width="1.5"/><g class="cr-eye" data-cx="48" data-cy="60" data-rx="7" data-ry="10" data-pr="5"><ellipse cx="48" cy="60" rx="7" ry="10" fill="#38e1ff"/><g class="cr-pupil"><circle cx="48" cy="60" r="5" fill="#eafcff"/><circle cx="50.0" cy="57.9" r="1.8" fill="#fff"/><circle cx="46.4" cy="62.0" r="0.8" fill="#fff" opacity=".75"/></g><ellipse class="cr-lid" cx="48" cy="60" rx="7.8" ry="10.8" fill="#050f1d"/></g><g class="cr-eye" data-cx="72" data-cy="60" data-rx="7" data-ry="10" data-pr="5"><ellipse cx="72" cy="60" rx="7" ry="10" fill="#38e1ff"/><g class="cr-pupil"><circle cx="72" cy="60" r="5" fill="#eafcff"/><circle cx="74.0" cy="57.9" r="1.8" fill="#fff"/><circle cx="70.4" cy="62.0" r="0.8" fill="#fff" opacity=".75"/></g><ellipse class="cr-lid" cx="72" cy="60" rx="7.8" ry="10.8" fill="#050f1d"/></g><g class="cr-mouth"><path class="cr-mouth-open" d="M50 76Q60 86 70 76Q60 74 50 76Z" fill="#38e1ff"/><path class="cr-smile" d="M50 75Q60 82 70 75" fill="none" stroke="#38e1ff" stroke-width="3" stroke-linecap="round"/></g><rect x="36" y="94" width="48" height="20" rx="8" fill="#06182e"/><text x="46" y="109" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#ff8a3d">₹</text><rect class="cr-bar b1" x="58" y="104" width="5" height="6" rx="1.5" fill="#38e1ff"/><rect class="cr-bar b2" x="66" y="100" width="5" height="10" rx="1.5" fill="#38e1ff"/><rect class="cr-bar b3" x="74" y="97" width="5" height="13" rx="1.5" fill="#ff8a3d"/></g></svg>
 <!-- @/gen:creature_bot -->
@@ -1652,7 +1653,7 @@
 <footer role="contentinfo">
   <div class="footer-inner">
     <div class="footer-col">
-      <p class="footer-logo">🛡️ FraudShield</p>
+      <p class="footer-logo"><img src="icons/logo-mark-light.svg" width="30" height="30" alt="">FraudShield</p>
       <p class="footer-tagline">Awareness. Prevention. Recovery.</p>
       <p class="footer-desc">An offline-first scam checker and first-hour guide for India. Free, no accounts, nothing you paste leaves your device. Built by Azlan at G. Pulla Reddy Engineering College, Kurnool, as his Community Service Project. Not a government body.</p>
     </div>
