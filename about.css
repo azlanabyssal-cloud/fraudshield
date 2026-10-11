@@ -164,9 +164,7 @@ html.lb-lock { overflow: hidden; }
   .lb__prev, .lb__next { top: auto; bottom: 1rem; margin-top: 0; } .lb__prev { left: 1rem; } .lb__next { right: 1rem; }
   .lb__img, .lb__stage { max-height: calc(100dvh - 14rem); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .csp-num::after, .csp-weeks::after, .csp-week, .csp-week__n, .csp-gap, .csp-rules li, .csp-sdg, .fw-open img, .lb, .lb__fig { transition: none !important; }
-}
+:where(html.motion-calm) .csp-num::after, :where(html.motion-calm) .csp-weeks::after, :where(html.motion-calm) .csp-week, :where(html.motion-calm) .csp-week__n, :where(html.motion-calm) .csp-gap, :where(html.motion-calm) .csp-rules li, :where(html.motion-calm) .csp-sdg, :where(html.motion-calm) .fw-open img, :where(html.motion-calm) .lb, :where(html.motion-calm) .lb__fig { transition: none !important; }
 
 /* ───── water: the rail, the 48 days, the wave dividers ───── */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -179,36 +177,30 @@ html.lb-lock { overflow: hidden; }
 .about-wave--tint::before, .about-wave--tint::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath fill='%23F8F6F1' d='M0 30Q300-10 600 30T1200 30V60H0Z'/%3E%3C/svg%3E"); }
 .about-wave--ink::before, .about-wave--ink::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath fill='%2306101f' d='M0 30Q300-10 600 30T1200 30V60H0Z'/%3E%3C/svg%3E"); }
 .about-wave--white::before, .about-wave--white::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0 30Q300-10 600 30T1200 30V60H0Z'/%3E%3C/svg%3E"); }
-@media (prefers-reduced-motion: no-preference) {
-  .about-wave::before { animation: wave-drift 16s linear infinite; }
-  .about-wave::after { animation: wave-drift 10s linear infinite reverse; }
-  @keyframes wave-drift { to { background-position-x: -1200px; } }
-}
+@keyframes wave-drift { to { background-position-x: -1200px; } }
+:where(html:not(.motion-calm)) .about-wave::before { animation: wave-drift 16s linear infinite; }
+:where(html:not(.motion-calm)) .about-wave::after { animation: wave-drift 10s linear infinite reverse; }
 
 /* the eight-week rail: a continuous column of water with a glowing front, driven by scroll */
 .csp-weeks.river-armed::after { transform: none; transition: none; bottom: auto; height: var(--head, 0px); background: repeating-linear-gradient(180deg, var(--orange) 0 14px, #ff9a4d 14px 28px); background-size: 100% 56px; }
 .csp-weeks.river-armed .csp-week { --k: clamp(0, calc(var(--s, 0) * 1.8 - .3), 1); opacity: var(--k); transform: translateY(calc((1 - var(--k)) * 22px)); transition: none; }
 .river-drop { position: absolute; left: 19px; top: var(--head, 0px); width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, #ffb27a 45%, var(--orange)); box-shadow: 0 0 22px 6px rgba(232,93,4,.6); opacity: var(--drop, 0); transition: opacity .25s ease; z-index: 2; pointer-events: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .csp-weeks.river-armed::after { animation: rail-flow 1.1s linear infinite; }
-  @keyframes rail-flow { to { background-position-y: 56px; } }
-  .river-drop { animation: drop-pulse 1.6s ease-in-out infinite; }
-  @keyframes drop-pulse { 50% { box-shadow: 0 0 30px 10px rgba(232,93,4,.75); transform: scale(1.12); } }
-}
+@keyframes rail-flow { to { background-position-y: 56px; } }
+@keyframes drop-pulse { 50% { box-shadow: 0 0 30px 10px rgba(232,93,4,.75); transform: scale(1.12); } }
+:where(html:not(.motion-calm)) .csp-weeks.river-armed::after { animation: rail-flow 1.1s linear infinite; }
+:where(html:not(.motion-calm)) .river-drop { animation: drop-pulse 1.6s ease-in-out infinite; }
 
 /* the 48 days: one row per week, filled by the same water, with a live readout of the day it has reached */
 .csp-river { --flow: 1; display: grid; grid-template-columns: minmax(0, 400px) 1fr; gap: 2.4rem; align-items: start; margin: 2.4rem 0 .6rem; }
 .csp-days { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
 .csp-day { --wkc: hsl(calc(10 + var(--w) * 5) 92% 56%); aspect-ratio: 1; position: relative; border-radius: 3px; background: var(--wkc); box-shadow: 0 0 12px color-mix(in srgb, var(--wkc) 55%, transparent); }
 .csp-river.river-armed .csp-day { background: color-mix(in srgb, var(--wkc) calc(var(--s, 0) * 100%), rgba(255,255,255,.07)); transform: scale(calc(.86 + .14 * var(--s, 0))); box-shadow: 0 0 calc(var(--s, 0) * 16px) color-mix(in srgb, var(--wkc) 60%, transparent); }
-@media (prefers-reduced-motion: no-preference) {
-  .csp-day.is-lit::after { content: ""; position: absolute; inset: 0; border: 2px solid var(--wkc); border-radius: 3px; animation: day-ring 900ms var(--mo-out, ease-out) forwards; pointer-events: none; }
-  @keyframes day-ring { from { opacity: .95; transform: scale(1); } to { opacity: 0; transform: scale(2.3); } }
-  .csp-readout__day.tick b { animation: ro-tick 260ms var(--mo-out, ease-out); }
-  @keyframes ro-tick { from { transform: translateY(8px); opacity: .4; } }
-  .csp-readout__bar i { background-size: 40px 100%; animation: bar-flow 1s linear infinite; }
-  @keyframes bar-flow { to { background-position-x: 40px; } }
-}
+@keyframes day-ring { from { opacity: .95; transform: scale(1); } to { opacity: 0; transform: scale(2.3); } }
+@keyframes ro-tick { from { transform: translateY(8px); opacity: .4; } }
+@keyframes bar-flow { to { background-position-x: 40px; } }
+:where(html:not(.motion-calm)) .csp-day.is-lit::after { content: ""; position: absolute; inset: 0; border: 2px solid var(--wkc); border-radius: 3px; animation: day-ring 900ms var(--mo-out, ease-out) forwards; pointer-events: none; }
+:where(html:not(.motion-calm)) .csp-readout__day.tick b { animation: ro-tick 260ms var(--mo-out, ease-out); }
+:where(html:not(.motion-calm)) .csp-readout__bar i { background-size: 40px 100%; animation: bar-flow 1s linear infinite; }
 .csp-readout { position: sticky; top: 120px; border-left: 2px solid var(--orange); padding-left: 1.5rem; min-height: 220px; display: flex; flex-direction: column; justify-content: center; }
 .csp-readout p { margin: 0 !important; }
 .csp-readout__k { font-family: 'JetBrains Mono', monospace; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--orange) !important; }
@@ -222,4 +214,4 @@ html.lb-lock { overflow: hidden; }
 .csp-readout__bar i { display: block; height: 100%; width: calc(var(--flow, 1) * 100%); background: repeating-linear-gradient(90deg, var(--orange) 0 20px, #ffb27a 20px 40px); }
 @media (max-width: 760px) { .csp-river { grid-template-columns: 1fr; gap: 1.6rem; } .csp-readout { min-height: 0; order: -1; top: 76px; background: rgba(6,16,31,.92); backdrop-filter: blur(6px); padding-top: .6rem; padding-bottom: .6rem; z-index: 3; } .csp-readout__day b { font-size: 3.2rem; } }
 @media (max-width: 560px) { .river-drop { left: 12px; } }
-@media (prefers-reduced-motion: reduce) { .csp-day, .river-drop { transition: none !important; } }
+:where(html.motion-calm) .csp-day, :where(html.motion-calm) .river-drop { transition: none !important; }

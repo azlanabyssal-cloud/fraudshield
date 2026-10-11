@@ -408,7 +408,7 @@
     .cr-joy{opacity:0;transition:opacity .2s ease}.c-star:hover .cr-joy{opacity:1}.c-star:hover .cr-eye{opacity:0}
     .creature--bouncing{pointer-events:none}
     .creature--paused *{animation-play-state:paused!important}
-    @media(prefers-reduced-motion:reduce){.creature *{animation:none!important}}
+    :where(html.motion-calm) .creature * {animation:none!important}
 
     /* ── MOBILE CREATURE OVERRIDES — placed AFTER all desktop rules so these win ── */
     @media(max-width:900px){
@@ -447,7 +447,7 @@
     .reveal--d3{transition-delay:.24s}
     .reveal--d4{transition-delay:.32s}
     /* "Reduce motion" asks for less movement, not for a page that does nothing: things still arrive as they are scrolled to, by fading, with no travel. */
-    @media(prefers-reduced-motion:reduce){.reveal{transform:none!important;transition:opacity .55s ease!important;transition-delay:0s!important}}
+    :where(html.motion-calm) .reveal {transform:none!important;transition:opacity .55s ease!important;transition-delay:0s!important}
 
     /* ══════════════════════════════════════
        READING PROGRESS BAR
@@ -470,14 +470,18 @@
     .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1.3rem;animation:hero-fade-in .8s ease both}
     @keyframes hero-fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
     /* The hero assembles as the entrance lifts: home.js adds hero-play at that moment. It used to start on load, so all of it played out
-       behind the entrance and was over before anyone saw it. Without script nothing is hidden, and nothing moves for reduced motion. */
-    @media (prefers-reduced-motion: no-preference){
-      .hero-play .hero-eyebrow{animation:hero-fade-in .85s var(--mo-out) both}
-      .hero-play .hero-h1{animation:hero-fade-in .85s .09s var(--mo-out) both}
-      .hero-play .hero-subtitle{animation:hero-fade-in .85s .2s var(--mo-out) both}
-      .hero-play .hero-buttons{animation:hero-fade-in .85s .31s var(--mo-out) both}
-      .hero-play .hero-emergency-bar{animation:hero-fade-in .85s .42s var(--mo-out) both}
-    }
+       behind the entrance and was over before anyone saw it. Without script nothing is hidden. When motion is calm it arrives by fading only. */
+    @keyframes hero-fade-only{from{opacity:0}to{opacity:1}}
+    html.hero-play .hero-eyebrow{animation:hero-fade-in .85s var(--mo-out) both}
+    html.hero-play .hero-h1{animation:hero-fade-in .85s .09s var(--mo-out) both}
+    html.hero-play .hero-subtitle{animation:hero-fade-in .85s .2s var(--mo-out) both}
+    html.hero-play .hero-buttons{animation:hero-fade-in .85s .31s var(--mo-out) both}
+    html.hero-play .hero-emergency-bar{animation:hero-fade-in .85s .42s var(--mo-out) both}
+    html.hero-play.motion-calm .hero-eyebrow{animation:hero-fade-only .7s both}
+    html.hero-play.motion-calm .hero-h1{animation:hero-fade-only .7s .08s both}
+    html.hero-play.motion-calm .hero-subtitle{animation:hero-fade-only .7s .16s both}
+    html.hero-play.motion-calm .hero-buttons{animation:hero-fade-only .7s .24s both}
+    html.hero-play.motion-calm .hero-emergency-bar{animation:hero-fade-only .7s .32s both}
 
     /* ══════════════════════════════════════
        IN THE NEWS SECTION
@@ -674,14 +678,21 @@
       animation:intro-rise calc(.5s * var(--k)) calc(1.4s * var(--k)) ease forwards;
     }
 
-    /* A person who has asked their device for less motion still gets the entrance, as one still frame: nothing moves, it is held
-       for a moment and lifts. (Skipping it for them would have been the easy way to be wrong about "every time".) */
-    @media (prefers-reduced-motion: reduce){
-      .intro-overlay{animation:intro-fallback-exit .3s 1.8s ease forwards}
-      .intro-line-top,.intro-line-bot,.intro-author::after{animation:none;transform:none;will-change:auto}
-      .intro-shield,.intro-tag,.intro-author,.intro-skip{animation:none;opacity:1;transform:none;will-change:auto}
-      .intro-title::after{display:none}
-    }
+    /* Calm motion (the device asks for less, or the visitor switched motion off) still gets the entrance, as a sequence of fades: nothing
+       travels, scales or wipes. The shield, the name, the line, the tagline and the signature arrive one after another, are held, and lift. */
+    @keyframes intro-fade{from{opacity:0}to{opacity:1}}
+    @keyframes intro-uncover{to{opacity:0}}
+    html.motion-calm .intro-overlay{animation:intro-fallback-exit .5s 3s ease forwards}
+    html.motion-calm .intro-shield{transform:none;animation:intro-fade .7s .15s ease-out forwards}
+    html.motion-calm .intro-line-top,html.motion-calm .intro-line-bot{transform:none;opacity:0;animation:intro-fade .7s .45s ease-out forwards}
+    html.motion-calm .intro-line-bot{animation-delay:.6s}
+    html.motion-calm .intro-title::after{transform:none;animation:intro-uncover .9s .4s ease-out forwards}
+    html.motion-calm .intro-tag{transform:none;animation:intro-fade .8s 1.2s ease-out forwards}
+    html.motion-calm .intro-author{transform:none;animation:intro-fade .8s 1.7s ease-out forwards}
+    html.motion-calm .intro-author::after{transform:none;opacity:0;animation:intro-fade .8s 2.1s ease-out forwards}
+    html.motion-calm .intro-skip{transform:none;animation:intro-fade .6s 1.4s ease-out forwards}
+    .intro-calm-note{display:none}
+    html.motion-calm .intro-calm-note{display:block;position:absolute;left:1.2rem;right:1.2rem;bottom:3.7rem;text-align:center;font-family:'DM Sans',sans-serif;font-size:.74rem;line-height:1.5;color:#B7C4D8;opacity:0;animation:intro-fade .8s 1.5s ease-out forwards}
 
     /* ── AP-STYLE PREMIUM REFINEMENTS ──────────────────────
        Precision over flash: measured timing, editorial scale,
@@ -802,6 +813,7 @@
   <div class="intro-line-bot" aria-hidden="true"></div>
   <p class="intro-tag">India's Frontline Against Digital Fraud</p>
   <p class="intro-author"><span class="intro-by">by</span> Azlan</p>
+  <span class="intro-calm-note">Motion is reduced on this device. You can turn it on at the top of the page.</span>
   <span class="intro-skip">Tap to skip</span>
 </div>
 
@@ -1780,6 +1792,7 @@
   </div>
   <div class="footer-bottom">
     <p>Sources: NCRB Crime in India 2024 · MHA replies in Parliament (as reported) · NPCI monthly data · RBI directions, June 2026 · PIB</p>
+    <p><button type="button" class="motion-toggle" data-motion-toggle aria-pressed="true"><span data-motion-label>Motion on</span></button></p>
     <p>© 2026 Shaik Mohammad Azlan Ahmed. All rights reserved. · FraudShield, built door to door in Kurnool · National Cyber Crime Helpline: <a href="tel:1930" style="color:var(--orange);text-decoration:none" data-snd="click">1930</a></p>
   </div>
 </footer>

@@ -57,7 +57,7 @@ test('the page wires the scene in, caches it offline, leaves no photo in the her
 
 test('the stylesheet honours reduced motion and uses no backdrop-filter', () => {
   const css = fs.readFileSync(path.join(ROOT, 'hero-scene.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-  assert.match(css, /prefers-reduced-motion: reduce/); assert.match(css, /\.hs--still/);
+  assert.match(css, /html\.motion-calm/); assert.match(css, /\.hs--still/); assert.doesNotMatch(css, /prefers-reduced-motion/);
   assert.ok(!/backdrop-filter/.test(css));
 });
 

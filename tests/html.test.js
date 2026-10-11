@@ -49,9 +49,12 @@ test('every --mo- token the pages and stylesheets use is defined in motion.css',
 
 test('the motion layer travels only for people who have not asked for less, and smooth scrolling is switched off for those who have', () => {
   const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8'), layer = css.slice(css.indexOf('MOTION LAYER'));
-  assert.match(layer, /@media \(prefers-reduced-motion: reduce\) \{ html \{ scroll-behavior: auto; \}/);
-  const spring = layer.indexOf('var(--mo-snappy)'), guard = layer.indexOf('@media (prefers-reduced-motion: no-preference)');
-  assert.ok(guard > 0 && spring > guard, 'spring transitions sit inside the no-preference block');
+  assert.match(layer, /html:where\(\.motion-calm\) \{ scroll-behavior: auto; \}/);
+  const spring = layer.indexOf('var(--mo-snappy)'), guard = layer.indexOf(':where(html:not(.motion-calm))');
+  assert.ok(guard > 0 && guard < spring, 'spring transitions are only for motion that is not calm');
+  const bare = css.replace(/\/\*[\s\S]*?\*\//g, ''), net = bare.indexOf('@media (prefers-reduced-motion: reduce)');
+  assert.ok(net > 0, 'the no-script safety net exists');
+  assert.doesNotMatch(bare.slice(0, net) + bare.slice(bare.indexOf('}\n}', net) + 3), /prefers-reduced-motion/, 'the stylesheet reads the page decision, not the device setting, except for a page with no script');
   assert.match(layer, /scroll-padding-top: 84px/);
 });
 

@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initArrivals() {
     if (document.getElementById('heroScene')) return;   // the home page has its own, older choreography
     if (!('IntersectionObserver' in window)) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Calm is not still: the arrivals run, and the stylesheet makes them a fade with no travel.
     const picks = '.fraud-card, .cm-card, .chart-card, .evo-era, .section-head, .golden-rule, .victim-section, .form-card, .action-box, .accordion-item, .assistant-frame, .about-card, .about-person, .fw-photo, .about-section h2, .about-lead, .share-card';
     const els = Array.from(document.querySelectorAll(picks)).filter(el => !el.closest('.csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .csp-nums, .share-bars'));
     if (!els.length) return;
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initCampaign() {
     const blocks = document.querySelectorAll('.csp-nums, .csp-weeks, .csp-gaps, .csp-sdgs, .csp-rules, .share-bars');
     if (!blocks.length) return;
-    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const calm = (window.FSMotion ? window.FSMotion.calm : !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches));
     if (!('IntersectionObserver' in window) || calm) return;
     const Motion = window.FraudShieldMotion, River = window.FraudShieldRiver;
     const ease = Motion ? Motion.bezier.apply(null, Motion.CURVES.out) : t => t * (2 - t);
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (root.hidden) return;
       root.classList.remove('is-open'); setInert(false); document.documentElement.classList.remove('lb-lock');
       const done = () => { root.hidden = true; img.removeAttribute('src'); };
-      const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const calm = (window.FSMotion ? window.FSMotion.calm : !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches));
       if (calm) done(); else setTimeout(done, 260);
       if (opener) opener.focus();
     }
@@ -607,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // A chart is drawn when it scrolls into view (or its tab opens), so its entrance is seen and not spent off-screen.
     // Under Reduce Motion, or without IntersectionObserver, it is drawn at once and does not animate.
-    const calm = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const calm = !!(window.FSMotion ? window.FSMotion.calm : !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches));
     if (calm) Chart.defaults.animation = false;
     else Chart.defaults.animation = { duration: 1400, easing: 'easeOutQuart', delay: ctx => (ctx.type === 'data' && ctx.mode === 'default' ? ctx.dataIndex * 90 : 0) };
     const whenSeen = (id, make) => {

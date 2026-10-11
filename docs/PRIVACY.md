@@ -20,6 +20,8 @@ and how to erase it. It is a description of the design and of what the tests che
 | sessionStorage | `fs_ops_v1` | diagnostics: counts of results and timings; never text, links, numbers or file names ([OBSERVABILITY.md](OBSERVABILITY.md)) | closing the tab, or the erase button |
 | localStorage | `fs_voice_consent_v1` | that you chose cloud speech recognition, if you did | the erase button |
 | localStorage | `fs_cb_seen` | that you have seen the chat button (hides a notification dot) | the erase button |
+| localStorage | `fs_motion` | the Motion switch: `on` or `off`, if you pressed it. A preference, not personal data | the browser's site-data controls |
+| sessionStorage | `fs_intro_seen` | that the home page's entrance has played in this tab, so later ones are the short cut | closing the tab |
 | Service worker cache | `fraudshield-v*`, `fraudshield-img-v1` | the site's own pages, scripts, fonts and photos, so it works offline | the browser's site-data controls |
 | IndexedDB | written by the OCR engine | its language data, so it need not be unpacked again; not personal data | the browser's site-data controls |
 

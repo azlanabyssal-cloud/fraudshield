@@ -25,7 +25,7 @@ test('every `npm run` command the documents mention is a real script', () => {
 });
 
 test('the number of ADRs, tests and the results quoted at the top of the README match the repository', () => {
-  const adrs = (read('docs/DECISIONS.md').match(/^## ADR-\d{4}:/gm) || []).length, words = { 22: 'twenty-two', 23: 'twenty-three', 24: 'twenty-four', 25: 'twenty-five' };
+  const adrs = (read('docs/DECISIONS.md').match(/^## ADR-\d{4}:/gm) || []).length, words = { 22: 'twenty-two', 23: 'twenty-three', 24: 'twenty-four', 25: 'twenty-five', 26: 'twenty-six' };
   assert.ok(read('README.md').includes(words[adrs] || '??'), `README says a number of ADRs other than ${adrs}`); assert.ok(read('docs/ARCHITECTURE.md').includes(`(${adrs} ADRs)`), 'ARCHITECTURE.md ADR count');
   const ids = [...read('docs/DECISIONS.md').matchAll(/^## ADR-(\d{4}):/gm)].map(m => +m[1]); ids.forEach((id, i) => assert.equal(id, i + 1, 'ADRs are numbered in order without gaps'));
   const lin = JSON.parse(read('mlops/lineage.json')); assert.ok(read('README.md').includes(lin.model.sha256.slice(0, 12)), 'the model hash quoted in the README is the shipped one'); assert.ok(read('docs/BENCHMARKS.md').includes(lin.model.sha256.slice(0, 12)));
@@ -38,6 +38,8 @@ test('the privacy document lists every key the page stores, and the erase button
   const erased = [...(src.match(/const LOCAL_KEYS = \[([^\]]*)\], PERSISTENT_KEYS = \[([^\]]*)\]/) || []).slice(1).join(',').matchAll(/'([a-z_0-9]+)'/g)].map(m => m[1]).concat(src.includes('PERSISTENT_KEYS = [VOICE_CONSENT_KEY') ? ['fs_voice_consent_v1'] : []);
   assert.deepEqual(erased.sort(), ['fs_cb_seen', 'fs_cb_state', 'fs_ops_v1', 'fs_voice_consent_v1']);
   for (const m of src.matchAll(/(?:sessionStorage|localStorage)\.(?:getItem|setItem)\('([a-z_0-9]+)'/g)) assert.ok(doc.includes(m[1]), `${m[1]} is stored but not in PRIVACY.md`);
+  // the files that run before the page does store things too
+  for (const f of ['lib/intro-gate.js', 'home.js']) for (const m of read(f).matchAll(/(?:sessionStorage|localStorage|store)\.(?:getItem|setItem|removeItem)\('([a-z_0-9]+)'/g)) assert.ok(doc.includes(m[1]), `${f}: ${m[1]} is stored but not in PRIVACY.md`);
 });
 
 test('every diagram in the architecture document is well-formed: no double quotes inside a label, balanced brackets, a known diagram type (the real parser is run by `npm run audit:docs`)', () => {

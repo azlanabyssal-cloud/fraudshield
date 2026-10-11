@@ -66,14 +66,16 @@ test('without script every item is in the page: the extras are only hidden by a 
 
 test('a class the page puts on <html> before first paint is used for nothing else: a name that another rule already styles once made the whole document absolutely positioned', () => {
   const gate = read('lib/intro-gate.js');
-  const added = [...gate.matchAll(/classList\.add\('([\w-]+)'\)/g)].map(m => m[1]);
-  assert.ok(added.length > 0);
-  const css = ['style.css', 'motion.css', 'hero-scene.css', 'about.css'].map(read).concat(read('index.html').match(/<style>[\s\S]*?<\/style>/g) || []).join('\n');
-  for (const cls of new Set(added)) {
-    const rules = css.split('\n').filter(l => new RegExp('\\.' + cls + '(?![\\w-])').test(l));
-    assert.ok(rules.length > 0, `${cls} is added but nothing uses it`);
-    assert.ok(rules.every(l => new RegExp('^\\s*\\.' + cls + '\\s+\\.intro-overlay\\s*\\{').test(l)), `${cls} is styled by a rule other than one that scopes it to the entrance: ${rules.join(' | ')}`);
-  }
+  const added = [...new Set([...gate.matchAll(/classList\.add\('([\w-]+)'\)/g)].map(m => m[1]))];
+  assert.deepEqual(added.sort(), ['intro-short', 'motion-calm', 'motion-known']);
+  const css = ['style.css', 'motion.css', 'hero-scene.css', 'about.css'].map(read).concat(read('index.html').match(/<style>[\s\S]*?<\/style>/g) || []).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
+  // intro-short: only ever as a scope for the entrance
+  for (const l of css.split('\n').filter(l => /\.intro-short(?![\w-])/.test(l))) assert.match(l, /^\s*\.intro-short\s+\.intro-overlay\s*\{/, 'intro-short styles only the entrance: ' + l);
+  // motion-known: only the no-script safety net, which reads it as a negation
+  for (const l of css.split('\n').filter(l => /\.motion-known(?![\w-])/.test(l))) assert.match(l, /html:not\(\.motion-known\)/, 'motion-known is only ever negated: ' + l);
+  // motion-calm: always on the root, in one of the few spellings that cannot be mistaken for a descendant of something else
+  const SPELLINGS = /(?:html\.motion-calm|html:where\(\.motion-calm\)|:where\(html\.motion-calm\)|html:not\(\.motion-calm\)|:where\(html:not\(\.motion-calm\)\)|html:where\(:not\(\.motion-calm\)\)|html\.hero-play\.motion-calm)/g;
+  for (const l of css.split('\n').filter(l => /\.motion-calm(?![\w-])/.test(l))) assert.doesNotMatch(l.replace(SPELLINGS, ''), /\.motion-calm/, 'motion-calm is only ever on the root element: ' + l.slice(0, 120));
 });
 
 test('the story keeps its original sound: the file has an audio track, the captions carry the one spoken line, and the page does not claim it is silent', () => {
@@ -99,62 +101,98 @@ test('the assistant page is the private page: nothing on it comes from a third p
   assert.match(h, /page-hero page-hero--compact/, 'the heading leaves room for the chat on a phone');
 });
 
-/* ---- the entrance plays every time the home page is loaded ---- */
-function runGate({ pathname, store, reduced = false }) {
+/* ---- the page's one decision about motion, and the entrance that plays every time the home page is loaded ---- */
+function runGate({ pathname = '/fraudshield/', session = {}, local = {}, os = false, blocked = false }) {
   const vm = require('node:vm'), fsx = require('node:fs');
-  const classes = new Set(), listeners = {}, style = { cssText: '' }, reloads = [];
-  const sessionStorage = store === null ? { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } }
-    : { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = v; } };
-  const window = { location: { pathname, reload: () => reloads.push(1) }, sessionStorage, matchMedia: () => ({ matches: reduced }), addEventListener: (t, f) => { listeners[t] = f; } };
-  const document = { documentElement: { classList: { add: c => classes.add(c), contains: c => classes.has(c) }, style } };
+  const classes = new Set(), winListeners = {}, docListeners = {}, style = { cssText: '' }, reloads = [];
+  const mk = obj => blocked ? { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); }, removeItem() { throw new Error('blocked'); } }
+    : { getItem: k => (k in obj ? obj[k] : null), setItem: (k, v) => { obj[k] = String(v); }, removeItem: k => { delete obj[k]; } };
+  const elements = [];
+  const window = { location: { pathname, reload: () => reloads.push(1) }, sessionStorage: mk(session), localStorage: mk(local),
+    matchMedia: q => ({ matches: os && /reduce/.test(q) }), addEventListener: (t, f) => { winListeners[t] = f; } };
+  const document = { documentElement: { classList: { add: c => classes.add(c), contains: c => classes.has(c) }, style },
+    addEventListener: (t, f) => { docListeners[t] = f; }, querySelectorAll: () => elements };
   vm.runInNewContext(fsx.readFileSync(path.join(ROOT, 'lib', 'intro-gate.js'), 'utf8'), { window, document });
-  return { classes, listeners, style, reloads };
+  return { classes, winListeners, docListeners, style, reloads, window, elements, local };
 }
+const fakeButton = () => { const l = {}, attrs = {}, label = { textContent: '' }; return { attrs, label, listeners: l, getAttribute: k => attrs[k], setAttribute: (k, v) => { attrs[k] = v; }, querySelector: () => label, addEventListener: (t, f) => { l[t] = f; } }; };
+
+test('motion: the device setting is the default, the visitor can override it either way, and the page reads one decision', () => {
+  const rows = [
+    { os: false, local: {}, calm: false }, { os: true, local: {}, calm: true },
+    { os: true, local: { fs_motion: 'on' }, calm: false },      // the visitor switched motion on despite the device
+    { os: false, local: { fs_motion: 'off' }, calm: true },     // or off despite the device
+    { os: true, local: { fs_motion: 'nonsense' }, calm: true }, // an unknown value is not a choice
+  ];
+  for (const r of rows) {
+    const g = runGate({ os: r.os, local: r.local });
+    assert.equal(g.window.FSMotion.calm, r.calm, JSON.stringify(r));
+    assert.equal(g.classes.has('motion-calm'), r.calm); assert.ok(g.classes.has('motion-known'));
+  }
+  const blocked = runGate({ os: true, blocked: true });
+  assert.equal(blocked.window.FSMotion.calm, true, 'with storage blocked the device setting stands');
+});
+
+test('motion: the switch shows the state, stores a choice, and reloads so the page is consistent', () => {
+  const g = runGate({ os: true }), M = g.window.FSMotion, b = fakeButton();
+  M.bind(b);
+  assert.equal(b.label.textContent, 'Motion off'); assert.equal(b.attrs['aria-pressed'], 'false');
+  assert.match(b.attrs.title, /device asks for reduced motion/);
+  b.listeners.click();
+  assert.equal(g.local.fs_motion, 'on'); assert.equal(g.reloads.length, 1);
+  const on = runGate({ os: false }); const b2 = fakeButton(); on.window.FSMotion.bind(b2);
+  assert.equal(b2.label.textContent, 'Motion on'); assert.equal(b2.attrs['aria-pressed'], 'true');
+  b2.listeners.click(); assert.equal(on.local.fs_motion, 'off');
+  // a switch present in the page when it has loaded is wired by the gate itself
+  const w = runGate({ os: false }); const b3 = fakeButton(); w.elements.push(b3); w.docListeners.DOMContentLoaded();
+  assert.equal(b3.label.textContent, 'Motion on');
+  // and binding the same element twice never doubles its handler
+  const once = runGate({}); const b4 = fakeButton(); once.window.FSMotion.bind(b4); once.window.FSMotion.bind(b4); assert.equal(Object.keys(b4.listeners).length, 1);
+});
 
 test('the entrance is a part of every load of the home page: the first is the full film, every later one the short cut, and none is skipped', () => {
-  const store = {};
-  const first = runGate({ pathname: '/fraudshield/', store });
+  const session = {};
+  const first = runGate({ pathname: '/fraudshield/', session });
   assert.equal(first.classes.has('intro-short'), false, 'the first entrance in a session is the full film');
   for (const where of ['/fraudshield/', '/fraudshield/index.html', '/']) {   // a reload, the logo from another page, the back button
-    const again = runGate({ pathname: where, store });
+    const again = runGate({ pathname: where, session });
     assert.equal(again.classes.has('intro-short'), true, where + ': a later entrance is the short cut');
-    assert.equal(again.classes.has('intro-off'), false, where + ': it is never switched off');
   }
-  const blocked = runGate({ pathname: '/fraudshield/', store: null });
-  assert.equal(blocked.classes.has('intro-short'), true, 'with storage blocked it still plays, as the short cut');
+  assert.equal(runGate({ pathname: '/fraudshield/', blocked: true }).classes.has('intro-short'), true, 'with storage blocked it still plays, as the short cut');
+  for (const os of [true, false]) assert.equal(runGate({ pathname: '/fraudshield/', os, session: {} }).classes.has('intro-short'), false, 'reduced motion does not skip it');
 });
 
 test('the entrance belongs to the home page: the other pages are left alone, and do not spend it', () => {
-  const store = {};
+  const session = {};
   for (const p of ['/fraudshield/tips.html', '/fraudshield/about.html', '/fraudshield/assistant.html']) {
-    const g = runGate({ pathname: p, store });
-    assert.equal(g.classes.size, 0, p);
-    assert.equal(Object.keys(g.listeners).length, 0, p + ': no listener');
+    const g = runGate({ pathname: p, session });
+    assert.ok(!g.classes.has('intro-short'), p); assert.equal(g.winListeners.pageshow, undefined, p + ': no back-forward handling');
+    assert.ok(g.classes.has('motion-known'), p + ': the motion decision is made on every page');
   }
-  assert.deepEqual(store, {}, 'a visit to another page does not use up the full film');
-  assert.equal(runGate({ pathname: '/fraudshield/', store }).classes.has('intro-short'), false, 'so the first home page after them still gets the full film');
+  assert.deepEqual(session, {}, 'a visit to another page does not use up the full film');
+  assert.equal(runGate({ pathname: '/fraudshield/', session }).classes.has('intro-short'), false, 'so the first home page after them still gets the full film');
 });
 
 test('back and forward: a copy of the home page handed back from the browser\'s store is loaded afresh, behind the navy field, and a normal load is not', () => {
-  const g = runGate({ pathname: '/fraudshield/', store: {} });
-  assert.equal(typeof g.listeners.pageshow, 'function');
-  g.listeners.pageshow({ persisted: false });
+  const g = runGate({ pathname: '/fraudshield/' });
+  assert.equal(typeof g.winListeners.pageshow, 'function');
+  g.winListeners.pageshow({ persisted: false });
   assert.equal(g.reloads.length, 0, 'an ordinary load is left alone');
-  g.listeners.pageshow({ persisted: true });
+  g.winListeners.pageshow({ persisted: true });
   assert.equal(g.reloads.length, 1, 'a restored copy is reloaded');
   assert.match(g.style.cssText, /background:\s*#0B1F3A/i, 'under the navy field, so no white frame shows between');
   assert.match(g.style.cssText, /visibility:\s*hidden/);
 });
 
-test('the entrance never goes missing for anyone: the reduced-motion version is a still frame that lifts, and the stylesheet has no switch that hides it', () => {
+test('the entrance never goes missing for anyone: calm motion is a sequence of fades, and nothing hides the entrance', () => {
   const css = read('index.html').match(/<style>[\s\S]*?<\/style>/g).join('\n');
   assert.doesNotMatch(css, /\.intro-off\b/, 'nothing hides the entrance');
-  const media = /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\s*\}/.exec(css.slice(css.indexOf('.intro-overlay{')));
-  assert.ok(media, 'a reduced-motion block follows the entrance rules');
-  assert.match(media[1], /\.intro-title::after\{display:none\}/, 'the name is shown at once');
-  assert.match(media[1], /\.intro-shield,\.intro-tag,\.intro-author,\.intro-skip\{animation:none;opacity:1/, 'every line is in place, with nothing moving');
+  const calm = css.split('\n').filter(l => /html\.motion-calm \.intro-/.test(l)).join('\n');
+  assert.ok(calm.length > 300, 'a calm version of the entrance exists');
+  assert.doesNotMatch(calm, /scale|translate|clip-path|rotate/, 'it fades; nothing travels, scales or wipes');
+  for (const part of ['intro-shield', 'intro-tag', 'intro-author', 'intro-title::after', 'intro-line-top']) assert.match(calm, new RegExp(part.replace('::', '::')), part + ' is covered');
   const home = read('home.js');
-  assert.match(home, /prefers-reduced-motion: reduce/, 'and it lifts after a short hold');
+  assert.match(home, /introCalm \? 2600/, 'and it is held long enough to be seen, then lifts');
   assert.doesNotMatch(home, /addEventListener\(\s*['"]touchstart['"]/, 'a tap is one click, so it cannot fall through to a control under the finger');
 });
 

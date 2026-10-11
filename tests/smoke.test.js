@@ -356,7 +356,7 @@ test('with "reduce motion" on, the hero lens drops its drift but still follows t
   } finally { p.close(); }
 });
 
-test('the hero has a motion switch: still on a device set to reduce motion, a click starts it, a second click holds it again, and the choice is remembered', async () => {
+test('the motion switch: calm on a device set to reduce motion, a click chooses motion and reloads, and the hero and the footer carry the same switch', async () => {
   const setup = w => {
     w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} });
     Object.defineProperty(w.HTMLElement.prototype, 'clientWidth', { get() { return 1000; }, configurable: true }); Object.defineProperty(w.HTMLElement.prototype, 'clientHeight', { get() { return 600; }, configurable: true });
@@ -364,19 +364,30 @@ test('the hero has a motion switch: still on a device set to reduce motion, a cl
   };
   const p = await loadPage('index.html', { settle: 600, setup });
   try {
-    const scene = p.document.getElementById('heroScene'), btn = p.document.querySelector('.hero-motion');
-    assert.ok(btn, 'the switch is in the hero'); assert.equal(btn.tagName, 'BUTTON'); assert.equal(btn.getAttribute('aria-label'), 'Background motion');
-    assert.equal(btn.getAttribute('aria-pressed'), 'false'); assert.ok(scene.classList.contains('hs--still')); assert.equal(btn.textContent, 'Motion off');
-    btn.click();
-    assert.equal(btn.getAttribute('aria-pressed'), 'true'); assert.equal(btn.textContent, 'Motion on');
-    assert.ok(!scene.classList.contains('hs--still') && scene.classList.contains('hs--live'), 'it runs, and the stylesheet lets it');
-    assert.ok(scene.querySelector('canvas.hs__motes'), 'the specks are drawn once it runs');
-    assert.equal(p.window.localStorage.getItem('fs_motion'), 'on');
-    btn.click();
-    assert.ok(scene.classList.contains('hs--still') && !scene.querySelector('canvas.hs__motes'), 'held again, specks removed');
-    assert.equal(p.window.localStorage.getItem('fs_motion'), 'off');
+    const root = p.document.documentElement, scene = p.document.getElementById('heroScene');
+    assert.ok(root.classList.contains('motion-calm') && root.classList.contains('motion-known'));
+    assert.ok(scene.classList.contains('hs--still'), 'the scene holds still');
+    assert.ok(!scene.querySelector('canvas.hs__motes'), 'no specks while calm');
+    const hero = p.document.querySelector('.hero-motion'), foot = p.document.querySelector('footer [data-motion-toggle]');
+    for (const b of [hero, foot]) {
+      assert.ok(b, 'a switch is there'); assert.equal(b.tagName, 'BUTTON'); assert.equal(b.getAttribute('aria-pressed'), 'false');
+      assert.match(b.textContent, /Motion off/);
+    }
+    assert.equal(hero.getAttribute('aria-label'), 'Background motion');
+    let reloads = 0; p.window.FSMotion.reload = () => { reloads++; };
+    hero.click();
+    assert.equal(p.window.localStorage.getItem('fs_motion'), 'on'); assert.equal(reloads, 1, 'the page reloads so everything agrees');
     assert.deepEqual(p.errors, []);
   } finally { p.close(); }
+  // and when the visitor has chosen motion, the same device setting no longer holds the page still
+  const q = await loadPage('index.html', { settle: 600, setup: w => { setup(w); w.localStorage.setItem('fs_motion', 'on'); } });
+  try {
+    const root = q.document.documentElement, scene = q.document.getElementById('heroScene');
+    assert.ok(!root.classList.contains('motion-calm'), 'the choice wins over the device');
+    assert.ok(!scene.classList.contains('hs--still') && scene.querySelector('canvas.hs__motes'), 'the scene runs and draws its specks');
+    assert.match(q.document.querySelector('.hero-motion').textContent, /Motion on/);
+    assert.deepEqual(q.errors, []);
+  } finally { q.close(); }
 });
 
 /* ---------- the living hero and the flowing steps, on the real home page ---------- */

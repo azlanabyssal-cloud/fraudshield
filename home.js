@@ -6,21 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
   var scene = window.FraudShieldHeroScene.mount(host), hero = host.parentElement;
   if (!scene || !hero) return;
 
-  /* A way to start and stop the background motion. A device set to "reduce motion" gets it still, as it asked; this lets a person on such a
-     device turn it on, and anyone pause it (moving content that cannot be paused fails WCAG 2.2.2). The choice is remembered on this device. */
-  var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches, saved = null;
-  try { saved = window.localStorage.getItem('fs_motion'); } catch (e) { /* storage blocked: the default stands */ }
-  var on = saved === 'on' ? true : saved === 'off' ? false : !calm;
-  scene.setMotion(on);
+  /* The motion switch, at the top of the hero (the footer of every page has the same one). It is the visitor's say over the device's
+     setting: lib/intro-gate.js holds the decision and reloads the page when it changes, so the scene, the entrance and every reveal agree.
+     It is also the pause control that moving content needs (WCAG 2.2.2). */
   var btn = document.createElement('button');
   btn.type = 'button'; btn.className = 'hero-motion'; btn.setAttribute('aria-label', 'Background motion');
-  function paintToggle() { btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? 'Motion on' : 'Motion off'; }
-  btn.addEventListener('click', function () {
-    on = !on; scene.setMotion(on); paintToggle();
-    try { window.localStorage.setItem('fs_motion', on ? 'on' : 'off'); } catch (e) { /* not remembered, still applied */ }
-  });
-  paintToggle();
+  btn.appendChild(document.createElement('span')).setAttribute('data-motion-label', '');
   hero.appendChild(btn);
+  if (window.FSMotion) window.FSMotion.bind(btn); else btn.hidden = true;
 });
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -64,10 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* Auto-dismiss once the last line has been drawn and held for a breath: the full film is 3.9 s, the short cut (every
-       entrance after the first in a session) half of that, and the still frame for reduced motion 1.6 s. */
+       entrance after the first in a session) half of that, and the calm version (fades only) 2.6 s. */
     var introShort = document.documentElement.classList.contains('intro-short');
-    var introStill = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(function() { dismissIntro(false); }, introStill ? 1600 : (introShort ? 1950 : 3900));
+    var introCalm = window.FSMotion ? window.FSMotion.calm : !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    setTimeout(function() { dismissIntro(false); }, introCalm ? 2600 : (introShort ? 1950 : 3900));
 
     /* A tap or click skips it and plays the sound. Only "click": a touchstart handler removed the overlay before the finger lifted,
        so the tap's own click landed on whatever control was under it. Escape and Enter skip it for a keyboard. */

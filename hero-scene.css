@@ -101,9 +101,7 @@
 }
 
 .hs--still *, .hs--still *::before, .hs--still *::after { animation: none !important; }
-@media (prefers-reduced-motion: reduce) {
-  .hero-scene:not(.hs--live), .hero-scene:not(.hs--live) * { animation: none !important; }
-}
+:where(html.motion-calm) .hero-scene:not(.hs--live), :where(html.motion-calm) .hero-scene:not(.hs--live) * { animation: none !important; }
 
 /* the switch: small, quiet, always in the first screen */
 .hero-motion {
@@ -120,10 +118,8 @@
 /* depth while the page scrolls past: the light and the grid move more slowly than the page, so the first screen has layers. Browsers
    without scroll-driven animations simply do without; reduced motion and a switched-off scene hold still. */
 @supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-scene:not(.hs--still) .hs__aurora { animation: hs-par-a linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
-    .hero-scene:not(.hs--still) .hs__grid   { animation: hs-par-g linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
-  }
+  :where(html:not(.motion-calm)) .hero-scene:not(.hs--still) .hs__aurora { animation: hs-par-a linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
+:where(html:not(.motion-calm)) .hero-scene:not(.hs--still) .hs__grid { animation: hs-par-g linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
 }
 @keyframes hs-par-a { to { transform: translate3d(0, 14vh, 0); } }
 @keyframes hs-par-g { to { transform: translate3d(0, 6vh, 0); } }

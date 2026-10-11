@@ -141,19 +141,21 @@ test('the viewer can go to actual size and back, and resets when you change phot
   } finally { p.close(); }
 });
 
-test('cards and headings arrive on scroll on the inner pages, and are simply there under Reduce Motion', async () => {
+test('cards and headings arrive on scroll on the inner pages, and under calm motion they arrive by fading with no travel', async () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+  const calmRule = /html:where\(\.motion-calm\)\.rv-on \.rv\s*\{([^}]*)\}/.exec(css);
+  assert.ok(calmRule, 'a calm rule for the arrivals exists');
+  assert.match(calmRule[1], /transform:\s*none/); assert.match(calmRule[1], /transition:\s*opacity/);
   for (const calm of [false, true]) {
     const p = await loadPage('tips.html', { settle: 300, setup: w => { stubObserver(w); if (calm) w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} }); } });
     try {
       const d = p.document, cards = d.querySelectorAll('.fraud-card');
       assert.ok(cards.length >= 6);
-      if (calm) { assert.ok(!d.documentElement.classList.contains('rv-on')); assert.equal(d.querySelectorAll('.rv').length, 0); }
-      else {
-        assert.ok(d.documentElement.classList.contains('rv-on')); assert.ok(cards[0].classList.contains('rv') && !cards[0].classList.contains('rv-in'));
-        const o = p.window.__seen.find(x => x.els.includes(cards[0])); o.cb([{ target: cards[0], isIntersecting: true, boundingClientRect: { bottom: 100 } }]);
-        assert.ok(cards[0].classList.contains('rv-in'));
-        o.cb([{ target: cards[1], isIntersecting: false, boundingClientRect: { bottom: -50 } }]); assert.ok(cards[1].classList.contains('rv-in'), 'a card already scrolled past is shown, not left invisible');
-      }
+      assert.equal(d.documentElement.classList.contains('motion-calm'), calm, 'the page knows which it is');
+      assert.ok(d.documentElement.classList.contains('rv-on')); assert.ok(cards[0].classList.contains('rv') && !cards[0].classList.contains('rv-in'));
+      const o = p.window.__seen.find(x => x.els.includes(cards[0])); o.cb([{ target: cards[0], isIntersecting: true, boundingClientRect: { bottom: 100 } }]);
+      assert.ok(cards[0].classList.contains('rv-in'));
+      o.cb([{ target: cards[1], isIntersecting: false, boundingClientRect: { bottom: -50 } }]); assert.ok(cards[1].classList.contains('rv-in'), 'a card already scrolled past is shown, not left invisible');
       assert.deepEqual(p.errors, []);
     } finally { p.close(); }
   }
