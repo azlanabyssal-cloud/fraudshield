@@ -150,12 +150,11 @@ Figures on the site cite official publications (I4C, RBI, PIB, NPCI, MHA, DoT, N
 
 ## Licence
 
-The code is under the [MIT licence](LICENSE): use it, change it, share it, keep the copyright notice. It comes with no warranty, and it is a study aid, not legal or financial advice.
+Copyright (c) 2026 Shaik Mohammad Azlan Ahmed. **All rights reserved.** The code, text, design, data files, pictures and film are original work and are not licensed for copying, modification, redistribution or hosting as a copy, in whole or in part, or for presenting as anyone else's work. Using the website as a visitor is free. See [LICENSE](LICENSE).
 
-The licence covers the code only. These keep their own terms:
+It is a study aid, not legal or financial advice.
 
-- the fonts in `fonts/` (SIL Open Font License 1.1) and the libraries in `vendor/` (each folder carries its licence file);
-- every picture and the film: `images/`, `media/` and `icons/install/`. They are not offered for reuse. Some are stock or generated images, the film is dramatised with generated scenes, and the photographs in `images/field/` show real people met during the project.
+Third-party parts keep their own terms: the fonts in `fonts/` (SIL Open Font License 1.1) and the libraries in `vendor/` (each folder carries its licence file). Some pictures are stock or generated images, the film is dramatised with generated scenes, and the photographs in `images/field/` show real people met during the project.
 
 ---
 

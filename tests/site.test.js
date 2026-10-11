@@ -220,3 +220,15 @@ test('every published field photo has recorded consent, a real stamp, a real fil
     const bytes = fs.readFileSync(file); assert.ok(!bytes.includes(Buffer.from('Exif')), 'no EXIF metadata (it can carry GPS coordinates)');
   }
 });
+
+test('the work is all rights reserved, and nothing on the site or in the assistant says otherwise or sends a visitor to the repository', () => {
+  const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
+  assert.match(read('LICENSE'), /All rights reserved/); assert.doesNotMatch(read('LICENSE'), /Permission is hereby granted|MIT License/);
+  assert.equal(JSON.parse(read('package.json')).license, 'UNLICENSED');
+  assert.match(read('README.md'), /All rights reserved/); assert.doesNotMatch(read('README.md'), /MIT licen[cs]e/);
+  for (const f of ['index.html', 'about.html', 'tips.html', 'data.html', 'report.html', 'assistant.html']) {
+    const h = read(f); assert.doesNotMatch(h, /github\.com\/azlanabyssal-cloud/, f + ': no link to the repository');
+    assert.match(h, /All rights reserved/, f + ': the footer says so');
+  }
+  assert.doesNotMatch(read('lib/knowledge.js').replace(/const REPO[^\n]*\n/, ''), /github\.com\/azlanabyssal-cloud|\bREPO\b\s*\+|href:\s*REPO/, 'the assistant does not link to the repository');
+});
