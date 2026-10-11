@@ -356,6 +356,29 @@ test('with "reduce motion" on, the hero lens drops its drift but still follows t
   } finally { p.close(); }
 });
 
+test('the hero has a motion switch: still on a device set to reduce motion, a click starts it, a second click holds it again, and the choice is remembered', async () => {
+  const setup = w => {
+    w.matchMedia = q => ({ matches: /prefers-reduced-motion: reduce/.test(q), media: q, addEventListener() {}, removeEventListener() {} });
+    Object.defineProperty(w.HTMLElement.prototype, 'clientWidth', { get() { return 1000; }, configurable: true }); Object.defineProperty(w.HTMLElement.prototype, 'clientHeight', { get() { return 600; }, configurable: true });
+    const ctx = new Proxy({}, { get: () => () => undefined, set: () => true }); w.HTMLCanvasElement.prototype.getContext = () => ctx;
+  };
+  const p = await loadPage('index.html', { settle: 600, setup });
+  try {
+    const scene = p.document.getElementById('heroScene'), btn = p.document.querySelector('.hero-motion');
+    assert.ok(btn, 'the switch is in the hero'); assert.equal(btn.tagName, 'BUTTON'); assert.equal(btn.getAttribute('aria-label'), 'Background motion');
+    assert.equal(btn.getAttribute('aria-pressed'), 'false'); assert.ok(scene.classList.contains('hs--still')); assert.equal(btn.textContent, 'Motion off');
+    btn.click();
+    assert.equal(btn.getAttribute('aria-pressed'), 'true'); assert.equal(btn.textContent, 'Motion on');
+    assert.ok(!scene.classList.contains('hs--still') && scene.classList.contains('hs--live'), 'it runs, and the stylesheet lets it');
+    assert.ok(scene.querySelector('canvas.hs__motes'), 'the specks are drawn once it runs');
+    assert.equal(p.window.localStorage.getItem('fs_motion'), 'on');
+    btn.click();
+    assert.ok(scene.classList.contains('hs--still') && !scene.querySelector('canvas.hs__motes'), 'held again, specks removed');
+    assert.equal(p.window.localStorage.getItem('fs_motion'), 'off');
+    assert.deepEqual(p.errors, []);
+  } finally { p.close(); }
+});
+
 /* ---------- the living hero and the flowing steps, on the real home page ---------- */
 test('the home page arms the water: every step has an awake-ness, the line a fill, and none of it breaks the page', async () => {
   const p = await loadPage('index.html', { settle: 500 });

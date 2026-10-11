@@ -2,7 +2,25 @@
    It lived inline in index.html; it is a file now so the page can run under a Content-Security-Policy with no 'unsafe-inline' for scripts. */
 document.addEventListener('DOMContentLoaded', function () {
   var host = document.getElementById('heroScene');
-  if (host && window.FraudShieldHeroScene) window.FraudShieldHeroScene.mount(host);
+  if (!host || !window.FraudShieldHeroScene) return;
+  var scene = window.FraudShieldHeroScene.mount(host), hero = host.parentElement;
+  if (!scene || !hero) return;
+
+  /* A way to start and stop the background motion. A device set to "reduce motion" gets it still, as it asked; this lets a person on such a
+     device turn it on, and anyone pause it (moving content that cannot be paused fails WCAG 2.2.2). The choice is remembered on this device. */
+  var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches, saved = null;
+  try { saved = window.localStorage.getItem('fs_motion'); } catch (e) { /* storage blocked: the default stands */ }
+  var on = saved === 'on' ? true : saved === 'off' ? false : !calm;
+  scene.setMotion(on);
+  var btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'hero-motion'; btn.setAttribute('aria-label', 'Background motion');
+  function paintToggle() { btn.setAttribute('aria-pressed', String(on)); btn.textContent = on ? 'Motion on' : 'Motion off'; }
+  btn.addEventListener('click', function () {
+    on = !on; scene.setMotion(on); paintToggle();
+    try { window.localStorage.setItem('fs_motion', on ? 'on' : 'off'); } catch (e) { /* not remembered, still applied */ }
+  });
+  paintToggle();
+  hero.appendChild(btn);
 });
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -41,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch(e){ /* sound is optional: the page works without it */ }
       }
       introEl.classList.add('exit');
+      document.documentElement.classList.add('hero-play');   /* the hero assembles as the entrance lifts */
       setTimeout(function() { introEl.style.display = 'none'; }, 850);
     }
 
@@ -54,6 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
        so the tap's own click landed on whatever control was under it. Escape and Enter skip it for a keyboard. */
     introEl.addEventListener('click', function() { dismissIntro(true); });
     document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape' || ev.key === 'Enter') dismissIntro(false); });
+  } else {
+    document.documentElement.classList.add('hero-play');
   }
 
   /* ════════════════════════════════════════════════════════

@@ -60,3 +60,18 @@ test('the stylesheet honours reduced motion and uses no backdrop-filter', () => 
   assert.match(css, /prefers-reduced-motion: reduce/); assert.match(css, /\.hs--still/);
   assert.ok(!/backdrop-filter/.test(css));
 });
+
+test('the scene is a screen high, a phone can see it, and the hero assembles when the entrance lifts', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'hero-scene.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const stage = /\.hero-scene\s*\{[^}]*\}/.exec(css)[0];
+  assert.match(stage, /bottom:\s*auto/); assert.match(stage, /height:\s*min\(100%,\s*100svh\)/, 'the stage is one screen, not the whole hero');
+  // the veil on a phone: the old .92/.72/.58 sheet hid the scene; no stop may be that dense again
+  const phone = /@media \(max-width: 720px\)\s*\{\s*\.hs__veil\s*\{[^}]*\}/.exec(css)[0];
+  for (const a of phone.match(/rgba\(7,22,43,([.\d]+)\)/g).map(x => parseFloat(x.split(',').pop()))) assert.ok(a <= 0.6, 'veil stop ' + a);
+  assert.match(css, /\.hero-scene:not\(\.hs--live\)/, 'reduced motion holds the scene unless it was switched on');
+  assert.match(css, /\.hero-motion\b/);
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, ''), home = fs.readFileSync(path.join(ROOT, 'home.js'), 'utf8');
+  assert.doesNotMatch(html, /\n\s*\.hero-h1\{animation:/, 'the hero text no longer plays out behind the entrance');
+  assert.match(html, /\.hero-play \.hero-h1\{animation:hero-fade-in/);
+  assert.match(home, /classList\.add\('hero-play'\)/);
+});

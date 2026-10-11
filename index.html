@@ -468,10 +468,15 @@
     ══════════════════════════════════════ */
     .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1.3rem;animation:hero-fade-in .8s ease both}
     @keyframes hero-fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-    .hero-h1{animation:hero-fade-in .8s .15s ease both}
-    .hero-subtitle{animation:hero-fade-in .8s .28s ease both}
-    .hero-buttons{animation:hero-fade-in .8s .4s ease both}
-    .hero-emergency-bar{animation:hero-fade-in .8s .52s ease both}
+    /* The hero assembles as the entrance lifts: home.js adds hero-play at that moment. It used to start on load, so all of it played out
+       behind the entrance and was over before anyone saw it. Without script nothing is hidden, and nothing moves for reduced motion. */
+    @media (prefers-reduced-motion: no-preference){
+      .hero-play .hero-eyebrow{animation:hero-fade-in .85s var(--mo-out) both}
+      .hero-play .hero-h1{animation:hero-fade-in .85s .09s var(--mo-out) both}
+      .hero-play .hero-subtitle{animation:hero-fade-in .85s .2s var(--mo-out) both}
+      .hero-play .hero-buttons{animation:hero-fade-in .85s .31s var(--mo-out) both}
+      .hero-play .hero-emergency-bar{animation:hero-fade-in .85s .42s var(--mo-out) both}
+    }
 
     /* ══════════════════════════════════════
        IN THE NEWS SECTION
