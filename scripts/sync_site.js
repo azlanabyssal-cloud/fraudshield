@@ -4,7 +4,7 @@
      data-stat="key"         element text becomes the formatted value from data/stats.json (data-fmt overrides the format)
      data-stat-target="key"  the element's data-target (used by the counters) becomes the raw value
      data-series-key="key"   the element gets data-series='{"labels":[...],"values":[...]}' for the charts
-     <!-- @gen:nav|footer|cases|creature_<key> --> ... <!-- @/gen:... -->   region regenerated from partials/ or data/cases.json
+     <!-- @gen:nav|footer|icons|cases|creature_<key> --> ... <!-- @/gen:... -->   region regenerated from partials/ or data/cases.json
    Usage: node scripts/sync_site.js [--check]   (--check exits 1 and writes nothing if any page is out of date) */
 const fs = require('node:fs'), path = require('node:path');
 const { formatStat, indian } = require('../lib/format.js');
@@ -22,7 +22,7 @@ function loadData(root = ROOT_DEFAULT) {
   if (!raw.stats || !raw.series || !raw.site) throw new Error('data/stats.json needs "stats", "series" and "site"');
   return {
     stats: raw.stats, series: raw.series, site: raw.site, rbi: raw.rbi_directions, cases: JSON.parse(read('data/cases.json')), fieldwork: JSON.parse(read('data/fieldwork.json')), campaign: JSON.parse(read('data/campaign.json')),
-    partials: { nav: read('partials/nav.html').trim(), footer: read('partials/footer.html').trim(), csp: read('partials/csp.txt').trim() }
+    partials: { nav: read('partials/nav.html').trim(), footer: read('partials/footer.html').trim(), csp: read('partials/csp.txt').trim(), icons: read('partials/icons.html').trim() }
   };
 }
 
@@ -136,7 +136,7 @@ function renderCases(data) {
           <h3 class="case-title">${esc(c.title)}</h3>
           <p class="case-amt">${esc(c.amount)}</p>
           <p class="case-desc">${esc(c.desc)}</p>
-          <span class="case-verdict case-verdict--${esc(c.verdict.variant)}">${esc(c.verdict.text)}</span>
+          <span class="case-verdict case-verdict--${esc(c.verdict.variant)}">${verdictHtml(c.verdict.text)}</span>
           <p class="case-src">Reported by: ${src}</p>
         </div>
       </div>`;
@@ -214,12 +214,22 @@ function renderShareBars(data) {
   return `<div class="share-bars" role="group" aria-label="Share of cases and share of money lost in 2025, by type of fraud">\n${rows}\n</div>`;
 }
 
+// A verdict begins with a mark (a tick, a red dot, scales, a magnifier). It is drawn from the icon sprite, so it looks the same on every device.
+const VERDICT_ICONS = { '✅': ['check', ''], '🔴': ['dot', ' ico--red'], '⚖': ['scale', ''], '🔎': ['search', ''] };
+function verdictHtml(text) {
+  const sp = text.indexOf(' '), mark = sp > 0 ? text.slice(0, sp).replace(/\ufe0f/g, '') : '';
+  const icon = VERDICT_ICONS[mark];
+  if (!icon) return esc(text);
+  return `<svg class="ico${icon[1]}" aria-hidden="true" focusable="false"><use href="#i-${icon[0]}"/></svg> ${esc(text.slice(sp + 1))}`;
+}
+
 function syncRegions(html, data, page, root = ROOT_DEFAULT) {
   return html.replace(/<!-- @gen:(\w+) -->[\s\S]*?<!-- @\/gen:\1 -->/g, (m, name) => {
     let body;
     if (name === 'nav') body = renderNav(data, page);
     else if (name === 'footer') body = renderFooter(data);
     else if (name === 'csp') body = renderCsp(data);
+    else if (name === 'icons') body = data.partials.icons;
     else if (name === 'cases') body = renderCases(data);
     else if (name === 'states') body = renderStates(data);
     else if (name === 'sources') body = renderSources(data);

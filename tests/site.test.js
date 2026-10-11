@@ -232,3 +232,19 @@ test('the work is all rights reserved, and nothing on the site or in the assista
   }
   assert.doesNotMatch(read('lib/knowledge.js').replace(/const REPO[^\n]*\n/, ''), /github\.com\/azlanabyssal-cloud|\bREPO\b\s*\+|href:\s*REPO/, 'the assistant does not link to the repository');
 });
+
+test('icons: every page carries the sprite once, every icon it uses is in it, and no emoji stands in for an icon', () => {
+  const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
+  const sprite = read('partials/icons.html'), defined = new Set([...sprite.matchAll(/<symbol id="(i-[\w-]+)"/g)].map(m => m[1]));
+  assert.ok(defined.size >= 40, 'the icon set');
+  const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2705}\u{274C}\u{2B50}]/u;   // pictographs; a plain tick (U+2713) or arrow is type, not an emoji
+  for (const f of ['index.html', 'tips.html', 'data.html', 'about.html', 'report.html', 'assistant.html']) {
+    const html = read(f);
+    assert.equal((html.match(/<symbol id="i-phone"/g) || []).length, 1, f + ': the sprite is on the page once');
+    for (const m of html.matchAll(/<use href="#(i-[\w-]+)"/g)) assert.ok(defined.has(m[1]), `${f}: uses ${m[1]}, which the sprite does not define`);
+    // text a person reads: not scripts, styles, the sprite, the mascots' speech, and nothing inside an attribute
+    const body = html.slice(html.indexOf('<body')).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>|<div class="creature-tip">[\s\S]*?<\/div>|<!--[\s\S]*?-->/g, '');
+    const text = [...body.matchAll(/>([^<>]+)</g)].map(m => m[1]).join(' ');
+    assert.ok(!EMOJI.test(text), `${f}: an emoji is standing in for an icon: ${(text.match(EMOJI) || [''])[0]}`);
+  }
+});

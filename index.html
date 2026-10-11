@@ -446,7 +446,8 @@
     .reveal--d2{transition-delay:.16s}
     .reveal--d3{transition-delay:.24s}
     .reveal--d4{transition-delay:.32s}
-    @media(prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important}}
+    /* "Reduce motion" asks for less movement, not for a page that does nothing: things still arrive as they are scrolled to, by fading, with no travel. */
+    @media(prefers-reduced-motion:reduce){.reveal{transform:none!important;transition:opacity .55s ease!important;transition-delay:0s!important}}
 
     /* ══════════════════════════════════════
        READING PROGRESS BAR
@@ -745,6 +746,53 @@
   </style>
 </head>
 <body>
+<!-- @gen:icons -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+<symbol id="i-siren" viewBox="0 0 24 24"><path d="M7 18v-6a5 5 0 0 1 10 0v6M4 18h16M12 3v2M4.5 6.5l1.4 1.4M19.5 6.5l-1.4 1.4"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8 12.5l2.7 2.7L16 9.5"/></symbol>
+<symbol id="i-triangle" viewBox="0 0 24 24"><path d="M12 4l9 16H3L12 4zM12 10v4M12 17v.01"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v5M12 16.5v.01"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3.5 9h17M3.5 15h17M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9S9.5 5.5 12 3z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path d="M6 11h12v9H6v-9zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"/></symbol>
+<symbol id="i-rupee" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9 8h6M9 11.2h6M9.4 8c2.6 0 3.8 1.2 3.8 2.8s-1.2 2.8-3.8 2.8H9l5 3.2"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-7M3 20h18"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2"/></symbol>
+<symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5M5 10v7M9.5 10v7M14.5 10v7M19 10v7M3 20h18"/></symbol>
+<symbol id="i-hook" viewBox="0 0 24 24"><path d="M12 3v11a4 4 0 0 1-8 0M2.5 11.8L4 14.2l2.6-2.2M12 3h0"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M4 8h16v11H4V8zM9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M4 13h16"/></symbol>
+<symbol id="i-mobile" viewBox="0 0 24 24"><path d="M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM5.6 5.6l12.8 12.8"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7V3zM14 3v5h5M10 13h6M10 17h6"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M9 5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM2.5 20a6.5 6.5 0 0 1 13 0M16 5.5a3 3 0 0 1 0 6M18 20a5.5 5.5 0 0 0-3-4.9"/></symbol>
+<symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6.2A9.7 9.7 0 0 1 12 6c5 0 8.5 4 9.5 6a12 12 0 0 1-2.6 3.3M6.4 7.7A12.4 12.4 0 0 0 2.5 12C3.5 14 7 18 12 18c1.3 0 2.5-.3 3.6-.8M9.9 10a3 3 0 0 0 4.1 4.1"/></symbol>
+<symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zM17 9l5 6M22 9l-5 6"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4V8zM12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></symbol>
+<symbol id="i-tv" viewBox="0 0 24 24"><path d="M3 6h18v12H3V6zM10 9.5v5l4.5-2.5-4.5-2.5zM8 21h8"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M6 20h12M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7zM19 7l-3 7a3.5 3.5 0 0 0 6 0l-3-7z"/></symbol>
+<symbol id="i-news" viewBox="0 0 24 24"><path d="M5 5h11v14H6a1 1 0 0 1-1-1V5zM16 9h3v9a1 1 0 0 1-1 1h-2M8 9h5M8 13h5M8 16h3"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 17l-5.2 2.7 1-5.9-4.3-4.1 5.9-.8L12 3.5z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16zM8 7h8"/></symbol>
+<symbol id="i-octagon" viewBox="0 0 24 24"><path d="M8.5 3h7L21 8.5v7L15.5 21h-7L3 15.5v-7L8.5 3zM12 8v5M12 16.5v.01"/></symbol>
+<symbol id="i-dot" viewBox="0 0 24 24"><path d="M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><path d="M8 11a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM10.8 13.2L20 4M16 8l3 3M14 10l2 2"/></symbol>
+<symbol id="i-unlock" viewBox="0 0 24 24"><path d="M6 11h12v9H6v-9zM8.5 11V8a3.5 3.5 0 0 1 6.8-1.2"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+<symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3v9h9a9 9 0 1 1-9-9zM15 3.5A9 9 0 0 1 20.5 9H15V3.5z"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6zM9 4v14M15 6v14"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-10a6 6 0 1 1 12 0c0 4.5-6 10-6 10zM12 8.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM15.5 8.5l-2 5-5 2 2-5 5-2z"/></symbol>
+<symbol id="i-bot" viewBox="0 0 24 24"><path d="M5 9h14v10H5V9zM12 9V5M9 13.5v.01M15 13.5v.01M9.5 16.5h5M3 13v3M21 13v3"/></symbol>
+<symbol id="i-phone-off" viewBox="0 0 24 24"><path d="M3 3l18 18M5 4h4l2 5-2.5 1.5a11 11 0 0 0 3 3.6M15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 6.5 14"/></symbol>
+<symbol id="i-mask" viewBox="0 0 24 24"><path d="M4 5h16v6a8 8 0 0 1-16 0V5zM8.5 10v.01M15.5 10v.01M8.5 14.5a4 4 0 0 0 7 0"/></symbol>
+</svg>
+<!-- @/gen:icons -->
 
 <!-- CINEMATIC INTRO OVERLAY — FraudShield film-title entrance -->
 <div class="intro-overlay" id="introOverlay" aria-hidden="true" role="presentation">
@@ -762,13 +810,13 @@
 
 <!-- STICKY SOS BAR (mobile) -->
 <div class="sos-bar" role="alert">
-  <div class="sos-bar__text"><strong>🚨 Been scammed?</strong> Call free 24×7.</div>
-  <a href="tel:1930" class="sos-bar__btn" data-snd="click">📞 1930 Free</a>
+  <div class="sos-bar__text"><strong><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> Been scammed?</strong> Call free 24×7.</div>
+  <a href="tel:1930" class="sos-bar__btn" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> 1930 Free</a>
 </div>
 
 <!-- DESKTOP FLOATING EMERGENCY BUTTON -->
 <div class="float-sos" aria-label="Emergency cyber crime helpline">
-  <a href="tel:1930" class="float-sos__btn" data-snd="click" aria-label="Call 1930 — National Cyber Crime Helpline">📞</a>
+  <a href="tel:1930" class="float-sos__btn" data-snd="click" aria-label="Call 1930 — National Cyber Crime Helpline"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></a>
   <span class="float-sos__label">1930 · Free</span>
 </div>
 
@@ -812,30 +860,30 @@
 <div class="alert-ticker" role="marquee" aria-label="Live fraud alerts">
   <div class="alert-ticker__inner">
     <span class="atick-live">LATEST</span>
-    <span>🚨 <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💸 <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
     <span class="atick-dot"></span>
-    <span>⚡ <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg> <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
     <span class="atick-dot"></span>
-    <span>🚔 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
     <span class="atick-dot"></span>
-    <span>✅ Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
     <span class="atick-dot"></span>
     <span class="atick-live">LATEST</span>
-    <span>🚨 <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> <span data-stat="ncrp_cases_2025">28.15 lakh</span> cyber fraud cases in 2025, up <span data-stat="cases_growth_2025_pct">24%</span> on 2024 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💸 <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> <span data-stat="loss_2025_cr">₹22,495 Cr</span> reported lost in 2025 · MHA reply to Parliament</span>
     <span class="atick-dot"></span>
-    <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud · MHA reply</span>
     <span class="atick-dot"></span>
-    <span>⚡ <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg> <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen by CFCFRMS, cumulative to 30 June 2026</span>
     <span class="atick-dot"></span>
-    <span>🚔 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> 9 life sentences in a digital arrest case · Nadia, West Bengal · July 2025</span>
     <span class="atick-dot"></span>
-    <span>✅ Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
+    <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Call 1930 at once: the sooner you report, the better the chance the money can be frozen</span>
     <span class="atick-dot"></span>
   </div>
 </div>
@@ -844,7 +892,7 @@
 <section id="hero" style="position:relative">
   <div class="hero-scene" id="heroScene" aria-hidden="true"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">🟡 Sourced data · MHA · NCRB · 2025</div>
+    <div class="hero-eyebrow"><svg class="ico ico--amber" aria-hidden="true" focusable="false"><use href="#i-dot"/></svg> Sourced data · MHA · NCRB · 2025</div>
     <h1 class="hero-h1">
       Indians Reported<br>
       Losing <em class="hero-h1__accent"><span data-stat="loss_2025_cr" data-fmt="inr_crore">₹22,495 Crore</span></em><br>
@@ -856,11 +904,11 @@
     </p>
     <div class="hero-buttons">
       <a href="tips.html" class="btn-primary" data-snd="click" data-magnetic>Protect Yourself Now</a>
-      <a href="report.html" class="btn-outline-white" data-snd="click">📋 Report Your Fraud</a>
+      <a href="report.html" class="btn-outline-white" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file"/></svg> Report Your Fraud</a>
     </div>
     <div class="hero-emergency-bar">
       <span class="hero-emergency-bar__label">National Cyber Crime Helpline:</span>
-      <a href="tel:1930" class="hero-emergency-bar__number" data-snd="click">📞 1930</a>
+      <a href="tel:1930" class="hero-emergency-bar__number" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> 1930</a>
       <span class="hero-emergency-bar__note">Free · 24 hrs · 7 days · No registration</span>
     </div>
   </div>
@@ -882,51 +930,51 @@
 
   <div class="hero-ticker" aria-label="Live statistics ticker">
     <div class="ticker-inner">
-      <span>📊 NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
-      <span>💸 Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
-      <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
-      <span>⚡ CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
-      <span>🚔 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
-      <span>📱 UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
-      <span>📊 NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
-      <span>💸 Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
-      <span>💼 <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
-      <span>⚡ CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
-      <span>🚔 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
-      <span>📱 UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg> NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg> CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg> UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg> NCRB cyber crime cases: <span data-stat="ncrb_cases_2021">52,974</span> (2021) → <span data-stat="ncrb_cases_2024">1,01,928</span> (2024), up <span data-stat="ncrb_growth_2021_2024_pct">92%</span></span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> Reported losses: <span data-stat="loss_2023_cr">₹7,465 Cr</span> (2023) → <span data-stat="loss_2024_cr">₹22,845 Cr</span> (2024), up <span data-stat="loss_growth_2024_pct">206%</span></span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> <span data-stat="loss_share_2025_investment_pct">76%</span> of the money lost in 2025 was investment fraud</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg> CFCFRMS: <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> saved or frozen to 30 June 2026</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> 9 life sentences in a digital arrest case · July 2025</span><span aria-hidden="true">•</span>
+      <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg> UPI handled <span data-stat="upi_aug2026_bn">24.51 billion</span> transactions in August 2026 · NPCI</span><span aria-hidden="true">•</span>
     </div>
   </div>
 </section>
 
 <!-- EMERGENCY BANNER -->
 <div class="e-banner" role="alert">
-  <span class="e-banner__pill">⚡ Emergency Helplines</span>
+  <span class="e-banner__pill"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg> Emergency Helplines</span>
   <span class="e-banner__text">Just been scammed? <strong>Every minute matters.</strong> Do not panic — act immediately.</span>
-  <a href="tel:1930" class="e-banner__btn" data-snd="click">📞 1930 — Cyber Crime</a>
-  <a href="tel:112"  class="e-banner__btn" data-snd="click" style="background:var(--navy)">🚔 112 — Police</a>
-  <a href="tel:181"  class="e-banner__btn" data-snd="click" style="background:var(--olive)">👩 181 — Women Safety</a>
+  <a href="tel:1930" class="e-banner__btn" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> 1930 — Cyber Crime</a>
+  <a href="tel:112"  class="e-banner__btn" data-snd="click" style="background:var(--navy)"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> 112 — Police</a>
+  <a href="tel:181"  class="e-banner__btn" data-snd="click" style="background:var(--olive)"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-user"/></svg> 181 — Women Safety</a>
 </div>
 
 <!-- SITUATION HELPER — "What Just Happened?" -->
 <section id="sit-sec" class="sit-sec" aria-label="Immediate help based on your situation">
   <div class="container">
     <div class="sit-head">
-      <p class="sit-head__kicker">🚨 Immediate Help — Right Now</p>
+      <p class="sit-head__kicker"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> Immediate Help — Right Now</p>
       <h2>What Just Happened to You?</h2>
       <p>Select your situation — get exact steps to take in the next 5 minutes, before it's too late.</p>
     </div>
     <div class="sit-buttons" role="group" aria-label="Select your situation">
-      <button class="sit-btn" data-sit="digital-arrest">📞 Someone called claiming Police / CBI / ED</button>
-      <button class="sit-btn" data-sit="otp-upi">💸 I shared my OTP or money was transferred</button>
-      <button class="sit-btn" data-sit="phishing">📱 I clicked a suspicious link</button>
-      <button class="sit-btn" data-sit="investment">💰 My investment app disappeared with my money</button>
-      <button class="sit-btn" data-sit="sextortion">🚫 Someone is blackmailing me with private photos</button>
-      <button class="sit-btn" data-sit="loan-app">🏦 A loan app is threatening me or my family</button>
+      <button class="sit-btn" data-sit="digital-arrest"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Someone called claiming Police / CBI / ED</button>
+      <button class="sit-btn" data-sit="otp-upi"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> I shared my OTP or money was transferred</button>
+      <button class="sit-btn" data-sit="phishing"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg> I clicked a suspicious link</button>
+      <button class="sit-btn" data-sit="investment"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> My investment app disappeared with my money</button>
+      <button class="sit-btn" data-sit="sextortion"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ban"/></svg> Someone is blackmailing me with private photos</button>
+      <button class="sit-btn" data-sit="loan-app"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg> A loan app is threatening me or my family</button>
     </div>
 
     <!-- Panel 1: Digital Arrest -->
     <div class="sit-panel" id="sit-digital-arrest" aria-live="polite">
-      <p class="sit-panel__heading">🚔 This is a Digital Arrest Scam — You Have Not Done Anything Wrong</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> This is a Digital Arrest Scam — You Have Not Done Anything Wrong</p>
       <ol class="sit-steps">
         <li><strong>Hang up immediately</strong> — no matter what they threaten. "Digital Arrest" does not exist in Indian law. PM Modi confirmed this on Mann Ki Baat. No C B I, police, or court ever arrests anyone via video call.</li>
         <li><strong>Call 1930 right now</strong> (free, 24×7). If money was transferred, report it immediately: the faster you report, the better the chance the receiving account can be frozen through I4C's CFCFRMS system.</li>
@@ -936,14 +984,14 @@
       </ol>
       <p class="sit-note">In July 2025 a court in Nadia, West Bengal, gave nine members of a digital arrest network life sentences; the prosecutor called it India's first such conviction. The law is on your side.</p>
       <div class="sit-cta">
-        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
+        <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930 — Free · 24×7</a>
         <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">cybercrime.gov.in ↗</a>
       </div>
     </div>
 
     <!-- Panel 2: OTP / UPI fraud -->
     <div class="sit-panel" id="sit-otp-upi" aria-live="polite">
-      <p class="sit-panel__heading">💸 OTP / UPI Fraud — Act Right Now</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> OTP / UPI Fraud — Act Right Now</p>
       <ol class="sit-steps">
         <li><strong>Call 1930 right now.</strong> CFCFRMS can freeze stolen funds in real-time — but only before the money moves out of the first account. Every minute matters.</li>
         <li><strong>Call your bank's 24×7 helpline.</strong> Say: "Freeze my account — unauthorised transaction happened." Get a written complaint reference number.</li>
@@ -953,14 +1001,14 @@
       </ol>
       <p class="sit-note">RBI circular of 6 July 2017: if the fraud came from a breach that was not your fault and you report within 3 working days, your liability is zero; if you shared your OTP or PIN, you bear the loss until you report, and any loss after you report is the bank's.</p>
       <div class="sit-cta">
-        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free · 24×7</a>
+        <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930 — Free · 24×7</a>
         <a href="report.html" class="btn-navy" data-snd="click">Full Recovery Guide →</a>
       </div>
     </div>
 
     <!-- Panel 3: Phishing -->
     <div class="sit-panel" id="sit-phishing" aria-live="polite">
-      <p class="sit-panel__heading">🎣 Phishing Link Clicked — Secure Everything Now</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-hook"/></svg> Phishing Link Clicked — Secure Everything Now</p>
       <ol class="sit-steps">
         <li><strong>If you entered a bank login or OTP on that page — disconnect from the internet immediately</strong> and change all passwords from a clean device.</li>
         <li><strong>Change passwords</strong> for your bank, email, UPI app, and any account linked to your phone number — do it now, not later.</li>
@@ -971,13 +1019,13 @@
       <p class="sit-note">If you only clicked the link but did not enter any information — you are most likely safe. But run a full virus scan with an updated antivirus app as a precaution.</p>
       <div class="sit-cta">
         <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-primary" data-snd="click">Report the Phishing Link ↗</a>
-        <a href="tel:1930" class="btn-navy" data-snd="click">📞 1930 If Money Is Gone</a>
+        <a href="tel:1930" class="btn-navy" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> 1930 If Money Is Gone</a>
       </div>
     </div>
 
     <!-- Panel 4: Investment fraud -->
     <div class="sit-panel" id="sit-investment" aria-live="polite">
-      <p class="sit-panel__heading">💰 Investment App Fraud — Your Money May Still Be Recoverable</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> Investment App Fraud — Your Money May Still Be Recoverable</p>
       <ol class="sit-steps">
         <li><strong>Stop depositing money immediately</strong> — no matter what "guaranteed profit" is shown. The dashboard is fake software designed to keep you investing until they disappear.</li>
         <li><strong>Call 1930</strong> and report all transaction IDs of the deposits you made. Provide app names and contact details of the "agents".</li>
@@ -987,14 +1035,14 @@
       </ol>
       <p class="sit-note">In 2025, investment fraud was <span data-stat="loss_share_2025_investment_pct">76%</span> of the money reported lost in India, about <span data-stat="loss_investment_2025_cr">₹17,096 Cr</span>. You are not alone: report it, and if any of the money was frozen you can apply to get it back.</p>
       <div class="sit-cta">
-        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free</a>
+        <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930 — Free</a>
         <a href="report.html" class="btn-navy" data-snd="click">Full Report Guide →</a>
       </div>
     </div>
 
     <!-- Panel 5: Sextortion -->
     <div class="sit-panel" id="sit-sextortion" aria-live="polite">
-      <p class="sit-panel__heading">🚫 Sextortion — Do Not Pay. Payment Guarantees They Return.</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ban"/></svg> Sextortion — Do Not Pay. Payment Guarantees They Return.</p>
       <ol class="sit-steps">
         <li><strong>Do not pay a single rupee.</strong> This is the most critical step. Payment tells them you will pay again — they always come back for more, often double or triple the amount.</li>
         <li><strong>Block and report</strong> the person on every platform — WhatsApp, Instagram, Telegram. Screenshot all threats first before blocking.</li>
@@ -1004,14 +1052,14 @@
       </ol>
       <p class="sit-note">Threatening to share someone's private images to get money is a crime, and you are the victim. Do not pay, keep the messages as evidence, and report it.</p>
       <div class="sit-cta">
-        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Confidential</a>
-        <a href="tel:181" class="btn-navy" data-snd="click">👩 181 — Women's Helpline</a>
+        <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930 — Confidential</a>
+        <a href="tel:181" class="btn-navy" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-user"/></svg> 181 — Women's Helpline</a>
       </div>
     </div>
 
     <!-- Panel 6: Fake loan app -->
     <div class="sit-panel" id="sit-loan-app" aria-live="polite">
-      <p class="sit-panel__heading">🏦 Fake Loan App Harassment — You Have Strong Legal Protection</p>
+      <p class="sit-panel__heading"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg> Fake Loan App Harassment — You Have Strong Legal Protection</p>
       <ol class="sit-steps">
         <li><strong>Do not pay any "processing fee", "insurance charge", or "security deposit"</strong> — these are extraction tactics. No legitimate lender charges fees before disbursing a loan.</li>
         <li><strong>Uninstall the app immediately</strong> and revoke all permissions it has to your contacts, camera, and gallery through your phone Settings → Apps.</li>
@@ -1021,7 +1069,7 @@
       </ol>
       <p class="sit-note">RBI Digital Lending Guidelines (2022) prohibit fee collection before loan disbursement. If this happened — you were defrauded. File the complaint. The law covers you completely.</p>
       <div class="sit-cta">
-        <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930 — Free</a>
+        <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930 — Free</a>
         <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">File a Report ↗</a>
       </div>
     </div>
@@ -1072,7 +1120,7 @@
     </div>
     <div class="pm-warn__action">
       <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn-navy" data-snd="click">cybercrime.gov.in ↗</a>
-      <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call 1930</a>
+      <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930</a>
     </div>
   </div>
 
@@ -1119,25 +1167,25 @@
     <p class="section-overline">Figures from MHA replies to Parliament and NCRB Crime in India 2024, as reported · sources on The Data page</p>
     <div class="stats-grid">
       <div class="stat-card stat-card--orange reveal reveal--d1">
-        <div class="stat-icon" aria-hidden="true">📊</div>
+        <div class="stat-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg></div>
         <div class="stat-num counter-number" data-stat="ncrp_cases_2025" data-stat-target="ncrp_cases_2025" data-target="2815000" data-format="lakh">28.15 lakh</div>
         <div class="stat-label">Cyber fraud cases recorded in 2025</div>
         <div class="stat-src">MHA reply to Parliament · up <span data-stat="cases_growth_2025_pct">24%</span> on 2024</div>
       </div>
       <div class="stat-card stat-card--maroon reveal reveal--d2">
-        <div class="stat-icon" aria-hidden="true">💸</div>
+        <div class="stat-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg></div>
         <div class="stat-num counter-number" data-stat="loss_2025_cr" data-stat-target="loss_2025_cr" data-target="22495" data-prefix="₹" data-suffix=" Cr" data-format="plain">₹22,495 Cr</div>
         <div class="stat-label">Reported lost in 2025</div>
         <div class="stat-src">MHA reply to Parliament · 2024: <span data-stat="loss_2024_cr">₹22,845 Cr</span></div>
       </div>
       <div class="stat-card stat-card--navy reveal reveal--d3">
-        <div class="stat-icon" aria-hidden="true">⏱️</div>
+        <div class="stat-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></div>
         <div class="stat-num counter-number" data-stat="seconds_per_case_2025" data-stat-target="seconds_per_case_2025" data-target="11" data-suffix=" sec" data-format="plain">11</div>
         <div class="stat-label">Between cases recorded, on average</div>
         <div class="stat-src">Derived: seconds in a year ÷ cases in 2025</div>
       </div>
       <div class="stat-card stat-card--olive reveal reveal--d4">
-        <div class="stat-icon" aria-hidden="true">✅</div>
+        <div class="stat-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></div>
         <div class="stat-num counter-number" data-stat="cfcfrms_saved_cr" data-stat-target="cfcfrms_saved_cr" data-target="11158" data-prefix="₹" data-suffix=" Cr" data-format="plain">₹11,158 Cr</div>
         <div class="stat-label">Saved or frozen by CFCFRMS</div>
         <div class="stat-src">Cumulative to 30 June 2026 · more than <span data-stat="cfcfrms_complaints">32.80 lakh</span> complaints</div>
@@ -1166,28 +1214,28 @@
     <span class="funnel-drop" aria-hidden="true"></span>
     <div class="funnel-step funnel-step--1" role="listitem">
       <div class="funnel-num">01</div>
-      <div class="funnel-step__icon" aria-hidden="true">📞</div>
+      <div class="funnel-step__icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></div>
       <h3 class="funnel-step__title">Contact</h3>
       <p class="funnel-step__body">Call, WhatsApp, or SMS arrives. They sound official — bank officer, CBI agent, courier. The number appears legitimate. The voice is calm and authoritative.</p>
       <span class="funnel-step__pill">Phone · WhatsApp · SMS</span>
     </div>
     <div class="funnel-step funnel-step--2" role="listitem">
       <div class="funnel-num">02</div>
-      <div class="funnel-step__icon" aria-hidden="true">😨</div>
+      <div class="funnel-step__icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></div>
       <h3 class="funnel-step__title">Create Fear</h3>
       <p class="funnel-step__body">Urgency is manufactured: "Your Aadhaar was used in drug trafficking." "You will be arrested tonight." Fake warrants, forged CBI IDs, fabricated news screenshots appear on screen.</p>
       <span class="funnel-step__pill">Urgency · Fake Docs · Fear</span>
     </div>
     <div class="funnel-step funnel-step--3" role="listitem">
       <div class="funnel-num">03</div>
-      <div class="funnel-step__icon" aria-hidden="true">🔇</div>
+      <div class="funnel-step__icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-volume-off"/></svg></div>
       <h3 class="funnel-step__title">Isolate You</h3>
       <p class="funnel-step__body">"Do not tell your family — this is a confidential investigation." Without a reality check from loved ones, victims comply with anything. Isolation is their most powerful weapon.</p>
       <span class="funnel-step__pill">Secrecy · Isolation · Control</span>
     </div>
     <div class="funnel-step funnel-step--4" role="listitem">
       <div class="funnel-num">04</div>
-      <div class="funnel-step__icon" aria-hidden="true">💸</div>
+      <div class="funnel-step__icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg></div>
       <h3 class="funnel-step__title">Extract Money</h3>
       <p class="funnel-step__body">UPI transfer, NEFT to "verification account", OTP, or gift card codes. Money moves in seconds. Call 1930 as soon as you realise: the sooner you report, the better the chance the receiving account can be frozen.</p>
       <span class="funnel-step__pill">OTP · UPI · Wire Transfer</span>
@@ -1207,13 +1255,13 @@
     <p>Digital fraud is not a sign of ignorance. Fraud networks study psychology, test scripts daily, and target people across every income level and profession. The victims in the reported cases below include a retired scientist and a retired executive.</p>
     <p>The only reliable defence is knowing exactly how this works — before it happens to you.</p>
     <div class="tag-cloud">
-      <span class="tag tag--orange">📱 UPI &amp; QR tricks</span>
-      <span class="tag tag--navy">🔒 OTP scams</span>
-      <span class="tag tag--maroon">🎣 Phishing links</span>
-      <span class="tag tag--olive">💰 Fake loan apps</span>
-      <span class="tag tag--orange">🚫 Sextortion</span>
-      <span class="tag tag--navy">💼 Investment scams</span>
-      <span class="tag tag--maroon">🚔 Digital arrest</span>
+      <span class="tag tag--orange"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg> UPI &amp; QR tricks</span>
+      <span class="tag tag--navy"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg> OTP scams</span>
+      <span class="tag tag--maroon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-hook"/></svg> Phishing links</span>
+      <span class="tag tag--olive"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> Fake loan apps</span>
+      <span class="tag tag--orange"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ban"/></svg> Sextortion</span>
+      <span class="tag tag--navy"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> Investment scams</span>
+      <span class="tag tag--maroon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> Digital arrest</span>
     </div>
     <a href="tips.html" class="btn-navy" data-snd="click">Read the Full Protection Guide →</a>
   </div>
@@ -1224,34 +1272,34 @@
   <div class="container">
     <div class="cards-grid">
       <div class="info-card info-card--blue-border reveal reveal--d1">
-        <div class="info-card__icon">🔍</div>
+        <div class="info-card__icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search"/></svg></div>
         <h3 class="info-card__title">What is Digital Fraud Under Indian Law?</h3>
         <p class="info-card__body">Any unlawful act where a mobile, computer, or network steals your money or identity. Prosecuted under IT Act 2000 (Sec 66C, 66D) and BNS 2023 (Sec 318, 319) since July 1, 2024. Offenders face up to 3–7 years imprisonment.</p>
       </div>
       <div class="info-card info-card--orange-border reveal reveal--d2">
-        <div class="info-card__icon">⚠️</div>
+        <div class="info-card__icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-triangle"/></svg></div>
         <h3 class="info-card__title">Scams to Watch For</h3>
         <div class="info-card__body">
           <div class="mini-tag-list">
-            <span class="mini-tag">📱 UPI &amp; QR tricks</span>
-            <span class="mini-tag">🔒 OTP scams</span>
-            <span class="mini-tag">🎣 Phishing links</span>
-            <span class="mini-tag">💰 Fake loan apps</span>
-            <span class="mini-tag">🚫 Sextortion <strong><span data-stat="case_share_2025_sextortion_pct">19%</span> of cases</strong></span>
-            <span class="mini-tag">💼 Investment <strong><span data-stat="loss_share_2025_investment_pct">76%</span> of losses</strong></span>
-            <span class="mini-tag">🚔 Digital Arrest</span>
-            <span class="mini-tag">🔄 SIM Swap</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg> UPI &amp; QR tricks</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg> OTP scams</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-hook"/></svg> Phishing links</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg> Fake loan apps</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ban"/></svg> Sextortion <strong><span data-stat="case_share_2025_sextortion_pct">19%</span> of cases</strong></span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg> Investment <strong><span data-stat="loss_share_2025_investment_pct">76%</span> of losses</strong></span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> Digital Arrest</span>
+            <span class="mini-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-refresh"/></svg> SIM Swap</span>
           </div>
         </div>
       </div>
       <div class="info-card info-card--olive-border reveal reveal--d3">
-        <div class="info-card__icon">🛡️</div>
+        <div class="info-card__icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg></div>
         <h3 class="info-card__title">Scammed? Act in the Next 60 Minutes</h3>
         <ol class="info-card__steps">
-          <li><strong>📞 Call 1930</strong> — free, 24 hours; it starts the freeze request</li>
-          <li><strong>🌐 cybercrime.gov.in</strong> — file the same day</li>
-          <li><strong>🏦 Call your bank</strong> — request immediate transaction hold</li>
-          <li><strong>📸 Save all evidence</strong> — screenshots, SMS, call recordings</li>
+          <li><strong><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call 1930</strong> — free, 24 hours; it starts the freeze request</li>
+          <li><strong><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-globe"/></svg> cybercrime.gov.in</strong> — file the same day</li>
+          <li><strong><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg> Call your bank</strong> — request immediate transaction hold</li>
+          <li><strong><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-camera"/></svg> Save all evidence</strong> — screenshots, SMS, call recordings</li>
         </ol>
         <p class="info-card__note">RBI rules (2017): report an unauthorised transaction within 3 working days and, if it was not your fault, your liability can be zero.</p>
       </div>
@@ -1314,7 +1362,7 @@
           </div>
         </a>
         <div class="vid-main-meta">
-          <span class="vid-badge vid-badge--orange">📺 I4C Annual Press Conference · MHA India · 2024</span>
+          <span class="vid-badge vid-badge--orange"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-tv"/></svg> I4C Annual Press Conference · MHA India · 2024</span>
           <h3 class="vid-main-title">I4C Press Conference — Real Cyber Crime Data for India 2024</h3>
           <p class="vid-main-desc">The Indian Cyber Crime Coordination Centre (I4C) releases annual data on fraud losses, FIRs, and government action. Verified numbers — how bad it really is and what the government is doing.</p>
         </div>
@@ -1326,7 +1374,7 @@
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
-            <span class="vid-badge vid-badge--maroon">🔴 NPCI Official · UPI Fraud</span>
+            <span class="vid-badge vid-badge--maroon"><svg class="ico ico--red" aria-hidden="true" focusable="false"><use href="#i-dot"/></svg> NPCI Official · UPI Fraud</span>
             <p class="vid-sm-title">UPI Fraud Awareness — Official Video by NPCI India</p>
           </div>
         </div>
@@ -1336,14 +1384,14 @@
             <div class="vid-sm-over"><div class="vid-play-sm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
           </a>
           <div class="vid-sm-body">
-            <span class="vid-badge vid-badge--navy">🚔 PM Modi · Digital Arrest Warning</span>
+            <span class="vid-badge vid-badge--navy"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> PM Modi · Digital Arrest Warning</span>
             <p class="vid-sm-title">PM Modi Personally Warns Every Indian About "Digital Arrest" Scam</p>
           </div>
         </div>
         <div class="vid-cta-box">
           <p class="vid-cta-num">1930</p>
           <p class="vid-cta-label">National Cyber Crime Helpline · Free · 24×7</p>
-          <a href="tel:1930" class="btn-primary" data-snd="click">📞 Call Now — Free</a>
+          <a href="tel:1930" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg> Call Now — Free</a>
         </div>
       </div>
     </div>
@@ -1366,7 +1414,7 @@
           <h3 class="case-title">Cosmos Bank hack — Pune</h3>
           <p class="case-amt">₹94 crore taken on 11 and 13 August 2018</p>
           <p class="case-desc">Hackers attacked the bank's card-payment system with malware and its SWIFT link. About ₹78 crore went out in more than 12,000 ATM withdrawals outside India, ₹13.92 crore was sent to a firm in Hong Kong, and about ₹2.5 crore was taken in transactions inside India. A Pune court convicted 11 people in April 2023.</p>
-          <span class="case-verdict case-verdict--olive">✅ 11 convicted · April 2023</span>
+          <span class="case-verdict case-verdict--olive"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> 11 convicted · April 2023</span>
           <p class="case-src">Reported by: <a href="https://www.business-standard.com/india-news/pune-court-convicts-11-accused-in-cosmos-bank-s-rs-94-cr-cyber-fraud-case-123042300456_1.html" target="_blank" rel="noopener">Business Standard, 23 April 2023</a></p>
         </div>
       </div>
@@ -1376,7 +1424,7 @@
           <h3 class="case-title">Kerala AI deepfake call — Kozhikode</h3>
           <p class="case-amt">₹40,000 lost to a fake video call</p>
           <p class="case-desc">A retired executive in Kozhikode got a WhatsApp video call showing what looked like a friend, asking urgently for money for a sister's surgery. He sent ₹40,000, and grew suspicious only when the caller asked for ₹30,000 more. Kerala Police described it as the first case of its kind in Kerala to use AI-made video.</p>
-          <span class="case-verdict case-verdict--orange">🔴 First AI-video fraud reported in Kerala</span>
+          <span class="case-verdict case-verdict--orange"><svg class="ico ico--red" aria-hidden="true" focusable="false"><use href="#i-dot"/></svg> First AI-video fraud reported in Kerala</span>
           <p class="case-src">Reported by: <a href="https://www.deccanherald.com/national/south/fraud-using-ai-based-deepfaking-reported-in-kerala-1237663.html" target="_blank" rel="noopener">Deccan Herald</a></p>
         </div>
       </div>
@@ -1386,7 +1434,7 @@
           <h3 class="case-title">Nadia digital arrest — West Bengal</h3>
           <p class="case-amt">About ₹1 crore lost · 9 sentenced to life</p>
           <p class="case-desc">A retired scientist was told by a caller posing as Mumbai Police that he was under &quot;digital arrest&quot; and moved about ₹1 crore across several accounts. On 20 July 2025 a court in Kalyani, Nadia, sentenced nine members of the network to life imprisonment. The prosecutor called it India's first conviction in a digital arrest case; police said the gang had cheated at least 108 people.</p>
-          <span class="case-verdict case-verdict--maroon">⚖️ 9 life sentences · July 2025</span>
+          <span class="case-verdict case-verdict--maroon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-scale"/></svg> 9 life sentences · July 2025</span>
           <p class="case-src">Reported by: <a href="https://trak.in/stories/digital-arrest-scamsters-sentenced-to-life-indias-1st-such-convinction/" target="_blank" rel="noopener">Trak.in</a> · <a href="https://www.varindia.com/news/West-Bengal-Court-Gives-Life-Sentence-to-9-in-%E2%82%B9100-Crore-%E2%80%98Digital-Arrest%E2%80%99-Cyber-Fraud-Case" target="_blank" rel="noopener">VARindia</a></p>
         </div>
       </div>
@@ -1396,7 +1444,7 @@
           <h3 class="case-title">Operation Octopus 2 — Hyderabad</h3>
           <p class="case-amt">₹150 crore · 52 arrested, 32 of them bank officers</p>
           <p class="case-desc">In April 2026 Hyderabad City Police arrested 52 people across nine states, including 32 bank officers, 15 mule-account holders and five middlemen. Police said 350 bank accounts linked to 850 cybercrime cases were used to move victims' money. The case shows why a stranger's account number is never a reason to trust a payment request.</p>
-          <span class="case-verdict case-verdict--navy">🔎 52 arrests · April 2026</span>
+          <span class="case-verdict case-verdict--navy"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search"/></svg> 52 arrests · April 2026</span>
           <p class="case-src">Reported by: <a href="https://www.siasat.com/hyderabad-police-bust-rs150-crore-cyber-fraud-32-bank-officers-held-3456452/" target="_blank" rel="noopener">Siasat, 19 April 2026</a></p>
         </div>
       </div>
@@ -1422,11 +1470,11 @@
           <span class="news-card__illo">Illustration · not the victim</span>
         </div>
         <div class="news-card__body">
-          <span class="news-tag">🚨 Digital Arrest Scam · Mumbai · Verified Case</span>
+          <span class="news-tag"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg> Digital Arrest Scam · Mumbai · Verified Case</span>
           <h3 class="news-card__title">70-Year-Old Mumbai Woman Duped of ₹7.70 Lakh in "Digital Arrest" Cyber Scam</h3>
           <p class="news-card__desc">In Mumbai's Mulund area, a 70-year-old woman was cheated of ₹7.70 lakh by fraudsters posing as ED officials. They threatened her with digital arrest, isolated her from family, and forced her to transfer money via RTGS over multiple calls. A complaint was filed at Navghar police station.</p>
           <div class="news-card__meta">
-            <span class="news-source">📰 Source: DCN News · dcnnews.co.in</span>
+            <span class="news-source"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-news"/></svg> Source: DCN News · dcnnews.co.in</span>
             <span class="news-law">IT Act Sec 66D · BNS Sec 319</span>
           </div>
           <a href="tel:1930" class="btn-primary" data-snd="click">If this happened to you — Call 1930 Free</a>
@@ -1436,21 +1484,21 @@
       <!-- RIGHT COLUMN: stats + action box -->
       <div class="news-stat-col">
         <div class="news-stat-card reveal reveal--d1">
-          <div class="nsc-icon">⚡</div>
+          <div class="nsc-icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bolt"/></svg></div>
           <div class="nsc-body">
             <p class="nsc-num">₹7.70 Lakh</p>
             <p class="nsc-label">Lost by ONE 70-year-old Mumbai woman — in a single Digital Arrest call lasting days</p>
           </div>
         </div>
         <div class="news-stat-card reveal reveal--d2">
-          <div class="nsc-icon">👤</div>
+          <div class="nsc-icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-user"/></svg></div>
           <div class="nsc-body">
             <p class="nsc-num">70 Years Old</p>
             <p class="nsc-label">Age of the victim. Older people are often targeted, but careful, educated people are caught too</p>
           </div>
         </div>
         <div class="news-stat-card reveal reveal--d3">
-          <div class="nsc-icon">🏛️</div>
+          <div class="nsc-icon"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg></div>
           <div class="nsc-body">
             <p class="nsc-num">ED + Police</p>
             <p class="nsc-label">Fake officials used — fraudsters impersonate CBI, ED, NCB, TRAI, Mumbai Police simultaneously</p>
@@ -1491,42 +1539,42 @@
     <div class="r-line" aria-hidden="true"></div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">01</div>
-      <div class="r-icon" aria-hidden="true">🛑</div>
+      <div class="r-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-octagon"/></svg></div>
       <h3 class="r-title">Stop All Contact</h3>
       <p class="r-desc">Block the scammer everywhere. Do not send another rupee even if threatened with arrest. Hang up.</p>
       <span class="r-time">First 5 minutes</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">02</div>
-      <div class="r-icon" aria-hidden="true">📞</div>
+      <div class="r-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></div>
       <h3 class="r-title">Call 1930</h3>
       <p class="r-desc">Free, 24×7. The CFCFRMS system can ask the receiving bank to freeze the money, and has saved or frozen <span data-stat="cfcfrms_saved_cr">₹11,158 Cr</span> so far.</p>
       <span class="r-time">Right away</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">03</div>
-      <div class="r-icon" aria-hidden="true">🏦</div>
+      <div class="r-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg></div>
       <h3 class="r-title">Call Your Bank</h3>
       <p class="r-desc">Report it as a fraudulent transaction and ask them to act on the receiving account. Get a complaint reference number. If you did not share an OTP or PIN, ask whether RBI's limited-liability rules apply: they reward reporting within 3 working days.</p>
       <span class="r-time">Right away</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">04</div>
-      <div class="r-icon" aria-hidden="true">🌐</div>
+      <div class="r-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-globe"/></svg></div>
       <h3 class="r-title">File at cybercrime.gov.in</h3>
       <p class="r-desc">Submit all transaction IDs, screenshots, phone numbers and fake documents. Keep the 14-digit complaint number: if your money was frozen, you can apply to get it back through the Money Restoration Module on the same portal.</p>
       <span class="r-time">The same day</span>
     </div>
     <div class="r-step" role="listitem">
       <div class="r-bubble">05</div>
-      <div class="r-icon" aria-hidden="true">🚔</div>
+      <div class="r-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-siren"/></svg></div>
       <h3 class="r-title">File Police FIR</h3>
       <p class="r-desc">FIR at the nearest police station under IT Act Sec 66C/66D and BNS Sec 318/319. Keep a certified copy. An FIR is compulsory to get back more than <span data-stat="mrm_threshold_inr">₹50,000</span> frozen in a single account.</p>
       <span class="r-time">As soon as you can</span>
     </div>
   </div>
   <div class="recovery-cta">
-    <a href="report.html" class="btn-primary" data-snd="click">📋 Full Step-by-Step Report Guide →</a>
+    <a href="report.html" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file"/></svg> Full Step-by-Step Report Guide →</a>
   </div>
 </section>
 
@@ -1556,7 +1604,7 @@
           <img src="images/scam-upi.webp" width="1024" height="563" alt="A customer's hand holding a phone in front of a payment stand on a small shop counter, with a second paper card pasted crookedly over it" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">QR codes only take money out</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">📱</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-mobile"/></svg></span>
           <div><p class="fviz-title">UPI Fraud</p><p class="fviz-rule">QR codes only DEBIT your account. Scanning one to "receive" money is physically impossible by design. If anyone says otherwise — hang up.</p></div>
         </div>
       </div>
@@ -1565,7 +1613,7 @@
           <img src="images/scam-otp.webp" width="1024" height="563" alt="A man sitting on his bed with a phone at his ear, hand raised in a firm no" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Never share an OTP</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🔒</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg></span>
           <div><p class="fviz-title">OTP Scam</p><p class="fviz-rule">No bank, RBI, NPCI, or government body ever asks for your OTP. Sharing it gives complete account control. Hang up, call your bank directly.</p></div>
         </div>
       </div>
@@ -1574,7 +1622,7 @@
           <img src="images/scam-phishing.webp" width="1024" height="563" alt="A thumb hovering over a text message with a link, beside a glass of chai on a street table" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Check the web address</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🎣</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-hook"/></svg></span>
           <div><p class="fviz-title">Phishing</p><p class="fviz-rule">One wrong letter in a URL steals your login. "sbi-kyc-update.net" vs "sbi.co.in". Always type the address yourself. Never click SMS or WhatsApp links.</p></div>
         </div>
       </div>
@@ -1583,7 +1631,7 @@
           <img src="images/scam-loan-app.webp" width="1024" height="577" alt="A young man on the edge of a bed at night, anxious, lit by a loan app on his phone" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge">Uninstall it, then tell someone</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💰</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-rupee"/></svg></span>
           <div><p class="fviz-title">Fake Loan Apps</p><p class="fviz-rule">Any loan app requesting contacts or media access is a blackmail trap. It harvests contacts and morphs photos to extort you. Uninstall immediately.</p></div>
         </div>
       </div>
@@ -1592,7 +1640,7 @@
           <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=85&fit=crop" alt="Sextortion — privacy violation cybercrime" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge"><span data-stat="case_share_2025_sextortion_pct">19%</span> of cases · <span data-stat="loss_share_2025_sextortion_pct">4%</span> of losses · 2025</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">🚫</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ban"/></svg></span>
           <div><p class="fviz-title">Sextortion</p><p class="fviz-rule">Do not pay a single rupee. Payment guarantees they return. Call 1930 immediately and say it is a sensitive case.</p></div>
         </div>
       </div>
@@ -1601,13 +1649,13 @@
           <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=700&q=85&fit=crop" alt="Investment fraud app India" loading="lazy">
           <div class="fviz-over"></div><div class="fviz-badge"><span data-stat="loss_share_2025_investment_pct">76%</span> of losses · <span data-stat="case_share_2025_investment_pct">35%</span> of cases · 2025</div>
         </div>
-        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true">💼</span>
+        <div class="fviz-body"><span class="fviz-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-briefcase"/></svg></span>
           <div><p class="fviz-title">Investment Fraud</p><p class="fviz-rule">Real investments carry risk, so anyone promising guaranteed returns is a red flag. A big profit shown on a dashboard can be fabricated by the app itself.</p></div>
         </div>
       </div>
     </div>
     <div class="fviz-cta">
-      <a href="tips.html" class="btn-primary" data-snd="click">📖 Full Protection Guide — All 12 Scam Types →</a>
+      <a href="tips.html" class="btn-primary" data-snd="click"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-book"/></svg> Full Protection Guide — All 12 Scam Types →</a>
     </div>
   </div>
 </section>

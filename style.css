@@ -1377,7 +1377,9 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
 }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-  html.rv-on .rv { opacity: 1; transform: none; transition: none; }
+  html.rv-on .rv { opacity: 0; transform: none; transition: opacity 520ms ease; transition-delay: var(--rv-d, 0ms); }   /* arrives by fading, with no travel */
+  html.rv-on .rv.rv-in, html.rv-on .fw-photo.rv.rv-in { opacity: 1; }
+  html.rv-on .fw-photo.rv { transform: none; }
 }
 
 /* data page: the scale at a glance, and cases against money */
@@ -1445,4 +1447,40 @@ html.rv-on .fw-photo.rv { transform: translateY(24px) scale(.97); }
   .page-hero--compact h1 { font-size: 1.65rem; margin-bottom: .4rem; }
   .page-hero--compact .page-hero__badge { display: none; }
   .page-hero--compact p { font-size: .92rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+/* ── Icons ─────────────────────────────────────────────────────────────────
+   One line-icon family on a 24-unit grid (partials/icons.html, placed on every page), drawn in currentColor. It replaced the emoji,
+   which looked different on every phone and, next to this site's photography and serif type, read as clip-art. They size with the
+   text they sit in; the large slots get a quiet tinted tile. */
+.ico { width: 1.12em; height: 1.12em; flex: none; vertical-align: -.2em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.ico--red { color: #dc2626; }
+.ico--amber { color: #e0a100; }
+.stat-icon, .info-card__icon, .r-icon, .funnel-step__icon, .fraud-card__icon, .empathy-card__icon, .cm-card__icon, .action-box__icon {
+  display: inline-grid; place-items: center; width: 1.62em; height: 1.62em; border-radius: .42em; line-height: 1;
+  background: rgba(232, 93, 4, .10); color: var(--orange); box-shadow: inset 0 0 0 1px rgba(232, 93, 4, .16);
+}
+.stat-icon .ico, .info-card__icon .ico, .r-icon .ico, .funnel-step__icon .ico, .fraud-card__icon .ico, .empathy-card__icon .ico, .cm-card__icon .ico, .action-box__icon .ico { width: .82em; height: .82em; vertical-align: 0; }
+.golden-rule .ico, .info-block__label .ico, .chart-insight .ico { color: var(--orange); }
+.fviz-icon, .nsc-icon { color: var(--orange); }
+.fviz-icon .ico, .nsc-icon .ico { width: 1em; height: 1em; vertical-align: 0; }
+
+/* ── The figures stay on one line ──────────────────────────────────────────
+   "26.02 lakh" and "₹20,791 Cr" used to break after the number in a four-column row on a laptop. The size now follows the width of its own card
+   (container query units), so the figure and its unit always sit together and always fit. */
+.stat-num { white-space: nowrap; }
+@supports (font-size: 1cqi) {
+  .stat-card { container-type: inline-size; }
+  .stat-num { font-size: clamp(1.45rem, 15cqi, 2.8rem); }
+}
+
+/* ── Touch and keyboard feedback ───────────────────────────────────────────
+   A press on a touch screen answers at once (a small settle, no delay), the tap flash is the brand's own tint instead of the browser's
+   grey, and the keyboard focus ring is always visible. :where() keeps these at zero specificity, so a component's own rule still wins. */
+:where(a, button, summary, [role="button"]) { -webkit-tap-highlight-color: rgba(232, 93, 4, .16); }
+:where(a, button, summary, [role="button"], input, select, textarea):focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  :where(.btn-primary, .btn-outline-white, .btn-navy, .sit-btn, .filter-btn, .tab-btn, .e-banner__btn, .hero-emergency-bar__number, .hero-motion):active {
+    transform: scale(.972); transition: transform .12s ease-out;
+  }
 }
