@@ -9,3 +9,5 @@ mlops/benchmarks/data/
 # Real survey responses: response-level data, never committed
 field/survey.csv
 field/*.private.*
+
+web/dist/

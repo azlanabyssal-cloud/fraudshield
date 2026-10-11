@@ -1,0 +1,391 @@
+
+
+  /* Link and QR-payload analysis. Pure functions, shared by the browser and Node, no network access.
+
+   Principles:
+   - A "scam" verdict needs specific, checkable evidence (a hidden destination, an official name hijacked inside another
+     domain, a lookalike paired with an action word, a raw IP, an app-file download). Weak signals alone only ever give
+     "suspicious". A link we cannot judge is "unverified", never "safe": a clean-looking address proves nothing.
+   - Every verdict carries the reasons that produced it, so a person can check them.
+   - "official" means the address belongs to a known official domain; it is not a promise about the page's content. */
+
+const LEVELS = ['scam', 'suspicious', 'unverified', 'official'] as const;
+export type LinkLevel = (typeof LEVELS)[number];
+export type NameModelState = 'applied' | 'not-loaded' | 'not-applicable';
+/** What the domain-name model says about a host; it can only add a warning. */
+export interface NameScore { band: string; card?: Record<string, { recall: number; falseAlarm: number } | undefined> | null; [more: string]: unknown }
+/** The facts a link, payment-code or UPI verdict carries besides its words. */
+export interface LinkExtras {
+  codes: string[];
+  host?: string | null; registrable?: string | null; brand?: string | null; score?: number; strong?: boolean; shortened?: boolean;
+  nameModel?: NameModelState; target?: string | null; forwardsTo?: string;
+  /** UPI codes: who would be paid, and how. */
+  payee?: string; name?: string; amount?: string; note?: string; action?: string;
+  /** Plain-text codes. */
+  text?: string;
+  /** Links that are not web addresses: the scheme they start with. */
+  scheme?: string;
+}
+/** A verdict on a link, a payment code or a UPI ID: always with the reasons that produced it, and never "safe". */
+export interface LinkResult extends LinkExtras { kind: string; level: LinkLevel; headline: string; reasons: string[] }
+type Extra = LinkExtras;
+export interface Brand { name: string; tokens: string[]; domains: string[] }
+
+// brand -> tokens that appear in lookalike hosts, and the registrable domains that really belong to it
+const BRANDS: Brand[] = [
+  { name: 'State Bank of India', tokens: ['sbi', 'onlinesbi', 'yono'], domains: ['sbi.co.in', 'onlinesbi.sbi', 'sbicard.com', 'sbiepay.sbi'] },
+  { name: 'HDFC Bank', tokens: ['hdfc', 'hdfcbank'], domains: ['hdfcbank.com', 'hdfc.com', 'hdfclife.com', 'hdfcsec.com', 'hdfcergo.com', 'hdfcfund.com'] },
+  { name: 'ICICI Bank', tokens: ['icici', 'icicibank'], domains: ['icicibank.com', 'icicisecurities.com', 'icicilombard.com', 'iciciprulife.com', 'icicidirect.com'] },
+  { name: 'Axis Bank', tokens: ['axisbank'], domains: ['axisbank.com'] },
+  { name: 'Kotak Mahindra Bank', tokens: ['kotak'], domains: ['kotak.com', 'kotaksecurities.com'] },
+  { name: 'Punjab National Bank', tokens: ['pnbindia', 'netpnb'], domains: ['pnbindia.in', 'netpnb.com'] },
+  { name: 'Bank of Baroda', tokens: ['bankofbaroda'], domains: ['bankofbaroda.in', 'bankofbaroda.com'] },
+  { name: 'Canara Bank', tokens: ['canarabank'], domains: ['canarabank.com', 'canarabank.in'] },
+  { name: 'Union Bank of India', tokens: ['unionbank'], domains: ['unionbankofindia.co.in'] },
+  { name: 'Paytm', tokens: ['paytm'], domains: ['paytm.com', 'paytmbank.com'] },
+  { name: 'PhonePe', tokens: ['phonepe'], domains: ['phonepe.com'] },
+  { name: 'NPCI / BHIM', tokens: ['npci', 'bhim'], domains: ['npci.org.in', 'bhimupi.org.in'] },
+  { name: 'Reserve Bank of India', tokens: ['rbi'], domains: ['rbi.org.in'] },
+  { name: 'UIDAI (Aadhaar)', tokens: ['uidai', 'aadhaar', 'aadhar'], domains: ['uidai.gov.in'] },
+  { name: 'Income Tax Department', tokens: ['incometax', 'incometaxindia'], domains: ['incometax.gov.in', 'incometaxindia.gov.in'] },
+  { name: 'EPFO', tokens: ['epfo', 'epfindia'], domains: ['epfindia.gov.in', 'epfo.gov.in'] },
+  { name: 'IRCTC', tokens: ['irctc'], domains: ['irctc.co.in'] },
+  { name: 'India Post', tokens: ['indiapost'], domains: ['indiapost.gov.in'] },
+  { name: 'TRAI', tokens: ['trai'], domains: ['trai.gov.in'] },
+  { name: 'CBI', tokens: ['cbi'], domains: ['cbi.gov.in'] },
+  { name: 'National Cyber Crime Portal', tokens: ['cybercrime'], domains: ['cybercrime.gov.in'] },
+  { name: 'Amazon', tokens: ['amazon'], domains: ['amazon.in', 'amazon.com', 'amazon.co.uk', 'amazon.de', 'amazon.fr', 'amazon.it', 'amazon.es', 'amazon.ca', 'amazon.com.au', 'amazon.com.br', 'amazon.com.mx', 'amazon.co.jp', 'amazon.ae', 'amazon.sa', 'amazon.sg', 'amazon.nl', 'amazon.se', 'amazon.pl', 'amazon.com.tr', 'amazon.eg', 'amazonaws.com', 'media-amazon.com', 'ssl-images-amazon.com'] },
+  { name: 'Flipkart', tokens: ['flipkart'], domains: ['flipkart.com'] },
+  { name: 'WhatsApp', tokens: ['whatsapp'], domains: ['whatsapp.com', 'whatsapp.net'] }
+];
+const OFFICIAL_DOMAINS = BRANDS.flatMap(b => b.domains.map(d => ({ domain: d, brand: b.name })));
+
+// Multi-label public suffixes that matter for India, so "co.in" is not mistaken for a registrable domain.
+const MULTI_SUFFIX = new Set(['co.in', 'org.in', 'net.in', 'gov.in', 'nic.in', 'ac.in', 'res.in', 'edu.in', 'firm.in', 'gen.in', 'ind.in', 'mil.in', 'bank.in', 'fin.in',
+  'co.uk', 'org.uk', 'ac.uk', 'gov.uk', 'com.au', 'co.nz', 'co.za', 'com.br', 'com.sg', 'com.my', 'com.pk', 'com.bd', 'co.id', 'com.np']);
+
+// A two-letter country ending preceded by one of these ("co.uk", "com.br", "ac.in") is a public suffix of two labels, whatever the country.
+const GENERIC_SECOND = new Set(['co', 'com', 'org', 'net', 'gov', 'edu', 'ac', 'or', 'ne', 'go', 'nic', 'res', 'ltd', 'plc', 'sch', 'mil', 'gob', 'gen', 'firm', 'ind', 'nom']);
+const suffixLength = (labels: readonly string[]): number => {
+  if (labels.length < 3) return 1;
+  const last2 = labels.slice(-2).join('.');
+  return MULTI_SUFFIX.has(last2) || ((labels[labels.length - 1] ?? '').length === 2 && GENERIC_SECOND.has(labels[labels.length - 2] ?? '')) ? 2 : 1;
+};
+
+// A second opinion on the name of a domain, installed by lib/urlmodel.js once its weights are loaded. It can only add a warning.
+let softScorer: ((host: string) => NameScore | null) | null = null;
+const setScorer = (fn: unknown): void => { softScorer = typeof fn === 'function' ? (fn as (host: string) => NameScore | null) : null; };
+const SPEECH = (n: number): string => (n >= 1 ? Math.round(n).toLocaleString('en-US') : '1');
+function modelReason(m: NameScore): string {
+  const c = m.card && m.card[m.band];
+  const basis = c ? ` On held-out examples it flagged about ${SPEECH(c.recall * 100)} in every 100 phishing domains and about ${SPEECH(c.falseAlarm * 1000)} in every 1,000 ordinary ones, so treat it as a hint, not proof.` : '';
+  return 'The pattern of this domain name resembles those behind reported phishing.' + basis;
+}
+
+const SHORTENERS = new Set(['bit.ly', 'tinyurl.com', 'cutt.ly', 'rebrand.ly', 'is.gd', 'shorturl.at', 'tiny.cc', 'ow.ly', 'buff.ly', 'rb.gy', 's.id', 'v.gd', 't.ly', 'shorturl.asia', 'bitly.ws', 'tr.ee', 'lnkd.in', 'qr.ae', 'urlz.fr', 'tiny.one']);
+const FREE_TLDS = new Set(['tk', 'ml', 'ga', 'cf', 'gq']);                                                  // free, long abused
+const CHEAP_TLDS = new Set(['xyz', 'top', 'icu', 'click', 'live', 'shop', 'site', 'online', 'buzz', 'cyou', 'sbs', 'cfd', 'vip', 'link', 'support']);
+// Words that, beside a brand's name in a short folder or file name, give away a phishing kit's layout: /sbi/kyc-update, /hdfcbank/login.php
+const PATH_ACTIONS = new Set(['login', 'signin', 'logon', 'kyc', 'update', 'verify', 'verification', 'refund', 'netbanking', 'otp', 'claim', 'reward', 'rewards', 'activate', 'unblock', 'suspended', 'blocked', 'aadhaar', 'upi']);
+// A path that talks about fraud (a news story, a warning, a guide) names the brand to report on it, not to impersonate it.
+const PATH_BENIGN = /(fraud|scam|warning|awareness|beware|news|blog|article|press|guide|tips|phishing|cyber|complaint|report)/;
+// Query parameters that carry a destination: link wrappers and open redirects use them to hide where a link really goes.
+const REDIRECT_PARAMS = /^(url|u|q|link|redirect|redirect_uri|redirect_url|redirecturl|next|target|dest|destination|goto|continue|return|returnurl|return_to|r|to|out|href|forward)$/i;
+const SEVERITY: Record<LinkLevel, number> = { official: 0, unverified: 1, suspicious: 2, scam: 3 };
+const ACTION_WORDS = ['kyc', 'verify', 'verification', 'update', 'login', 'signin', 'secure', 'security', 'account', 'support', 'care', 'helpline', 'refund', 'reward', 'rewards', 'claim',
+  'prize', 'lottery', 'winner', 'bonus', 'cashback', 'block', 'blocked', 'suspend', 'suspended', 'expire', 'expired', 'otp', 'unlock', 'activate', 'parcel', 'customs', 'challan', 'pan', 'aadhaar'];
+// What may sit next to a short brand name in a lookalike ("sbi" + "kyc", "hdfc" + "bank"). A word that merely contains the letters
+// ("trai" in "training", "rbi" in "turbi") is not an imitation, so short tokens only match when the rest is made of these.
+const AFFIX = new Set([...ACTION_WORDS, 'bank', 'banking', 'online', 'netbanking', 'net', 'card', 'cards', 'pay', 'payment', 'payments', 'secure', 'customer', 'yono', 'app', 'apps', 'services', 'service', 'india', 'indian', 'official', 'portal', 'gov', 'new', 'my', 'e', 'alert', 'help', 'in', 'com', 'upi', 'wallet', 'loan', 'credit', 'debit', 'offer', 'offers', 'free', 'gift', 'jobs', 'recruitment', 'notice', 'case', 'complaint', 'status', 'check', 'form', 'web', 'site', 'id', 'no', 'number']);
+/** Every character that means something in a regular expression, made literal. */
+const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function onlyAffixes(rest: string): boolean {                       // can `rest` be read as affix words and digits, end to end?
+  if (!rest) return true;
+  const ok = new Array(rest.length + 1).fill(false); ok[0] = true;
+  for (let i = 1; i <= rest.length; i++) for (let j = Math.max(0, i - 14); j < i && !ok[i]; j++) if (ok[j] && (AFFIX.has(rest.slice(j, i)) || /^\d+$/.test(rest.slice(j, i)))) ok[i] = true;
+  return ok[rest.length];
+}
+// exact: the label IS the brand (optionally with affixes). loose: the letters merely appear inside a longer label.
+function brandMatch(x: string, t: string): 'exact' | 'loose' | null {
+  if (x === t) return 'exact';
+  if (t.length <= 4) {
+    if (x.startsWith(t) && onlyAffixes(x.slice(t.length))) return 'exact';
+    if (x.endsWith(t) && onlyAffixes(x.slice(0, x.length - t.length))) return 'exact';
+    return null;
+  }
+  if (!x.includes(t)) return null;
+  return onlyAffixes(x.replace(t, '')) ? 'exact' : 'loose';
+}
+
+const PRETEXT_WORDS = ['refund', 'prize', 'lottery', 'reward', 'rewards', 'cashback', 'gift', 'winner', 'kyc', 'claim', 'receive', 'bonus', 'loan', 'job', 'salary', 'lucky', 'jackpot'];
+
+// lookalike letters from other scripts -> the Latin letter they imitate
+const CONFUSABLE: Record<string, string> = { 'а': 'a', 'е': 'e', 'о': 'o', 'р': 'p', 'с': 'c', 'х': 'x', 'у': 'y', 'і': 'i', 'ј': 'j', 'ѕ': 's', 'һ': 'h', 'к': 'k', 'м': 'm', 'т': 't', 'в': 'b', 'н': 'h', 'ԁ': 'd', 'ӏ': 'l',
+  'ο': 'o', 'α': 'a', 'ν': 'v', 'ι': 'i', 'ρ': 'p', 'τ': 't', 'ε': 'e', 'κ': 'k', 'υ': 'u', 'ı': 'i', 'ł': 'l', 'ɡ': 'g', '0': 'o', '1': 'l' };
+
+/* ---------- small, pure helpers ---------- */
+// RFC 3492 punycode decoding, so "xn--" hosts can be examined as the characters a person would actually see.
+function punycodeDecode(input: string): string {
+  const base = 36, tMin = 1, tMax = 26, skew = 38, damp = 700; let n = 128, i = 0, bias = 72;
+  const out = [], basic = input.lastIndexOf('-');
+  for (let j = 0; j < Math.max(basic, 0); j++) { if (input.charCodeAt(j) >= 0x80) throw new RangeError('not basic'); out.push(input.charCodeAt(j)); }
+  const digit = (c: number): number => (c >= 48 && c < 58 ? c - 22 : c >= 65 && c < 91 ? c - 65 : c >= 97 && c < 123 ? c - 97 : base);
+  const adapt = (delta: number, count: number, first: boolean): number => { let k = 0; delta = first ? Math.floor(delta / damp) : delta >> 1; delta += Math.floor(delta / count); for (; delta > ((base - tMin) * tMax) >> 1; k += base) delta = Math.floor(delta / (base - tMin)); return Math.floor(k + (base - tMin + 1) * delta / (delta + skew)); };
+  for (let idx = basic > 0 ? basic + 1 : 0; idx < input.length;) {
+    const old = i;
+    for (let w = 1, k = base; ; k += base) {
+      if (idx >= input.length) throw new RangeError('bad input');
+      const d = digit(input.charCodeAt(idx++));
+      if (d >= base) throw new RangeError('bad digit');
+      i += d * w; const t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+      if (d < t) break; w *= base - t;
+    }
+    const len = out.length + 1; bias = adapt(i - old, len, old === 0); n += Math.floor(i / len); i %= len;
+    out.splice(i++, 0, n);
+  }
+  if (!out.length || out.every(c => c < 0x80)) throw new RangeError('not an internationalised label');   // IDNA: an "xn--" label must hide at least one non-ASCII letter
+  return String.fromCodePoint(...out);
+}
+
+function hostToUnicode(host: string): string {
+  return host.split('.').map(l => { if (!l.startsWith('xn--')) return l; try { return punycodeDecode(l.slice(4)); } catch (e) { return l; } }).join('.');
+}
+
+// Optimal-string-alignment distance (counts a swap of two neighbouring letters as one edit), capped for speed.
+function damerau(a: string, b: string, cap: number): number {
+  if (Math.abs(a.length - b.length) > cap) return cap + 1;
+  const d: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i, ...new Array<number>(b.length).fill(0)]);
+  const at = (i: number, j: number): number => d[i]?.[j] ?? 0;
+  const set = (i: number, j: number, v: number): void => { const row = d[i]; if (row) row[j] = v; };
+  for (let j = 1; j <= b.length; j++) set(0, j, j);
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+    const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+    set(i, j, Math.min(at(i - 1, j) + 1, at(i, j - 1) + 1, at(i - 1, j - 1) + cost));
+    if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) set(i, j, Math.min(at(i, j), at(i - 2, j - 2) + 1));
+  }
+  return at(a.length, b.length);
+}
+
+function registrableDomain(host: string): string {
+  const labels = host.split('.');
+  if (labels.length <= 2) return host;
+  return labels.slice(-(suffixLength(labels) + 1)).join('.');
+}
+// The three parts of an address: the name the owner chose, the ending, and whatever sits in front of them.
+function splitDomain(host: unknown): { name: string; suffix: string; subdomains: string[] } {
+  const labels = String(host).toLowerCase().replace(/\.$/, '').split('.');
+  const n = suffixLength(labels), suffixLabels = Math.min(n, Math.max(labels.length - 1, 0));
+  return { name: labels[labels.length - suffixLabels - 1] || '', suffix: labels.slice(labels.length - suffixLabels).join('.'), subdomains: labels.slice(0, Math.max(labels.length - suffixLabels - 1, 0)) };
+}
+const isOfficial = (host: string): { domain: string; brand: string } | null => OFFICIAL_DOMAINS.find(o => host === o.domain || host.endsWith('.' + o.domain)) || null;
+const mixesScripts = (s: string): boolean => /[a-z]/i.test(s) && /[Ͱ-ϿЀ-ӿ]/.test(s);
+const fold = (s: string): string => Array.from(s).map(c => CONFUSABLE[c] || c).join('');
+// letter runs and digit runs: "sbi2kyc-up" -> sbi, 2, kyc, up   (no regex lookbehind: it breaks Safari before 16.4)
+const parts = (s: string): string[] => s.match(/[a-z]+|\d+/gi) || [];
+
+/* ---------- URL analysis ---------- */
+function result(level: LinkLevel, headline: string, reasons: string[], extra: Extra): LinkResult { return { kind: 'url', level, headline, reasons, ...extra }; }
+
+// A link may be only a doorway ("google.com/url?q=...", "bank.example/login?next=..."). The outer address is judged, then the one it forwards to,
+// and the worse verdict wins: an honest-looking wrapper cannot launder a scam link, and a real bank site that forwards elsewhere is called out.
+function analyzeUrl(raw: unknown, depth?: number): LinkResult {
+  const outer = analyzeUrlOnce(raw);
+  if ((depth || 0) >= 2 || !outer.target) return outer;
+  const inner = analyzeUrl(outer.target, (depth || 0) + 1);
+  if (inner.kind !== 'url' || !inner.host) return outer;
+  const door = 'The address you are looking at is only a doorway: it forwards you to ' + inner.host + '.';
+  if (SEVERITY[inner.level] > SEVERITY[outer.level]) {
+    return { ...outer, level: inner.level, headline: 'This link forwards you to another address, and that one is the problem. ' + inner.headline, reasons: [door, ...inner.reasons, ...outer.reasons], codes: [...outer.codes, 'forwards-to', ...inner.codes], forwardsTo: inner.host };
+  }
+  return { ...outer, reasons: [...outer.reasons, door], codes: [...outer.codes, 'forwards-to'], forwardsTo: inner.host };
+}
+
+function analyzeUrlOnce(raw: unknown): LinkResult {
+  const EDGE = /^[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]+|[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]+$/g;   // chat apps add these around a copied link; that is an artefact, not a trick
+  const input = String(raw == null ? '' : raw).replace(EDGE, '').trim().replace(/^[<"'([]+|[>"')\].,;!]+$/g, '');
+  if (!input) return result('unverified', "That doesn't look like a link I can check.", ["If it's a phone number or UPI ID, search it online with the word \"scam\": many are already reported."], { codes: ['empty'] });
+
+  const scheme = (/^([a-z][a-z0-9+.-]*):/i.exec(input) || [])[1];
+  if (scheme && !/^https?$/i.test(scheme) && !/^[a-z0-9.-]+:\d+/i.test(input)) {
+    const s = scheme.toLowerCase();
+    if (s === 'javascript' || s === 'data' || s === 'vbscript') return result('scam', 'This is not a web address: it is code.', ['A link that starts with "' + s + ':" runs instructions in your browser instead of opening a website. Genuine banks and offices never send one.'], { codes: ['code-scheme'], scheme: s });
+    if (s === 'upi') return analyzeUpi(input);
+    return result('unverified', 'This is a "' + s + ':" link, not a website.', ['It opens another app on your phone. Check who sent it and what it asks you to do before you tap.'], { codes: ['other-scheme'], scheme: s });
+  }
+
+  let url: URL | null;
+  try { url = new URL(/^https?:\/\//i.test(input) ? input : 'http://' + input); } catch (e) { url = null; }
+  if (!url || !url.hostname || !/[.:]/.test(url.hostname) || /\s/.test(input)) return result('unverified', "That doesn't look like a link I can check.", ["If it's a phone number or UPI ID, search it online with the word \"scam\": many are already reported."], { codes: ['unparseable'] });
+
+  const host = url.hostname.toLowerCase().replace(/\.$/, '').replace(/^www\./, '');
+  const uni = hostToUnicode(host), registrable = registrableDomain(host);
+  const path = decodeURIComponentSafe(url.pathname + url.search).toLowerCase();
+  const tld = host.split('.').pop() ?? '';
+  const reasons: string[] = [], codes: string[] = []; let strong = false, weak = 0, brand: string | null = null, exactBrand = false;
+  const flag = (code: string, text: string, isStrong: boolean, w?: number): void => { codes.push(code); reasons.push(text); if (isStrong) strong = true; else weak += w || 1; };
+
+  // WHATWG browsers read a backslash as a slash, so "sbi.co.in\@evil.com" goes to sbi.co.in; many apps and older parsers read it as user-info and go to evil.com. No honest link needs one.
+  const backslash = /^[a-z][a-z0-9+.-]*:\/\/[^/?#]*\\/i.test(input);
+  // Invisible and direction-changing characters (zero-width, left-to-right and right-to-left overrides) have no place in a link; they make text read as something it is not.
+  const hidden = /[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/.test(input);
+  const ambiguous = backslash || hidden;
+  if (hidden) flag('hidden-characters', 'The link contains invisible or direction-changing characters. They are used to make a link read as something it is not, and no honest link needs them.', true);
+  if (backslash) flag('backslash', 'The address has a backslash (\\) where a slash belongs. Browsers and apps read such a link differently, and it is a known trick for hiding where a link goes.', true);
+  if (url.username || url.password) flag('userinfo', 'Everything before the "@" is decoration. The browser goes to the address after it, so a link can look like a bank while taking you elsewhere.', true);
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(':') || /^\[/.test(url.host)) flag('raw-ip', 'It points at a raw IP address, not a name. Real banks and government sites do not send people to bare numbers.', true);
+
+  const hostParts = uni.split('.');
+  const nonLatin = hostParts.some(l => /[^\u0020-\u007e]/.test(l));   // anything outside plain printable ASCII
+  const govIn = /(^|\.)(gov|nic)\.in$/.test(host);   // gov.in and nic.in are restricted to government bodies
+  const official = isOfficial(host) || (govIn ? { brand: 'Government of India', domain: registrableDomain(host) } : null);
+
+  // .bank.in and .fin.in can only be registered by banks and financial institutions, through one government-authorised registrar.
+  const regRestricted = /(^|\.)(bank|fin)\.in$/.test(host);
+
+  if (!official && !regRestricted) {
+    // 1. an official domain's name used inside someone else's host: "sbi.co.in.attacker.xyz"
+    const embedded = OFFICIAL_DOMAINS.find(o => (host.includes(o.domain + '.') || host.includes(o.domain + '-')) && registrable !== registrableDomain(o.domain) && splitDomain(registrable).name !== splitDomain(o.domain).name);
+    if (embedded) { brand = embedded.brand; flag('embedded-official', 'It contains the real address of ' + embedded.brand + ' (' + embedded.domain + ') but belongs to a different domain (' + registrable + '). Only what comes right before the last two parts counts.', true); }
+
+    // 2. a brand name inside the host: lookalike
+    const labelsNoSuffix = hostParts.slice(0, hostParts.length - suffixLength(hostParts));
+    const bits = labelsNoSuffix.flatMap(l => [l, l.replace(/-/g, ''), ...parts(l)]);
+    const folded = bits.map(fold);
+    for (const b of BRANDS) {
+      if (b.domains.some(d => registrable === d)) continue;
+      let match = null;
+      for (const t of b.tokens) for (const x of [...bits, ...folded]) { const m = brandMatch(x, t); if (m === 'exact' || (m && !match)) match = m; }
+      const hit = !!match;
+      const fuzzy = !hit && b.tokens.some(t => t.length >= 6 && [...bits, ...folded].some(x => x.length >= 6 && damerau(x, t, 1) <= 1));
+      if (hit || fuzzy) {
+        brand = brand || b.name; exactBrand = exactBrand || match === 'exact';
+        if (nonLatin && folded.some(x => b.tokens.some(t => x.includes(t))) && !bits.some(x => b.tokens.some(t => x.includes(t)))) flag('homoglyph', 'The letters imitate "' + b.tokens[0] + '" using look-alike characters from another alphabet, a trick to pass for ' + b.name + '.', true);
+        else flag(fuzzy ? 'typosquat' : 'impersonation', (fuzzy ? 'It looks like a misspelling of ' : 'It uses the name of ') + b.name + ' but is not their real address' + (b.domains[0] ? ' (' + b.domains[0] + ').' : '.'), false, 3);
+        break;
+      }
+    }
+    if (nonLatin && mixesScripts(uni.split('.').join(''))) flag('mixed-script', 'The address mixes letters from different alphabets, which is how look-alike addresses are built.', false, 3);
+  }
+
+  if (!official && !regRestricted) {
+    if (FREE_TLDS.has(tld)) flag('free-tld', 'The ending ".' + tld + '" is a free domain type that scam sites have used heavily.', false, 2);
+    else if (CHEAP_TLDS.has(tld)) flag('cheap-tld', 'The ending ".' + tld + '" is cheap to register and common on scam sites (many honest sites use it too).', false, 1);
+    const hits = ACTION_WORDS.filter(w => bits_of(hostParts.slice(0, hostParts.length - suffixLength(hostParts)).join('.')).includes(w) || new RegExp('(^|[^a-z])' + w + '([^a-z]|$)').test(path));   // an ending such as ".care" is not a pressure word
+    if (hits.length) flag('action-words', 'It uses pressure words (' + hits.slice(0, 3).join(', ') + ') of the kind used to rush people into acting.', false, 1);
+    // a brand named in a short folder or file name of someone else's address: how a phishing kit is laid out
+    const pathTokens = path.split(/[^a-z0-9]+/).filter(Boolean);
+    if (!PATH_BENIGN.test(path) && (pathTokens.some(t => PATH_ACTIONS.has(t)) || /\.(php|aspx?|jsp)$/.test(url.pathname.toLowerCase()))) {
+      for (const seg of decodeURIComponentSafe(url.pathname).toLowerCase().split('/').filter(Boolean)) {
+        const words = seg.split(/[^a-z0-9]+/).filter(Boolean);
+        if (!words.length || words.length > 3) continue;   // a long slug is a headline, not a kit folder
+        const b = BRANDS.find(x => !x.domains.some(d => registrable === d) && x.tokens.some(t => words.some(w => brandMatch(w, t) === 'exact')));
+        if (b) { brand = brand || b.name; flag('brand-in-path', 'The address names ' + b.name + ' in its folders (/' + seg + ') but belongs to ' + registrable + '. A real bank does not run its login from someone else\'s website.', false, 3); break; }
+      }
+    }
+    // an official address tucked into a query value: a lure that makes the link look like the bank at a glance
+    const isSearch = /^\/(search|s|results)(\/|$)/.test(url.pathname.toLowerCase());   // someone searching for the bank's address is not a lure
+    const tucked = !isSearch && OFFICIAL_DOMAINS.find(o => new RegExp('[?&][^=&]*=[^&]*' + escapeRegExp(o.domain)).test(path));
+    if (tucked) flag('official-in-query', 'It carries ' + tucked.domain + ' inside the link, after the real domain (' + registrable + '). Only what comes before the first "/" says where you are going.', false, 2);
+    const label = registrable.split('.')[0] ?? '';
+    if ((label.match(/-/g) || []).length >= 3) flag('hyphens', 'The domain chains several hyphenated words together, a common pattern in throwaway scam domains.', false, 1);
+    if (hostParts.length - registrable.split('.').length >= 3) flag('deep-subdomain', 'It stacks many sub-domains in front of the real domain, which hides who it belongs to.', false, 1);
+    if (/\.apk(\?|$)/i.test(url.pathname)) flag('apk', 'It downloads an app file (.apk) directly. Fake bank, challan and KYC apps are spread this way; install apps only from the Play Store or App Store.', false, 3);
+    if (url.protocol === 'http:' && (hits_exist(path) || weak >= 2)) flag('no-tls', 'It is not an encrypted (https) link.', false, 1);
+  }
+
+  const shortened = SHORTENERS.has(host);
+  if (shortened) { codes.push('shortener'); reasons.push("A shortened link hides the real destination, and scammers use shorteners for exactly that. Don't open it unless you completely trust who sent it."); }
+
+  // ----- verdict -----
+  const impersonating = codes.includes('impersonation') || codes.includes('typosquat');
+  // The label being the brand's own name is strong evidence; the letters merely appearing inside a longer word needs more beside it.
+  const impersonationIsScam = impersonating && ((exactBrand && weak >= 4) || weak >= 5);
+  // The name model is a hint: at its strict setting only, it can lift an unexplained address to "suspicious". It never counts towards
+  // "scam". (Its looser setting was measured on validation and dropped: 218 more phishing domains caught for 128 more honest ones flagged.)
+  const soft = !official && !regRestricted && !shortened && softScorer ? softScorer(host) : null;   // a shortener's own name says nothing about where it leads
+  const softWarn = !!soft && soft.band === 'high';
+  let level: LinkLevel, headline: string;
+  if (official && !ambiguous) { level = 'official'; headline = 'This is an official address (' + official.brand + ', ' + host + ').'; reasons.unshift('It matches a known official domain. That says nothing about a message that carries it: type the address yourself next time, and never share an OTP or PIN.'); }
+  else if (regRestricted && !strong) { level = 'official'; headline = 'This ends in .' + (/\.fin\.in$/.test(host) ? 'fin.in' : 'bank.in') + ', an address only registered financial institutions can get (' + host + ').'; reasons.unshift('The RBI required banks to move to .bank.in and other financial institutions to .fin.in, through one authorised registrar. A scammer cannot register one. It still pays to type the address yourself, and never share an OTP or PIN.'); }
+  else if (strong || impersonationIsScam || weak >= 6) { level = 'scam'; headline = 'This looks like a scam link.'; }
+  else if (impersonating || weak >= 2 || (nonLatin && codes.includes('mixed-script'))) { level = 'suspicious'; headline = 'This link has warning signs.'; }
+  else if (softWarn) { level = 'suspicious'; headline = 'This link has warning signs.'; }
+  else { level = 'unverified'; headline = shortened ? 'This is a shortened link: the real destination is hidden.' : "I can't confirm this address (" + host + ') either way.'; if (!shortened) reasons.push('Nothing here proves it is genuine or fake. When in doubt, go to the site by typing its address yourself instead of clicking.'); }
+  if (softWarn && level !== 'official') { reasons.push(modelReason(soft)); codes.push('name-model'); }
+  // Says whether the name model took part, so the page can tell the reader when it could not: 'applied', 'not-loaded', or 'not-applicable' (an official or shortened address has no use for it)
+  const nameModel = official || regRestricted || shortened ? 'not-applicable' : (softScorer ? 'applied' : 'not-loaded');
+  let target: string | null = null;   // the address this one forwards to, when a query parameter carries a whole link
+  for (const [k, v] of url.searchParams) if (!target && !/^\/(search|s|results)(\/|$)/.test(url.pathname.toLowerCase()) && REDIRECT_PARAMS.test(k) && /^https?:\/\/[^\s/]+/i.test(v)) target = v;
+  return result(level, headline, reasons, { codes, host, registrable, brand, score: weak, strong, shortened, nameModel, target });
+}
+
+function bits_of(host: string): string[] { return host.split(/[^a-z0-9]+/i).flatMap(p => [p, ...parts(p)]).map(x => x.toLowerCase()); }
+function hits_exist(path: string): boolean { return ACTION_WORDS.some(w => new RegExp('(^|[^a-z])' + w + '([^a-z]|$)').test(path)); }
+function decodeURIComponentSafe(s: string): string { try { return decodeURIComponent(s); } catch (e) { return s; } }
+
+/* ---------- UPI QR payloads ---------- */
+const UPI_TRUTH = 'Scanning a UPI QR code or tapping a UPI link only ever sends money out of your account. A QR code can never receive money for you, so anyone who asks you to scan one to receive a refund or prize is scamming you.';
+
+function analyzeUpi(raw: unknown): LinkResult {
+  let url: URL;
+  try { url = new URL(String(raw).trim()); } catch (e) { return { kind: 'upi', level: 'unverified', headline: "That doesn't look like a payment code I can read.", reasons: [UPI_TRUTH], codes: ['unparseable'] }; }
+  const action = (url.hostname || '').toLowerCase();
+  // parameter names are read case-insensitively ("PA=" is as good as "pa="), and a repeated one counts once: the first
+  const q = new Map<string, string>(); for (const [k, v] of url.searchParams) if (!q.has(k.toLowerCase())) q.set(k.toLowerCase(), v);
+  const param = (k: string): string | null => q.get(k) ?? null;
+  const payee = (param('pa') || '').trim(), name = (param('pn') || '').trim(), amount = (param('am') || '').trim(), note = (param('tn') || '').trim();
+  const reasons: string[] = [], codes: string[] = []; let strong = false, weak = 0;
+  const text = (name + ' ' + note + ' ' + payee).toLowerCase();
+  const pretext = PRETEXT_WORDS.filter(w => new RegExp('(^|[^a-z])' + w + '([^a-z]|$)').test(text));
+
+  if (action === 'mandate' || /mandate/.test(action)) { codes.push('mandate'); reasons.push('This sets up a repeat (auto-debit) payment from your account, not a one-time payment. Do not approve it unless you started a subscription yourself.'); weak += 3; }
+  else if (action !== 'pay') { codes.push('unknown-action'); reasons.push('This is an unusual payment code (' + (action || 'unknown') + ').'); weak += 1; }
+  if (!/^[a-z0-9._-]{2,}@[a-z][a-z0-9]{1,}$/i.test(payee)) { codes.push('bad-payee'); reasons.push(payee ? 'The payee address "' + payee + '" is not in the normal name@bank form.' : 'There is no payee address in this code.'); weak += 2; }
+  // Two different payee or amount values in one code: apps disagree about which one wins, and the only reason to write both is to exploit that.
+  for (const key of ['pa', 'am']) { const vals = new Set<string>(); for (const [k, v] of url.searchParams) if (k.toLowerCase() === key) vals.add(v.trim()); if (vals.size > 1) { codes.push('duplicate-' + key); reasons.push('The code gives more than one ' + (key === 'pa' ? 'payee address' : 'amount') + '. Apps differ on which they use, and no genuine code needs two.'); weak += 3; } }
+  // A bank or an agency does not collect money on a personal payment address under a name like "SBI Support": the name borrows trust that the address cannot back up.
+  const lead = (name + ' ' + payee.split('@')[0]).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const authority = ['sbi', 'hdfc', 'icici', 'axis', 'kotak', 'pnb', 'canara', 'rbi', 'npci', 'uidai', 'cbi', 'police', 'customs', 'trai', 'bank'].filter(w => lead.includes(w));
+  const helpish = ['support', 'helpline', 'care', 'customer', 'official', 'kyc', 'service', 'officer', 'department'].filter(w => lead.includes(w));
+  if (authority.length && helpish.length) { codes.push('payee-impersonation'); reasons.push('The payee is named like ' + (authority[0] ?? '').toUpperCase() + ' ' + (helpish[0] ?? '') + ' but is an ordinary payment address. Banks and agencies do not collect money this way.'); weak += 3; }
+  if (pretext.length) { codes.push('pretext'); reasons.push('The payee or note uses ' + pretext.slice(0, 3).join(', ') + ': words scammers use to make you pay when you were promised money.'); strong = true; }
+  if (amount && action === 'pay') { codes.push('amount'); reasons.push('The amount is already filled in (' + amount + (param('cu') && param('cu') !== 'INR' ? ' ' + param('cu') : ' rupees') + '). Check it before you pay: scams often pre-fill a sum.'); weak += 1; }
+  reasons.unshift(UPI_TRUTH);
+  const who = (name ? name + ' ' : '') + (payee ? '(' + payee + ')' : '');
+  let level: LinkLevel, headline: string;
+  if (strong || weak >= 4) { level = 'scam'; headline = 'This QR code looks like a scam' + (who ? ': it would pay ' + who + '.' : '.'); }
+  else if (weak >= 2) { level = 'suspicious'; headline = 'This payment code has warning signs' + (who ? ': it would pay ' + who + '.' : '.'); }
+  else { level = 'unverified'; headline = 'This QR code will send money out of your account' + (who ? ' to ' + who : '') + '. I cannot tell whether the payee is genuine.'; }
+  return { kind: 'upi', level, headline, reasons, codes, payee, name, amount, note, action };
+}
+
+/* ---------- what was inside a QR code or message ---------- */
+function analyzePayload(text: unknown): LinkResult {
+  const s = String(text == null ? '' : text).trim();
+  if (/^upi:(?:\/\/)?[a-z]/i.test(s)) return analyzeUpi(s.replace(/^upi:(?!\/\/)/i, 'upi://'));
+  // payment-app deep links open the app straight on a payment screen, exactly as a UPI code does
+  const app = /^(paytmmp|phonepe|tez|gpay|bhim|credpay|mobikwik|freecharge|amazonpay):\/\//i.exec(s);
+  if (app) {
+    let u: URL | null; try { u = new URL(s); } catch (e) { u = null; }
+    if (u && u.searchParams.get('pa') !== null) { const r = analyzeUpi('upi://pay' + u.search); r.codes.push('app-link'); r.reasons.push('This is a ' + (app[1] ?? '').toLowerCase() + ' payment-app link. It opens the app straight on a payment screen, the same as scanning a UPI QR code.'); return r; }
+  }
+  if (/^[a-z0-9._-]{2,}@[a-z][a-z0-9]{1,}$/i.test(s)) return analyzeUpi('upi://pay?pa=' + encodeURIComponent(s));   // a bare payment address such as name@bank
+  if (/^(\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}$/.test(s) || /^(\+|00)\d[\d\s-]{7,14}$/.test(s)) {
+    return { kind: 'phone', level: 'unverified', headline: "This is a phone number. I can't tell whether it is genuine.", codes: ['phone'],
+      reasons: ['No tool can verify a caller from a number alone, and numbers are easy to fake. Police, CBI, courts and banks do not demand money or an OTP over a call. If the caller does, hang up and call 1930.'] };
+  }
+  // an address whose "name" part ends like a web address (sbi.co.in@evil.com) is the hidden-destination trick, not an email
+  if (/^[^\s@/:?#]+@[^\s@/:?#]+\.[a-z]{2,}$/i.test(s) && !/\.(com|in|net|org|gov|edu|co|bank|fin|sbi)$/i.test((s.split('@')[0] ?? ''))) {
+    return { kind: 'other', level: 'unverified', headline: 'This is an email address, not a website.', codes: ['other-email'], reasons: ['Check who gave it to you and what they want. Banks do not ask for an OTP, PIN or password by email.'] };
+  }
+  if (/^(https?:\/\/|www\.)/i.test(s) || /^([a-z0-9.-]+@)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?(\/\S*)?$/i.test(s) || /^(javascript|data|vbscript):/i.test(s)) return analyzeUrl(s);
+  const m = /^(tel|sms|smsto|mailto|geo|wifi|begin:vcard)/i.exec(s);
+  if (m) {
+    const k = (m[1] ?? '').toLowerCase();
+    const what = k === 'tel' ? 'a phone number' : /^sms/.test(k) ? 'a text message to send' : k === 'mailto' ? 'an email address' : k === 'wifi' ? 'Wi-Fi details' : k === 'geo' ? 'a map location' : 'a contact card';
+    return { kind: 'other', level: 'unverified', headline: 'This code contains ' + what + ', not a website.', reasons: ['Check who gave you this code and what it asks you to do before you act on it.'], codes: ['other-' + k] };
+  }
+  return { kind: 'text', level: 'unverified', headline: 'This code holds plain text.', reasons: ['"' + s.slice(0, 160) + '"'], codes: ['text'], text: s };
+}
+
+export { LEVELS, BRANDS, OFFICIAL_DOMAINS, analyzeUrl, analyzeUpi, analyzePayload, setScorer, registrableDomain, splitDomain, hostToUnicode, punycodeDecode, damerau, UPI_TRUTH };

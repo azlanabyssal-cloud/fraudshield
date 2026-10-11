@@ -23,6 +23,14 @@ jobs:
       - name: Model lineage (the shipped model, its data digests, trainer and feature code match the record)
         run: npm run model:lineage:check
       - run: npm test
+      - name: Web app (TypeScript, strict mode with indexed access checked)
+        run: npm run web:typecheck
+      - name: Web app tests (differential parity with the shipped code, interface behaviour, accessibility audit, voice)
+        run: npm run web:test
+      - name: Web app build, then the policy, same-origin and size-budget gate
+        run: npm run web:budget
+      - name: Web app in a real Chrome (axe with colour contrast, light and dark, phone and desktop; console and policy errors; touch targets; keyboard)
+        run: npm run audit:web
       - name: Every control on every page, clicked in a real Chrome on a phone and a laptop (what would be published, not the working tree)
         run: npm run ux:clicks
       - name: Syntax check browser scripts
