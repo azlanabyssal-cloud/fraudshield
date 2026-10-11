@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ════════════════════════════════════════════════════════
      0.  CINEMATIC INTRO — FraudShield film-title entrance
-         Visual: clip-path wipe reveal + shield pop + tagline
+         Visual: shield, name revealed left to right, tagline, signature: opacity and transform only
          Sound: deep bass thud + harmonic on user interaction
   ════════════════════════════════════════════════════════ */
   var introEl = document.getElementById('introOverlay');

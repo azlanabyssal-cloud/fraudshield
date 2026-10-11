@@ -56,6 +56,8 @@
   </script>
 
   <link rel="preload" href="fonts/dm-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/playfair-display-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/playfair-display-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
   <script src="lib/intro-gate.js"></script>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="motion.css">
@@ -559,21 +561,23 @@
     @media(max-width:560px){.sit-buttons{flex-direction:column}.sit-btn{width:100%}.sit-panel{padding:1.2rem 1rem}}
 
     /* ══════════════════════════════════════════════════════
-       CINEMATIC INTRO — a deep-navy field, lit from the centre, and the name rising out of it
+       INTRO — a flat navy field and the name, set plainly. No glow, no halo, no shadow: nothing is lit from behind.
        One motion language: ease-out rises only. No bounce. The first frame is already the final colour: no white flash,
-       and every line of text is readable against it (tagline and hint were 2:1 before; they are 7:1 and 4.6:1 now).
-       Colours: navy #0B1F3A and its two shades, cream #FDF9F3, orange #FF8A3D (6.7:1 on navy), gold #E6B95A for the signature.
+       and every line of text is readable against it (tagline 9.6:1, hint 7.3:1, signature 15:1).
+       Every movement changes only opacity or transform, so the browser runs it off the main thread: it cannot stutter
+       while the page behind is still parsing, and nothing is laid out or repainted frame by frame.
+       Colours: navy #0B1F3A, cream #FDF9F3, one accent, orange #FF8A3D (6.7:1 on navy).
     ══════════════════════════════════════════════════════ */
 
-    @keyframes intro-glow{from{opacity:0;transform:translate(-50%,-50%) scale(.82)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
     @keyframes intro-fallback-exit{to{opacity:0;pointer-events:none}}
     @keyframes intro-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes intro-wipe{to{clip-path:inset(0 0% 0 0)}}
-    @keyframes intro-line{to{width:min(295px,56vw)}}
+    @keyframes intro-wipe{to{transform:scaleX(0)}}
+    @keyframes intro-line{to{transform:scaleX(1)}}
 
     .intro-overlay{
       position:fixed;inset:0;z-index:99999;
-      background:radial-gradient(120% 90% at 50% 40%,#12315a 0%,#0B1F3A 46%,#07152a 100%);
+      background:#0B1F3A;
+      --intro-fs:clamp(2.8rem,9vw,5.5rem);   /* the name's size; the rules under and over it are exactly its width (5.73 em) */
       display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.9rem;
       transition:opacity .72s cubic-bezier(.4,0,.2,1);
       pointer-events:auto;
@@ -584,26 +588,28 @@
     }
     .intro-overlay.exit{opacity:0;pointer-events:none}
     .intro-off .intro-overlay{display:none}
-    .intro-overlay::before{content:'';position:absolute;left:50%;top:40%;width:min(70vw,520px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,138,61,.16) 0%,rgba(255,138,61,0) 68%);opacity:0;animation:intro-glow 1.4s .15s ease-out forwards;pointer-events:none}
 
     /* Lines — draw only after bg is dark (bg darkens by 0.76s, lines start at 0.62s/0.75s) */
-    .intro-line-top,.intro-line-bot{height:1px;width:0;animation:intro-line .75s cubic-bezier(.4,0,.2,1) forwards}
+    .intro-line-top,.intro-line-bot{height:1px;width:calc(var(--intro-fs) * 5.73);transform:scaleX(0);will-change:transform;animation:intro-line .75s cubic-bezier(.4,0,.2,1) forwards}
     .intro-line-top{background:#FF8A3D;animation-delay:.2s}
     .intro-line-bot{background:rgba(255,138,61,.4);animation-delay:.32s}
 
     /* Shield — clean rise, no rotation, no scale bounce */
     .intro-shield{
-      width:clamp(3rem,7vw,4.4rem);height:auto;opacity:0;transform:translateY(10px);
-      filter:drop-shadow(0 0 26px rgba(255,138,61,.28));
+      width:clamp(3rem,7vw,4.4rem);height:auto;opacity:0;transform:translateY(10px);will-change:transform,opacity;
       animation:intro-rise .6s .4s ease-out forwards;
     }
 
-    /* Title — measured left-to-right wipe, unhurried pace */
+    /* Title — measured left-to-right reveal, unhurried pace. The text is still; a cover the colour of the field slides off it. */
     .intro-title{
+      position:relative;
       font-family:'Playfair Display',serif;
-      font-size:clamp(2.8rem,9vw,5.5rem);font-weight:900;
+      font-size:var(--intro-fs);font-weight:900;
       color:#FDF9F3;letter-spacing:-.01em;line-height:1;text-align:center;
-      clip-path:inset(0 100% 0 0);
+    }
+    .intro-title::after{
+      content:'';position:absolute;left:-.08em;right:-.08em;top:-.12em;bottom:-.12em;
+      background:#0B1F3A;transform-origin:100% 50%;will-change:transform;
       animation:intro-wipe .95s .55s cubic-bezier(.7,0,.2,1) forwards;
     }
     .intro-title span{color:#FF8A3D}
@@ -612,34 +618,33 @@
     .intro-tag{
       font-family:'DM Sans',sans-serif;font-size:clamp(.58rem,1.3vw,.78rem);font-weight:600;
       letter-spacing:.55em;text-transform:uppercase;color:#C9D3E3;
-      white-space:nowrap;opacity:0;transform:translateY(10px);
+      white-space:nowrap;opacity:0;transform:translateY(10px);will-change:transform,opacity;
       animation:intro-rise .65s 1.2s ease-out forwards;
     }
     @media(max-width:480px){
       .intro-tag{letter-spacing:.2em;white-space:normal;text-align:center;font-size:.62rem}
-      .intro-title{font-size:clamp(2.4rem,11vw,5.5rem)}
+      .intro-overlay{--intro-fs:clamp(2.4rem,11vw,5.5rem)}
     }
 
     /* ─── Azlan — the owner's signature ────────────────────
-       Bold italic Playfair. Rich jewelry gold. Film-credit scale.
-       "by" whispered before the name. Drawn gradient underline seals it.
-       Psychology: confidence + warmth + unhurried presence.
+       Bold italic Playfair in plain cream, film-credit scale.
+       "by" set small before the name, one drawn rule under it.
+       Confidence without decoration.
     ──────────────────────────────────────────────────────── */
     @keyframes intro-author-appear{
-      from{opacity:0;transform:translateY(14px) scale(.96)}
-      to{opacity:1;transform:translateY(0) scale(1)}
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
     }
-    @keyframes intro-author-line{to{width:100%}}
+    @keyframes intro-author-line{to{transform:scaleX(1)}}
 
     .intro-author{
       font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
       font-size:clamp(1.2rem,2.5vw,1.75rem);
-      color:#E6B95A;
+      color:#FDF9F3;
       letter-spacing:.1em;
-      text-shadow:0 0 38px rgba(230,185,90,.28),0 2px 16px rgba(0,0,0,.4);
-      opacity:0;transform:translateY(14px) scale(.96);
+      opacity:0;transform:translateY(10px);will-change:transform,opacity;
       position:relative;display:inline-block;
-      animation:intro-author-appear .92s 1.55s cubic-bezier(.22,1,.36,1) forwards;
+      animation:intro-author-appear .8s 1.55s cubic-bezier(.22,1,.36,1) forwards;
     }
     .intro-by{
       font-family:'DM Sans',sans-serif;font-style:normal;font-weight:400;
@@ -649,8 +654,8 @@
     }
     .intro-author::after{
       content:'';position:absolute;left:0;bottom:-7px;
-      height:1.5px;width:0;
-      background:linear-gradient(90deg,rgba(255,138,61,.85) 0%,rgba(255,138,61,.55) 60%,rgba(255,138,61,.06) 100%);
+      height:1.5px;width:100%;transform:scaleX(0);transform-origin:left;will-change:transform;
+      background:#FF8A3D;
       animation:intro-author-line .72s 2.2s cubic-bezier(.4,0,.2,1) forwards;
     }
 
