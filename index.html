@@ -578,26 +578,27 @@
       position:fixed;inset:0;z-index:99999;
       background:#0B1F3A;
       --intro-fs:clamp(2.8rem,9vw,5.5rem);   /* the name's size; the rules under and over it are exactly its width (5.73 em) */
+      --k:1;                                 /* time scale: 1 is the full film, .5 the short cut (every entrance after the first in a session) */
       display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.9rem;
       transition:opacity .72s cubic-bezier(.4,0,.2,1);
       pointer-events:auto;
       overflow:hidden;
       padding:0 1.2rem;
       box-sizing:border-box;
-      animation:intro-fallback-exit .8s 4.0s ease forwards;
+      animation:intro-fallback-exit calc(.8s * var(--k)) calc(4s * var(--k)) ease forwards;
     }
     .intro-overlay.exit{opacity:0;pointer-events:none}
-    .intro-off .intro-overlay{display:none}
+    .intro-short .intro-overlay{--k:.5}
 
     /* Lines — draw only after bg is dark (bg darkens by 0.76s, lines start at 0.62s/0.75s) */
-    .intro-line-top,.intro-line-bot{height:1px;width:calc(var(--intro-fs) * 5.73);transform:scaleX(0);will-change:transform;animation:intro-line .75s cubic-bezier(.4,0,.2,1) forwards}
-    .intro-line-top{background:#FF8A3D;animation-delay:.2s}
-    .intro-line-bot{background:rgba(255,138,61,.4);animation-delay:.32s}
+    .intro-line-top,.intro-line-bot{height:1px;width:calc(var(--intro-fs) * 5.73);transform:scaleX(0);will-change:transform;animation:intro-line calc(.75s * var(--k)) cubic-bezier(.4,0,.2,1) forwards}
+    .intro-line-top{background:#FF8A3D;animation-delay:calc(.2s * var(--k))}
+    .intro-line-bot{background:rgba(255,138,61,.4);animation-delay:calc(.32s * var(--k))}
 
     /* Shield — clean rise, no rotation, no scale bounce */
     .intro-shield{
       width:clamp(3rem,7vw,4.4rem);height:auto;opacity:0;transform:translateY(10px);will-change:transform,opacity;
-      animation:intro-rise .6s .4s ease-out forwards;
+      animation:intro-rise calc(.6s * var(--k)) calc(.4s * var(--k)) ease-out forwards;
     }
 
     /* Title — measured left-to-right reveal, unhurried pace. The text is still; a cover the colour of the field slides off it. */
@@ -609,8 +610,8 @@
     }
     .intro-title::after{
       content:'';position:absolute;left:-.08em;right:-.08em;top:-.12em;bottom:-.12em;
-      background:#0B1F3A;transform-origin:100% 50%;will-change:transform;
-      animation:intro-wipe .95s .55s cubic-bezier(.7,0,.2,1) forwards;
+      background:#0B1F3A;transform-origin:100% 50%;will-change:transform;pointer-events:none;
+      animation:intro-wipe calc(.95s * var(--k)) calc(.55s * var(--k)) cubic-bezier(.7,0,.2,1) forwards;
     }
     .intro-title span{color:#FF8A3D}
 
@@ -619,7 +620,7 @@
       font-family:'DM Sans',sans-serif;font-size:clamp(.58rem,1.3vw,.78rem);font-weight:600;
       letter-spacing:.55em;text-transform:uppercase;color:#C9D3E3;
       white-space:nowrap;opacity:0;transform:translateY(10px);will-change:transform,opacity;
-      animation:intro-rise .65s 1.2s ease-out forwards;
+      animation:intro-rise calc(.65s * var(--k)) calc(1.2s * var(--k)) ease-out forwards;
     }
     @media(max-width:480px){
       .intro-tag{letter-spacing:.2em;white-space:normal;text-align:center;font-size:.62rem}
@@ -627,9 +628,8 @@
     }
 
     /* ─── Azlan — the owner's signature ────────────────────
-       Bold italic Playfair in plain cream, film-credit scale.
-       "by" set small before the name, one drawn rule under it.
-       Confidence without decoration.
+       Bold italic Playfair in gold (#E6B95A, 9.6:1 on the navy), film-credit scale. No glow, no shadow.
+       "by" set small before the name; a rule fades out under it as it is drawn, the way a signature trails off.
     ──────────────────────────────────────────────────────── */
     @keyframes intro-author-appear{
       from{opacity:0;transform:translateY(10px)}
@@ -640,11 +640,11 @@
     .intro-author{
       font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
       font-size:clamp(1.2rem,2.5vw,1.75rem);
-      color:#FDF9F3;
+      color:#E6B95A;
       letter-spacing:.1em;
       opacity:0;transform:translateY(10px);will-change:transform,opacity;
       position:relative;display:inline-block;
-      animation:intro-author-appear .8s 1.55s cubic-bezier(.22,1,.36,1) forwards;
+      animation:intro-author-appear calc(.8s * var(--k)) calc(1.55s * var(--k)) cubic-bezier(.22,1,.36,1) forwards;
     }
     .intro-by{
       font-family:'DM Sans',sans-serif;font-style:normal;font-weight:400;
@@ -655,8 +655,8 @@
     .intro-author::after{
       content:'';position:absolute;left:0;bottom:-7px;
       height:1.5px;width:100%;transform:scaleX(0);transform-origin:left;will-change:transform;
-      background:#FF8A3D;
-      animation:intro-author-line .72s 2.2s cubic-bezier(.4,0,.2,1) forwards;
+      background:linear-gradient(90deg,rgba(255,138,61,.9) 0%,rgba(255,138,61,.55) 60%,rgba(255,138,61,.06) 100%);
+      animation:intro-author-line calc(.72s * var(--k)) calc(2.2s * var(--k)) cubic-bezier(.4,0,.2,1) forwards;
     }
 
     /* Skip hint — barely a whisper, just a signal */
@@ -665,7 +665,16 @@
       font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;
       color:#9FB0C8;letter-spacing:.18em;text-transform:uppercase;
       opacity:0;transform:translateY(10px);
-      animation:intro-rise .5s 1.4s ease forwards;
+      animation:intro-rise calc(.5s * var(--k)) calc(1.4s * var(--k)) ease forwards;
+    }
+
+    /* A person who has asked their device for less motion still gets the entrance, as one still frame: nothing moves, it is held
+       for a moment and lifts. (Skipping it for them would have been the easy way to be wrong about "every time".) */
+    @media (prefers-reduced-motion: reduce){
+      .intro-overlay{animation:intro-fallback-exit .3s 1.8s ease forwards}
+      .intro-line-top,.intro-line-bot,.intro-author::after{animation:none;transform:none;will-change:auto}
+      .intro-shield,.intro-tag,.intro-author,.intro-skip{animation:none;opacity:1;transform:none;will-change:auto}
+      .intro-title::after{display:none}
     }
 
     /* ── AP-STYLE PREMIUM REFINEMENTS ──────────────────────

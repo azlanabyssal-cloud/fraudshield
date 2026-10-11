@@ -71,7 +71,8 @@ test('a class the page puts on <html> before first paint is used for nothing els
   const css = ['style.css', 'motion.css', 'hero-scene.css', 'about.css'].map(read).concat(read('index.html').match(/<style>[\s\S]*?<\/style>/g) || []).join('\n');
   for (const cls of new Set(added)) {
     const rules = css.split('\n').filter(l => new RegExp('\\.' + cls + '(?![\\w-])').test(l));
-    assert.ok(rules.every(l => new RegExp('\\.' + cls + '\\s+\\.[\\w-]+\\s*\\{\\s*display:\\s*none').test(l)), `${cls} is styled by a rule other than the one that hides the entrance: ${rules.join(' | ')}`);
+    assert.ok(rules.length > 0, `${cls} is added but nothing uses it`);
+    assert.ok(rules.every(l => new RegExp('^\\s*\\.' + cls + '\\s+\\.intro-overlay\\s*\\{').test(l)), `${cls} is styled by a rule other than one that scopes it to the entrance: ${rules.join(' | ')}`);
   }
 });
 
@@ -96,4 +97,74 @@ test('the assistant page is the private page: nothing on it comes from a third p
   assert.doesNotMatch(body, /images\.unsplash\.com|fonts\.googleapis|fonts\.gstatic/);
   assert.doesNotMatch(h, /fonts from Google|photos from Unsplash/i);
   assert.match(h, /page-hero page-hero--compact/, 'the heading leaves room for the chat on a phone');
+});
+
+/* ---- the entrance plays every time the home page is loaded ---- */
+function runGate({ pathname, store, reduced = false }) {
+  const vm = require('node:vm'), fsx = require('node:fs');
+  const classes = new Set(), listeners = {}, style = { cssText: '' }, reloads = [];
+  const sessionStorage = store === null ? { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } }
+    : { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = v; } };
+  const window = { location: { pathname, reload: () => reloads.push(1) }, sessionStorage, matchMedia: () => ({ matches: reduced }), addEventListener: (t, f) => { listeners[t] = f; } };
+  const document = { documentElement: { classList: { add: c => classes.add(c), contains: c => classes.has(c) }, style } };
+  vm.runInNewContext(fsx.readFileSync(path.join(ROOT, 'lib', 'intro-gate.js'), 'utf8'), { window, document });
+  return { classes, listeners, style, reloads };
+}
+
+test('the entrance is a part of every load of the home page: the first is the full film, every later one the short cut, and none is skipped', () => {
+  const store = {};
+  const first = runGate({ pathname: '/fraudshield/', store });
+  assert.equal(first.classes.has('intro-short'), false, 'the first entrance in a session is the full film');
+  for (const where of ['/fraudshield/', '/fraudshield/index.html', '/']) {   // a reload, the logo from another page, the back button
+    const again = runGate({ pathname: where, store });
+    assert.equal(again.classes.has('intro-short'), true, where + ': a later entrance is the short cut');
+    assert.equal(again.classes.has('intro-off'), false, where + ': it is never switched off');
+  }
+  const blocked = runGate({ pathname: '/fraudshield/', store: null });
+  assert.equal(blocked.classes.has('intro-short'), true, 'with storage blocked it still plays, as the short cut');
+});
+
+test('the entrance belongs to the home page: the other pages are left alone, and do not spend it', () => {
+  const store = {};
+  for (const p of ['/fraudshield/tips.html', '/fraudshield/about.html', '/fraudshield/assistant.html']) {
+    const g = runGate({ pathname: p, store });
+    assert.equal(g.classes.size, 0, p);
+    assert.equal(Object.keys(g.listeners).length, 0, p + ': no listener');
+  }
+  assert.deepEqual(store, {}, 'a visit to another page does not use up the full film');
+  assert.equal(runGate({ pathname: '/fraudshield/', store }).classes.has('intro-short'), false, 'so the first home page after them still gets the full film');
+});
+
+test('back and forward: a copy of the home page handed back from the browser\'s store is loaded afresh, behind the navy field, and a normal load is not', () => {
+  const g = runGate({ pathname: '/fraudshield/', store: {} });
+  assert.equal(typeof g.listeners.pageshow, 'function');
+  g.listeners.pageshow({ persisted: false });
+  assert.equal(g.reloads.length, 0, 'an ordinary load is left alone');
+  g.listeners.pageshow({ persisted: true });
+  assert.equal(g.reloads.length, 1, 'a restored copy is reloaded');
+  assert.match(g.style.cssText, /background:\s*#0B1F3A/i, 'under the navy field, so no white frame shows between');
+  assert.match(g.style.cssText, /visibility:\s*hidden/);
+});
+
+test('the entrance never goes missing for anyone: the reduced-motion version is a still frame that lifts, and the stylesheet has no switch that hides it', () => {
+  const css = read('index.html').match(/<style>[\s\S]*?<\/style>/g).join('\n');
+  assert.doesNotMatch(css, /\.intro-off\b/, 'nothing hides the entrance');
+  const media = /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\s*\}/.exec(css.slice(css.indexOf('.intro-overlay{')));
+  assert.ok(media, 'a reduced-motion block follows the entrance rules');
+  assert.match(media[1], /\.intro-title::after\{display:none\}/, 'the name is shown at once');
+  assert.match(media[1], /\.intro-shield,\.intro-tag,\.intro-author,\.intro-skip\{animation:none;opacity:1/, 'every line is in place, with nothing moving');
+  const home = read('home.js');
+  assert.match(home, /prefers-reduced-motion: reduce/, 'and it lifts after a short hold');
+  assert.doesNotMatch(home, /addEventListener\(\s*['"]touchstart['"]/, 'a tap is one click, so it cannot fall through to a control under the finger');
+});
+
+test('the entrance has no glow, and moves only by opacity and transform', () => {
+  const css = read('index.html').match(/<style>[\s\S]*?<\/style>/g).join('\n');
+  const block = css.slice(css.indexOf('INTRO — a flat navy field'), css.indexOf('AP-STYLE PREMIUM REFINEMENTS'));
+  assert.ok(block.length > 1500, 'found the entrance rules');
+  assert.doesNotMatch(block.replace(/\/\*[\s\S]*?\*\//g, ''), /radial-gradient|drop-shadow|text-shadow:[^;]*\d+px|box-shadow|::before|clip-path/, 'no glow, no shadow, no clip-path repaint');
+  for (const m of block.matchAll(/@keyframes\s+(intro-[\w-]+)\s*\{([\s\S]*?)\}\s*(?=\n|@|\.)/g)) {
+    const props = [...m[2].matchAll(/([a-z-]+)\s*:/g)].map(x => x[1]);
+    for (const pr of props) assert.ok(['opacity', 'transform', 'pointer-events'].includes(pr), `${m[1]} animates ${pr}`);
+  }
 });

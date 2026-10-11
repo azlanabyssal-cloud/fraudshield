@@ -44,12 +44,16 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(function() { introEl.style.display = 'none'; }, 850);
     }
 
-    /* Auto-dismiss at 3.5s — underline animation ends at 3.04s, give 460ms to breathe */
-    setTimeout(function() { dismissIntro(false); }, 3900);
+    /* Auto-dismiss once the last line has been drawn and held for a breath: the full film is 3.9 s, the short cut (every
+       entrance after the first in a session) half of that, and the still frame for reduced motion 1.6 s. */
+    var introShort = document.documentElement.classList.contains('intro-short');
+    var introStill = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function() { dismissIntro(false); }, introStill ? 1600 : (introShort ? 1950 : 3900));
 
-    /* Click/touch overlay to skip + trigger sound */
+    /* A tap or click skips it and plays the sound. Only "click": a touchstart handler removed the overlay before the finger lifted,
+       so the tap's own click landed on whatever control was under it. Escape and Enter skip it for a keyboard. */
     introEl.addEventListener('click', function() { dismissIntro(true); });
-    introEl.addEventListener('touchstart', function() { dismissIntro(true); }, { passive:true });
+    document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape' || ev.key === 'Enter') dismissIntro(false); });
   }
 
   /* ════════════════════════════════════════════════════════

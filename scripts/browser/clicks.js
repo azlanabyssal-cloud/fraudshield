@@ -37,6 +37,8 @@ async function click(selector, n = 0) {
   // a person waits for a panel that is still sliding; so does this, until the control has held still for two looks
   let g = await probe();
   for (let i = 0; i < 12 && g.found; i++) { await sleep(90); const h = await probe(); const still = h.found && Math.abs(h.x - g.x) < 0.5 && Math.abs(h.y - g.y) < 0.5; g = h; if (still) break; }
+  // a control that something is passing over (a panel sliding in, a page's first frame still being committed) is given a moment, as a person would; a cover that stays fails
+  for (let i = 0; i < 15 && g.found && g.covered; i++) { await sleep(100); g = await probe(); }
   if (!g.found) throw new Error(`nothing visible matches "${selector}"[${n}] (${g.count} visible)`);
   if (g.covered) throw new Error(`"${selector}" is covered by ${g.by} at its centre: a person cannot press it`);
   for (const [type, extra] of [['mouseMoved', {}], ['mousePressed', { button: 'left', clickCount: 1 }], ['mouseReleased', { button: 'left', clickCount: 1 }]]) await pg.send('Input.dispatchMouseEvent', { type, x: g.x, y: g.y, ...extra });
@@ -46,6 +48,18 @@ const val = expr => pg.eval(expr);
 async function until(expr, what, ms = 4000) {
   const t0 = Date.now();
   for (;;) { if (await pg.eval(`!!(${expr})`)) { tally.checks++; return; } if (Date.now() - t0 > ms) throw new Error('expected: ' + what); await sleep(60); }
+}
+/** A person taps what is on the screen, so wait for the page's first painted frame: before it, the browser has nothing to hit-test and answers with the root. */
+const painted = () => pg.eval(`new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))`);
+
+/** Like until(), for the moments a page is being replaced: an evaluation against the old document throws, and that is not a failure, it is the wait. */
+async function untilLoaded(expr, what, ms = 8000) {
+  const t0 = Date.now();
+  for (;;) {
+    try { if (await pg.eval(`!!(${expr})`)) { tally.checks++; return; } } catch (e) { /* the document is changing */ }
+    if (Date.now() - t0 > ms) throw new Error('expected: ' + what);
+    await sleep(60);
+  }
 }
 async function step(label, fn) { try { await fn(); } catch (e) { failures.push(`${ctx} · ${label}: ${e.message}`); } }
 const type = async (sel, text) => pg.eval(`(() => { const t = document.querySelector(${JSON.stringify(sel)}); t.focus(); const proto = t.tagName === 'TEXTAREA' ? HTMLTextAreaElement : HTMLInputElement; Object.getOwnPropertyDescriptor(proto.prototype, 'value').set.call(t, ${JSON.stringify(text)}); t.dispatchEvent(new Event('input', { bubbles: true })); })()`);
@@ -63,14 +77,29 @@ async function common(phone, isAssistant) {
     await until(`/scam|suspicious|looks like/i.test(document.querySelector('.cb-panel').innerText)`, 'a verdict in the panel', 8000);
     await click('#cbClose'); await until(`!document.querySelector('.cb-panel--open')`, 'the panel to close');
   });
-  await step('the logo goes home, and the home page is usable at once (no intro in the way on a second visit)', async () => {
+  await step('the logo goes home: the entrance plays again, a tap skips it, and the page is usable at once', async () => {
     await val(`window.__before_logo = true`);
     await click('.nav-logo');
     // a fresh document: the marker set on the old one is gone, and the new one has finished loading
-    await until(`window.__before_logo === undefined && document.readyState === 'complete' && (location.pathname.endsWith('index.html') || location.pathname === '/')`, 'the home page to load afresh', 8000);
-    await sleep(500);
-    await until(`document.documentElement.classList.contains('intro-off') || getComputedStyle(document.getElementById('introOverlay')).display === 'none'`, 'no intro overlay on the second visit', 2000);
+    // "interactive", not "complete": a person taps as soon as the entrance is on screen, not when the last picture has arrived
+    await untilLoaded(`window.__before_logo === undefined && document.readyState !== 'loading' && (location.pathname.endsWith('index.html') || location.pathname === '/')`, 'the home page to load afresh');
+    await untilLoaded(`document.getElementById('introOverlay') && getComputedStyle(document.getElementById('introOverlay')).display !== 'none' && !document.getElementById('introOverlay').classList.contains('exit')`, 'the entrance to play when the logo brings a person home', 3000);
+    await painted();
+    const t0 = Date.now(); await click('#introOverlay');
+    await until(`getComputedStyle(document.getElementById('introOverlay')).display === 'none' || getComputedStyle(document.getElementById('introOverlay')).opacity === '0'`, 'a tap to skip the entrance', 2500);
+    tally.introAgain = Date.now() - t0; await sleep(900);
     if (phone) { await click('#hamburger'); await until(`document.getElementById('mobileNav').classList.contains('open')`, 'the menu to open straight away on the home page'); }
+  });
+  await step('the back button reloads the home page and the entrance plays', async () => {
+    await val(`window.__before_back = true; setTimeout(() => { location.href = 'tips.html'; }, 0); true`);
+    await untilLoaded(`location.pathname.endsWith('tips.html') && document.readyState !== 'loading'`, 'the tips page to load');
+    await val(`setTimeout(() => history.back(), 0); true`);
+    await untilLoaded(`(location.pathname.endsWith('index.html') || location.pathname === '/') && document.readyState !== 'loading'`, 'back to the home page');
+    await untilLoaded(`window.__before_back === undefined`, 'a live page, not the frozen copy');
+    await untilLoaded(`document.getElementById('introOverlay') && getComputedStyle(document.getElementById('introOverlay')).display !== 'none' && !document.getElementById('introOverlay').classList.contains('exit')`, 'the entrance to play again after back', 3000);
+    await painted();
+    await click('#introOverlay');
+    await until(`getComputedStyle(document.getElementById('introOverlay')).display === 'none' || getComputedStyle(document.getElementById('introOverlay')).opacity === '0'`, 'a tap to skip it', 2500); await sleep(900);
   });
 }
 
@@ -211,7 +240,7 @@ const PAGES = {
     pg.close(); process.stdout.write(`${ctx}: done\n`);
   }
   srv.close(); fs.rmSync(site, { recursive: true, force: true });
-  console.log(`${tally.clicks} real clicks, ${tally.checks} outcomes checked${tally.intro ? '; a tap skipped the entrance in ' + tally.intro + ' ms' : ''}`);
+  console.log(`${tally.clicks} real clicks, ${tally.checks} outcomes checked${tally.intro ? '; a tap skipped the entrance in ' + tally.intro + ' ms' : ''}${tally.introAgain ? ' (' + tally.introAgain + ' ms on a later visit)' : ''}`);
   if (failures.length) { console.error(`${failures.length} FAILED:`); failures.forEach(f => console.error('  - ' + f)); process.exit(1); }
   console.log('click-through ok: every control worked, on a phone and a laptop');
   process.exit(0);
